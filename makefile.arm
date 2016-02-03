@@ -1,0 +1,10 @@
+PROJECT =
+DEFS    = __MICROLIB
+LIBS    =
+DIRS    =
+KEYS    =
+INCS    =
+OUTDIR  =
+SCRIPT  =
+
+include startup/.arm/makefile
