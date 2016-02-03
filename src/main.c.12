@@ -1,20 +1,30 @@
 #include <stm32f4_discovery.h>
 #include <os.h>
 
-sem_t sem = SEM_INIT(0);
+msg_t msg = MSG_INIT(1);
 
 void slave()
 {
-	sem_wait(&sem);
+	unsigned x;
 
-	LED_Tick();
+	for (;;)
+	{
+		msg_wait(&msg, &x);
+
+		LEDs = x;
+	}
 }
 
 void master()
 {
-	tsk_delay(SEC);
+	unsigned x = 0;
 
-	sem_give(&sem);
+	for (;;)
+	{
+		tsk_delay(SEC);
+
+		msg_give(&msg, ++x);
+	}
 }
 
 tsk_t sla = TSK_INIT(slave);

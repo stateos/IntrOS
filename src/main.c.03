@@ -1,20 +1,24 @@
 #include <stm32f4_discovery.h>
 #include <os.h>
 
-sem_t sem = SEM_INIT(0);
+mtx_t mtx = MTX_INIT();
 
 void slave()
 {
-	sem_wait(&sem);
+	mtx_wait(&mtx);
 
 	LED_Tick();
+
+	mtx_give(&mtx);
 }
 
 void master()
 {
+	mtx_wait(&mtx);
+
 	tsk_delay(SEC);
 
-	sem_give(&sem);
+	mtx_give(&mtx);
 }
 
 tsk_t sla = TSK_INIT(slave);

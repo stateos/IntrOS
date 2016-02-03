@@ -2,6 +2,7 @@
 #include <os.h>
 
 sem_t sem = SEM_INIT(0);
+tmr_t tmr = TMR_INIT();
 
 void slave()
 {
@@ -10,15 +11,12 @@ void slave()
 	LED_Tick();
 }
 
-void master()
+void proc()
 {
-	tsk_delay(SEC);
-
 	sem_give(&sem);
 }
 
 tsk_t sla = TSK_INIT(slave);
-tsk_t mas = TSK_INIT(master);
 
 int main()
 {
@@ -26,6 +24,6 @@ int main()
 
 	sys_init();
 	tsk_start(&sla);
-	tsk_start(&mas);
+	tmr_startPeriodic(&tmr, SEC, proc);
 	tsk_stop();
 }
