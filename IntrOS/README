@@ -9,6 +9,7 @@ There's a dedicated function for immediate change the task state.
 ---------
 Features:
 - kernel works in cooperative mode only
+- signals (normal, auto clearing)
 - events
 - flags (one, all)
 - barriers
@@ -19,6 +20,11 @@ Features:
 - mailbox queues
 - timers (one-shot, periodic)
 - all documentation is contained within the source files
+---------
+1.1
+- add signal object
+- add example (main.c.19) for new feature
+- change flag object
 ---------
 1.0
 - first release

@@ -74,6 +74,7 @@ extern "C" {
 
 typedef void                *  os_id;
 typedef void               (* fun_id)( void );
+typedef struct __sig sig_t, * sig_id; // signal
 typedef struct __evt evt_t, * evt_id; // event
 typedef struct __flg flg_t, * flg_id; // flag
 typedef struct __bar bar_t, * bar_id; // barrier
@@ -86,6 +87,18 @@ typedef struct __obj obj_t, * obj_id;
 typedef struct __tmr tmr_t, * tmr_id; // timer
 typedef struct __tsk tsk_t, * tsk_id; // task
 typedef struct __sys sys_t, * sys_id; // system data
+
+/* -------------------------------------------------------------------------- */
+
+// signal
+
+struct __sig
+{
+	unsigned flag;  // signal's current value
+	unsigned type;  // signal type: sigNormal, sigClear
+};
+
+#define _SIG_INIT( type ) { false, type }
 
 /* -------------------------------------------------------------------------- */
 
@@ -106,10 +119,9 @@ struct __evt
 struct __flg
 {
 	unsigned flags; // flag's current value
-	unsigned mask;  // mask for blocked flags
 };
 
-#define _FLG_INIT( mask ) { 0, mask }
+#define _FLG_INIT( ) { 0 }
 
 /* -------------------------------------------------------------------------- */
 

@@ -1,6 +1,6 @@
 /******************************************************************************
 
-    @file    IntrOS: os_flg.h
+    @file    IntrOS: os_sig.h
     @author  Rajmund Szymanski
     @date    04.02.2016
     @brief   This file contains definitions for IntrOS.
@@ -36,134 +36,135 @@ extern "C" {
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Name              : flag                                                                                           *
+ * Name              : signal                                                                                         *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define flgOne       ( 0U )
-#define flgAll       ( 1U )
+#define sigNormal    ( 0U )
+#define sigClear     ( 1U )
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Name              : OS_FLG                                                                                         *
+ * Name              : OS_SIG                                                                                         *
  *                                                                                                                    *
- * Description       : define and initilize a flag object                                                             *
+ * Description       : define and initilize a signal object                                                           *
  *                                                                                                                    *
  * Parameters                                                                                                         *
- *   flg             : name of a pointer to flag object                                                               *
+ *   sig             : name of a pointer to signal object                                                             *
+ *   type            : signal type                                                                                    *
+ *                     sigNormal: normal signal                                                                       *
+ *                     sigClear:  auto clearing signal                                                                *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define     OS_FLG( flg )                     \
-               flg_t flg##__flg = _FLG_INIT(); \
-               flg_id flg = & flg##__flg
+#define     OS_SIG( sig, type )                   \
+               sig_t sig##__sig = _SIG_INIT(type); \
+               sig_id sig = & sig##__sig
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Name              : static_FLG                                                                                     *
+ * Name              : static_SIG                                                                                     *
  *                                                                                                                    *
- * Description       : define and initilize a static flag object                                                      *
+ * Description       : define and initilize a static signal object                                                    *
  *                                                                                                                    *
  * Parameters                                                                                                         *
- *   flg             : name of a pointer to flag object                                                               *
+ *   sig             : name of a pointer to signal object                                                             *
+ *   type            : signal type                                                                                    *
+ *                     sigNormal: normal signal                                                                       *
+ *                     sigClear:  auto clearing signal                                                                *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define static_FLG( flg )                     \
-        static flg_t flg##__flg = _FLG_INIT(); \
-        static flg_id flg = & flg##__flg
+#define static_SIG( sig, type )                   \
+        static sig_t sig##__sig = _SIG_INIT(type); \
+        static sig_id sig = & sig##__sig
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Name              : FLG_INIT                                                                                       *
+ * Name              : SIG_INIT                                                                                       *
  *                                                                                                                    *
- * Description       : create and initilize a flag object                                                             *
+ * Description       : create and initilize an signal object                                                          *
  *                                                                                                                    *
- * Parameters        : none                                                                                           *
+ * Parameters                                                                                                         *
+ *   type            : signal type                                                                                    *
+ *                     sigNormal: normal signal                                                                       *
+ *                     sigClear:  auto clearing signal                                                                *
  *                                                                                                                    *
- * Return            : flag object                                                                                    *
+ * Return            : signal object                                                                                  *
  *                                                                                                                    *
  * Note              : use only in 'C' code                                                                           *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define                FLG_INIT( ) \
-                      _FLG_INIT()
+#define                SIG_INIT( type ) \
+                      _SIG_INIT(type)
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Name              : FLG_CREATE                                                                                     *
+ * Name              : SIG_CREATE                                                                                     *
  *                                                                                                                    *
- * Description       : create and initilize a flag object                                                             *
+ * Description       : create and initilize a signal object                                                           *
  *                                                                                                                    *
- * Parameters        : none                                                                                           *
+ * Parameters                                                                                                         *
+ *   type            : signal type                                                                                    *
+ *                     sigNormal: normal signal                                                                       *
+ *                     sigClear:  auto clearing signal                                                                *
  *                                                                                                                    *
- * Return            : pointer to flag object                                                                         *
+ * Return            : pointer to signal object                                                                       *
  *                                                                                                                    *
  * Note              : use only in 'C' code                                                                           *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
 #ifndef __cplusplus
-#define                FLG_CREATE( ) \
-               &(flg_t)FLG_INIT()
+#define                SIG_CREATE( type ) \
+               &(sig_t)SIG_INIT(type)
 #endif
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Name              : flg_wait                                                                                       *
+ * Name              : sig_wait                                                                                       *
  *                                                                                                                    *
- * Description       : wait indefinitly on flag object until requested flags have been set                            *
+ * Description       : wait indefinitly until the signal object has been released                                     *
  *                                                                                                                    *
  * Parameters                                                                                                         *
- *   flg             : pointer to flag object                                                                         *
- *   flags           : all flags to wait                                                                              *
- *   mode            : waiting mode                                                                                   *
- *                     flgOne:    wait for any flags to be set                                                        *
- *                     flgAll:    wait for all flags to be set                                                        *
+ *   sig             : pointer to signal object                                                                       *
  *                                                                                                                    *
  * Return            : none                                                                                           *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              void     flg_wait( flg_id flg, unsigned flags, unsigned mode );
+              void     sig_wait( sig_id sig );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Name              : flg_take                                                                                       *
+ * Name              : sig_give                                                                                       *
  *                                                                                                                    *
- * Description       : don't wait on flag object until requested flags have been set                                  *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   flg             : pointer to flag object                                                                         *
- *   flags           : all flags to wait                                                                              *
- *   mode            : waiting mode                                                                                   *
- *                     flgOne:    wait for any flags to be set                                                        *
- *                     flgAll:    wait for all flags to be set                                                        *
- *                                                                                                                    *
- * Return                                                                                                             *
- *   E_SUCCESS       : requested flags have been set                                                                  *
- *   'another'       : requested flags have not been set                                                              *
- *                                                                                                                    *
- **********************************************************************************************************************/
-
-              unsigned flg_take( flg_id flg, unsigned flags, unsigned mode );
-
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : flg_give                                                                                       *
- *                                                                                                                    *
- * Description       : set given flags in flag object                                                                 *
+ * Description       : resume one (sigClear) or all (sigNormal) tasks that are waiting on the signal object           *
  *                                                                                                                    *
  * Parameters                                                                                                         *
- *   flg             : pointer to flag object                                                                         *
- *   flags           : all flags to set                                                                               *
+ *   sig             : pointer to signal object                                                                       *
  *                                                                                                                    *
  * Return            : none                                                                                           *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              void     flg_give( flg_id flg, unsigned flags );
+              void     sig_give( sig_id sig );
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : sig_clear                                                                                      *
+ *                                                                                                                    *
+ * Description       : reset the signal object                                                                        *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   sig             : pointer to signal object                                                                       *
+ *                                                                                                                    *
+ * Return            : none                                                                                           *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+              void     sig_clear( sig_id sig );
 
 #ifdef __cplusplus
 }
