@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    03.02.2016
+    @date    04.02.2016
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -86,8 +86,6 @@ typedef struct __obj obj_t, * obj_id;
 typedef struct __tmr tmr_t, * tmr_id; // timer
 typedef struct __tsk tsk_t, * tsk_id; // task
 typedef struct __sys sys_t, * sys_id; // system data
-typedef struct __sft sft_t, * sft_id; // task context saved by the software
-typedef struct __ctx ctx_t, * ctx_id; // task context saved by the hardware
 
 /* -------------------------------------------------------------------------- */
 
