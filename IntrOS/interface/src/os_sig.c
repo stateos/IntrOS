@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_sig.c
     @author  Rajmund Szymanski
-    @date    04.02.2016
+    @date    05.02.2016
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -29,13 +29,31 @@
 #include <os.h>
 
 /* -------------------------------------------------------------------------- */
+unsigned sig_take( sig_id sig )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned event = E_FAILURE;
+
+	port_sys_lock();
+
+	if (sig->flag)
+	{
+		if (sig->type == sigClear)
+		sig->flag = 0;
+
+		event = E_SUCCESS;
+	}
+
+	port_sys_unlock();
+
+	return event;
+}
+
+/* -------------------------------------------------------------------------- */
 void sig_wait( sig_id sig )
 /* -------------------------------------------------------------------------- */
 {
-	while (sig->flag == 0) tsk_yield();
-
-	if (sig->type == sigClear)
-		sig->flag = 0;
+	while (sig_take(sig) != E_SUCCESS) tsk_yield();
 }
 
 /* -------------------------------------------------------------------------- */
