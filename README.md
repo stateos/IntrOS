@@ -12,7 +12,7 @@ Features
 --------
 
 - kernel works in cooperative mode only
-- signals (normal, auto clearing)
+- signals (auto clearing, protected)
 - events
 - flags (one, all)
 - barriers

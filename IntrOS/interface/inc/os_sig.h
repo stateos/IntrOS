@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_sig.h
     @author  Rajmund Szymanski
-    @date    04.02.2016
+    @date    05.02.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -40,8 +40,8 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define sigNormal    ( 0U )
-#define sigClear     ( 1U )
+#define sigClear     ( 0U )
+#define sigProtect   ( 1U )
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -52,8 +52,8 @@ extern "C" {
  * Parameters                                                                                                         *
  *   sig             : name of a pointer to signal object                                                             *
  *   type            : signal type                                                                                    *
- *                     sigNormal: normal signal                                                                       *
- *                     sigClear:  auto clearing signal                                                                *
+ *                     sigClear:   auto clearing signal                                                               *
+ *                     sigProtect: protected signal                                                                   *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
@@ -70,8 +70,8 @@ extern "C" {
  * Parameters                                                                                                         *
  *   sig             : name of a pointer to signal object                                                             *
  *   type            : signal type                                                                                    *
- *                     sigNormal: normal signal                                                                       *
- *                     sigClear:  auto clearing signal                                                                *
+ *                     sigClear:   auto clearing signal                                                               *
+ *                     sigProtect: protected signal                                                                   *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
@@ -87,8 +87,8 @@ extern "C" {
  *                                                                                                                    *
  * Parameters                                                                                                         *
  *   type            : signal type                                                                                    *
- *                     sigNormal: normal signal                                                                       *
- *                     sigClear:  auto clearing signal                                                                *
+ *                     sigClear:   auto clearing signal                                                               *
+ *                     sigProtect: protected signal                                                                   *
  *                                                                                                                    *
  * Return            : signal object                                                                                  *
  *                                                                                                                    *
@@ -107,8 +107,8 @@ extern "C" {
  *                                                                                                                    *
  * Parameters                                                                                                         *
  *   type            : signal type                                                                                    *
- *                     sigNormal: normal signal                                                                       *
- *                     sigClear:  auto clearing signal                                                                *
+ *                     sigClear:   auto clearing signal                                                               *
+ *                     sigProtect: protected signal                                                                   *
  *                                                                                                                    *
  * Return            : pointer to signal object                                                                       *
  *                                                                                                                    *
@@ -140,7 +140,7 @@ extern "C" {
  *                                                                                                                    *
  * Name              : sig_give                                                                                       *
  *                                                                                                                    *
- * Description       : resume one (sigClear) or all (sigNormal) tasks that are waiting on the signal object           *
+ * Description       : resume one (sigClear) or all (sigProtect) tasks that are waiting on the signal object          *
  *                                                                                                                    *
  * Parameters                                                                                                         *
  *   sig             : pointer to signal object                                                                       *
