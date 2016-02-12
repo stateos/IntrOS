@@ -1,11 +1,11 @@
 #include <stm32f4_discovery.h>
 #include <os.h>
 
-sem_t sem = SEM_INIT(0);
+sig_t sig = SIG_INIT(sigClear);
 
 void slave()
 {
-	sem_wait(&sem);
+	sig_wait(&sig);
 
 	LED_Tick();
 }
@@ -14,7 +14,7 @@ void master()
 {
 	tsk_delay(SEC);
 
-	sem_give(&sem);
+	sig_give(&sig);
 }
 
 tsk_t sla = TSK_INIT(slave);
