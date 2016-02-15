@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.c
     @author  Rajmund Szymanski
-    @date    03.02.2016
+    @date    15.02.2016
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -83,9 +83,9 @@ unsigned priv_tsk_sleep( void )
 {
 	unsigned event;
 
-	port_sys_lock();
-
 	tsk_id cur = Current;
+
+	port_sys_lock();
 
 	cur->event = E_SUCCESS;
 	cur->id = ID_DELAYED;

@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    03.02.2016
+    @date    15.02.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -54,9 +54,9 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define     OS_WRK( tsk, state, size )                                        \
-               char tsk##__stack[ASIZE(size)] __osalign;                       \
-               tsk_t tsk##__tsk = _TSK_INIT(state, &tsk##__stack[ASIZE(size)]); \
+#define     OS_WRK( tsk, state, size )                                      \
+               char tsk##__stack[ASIZE(size)] __osalign;                     \
+               tsk_t tsk##__tsk = _TSK_INIT(state, tsk##__stack+ASIZE(size)); \
                tsk_id tsk = & tsk##__tsk
 
 /**********************************************************************************************************************
@@ -106,9 +106,9 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define static_WRK( tsk, state, size )                                        \
-        static char tsk##__stack[ASIZE(size)] __osalign;                       \
-        static tsk_t tsk##__tsk = _TSK_INIT(state, &tsk##__stack[ASIZE(size)]); \
+#define static_WRK( tsk, state, size )                                      \
+        static char tsk##__stack[ASIZE(size)] __osalign;                     \
+        static tsk_t tsk##__tsk = _TSK_INIT(state, tsk##__stack+ASIZE(size)); \
         static tsk_id tsk = & tsk##__tsk
 
 /**********************************************************************************************************************

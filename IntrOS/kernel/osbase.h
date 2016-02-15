@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    12.02.2016
+    @date    15.02.2016
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -99,11 +99,14 @@ typedef struct __sys sys_t, *sys_id; // system data
 
 struct __sig
 {
-	bool     flag;    // signal's current value
-	bool     protect; // signal type: sigClear, sigProtect
+	unsigned flag;    // signal's current value
+	unsigned protect; // signal type: sigClear, sigProtect
 };
 
-#define _SIG_INIT( protect ) { false, protect }
+#define  sigClear    ( 0U )
+#define  sigProtect  ( 1U )
+
+#define _SIG_INIT( protect ) { 0, (protect) ? sigProtect : sigClear }
 
 /* -------------------------------------------------------------------------- */
 
@@ -125,6 +128,9 @@ struct __flg
 {
 	unsigned flags; // flag's current value
 };
+
+#define  flgOne  ( false )
+#define  flgAll  ( true  )
 
 #define _FLG_INIT() { 0 }
 

@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_flg.h
     @author  Rajmund Szymanski
-    @date    04.02.2016
+    @date    15.02.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -39,9 +39,6 @@ extern "C" {
  * Name              : flag                                                                                           *
  *                                                                                                                    *
  **********************************************************************************************************************/
-
-#define flgOne       ( 0U )
-#define flgAll       ( 1U )
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -118,7 +115,7 @@ extern "C" {
  * Parameters                                                                                                         *
  *   flg             : pointer to flag object                                                                         *
  *   flags           : all flags to wait                                                                              *
- *   mode            : waiting mode                                                                                   *
+ *   all             : waiting mode                                                                                   *
  *                     flgOne:    wait for any flags to be set                                                        *
  *                     flgAll:    wait for all flags to be set                                                        *
  *                                                                                                                    *
@@ -126,7 +123,7 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              void     flg_wait( flg_id flg, unsigned flags, unsigned mode );
+              void     flg_wait( flg_id flg, unsigned flags, bool all );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -137,7 +134,7 @@ extern "C" {
  * Parameters                                                                                                         *
  *   flg             : pointer to flag object                                                                         *
  *   flags           : all flags to wait                                                                              *
- *   mode            : waiting mode                                                                                   *
+ *   all             : waiting mode                                                                                   *
  *                     flgOne:    wait for any flags to be set                                                        *
  *                     flgAll:    wait for all flags to be set                                                        *
  *                                                                                                                    *
@@ -147,7 +144,7 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              unsigned flg_take( flg_id flg, unsigned flags, unsigned mode );
+              unsigned flg_take( flg_id flg, unsigned flags, bool all );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
