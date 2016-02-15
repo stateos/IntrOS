@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.h
     @author  Rajmund Szymanski
-    @date    04.02.2016
+    @date    15.02.2016
     @brief   This file defines set of kernel functions for IntrOS.
 
  ******************************************************************************
@@ -88,25 +88,6 @@ void   core_tsk_remove( tsk_id tsk ) { core_rdy_remove(tsk); }
 // tasks queue handler procedure
 // return a pointer to next READY task
 tsk_id core_tsk_handler( void );
-
-/* -------------------------------------------------------------------------- */
-
-static inline unsigned port_get_lock( void )           { return __get_PRIMASK();      }
-static inline void     port_put_lock( unsigned state ) {        __set_PRIMASK(state); }
-static inline void     port_set_lock( void )           {        __disable_irq();      }
-static inline void     port_clr_lock( void )           {         __enable_irq();      }
-
-#define port_sys_lock()                             do { unsigned __LOCK = port_get_lock(); port_set_lock()
-#define port_sys_unlock()                                port_put_lock(__LOCK); } while(0)
-
-#define port_sys_enable()                           do { unsigned __LOCK = port_get_lock(); port_clr_lock()
-#define port_sys_disable()                               port_put_lock(__LOCK); } while(0)
-
-#define port_isr_lock()                             do { port_set_lock()
-#define port_isr_unlock()                                port_clr_lock(); } while(0)
-
-#define port_isr_enable()                           do { port_clr_lock()
-#define port_isr_disable()                               port_set_lock(); } while(0)
 
 /* -------------------------------------------------------------------------- */
 
