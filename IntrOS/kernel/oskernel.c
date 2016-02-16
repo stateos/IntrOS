@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    12.02.2016
+    @date    16.02.2016
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -41,7 +41,6 @@ static  tsk_t MAIN   = { .id=ID_READY, .next=&MAIN, .prev=&MAIN, .top=MAIN_SP };
 
 /* -------------------------------------------------------------------------- */
 
-__attribute__((noinline))
 void core_rdy_insert( os_id obj, unsigned id, os_id nxt )
 {
 	obj_id Obj = obj;
@@ -57,7 +56,6 @@ void core_rdy_insert( os_id obj, unsigned id, os_id nxt )
 
 /* -------------------------------------------------------------------------- */
 
-__attribute__((noinline))
 void core_rdy_remove( os_id obj )
 {
 	obj_id Obj = obj;
