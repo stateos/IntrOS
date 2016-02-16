@@ -10,11 +10,12 @@
 #ifdef  __CC_ARM
 
 #include <stm32f4xx.h>
-#include "startup.h"
 
 /*******************************************************************************
  Configuration of stacks and heap
 *******************************************************************************/
+
+#include "startup.h"
 
 __attribute__ ((const, section("HEAP")))
 __asm void __user_config_stackheap( void )
