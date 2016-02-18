@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    15.02.2016
+    @date    18.02.2016
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -105,8 +105,9 @@ struct __sig
 
 #define  sigClear    ( 0U )
 #define  sigProtect  ( 1U )
+#define  sigMASK     ( 1U )
 
-#define _SIG_INIT( protect ) { 0, (protect) ? sigProtect : sigClear }
+#define _SIG_INIT( protect ) { 0, (protect)&sigMASK }
 
 /* -------------------------------------------------------------------------- */
 
@@ -263,11 +264,8 @@ struct __tsk
 	unsigned delay; // inherited from timer
 	unsigned period;// inherited from timer
 
-	 os_id   sp;    // stack pointer
-	 os_id   top;   // top of stack
-#if defined(__CC_ARM) && !defined(__MICROLIB)
-	char     libspace[96];
-#endif
+	void    *sp;    // stack pointer
+	void    *top;   // top of stack
 };
 
 #define _TSK_INIT( state, top ) { 0, 0, 0, 0, state, 0, 0, 0, 0, top }
