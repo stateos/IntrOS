@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    15.02.2016
+    @date    19.02.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -257,6 +257,22 @@ extern "C" {
  **********************************************************************************************************************/
 
               void     tsk_startFrom( tsk_id tsk, fun_id state );
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : tsk_startPeriodic                                                                              *
+ *                                                                                                                    *
+ * Description       : start previously defined/created/stopped task object                                           *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   tsk             : pointer to task object                                                                         *
+ *   period          : duration of time (maximum number of ticks to countdownd)                                       *
+ *                                                                                                                    *
+ * Return            : none                                                                                           *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+              void     tsk_startPeriodic( tsk_id tsk, unsigned period );
 
 /**********************************************************************************************************************
  *                                                                                                                    *

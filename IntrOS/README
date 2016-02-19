@@ -23,11 +23,13 @@ Features:
 ---------
 1.1
 - add signal object
-- add example (main.c.19) for new feature
+- add example for new feature
 - change flag object
 - add sig_take function
-- added some optimizations
-- changed startup files
+- add some optimizations
+- change startup files
+- add tsk_startPeriodic function
+- add example for new feature
 ---------
 1.0
 - first release
