@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_sig.c
     @author  Rajmund Szymanski
-    @date    15.02.2016
+    @date    19.02.2016
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -38,7 +38,7 @@ unsigned sig_take( sig_id sig )
 
 	if (sig->flag)
 	{
-		sig->flag = sig->protect;
+		sig->flag = sig->type;
 
 		event = E_SUCCESS;
 	}
