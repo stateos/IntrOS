@@ -90,9 +90,6 @@ tsk_id core_tsk_handler( void )
 		if (cur->delay >= Counter - cur->start + 1)
 			continue;
 
-			cur->start += cur->delay;
-			cur->delay  = cur->period;
-
 		if (cur->id == ID_DELAYED)
 			break;
 
@@ -102,6 +99,9 @@ tsk_id core_tsk_handler( void )
 
 			tmr_id tmr = (tmr_id) cur;
 			
+			tmr->start += tmr->delay;
+			tmr->delay  = tmr->period;
+
 			if (tmr->state)
 			tmr->state();
 

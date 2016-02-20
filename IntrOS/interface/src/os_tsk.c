@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.c
     @author  Rajmund Szymanski
-    @date    19.02.2016
+    @date    15.02.2016
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -36,8 +36,6 @@ void tsk_start( tsk_id tsk )
 
 	if (tsk->id == ID_STOPPED)
 	{
-		tsk->period = 0;
-
 		core_tsk_insert(tsk);
 	}
 
@@ -52,29 +50,9 @@ void tsk_startFrom( tsk_id tsk, fun_id state )
 
 	if (tsk->id == ID_STOPPED)
 	{
-		tsk->state  = state;
-		tsk->period = 0;
+		tsk->state = state;
 
 		core_tsk_insert(tsk);
-	}
-
-	port_sys_unlock();
-}
-
-/* -------------------------------------------------------------------------- */
-void tsk_startPeriodic( tsk_id tsk, unsigned period )
-/* -------------------------------------------------------------------------- */
-{
-	port_sys_lock();
-
-	if (tsk->id == ID_STOPPED)
-	{
-		tsk->start  = Counter;
-		tsk->delay  = period;
-		tsk->period = period;
-
-		core_tsk_insert(tsk);
-		tsk->id = ID_DELAYED;
 	}
 
 	port_sys_unlock();
@@ -112,7 +90,6 @@ unsigned priv_tsk_sleep( void )
 	cur->event = E_SUCCESS;
 	cur->id = ID_DELAYED;
 	tsk_yield();
-	if (cur->delay == 0)
 	cur->id = ID_READY;
 	event = cur->event;
 
