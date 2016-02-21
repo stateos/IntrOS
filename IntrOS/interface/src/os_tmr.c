@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.c
     @author  Rajmund Szymanski
-    @date    03.02.2016
+    @date    21.02.2016
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -29,7 +29,7 @@
 #include <os.h>
 
 /* -------------------------------------------------------------------------- */
-static
+static inline
 void priv_tmr_start( tmr_id tmr )
 /* -------------------------------------------------------------------------- */
 {

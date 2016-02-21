@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    16.02.2016
+    @date    21.02.2016
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -91,8 +91,11 @@ tsk_id core_tsk_handler( void )
 			continue;
 
 		if (cur->id == ID_DELAYED)
+		{
+			cur->id =  ID_READY;
+			cur->event = E_SUCCESS;
 			break;
-
+		}
 //		if (cur->id == ID_TIMER)
 		{
 			port_set_lock();

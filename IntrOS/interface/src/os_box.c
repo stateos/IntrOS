@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_box.c
     @author  Rajmund Szymanski
-    @date    03.02.2016
+    @date    21.02.2016
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -29,7 +29,7 @@
 #include <os.h>
 
 /* -------------------------------------------------------------------------- */
-static
+static inline
 void priv_box_get( box_id box, void *data )
 /* -------------------------------------------------------------------------- */
 {
@@ -42,7 +42,7 @@ void priv_box_get( box_id box, void *data )
 }
 
 /* -------------------------------------------------------------------------- */
-static
+static inline
 void priv_box_put( box_id box, void *data )
 /* -------------------------------------------------------------------------- */
 {

@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_msg.c
     @author  Rajmund Szymanski
-    @date    03.02.2016
+    @date    21.02.2016
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -29,7 +29,7 @@
 #include <os.h>
 
 /* -------------------------------------------------------------------------- */
-static
+static inline
 void priv_msg_get( msg_id msg, unsigned *data )
 /* -------------------------------------------------------------------------- */
 {
@@ -39,7 +39,7 @@ void priv_msg_get( msg_id msg, unsigned *data )
 }
 
 /* -------------------------------------------------------------------------- */
-static
+static inline
 void priv_msg_put( msg_id msg, unsigned data )
 /* -------------------------------------------------------------------------- */
 {

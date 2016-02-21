@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.c
     @author  Rajmund Szymanski
-    @date    15.02.2016
+    @date    21.02.2016
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -78,44 +78,38 @@ void tsk_flip( fun_id state )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned priv_tsk_sleep( void )
+static inline
+unsigned priv_tsk_sleep( tsk_id cur )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event;
-
-	tsk_id cur = Current;
-
-	port_sys_lock();
-
-	cur->event = E_SUCCESS;
 	cur->id = ID_DELAYED;
 	tsk_yield();
-	cur->id = ID_READY;
-	event = cur->event;
 
-	port_sys_unlock();
-
-	return event;
+	return cur->event;
 }
 
 /* -------------------------------------------------------------------------- */
 unsigned tsk_sleepUntil( unsigned time )
 /* -------------------------------------------------------------------------- */
 {
-	Current->start = Counter;
-	Current->delay = time - Current->start;
+	tsk_id cur = Current;
 
-	return priv_tsk_sleep();
+	cur->start = Counter;
+	cur->delay = time - cur->start;
+
+	return priv_tsk_sleep(cur);
 }
 
 /* -------------------------------------------------------------------------- */
 unsigned tsk_sleepFor( unsigned delay )
 /* -------------------------------------------------------------------------- */
 {
-	Current->start = Counter;
-	Current->delay = delay;
+	tsk_id cur = Current;
 
-	return priv_tsk_sleep();
+	cur->start = Counter;
+	cur->delay = delay;
+
+	return priv_tsk_sleep(cur);
 }
 
 /* -------------------------------------------------------------------------- */
