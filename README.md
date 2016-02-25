@@ -11,7 +11,7 @@ There's a dedicated function for immediate change the task state.
 Features
 --------
 
-- kernel works in cooperative mode only
+- kernel works in cooperative (non-preemptive) mode only
 - signals (auto clearing, protected)
 - events
 - flags (one, all)
