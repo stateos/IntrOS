@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    21.02.2016
+    @date    29.02.2016
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -41,30 +41,30 @@ static  tsk_t MAIN   = { .id=ID_READY, .next=&MAIN, .prev=&MAIN, .top=MAIN_SP };
 
 /* -------------------------------------------------------------------------- */
 
-void core_rdy_insert( os_id obj, unsigned id, os_id nxt )
+void core_rdy_insert( os_id item, unsigned id, os_id next )
 {
-	obj_id Obj = obj;
-	obj_id Nxt = nxt;
-	obj_id Prv = Nxt->prev;
+	obj_id obj = item;
+	obj_id nxt = next;
+	obj_id prv = nxt->prev;
 
-	Obj->id   = id;
-	Obj->prev = Prv;
-	Obj->next = Nxt;
-	Nxt->prev = Obj;
-	Prv->next = Obj;
+	obj->id   = id;
+	obj->prev = prv;
+	obj->next = nxt;
+	nxt->prev = obj;
+	prv->next = obj;
 }
 
 /* -------------------------------------------------------------------------- */
 
-void core_rdy_remove( os_id obj )
+void core_rdy_remove( os_id item )
 {
-	obj_id Obj = obj;
-	obj_id Nxt = Obj->next;
-	obj_id Prv = Obj->prev;
+	obj_id obj = item;
+	obj_id nxt = obj->next;
+	obj_id prv = obj->prev;
 
-	Nxt->prev = Prv;
-	Prv->next = Nxt;
-	Obj->id   = ID_STOPPED;
+	nxt->prev = prv;
+	prv->next = nxt;
+	obj->id   = ID_STOPPED;
 }
 
 /* -------------------------------------------------------------------------- */
