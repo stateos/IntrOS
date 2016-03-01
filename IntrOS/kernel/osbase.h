@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    19.02.2016
+    @date    01.03.2016
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -78,7 +78,7 @@ extern "C" {
 /* -------------------------------------------------------------------------- */
 
 typedef void                 *os_id;
-typedef void               (*fun_id)(void);
+typedef void               (*fun_id)();
 typedef struct __sig sig_t, *sig_id; // signal
 typedef struct __evt evt_t, *evt_id; // event
 typedef struct __flg flg_t, *flg_id; // flag
