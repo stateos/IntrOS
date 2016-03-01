@@ -28,6 +28,7 @@ Features:
 - add sig_take function
 - add some optimizations
 - change startup files
+- fixed bug in startup file for armcc compiler
 ---------
 1.0
 - first release

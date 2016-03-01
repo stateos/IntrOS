@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.h
     @author  Rajmund Szymanski
-    @date    03.02.2016
+    @date    01.03.2016
     @brief   IntrOS port definitions for STM32 uC.
 
  ******************************************************************************
@@ -68,12 +68,6 @@ extern "C" {
 #error   osconfig.h: Incorrect OS_STACK_SIZE value!
 #endif
 
-#endif
-
-/* -------------------------------------------------------------------------- */
-
-#ifndef  OS_ALIGN
-#define  OS_ALIGN          8 /* stack alignment                            */
 #endif
 
 /* -------------------------------------------------------------------------- */
