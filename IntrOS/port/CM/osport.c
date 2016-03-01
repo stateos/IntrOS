@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.c
     @author  Rajmund Szymanski
-    @date    25.02.2016
+    @date    01.03.2016
     @brief   IntrOS port file for STM32 uC.
 
  ******************************************************************************
@@ -35,7 +35,7 @@ void port_sys_init( void )
 /******************************************************************************
  Put here configuration of system timer
 
- Example for TIM1:
+ Example for TIM1 (STM32F4):
 
 	NVIC_SetPriority(TIM1_UP_TIM10_IRQn, 0xFF);
 	NVIC_EnableIRQ  (TIM1_UP_TIM10_IRQn);
@@ -57,7 +57,7 @@ void port_sys_init( void )
 /******************************************************************************
  Put here the procedure of interrupt handler of system timer for non-tick-less mode
 
- Example for TIM1:
+ Example for TIM1 (STM32F4):
 
 void TIM1_UP_TIM10_IRQHandler( void )
 {
