@@ -1,0 +1,18 @@
+#include <stm32f4_discovery.h>
+#include <os.h>
+
+tmr_t tmr = TMR_INIT();
+
+void proc()
+{
+	LED_Tick();
+}
+
+int main()
+{
+	LED_Config();
+
+	sys_init();
+	tmr_startPeriodic(&tmr, SEC, proc);
+	tsk_stop();
+}

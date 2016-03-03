@@ -1,0 +1,35 @@
+#include <stm32f4_discovery.h>
+#include <os.h>
+
+flg_t flg = FLG_INIT();
+
+void slave()
+{
+	flg_wait(&flg, 3, flgAll);
+
+	LED_Tick();
+}
+
+void master()
+{
+	tsk_delay(SEC/2);
+
+	flg_give(&flg, 1);
+
+	tsk_delay(SEC/2);
+
+	flg_give(&flg, 2);
+}
+
+tsk_t sla = TSK_INIT(slave);
+tsk_t mas = TSK_INIT(master);
+
+int main()
+{
+	LED_Config();
+
+	sys_init();
+	tsk_start(&sla);
+	tsk_start(&mas);
+	tsk_stop();
+}

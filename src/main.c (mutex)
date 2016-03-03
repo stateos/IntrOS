@@ -1,0 +1,35 @@
+#include <stm32f4_discovery.h>
+#include <os.h>
+
+mtx_t mtx = MTX_INIT();
+
+void slave()
+{
+	mtx_wait(&mtx);
+
+	LED_Tick();
+
+	mtx_give(&mtx);
+}
+
+void master()
+{
+	mtx_wait(&mtx);
+
+	tsk_delay(SEC);
+
+	mtx_give(&mtx);
+}
+
+tsk_t sla = TSK_INIT(slave);
+tsk_t mas = TSK_INIT(master);
+
+int main()
+{
+	LED_Config();
+
+	sys_init();
+	tsk_start(&sla);
+	tsk_start(&mas);
+	tsk_stop();
+}

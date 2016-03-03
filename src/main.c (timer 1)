@@ -1,0 +1,29 @@
+#include <stm32f4_discovery.h>
+#include <os.h>
+
+sem_t sem = SEM_INIT(0);
+tmr_t tmr = TMR_INIT();
+
+void slave()
+{
+	sem_wait(&sem);
+
+	LED_Tick();
+}
+
+void proc()
+{
+	sem_give(&sem);
+}
+
+tsk_t sla = TSK_INIT(slave);
+
+int main()
+{
+	LED_Config();
+
+	sys_init();
+	tsk_start(&sla);
+	tmr_startPeriodic(&tmr, SEC, proc);
+	tsk_stop();
+}

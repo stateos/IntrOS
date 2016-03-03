@@ -2,8 +2,8 @@
 
     @file    IntrOS: osport.c
     @author  Rajmund Szymanski
-    @date    01.03.2016
-    @brief   IntrOS port file for STM32 uC.
+    @date    03.03.2016
+    @brief   IntrOS port file for Cortex-Mx uC.
 
  ******************************************************************************
 

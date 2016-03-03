@@ -1,0 +1,56 @@
+#! armcc -E
+
+/*******************************************************************************
+@file     stm32f4xx.sct
+@author   Rajmund Szymanski
+@date     18.02.2016
+@brief    Scatter file for STM32F407VG device with 1024KB FLASH and 192KB RAM
+*******************************************************************************/
+
+#define __rom_start 0x08000000
+#define __rom_size  0x00100000
+#define __rom_end  (__rom_start+__rom_size)
+#define __ccm_start 0x10000000
+#define __ccm_size  0x00010000
+#define __ccm_end  (__ccm_start+__ccm_size)
+#define __ram_start 0x20000000
+#define __ram_size  0x00020000
+#define __ram_end  (__ram_start+__ram_size)
+#define __bkp_start 0x40024000
+#define __bkp_size  0x00001000
+#define __bkp_end  (__bkp_start+__bkp_size)
+
+FLASH __rom_start __rom_size
+{
+	ROM +0
+	{
+		*(RESET, +FIRST)
+		*(InRoot$$Sections)
+		.ANY(+RO)
+	}
+
+	CCM __ccm_start UNINIT __ccm_size
+	{
+		.ANY(CCM)
+	}
+
+	BKP __bkp_start UNINIT __bkp_size
+	{
+		.ANY(BKP)
+	}
+
+	STACK __ram_start UNINIT NOCOMPRESS __ram_size
+	{
+		.ANY(STACK, +FIRST)
+	}
+	
+	RAM ALIGNEXPR(+0, 8) NOCOMPRESS
+	{
+		.ANY(+RW, +ZI)
+	}
+
+	HEAP ALIGNEXPR(+0, 8) UNINIT
+	{
+		.ANY(HEAP, +LAST)
+	}
+}
