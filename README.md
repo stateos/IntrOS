@@ -23,6 +23,7 @@ Features
 - mailbox queues
 - timers (one-shot, periodic)
 - all documentation is contained within the source files
+- examples and templates are in separate repositories
 
 Targets
 -------
