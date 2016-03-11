@@ -76,7 +76,7 @@ extern "C" {
  *                                                                                                                    *
  * Name              : BAR_INIT                                                                                       *
  *                                                                                                                    *
- * Description       : define and initilize a barrier object                                                          *
+ * Description       : create and initilize a barrier object                                                          *
  *                                                                                                                    *
  * Parameters                                                                                                         *
  *   limit           : number of tasks that must call bar_wait[Until|For] function to release the barrier object      *
@@ -94,7 +94,7 @@ extern "C" {
  *                                                                                                                    *
  * Name              : BAR_CREATE                                                                                     *
  *                                                                                                                    *
- * Description       : define and initilize a barrier object                                                          *
+ * Description       : create and initilize a barrier object                                                          *
  *                                                                                                                    *
  * Parameters                                                                                                         *
  *   limit           : number of tasks that must call bar_wait[Until|For] function to release the barrier object      *
