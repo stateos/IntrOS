@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    01.03.2016
+    @date    20.03.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -39,6 +39,58 @@ extern "C" {
  * Name              : task (thread)                                                                                  *
  *                                                                                                                    *
  **********************************************************************************************************************/
+
+struct __tsk
+{
+	unsigned id;    // inherited from timer
+	tsk_id   next;  // inherited from timer
+	tsk_id   prev;  // inherited from timer
+	unsigned event; // wakeup event
+
+	fun_id   state; // inherited from timer
+	unsigned start; // inherited from timer
+	unsigned delay; // inherited from timer
+	unsigned period;// inherited from timer
+
+	void    *sp;    // stack pointer
+	void    *top;   // top of stack
+};
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : _TSK_INIT                                                                                      *
+ *                                                                                                                    *
+ * Description       : create and initilize a task object                                                             *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   state           : task state (initial task function) doesn't have to be noreturn-type                            *
+ *                     it will be executed into an infinite system-implemented loop                                   *
+ *   top             : top of task's private stack storage                                                            *
+ *                                                                                                                    *
+ * Return            : task object                                                                                    *
+ *                                                                                                                    *
+ * Note              : for internal use                                                                               *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+#define               _TSK_INIT( state, top ) { 0, 0, 0, 0, state, 0, 0, 0, 0, top }
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : _TSK_STACK                                                                                     *
+ *                                                                                                                    *
+ * Description       : create task's private stack storage                                                            *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   size            : size of task's private stack storage (in bytes)                                                *
+ *                                                                                                                    *
+ * Return            : top of task's private stack storage                                                            *
+ *                                                                                                                    *
+ * Note              : for internal use                                                                               *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+#define               _TSK_STACK( size ) (__osalign char[ASIZE(size)]){ 0 } + ASIZE(size)
 
 /**********************************************************************************************************************
  *                                                                                                                    *

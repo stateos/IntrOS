@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_msg.h
     @author  Rajmund Szymanski
-    @date    01.03.2016
+    @date    20.03.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -39,6 +39,52 @@ extern "C" {
  * Name              : message queue                                                                                  *
  *                                                                                                                    *
  **********************************************************************************************************************/
+
+typedef struct __msg
+{
+	unsigned count; // inherited from semaphore
+	unsigned limit; // inherited from semaphore
+
+	unsigned first; // first element to read from queue
+	unsigned next;  // next element to write into queue
+	unsigned*data;  // queue data
+
+}	msg_t, *msg_id;
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : _MSG_INIT                                                                                      *
+ *                                                                                                                    *
+ * Description       : create and initilize a message queue object                                                    *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   limit           : size of a queue (max number of stored messages)                                                *
+ *   data            : message queue data buffer                                                                      *
+ *                                                                                                                    *
+ * Return            : message queue object                                                                           *
+ *                                                                                                                    *
+ * Note              : for internal use                                                                               *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+#define               _MSG_INIT( limit, data ) { 0, limit, 0, 0, data }
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : _MSG_DATA                                                                                      *
+ *                                                                                                                    *
+ * Description       : create a message queue data buffer                                                             *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   limit           : size of a queue (max number of stored messages)                                                *
+ *                                                                                                                    *
+ * Return            : message queue data buffer                                                                      *
+ *                                                                                                                    *
+ * Note              : for internal use                                                                               *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+#define               _MSG_DATA( limit ) (unsigned[limit]){ 0 }
 
 /**********************************************************************************************************************
  *                                                                                                                    *

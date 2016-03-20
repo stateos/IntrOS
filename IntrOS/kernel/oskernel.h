@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.h
     @author  Rajmund Szymanski
-    @date    25.02.2016
+    @date    20.03.2016
     @brief   This file defines set of kernel functions for IntrOS.
 
  ******************************************************************************
@@ -28,9 +28,9 @@
 
 #pragma once
 
-#include <osbase.h>
-#include <bitband.h>
 #include <stdlib.h>
+#include <bitband.h>
+#include <osbase.h>
 
 #ifdef __cplusplus
 extern "C" {

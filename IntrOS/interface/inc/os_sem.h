@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_sem.h
     @author  Rajmund Szymanski
-    @date    01.03.2016
+    @date    20.03.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -39,6 +39,29 @@ extern "C" {
  * Name              : semaphore                                                                                      *
  *                                                                                                                    *
  **********************************************************************************************************************/
+
+typedef struct __sem
+{
+	unsigned count; // semaphore's current value
+
+}	sem_t, *sem_id;
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : _SEM_INIT                                                                                      *
+ *                                                                                                                    *
+ * Description       : create and initilize a semaphore object                                                        *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   init            : initial value of semaphore counter                                                             *
+ *                                                                                                                    *
+ * Return            : semaphore object                                                                               *
+ *                                                                                                                    *
+ * Note              : for internal use                                                                               *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+#define               _SEM_INIT( count ) { count }
 
 /**********************************************************************************************************************
  *                                                                                                                    *

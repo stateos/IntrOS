@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_bar.h
     @author  Rajmund Szymanski
-    @date    01.03.2016
+    @date    20.03.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -39,6 +39,31 @@ extern "C" {
  * Name              : barrier                                                                                        *
  *                                                                                                                    *
  **********************************************************************************************************************/
+
+typedef struct __bar
+{
+	unsigned signal;
+	unsigned count; // barrier's current value
+	unsigned limit; // barrier's value limit
+
+}	bar_t, *bar_id;
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : _BAR_INIT                                                                                      *
+ *                                                                                                                    *
+ * Description       : create and initilize a barrier object                                                          *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   limit           : number of tasks that must call bar_wait[Until|For] function to release the barrier object      *
+ *                                                                                                                    *
+ * Return            : barrier object                                                                                 *
+ *                                                                                                                    *
+ * Note              : for internal use                                                                               *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+#define               _BAR_INIT( limit ) { 0, limit, limit }
 
 /**********************************************************************************************************************
  *                                                                                                                    *

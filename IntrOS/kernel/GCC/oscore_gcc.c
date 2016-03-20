@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.c
     @author  Rajmund Szymanski
-    @date    07.02.2016
+    @date    20.03.2016
     @brief   IntrOS port file for ARM Cotrex-M4F.
 
  ******************************************************************************
@@ -28,8 +28,8 @@
 
 #ifdef __GNUC__
 
-#include <oskernel.h>
 #include <stddef.h>
+#include <os.h>
 
 /* -------------------------------------------------------------------------- */
 

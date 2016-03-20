@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_box.h
     @author  Rajmund Szymanski
-    @date    01.03.2016
+    @date    20.03.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -39,6 +39,55 @@ extern "C" {
  * Name              : mailbox queue                                                                                  *
  *                                                                                                                    *
  **********************************************************************************************************************/
+
+typedef struct __box
+{
+	unsigned count; // inherited from semaphore
+	unsigned limit; // inherited from semaphore
+
+	unsigned first; // first element to read from queue
+	unsigned next;  // next element to write into queue
+	char    *data;  // queue data
+	unsigned size;  // size of a single mail (in bytes)
+
+}	box_t, *box_id;
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : _BOX_INIT                                                                                      *
+ *                                                                                                                    *
+ * Description       : create and initilize a mailbox queue object                                                    *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   limit           : size of a queue (max number of stored mails)                                                   *
+ *   size            : size of a single mail (in bytes)                                                               *
+ *   data            : mailbox queue data buffer                                                                      *
+ *                                                                                                                    *
+ * Return            : mailbox queue object                                                                           *
+ *                                                                                                                    *
+ * Note              : for internal use                                                                               *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+#define               _BOX_INIT( limit, size, data ) { 0, limit, 0, 0, data, size }
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : _BOX_DATA                                                                                      *
+ *                                                                                                                    *
+ * Description       : create a mailbox queue data buffer                                                             *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   limit           : size of a queue (max number of stored mails)                                                   *
+ *   size            : size of a single mail (in bytes)                                                               *
+ *                                                                                                                    *
+ * Return            : mailbox queue data buffer                                                                      *
+ *                                                                                                                    *
+ * Note              : for internal use                                                                               *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+#define               _BOX_DATA( limit, size ) (char[limit*size]){ 0 }
 
 /**********************************************************************************************************************
  *                                                                                                                    *

@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_evt.h
     @author  Rajmund Szymanski
-    @date    01.03.2016
+    @date    20.03.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -40,6 +40,29 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
+typedef struct __evt
+{
+	unsigned signal;
+	unsigned event;
+
+}	evt_t, *evt_id;
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : _EVT_INIT                                                                                      *
+ *                                                                                                                    *
+ * Description       : create and initilize an event object                                                           *
+ *                                                                                                                    *
+ * Parameters        : none                                                                                           *
+ *                                                                                                                    *
+ * Return            : event object                                                                                   *
+ *                                                                                                                    *
+ * Note              : for internal use                                                                               *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+#define               _EVT_INIT() { 0, 0 }
+
 /**********************************************************************************************************************
  *                                                                                                                    *
  * Name              : OS_EVT                                                                                         *
@@ -72,13 +95,13 @@ extern "C" {
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Name              : EVT_CREATE                                                                                     *
+ * Name              : EVT_INIT                                                                                       *
  *                                                                                                                    *
  * Description       : create and initilize an event object                                                           *
  *                                                                                                                    *
  * Parameters        : none                                                                                           *
  *                                                                                                                    *
- * Return            : pointer to event object                                                                        *
+ * Return            : event object                                                                                   *
  *                                                                                                                    *
  * Note              : use only in 'C' code                                                                           *
  *                                                                                                                    *
@@ -89,13 +112,13 @@ extern "C" {
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Name              : EVT_INIT                                                                                       *
+ * Name              : EVT_CREATE                                                                                     *
  *                                                                                                                    *
  * Description       : create and initilize an event object                                                           *
  *                                                                                                                    *
  * Parameters        : none                                                                                           *
  *                                                                                                                    *
- * Return            : event object                                                                                   *
+ * Return            : pointer to event object                                                                        *
  *                                                                                                                    *
  * Note              : use only in 'C' code                                                                           *
  *                                                                                                                    *

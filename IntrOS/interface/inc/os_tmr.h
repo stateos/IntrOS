@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.h
     @author  Rajmund Szymanski
-    @date    01.03.2016
+    @date    20.03.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -40,6 +40,37 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
+struct __tmr
+{
+	unsigned id;    // inherited from object
+	tmr_id   next;  // inherited from object
+	tmr_id   prev;  // inherited from object
+	unsigned signal;
+
+	fun_id   state; // callback procedure
+	unsigned start;
+	unsigned delay;
+	unsigned period;
+};
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : _TMR_INIT                                                                                      *
+ *                                                                                                                    *
+ * Description       : create and initilize a timer object                                                            *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   state           : callback procedure                                                                             *
+ *                     0: no callback                                                                                 *
+ *                                                                                                                    *
+ * Return            : timer object                                                                                   *
+ *                                                                                                                    *
+ * Note              : for internal use                                                                               *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+#define               _TMR_INIT( state ) { 0, 0, 0, 0, state, 0, 0, 0 }
+
 /**********************************************************************************************************************
  *                                                                                                                    *
  * Name              : OS_TMR                                                                                         *
@@ -51,8 +82,8 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define             OS_TMR( tmr )                     \
-                       tmr_t tmr##__tmr = _TMR_INIT(); \
+#define             OS_TMR( tmr )                        \
+                       tmr_t tmr##__tmr = _TMR_INIT( 0 ); \
                        tmr_id tmr = & tmr##__tmr
 
 /**********************************************************************************************************************
@@ -66,8 +97,8 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define         static_TMR( tmr )                     \
-                static tmr_t tmr##__tmr = _TMR_INIT(); \
+#define         static_TMR( tmr )                        \
+                static tmr_t tmr##__tmr = _TMR_INIT( 0 ); \
                 static tmr_id tmr = & tmr##__tmr
 
 /**********************************************************************************************************************
@@ -85,7 +116,7 @@ extern "C" {
  **********************************************************************************************************************/
 
 #define                TMR_INIT() \
-                      _TMR_INIT()
+                      _TMR_INIT( 0 )
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -213,7 +244,7 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-static inline void     tmr_flip( fun_id proc ) { Current->state = proc; }
+static inline void     tmr_flip( fun_id proc ) { ((tmr_id)Current)->state = proc; }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -232,7 +263,7 @@ static inline void     tmr_flip( fun_id proc ) { Current->state = proc; }
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-static inline void     tmr_delay( unsigned delay ) { Current->delay = delay; }
+static inline void     tmr_delay( unsigned delay ) { ((tmr_id)Current)->delay = delay; }
 
 #ifdef __cplusplus
 }

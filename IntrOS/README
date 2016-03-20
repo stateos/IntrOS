@@ -21,6 +21,9 @@ Features:
 - timers (one-shot, periodic)
 - all documentation is contained within the source files
 ---------
+1.2
+- reorganization of the code
+---------
 1.1
 - add signal object
 - add example for new feature
