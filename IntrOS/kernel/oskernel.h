@@ -104,11 +104,9 @@ template <class T>
 class EventGuard
 {
 public:
-	// an event can be safely destroyed if there are no tasks in the DELAYED queue
+
 	~EventGuard( void )
 	{
-		auto obj = reinterpret_cast<volatile T *>(this);
-		while (obj->queue != nullptr);
 	}
 };
 
@@ -122,10 +120,10 @@ template <class T>
 class MutexGuard
 {
 public:
-	// a mutex (Mutex, FastMutex) can be safely destroyed if it has no owner
+	// a mutex can be safely destroyed if it has no owner
 	~MutexGuard( void )
 	{
-		auto obj = reinterpret_cast<volatile T *>(this);
+		auto obj = reinterpret_cast<T *>(this);
 		while (obj->owner != nullptr);
 	}
 };
@@ -143,7 +141,7 @@ public:
 	// an object (Timer, Task) can be safely destroyed if it is stopped
 	~ObjectGuard( void )
 	{
-		auto obj = reinterpret_cast<volatile T *>(this);
+		auto obj = reinterpret_cast<T *>(this);
 		while (obj->id != ID_STOPPED);
 	}
 };
