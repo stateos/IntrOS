@@ -215,3 +215,37 @@ typedef struct __sig
 #ifdef __cplusplus
 }
 #endif
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef __cplusplus
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Class             : Signal                                                                                         *
+ *                                                                                                                    *
+ * Description       : create and initilize a signal object                                                           *
+ *                                                                                                                    *
+ * Constructor parameters                                                                                             *
+ *   type            : signal type                                                                                    *
+ *                     sigClear:   auto clearing signal (default)                                                     *
+ *                     sigProtect: protected signal                                                                   *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+class Signal : public __sig, private EventGuard<__sig>
+{
+public:
+
+	explicit
+	Signal( const unsigned _type = sigClear ): __sig(_SIG_INIT(_type)) {}
+
+	void     wait ( void ) {        sig_wait (this); }
+	unsigned take ( void ) { return sig_take (this); }
+	void     give ( void ) {        sig_give (this); }
+	void     clear( void ) {        sig_clear(this); }
+};
+
+#endif
+
+/* -------------------------------------------------------------------------- */

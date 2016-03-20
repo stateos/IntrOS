@@ -233,3 +233,38 @@ typedef struct __msg
 #ifdef __cplusplus
 }
 #endif
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef __cplusplus
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Class             : MessageQueue                                                                                   *
+ *                                                                                                                    *
+ * Description       : create and initilize a message queue object                                                    *
+ *                                                                                                                    *
+ * Constructor parameters                                                                                             *
+ *   limit           : size of a queue (max number of stored messages)                                                *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+template<unsigned _limit>
+class MessageQueueT : public __msg, private EventGuard<__msg>
+{
+	unsigned _data[_limit];
+
+public:
+
+	explicit
+	MessageQueueT( void ): __msg(_MSG_INIT(_limit, _data)) {}
+
+	void     wait( unsigned*_data ) {        msg_wait(this, _data); }
+	unsigned take( unsigned*_data ) { return msg_take(this, _data); }
+	void     send( unsigned _data ) {        msg_send(this, _data); }
+	unsigned give( unsigned _data ) { return msg_give(this, _data); }
+};
+
+#endif
+
+/* -------------------------------------------------------------------------- */

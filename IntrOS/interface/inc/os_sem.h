@@ -204,3 +204,35 @@ typedef struct __sem
 #ifdef __cplusplus
 }
 #endif
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef __cplusplus
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Class             : Semaphore                                                                                      *
+ *                                                                                                                    *
+ * Description       : create and initilize a semaphore object                                                        *
+ *                                                                                                                    *
+ * Constructor parameters                                                                                             *
+ *   init            : initial value of semaphore counter                                                             *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+class Semaphore : public __sem, private EventGuard<__sem>
+{
+public:
+
+	explicit
+	Semaphore( const unsigned _init ): __sem(_SEM_INIT(_init)) {}
+
+	void     wait( void ) {        sem_wait(this); }
+	unsigned take( void ) { return sem_take(this); }
+	void     send( void ) {        sem_send(this); }
+	unsigned give( void ) { return sem_give(this); }
+};
+
+#endif
+
+/* -------------------------------------------------------------------------- */

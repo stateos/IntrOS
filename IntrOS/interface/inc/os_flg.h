@@ -192,3 +192,34 @@ typedef struct __flg
 #ifdef __cplusplus
 }
 #endif
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef __cplusplus
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Class             : Flag                                                                                           *
+ *                                                                                                                    *
+ * Description       : create and initilize a flag object                                                             *
+ *                                                                                                                    *
+ * Constructor parameters                                                                                             *
+ *                   : none                                                                                           *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+class Flag : public __flg, private EventGuard<__flg>
+{
+public:
+
+	explicit
+	Flag( void ): __flg(_FLG_INIT()) {}
+
+	void     wait( unsigned _flags, bool _all = true ) {        flg_wait(this, _flags, _all); }
+	unsigned take( unsigned _flags, bool _all = true ) { return flg_take(this, _flags, _all); }
+	void     give( unsigned _flags )                   {        flg_give(this, _flags);       }
+};
+
+#endif
+
+/* -------------------------------------------------------------------------- */

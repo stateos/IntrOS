@@ -153,3 +153,32 @@ typedef struct __bar
 #ifdef __cplusplus
 }
 #endif
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef __cplusplus
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Class             : Barrier                                                                                        *
+ *                                                                                                                    *
+ * Description       : create and initilize a barrier object                                                          *
+ *                                                                                                                    *
+ * Constructor parameters                                                                                             *
+ *   limit           : number of tasks that must call wait function to release the barrier object                     *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+class Barrier : public __bar, private EventGuard<__bar>
+{
+public:
+
+	explicit
+	Barrier( const unsigned _limit ): __bar(_BAR_INIT(_limit)) {}
+
+	void wait( void ) { bar_wait(this); }
+};
+
+#endif
+
+/* -------------------------------------------------------------------------- */

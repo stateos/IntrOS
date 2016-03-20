@@ -185,3 +185,34 @@ typedef struct __mtx
 #ifdef __cplusplus
 }
 #endif
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef __cplusplus
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Class             : Mutex                                                                                          *
+ *                                                                                                                    *
+ * Description       : create and initilize a mutex object                                                            *
+ *                                                                                                                    *
+ * Constructor parameters                                                                                             *
+ *                   : none                                                                                           *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+class Mutex : public __mtx, private MutexGuard<__mtx>
+{
+public:
+
+	explicit
+	Mutex( void ): __mtx(_MTX_INIT()) {}
+
+	void     wait( void ) {        mtx_wait(this); }
+	unsigned take( void ) { return mtx_take(this); }
+	unsigned give( void ) { return mtx_give(this); }
+};
+
+#endif
+
+/* -------------------------------------------------------------------------- */

@@ -268,3 +268,149 @@ static inline void     tmr_delay( unsigned delay ) { ((tmr_id)Current)->delay = 
 #ifdef __cplusplus
 }
 #endif
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef __cplusplus
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Class             : Timer                                                                                          *
+ *                                                                                                                    *
+ * Description       : create and initilize a timer object                                                            *
+ *                                                                                                                    *
+ * Constructor parameters                                                                                             *
+ *                   : none                                                                                           *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+class Timer : public __tmr, private ObjectGuard<__tmr>
+{
+public:
+
+	explicit
+	Timer( const fun_id _state = 0 ): __tmr(_TMR_INIT(_state)) {}
+
+	void startUntil   ( unsigned _time   )                {        tmr_startUntil   (this, _time,   this->state); }
+	void startUntil   ( unsigned _time,   fun_id _state ) {        tmr_startUntil   (this, _time,        _state); }
+	void startFor     ( unsigned _delay  )                {        tmr_startFor     (this, _delay,  this->state); }
+	void startFor     ( unsigned _delay,  fun_id _state ) {        tmr_startFor     (this, _delay,       _state); }
+	void startPeriodic( unsigned _period )                {        tmr_startPeriodic(this, _period, this->state); }
+	void startPeriodic( unsigned _period, fun_id _state ) {        tmr_startPeriodic(this, _period,      _state); }
+
+	void     wait     ( void )                            {        tmr_wait         (this);                       }
+	unsigned take     ( void )                            { return tmr_take         (this);                       }
+};
+
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef __cplusplus
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Namespace         : ThisTimer                                                                                      *
+ *                                                                                                                    *
+ * Description       : provide set of functions for Current Timer                                                     *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+namespace ThisTimer
+{
+	void flip ( fun_id   _state ) { tmr_flip (_state); }
+	void delay( unsigned _delay ) { tmr_delay(_delay); }
+}
+
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef __cplusplus
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Class             : startTimerUntil                                                                                *
+ *                                                                                                                    *
+ * Description       : create and initilize a timer object                                                            *
+ *                     and start one-shot timer until given timepoint and then launch the callback procedure          *
+ *                                                                                                                    *
+ * Constructor parameters                                                                                             *
+ *   time            : timepoint value                                                                                *
+ *   state           : callback procedure                                                                             *
+ *                     0: no callback                                                                                 *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+class startTimerUntil : public Timer
+{
+public:
+
+	explicit
+	startTimerUntil( const unsigned _time, const fun_id _state ): Timer() { tmr_startUntil(this, _time, _state); }
+};
+
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef __cplusplus
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Class             : startTimerFor                                                                                  *
+ *                                                                                                                    *
+ * Description       : create and initilize a timer object                                                            *
+ *                     and start one-shot timer for given duration of time and then launch the callback procedure     *
+ *                                                                                                                    *
+ * Constructor parameters                                                                                             *
+ *   delay           : duration of time (maximum number of ticks to countdownd)                                       *
+ *                     IMMEDIATE: don't countdown                                                                     *
+ *                     INFINITE:  countdown indefinitly                                                               *
+ *   state           : callback procedure                                                                             *
+ *                     0: no callback                                                                                 *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+class startTimerFor : public Timer
+{
+public:
+
+	explicit
+	startTimerFor( const unsigned _delay, const fun_id _state ): Timer() { tmr_startFor(this, _delay, _state); }
+};
+
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef __cplusplus
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Class             : startTimerPeriodic                                                                             *
+ *                                                                                                                    *
+ * Description       : create and initilize a timer object                                                            *
+ *                     and start periodic timer for given duration of time and then launch the callback procedure     *
+ *                     do this periodically                                                                           *
+ *                                                                                                                    *
+ * Constructor parameters                                                                                             *
+ *   period          : duration of time (maximum number of ticks to countdownd)                                       *
+ *                     IMMEDIATE: don't countdown                                                                     *
+ *                     INFINITE:  countdown indefinitly                                                               *
+ *   state           : callback procedure                                                                             *
+ *                     0: no callback                                                                                 *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+class startTimerPeriodic : public Timer
+{
+public:
+
+	explicit
+	startTimerPeriodic( const unsigned _period, const fun_id _state ): Timer() { tmr_startPeriodic(this, _period, _state); }
+};
+
+#endif
+
+/* -------------------------------------------------------------------------- */

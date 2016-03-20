@@ -163,3 +163,33 @@ typedef struct __cnd
 #ifdef __cplusplus
 }
 #endif
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef __cplusplus
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Class             : ConditionVariable                                                                              *
+ *                                                                                                                    *
+ * Description       : create and initilize a condition variable object                                               *
+ *                                                                                                                    *
+ * Constructor parameters                                                                                             *
+ *                   : none                                                                                           *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+class ConditionVariable : public __cnd, private EventGuard<__cnd>
+{
+public:
+
+	explicit
+	ConditionVariable( void ): __cnd(_CND_INIT()) {}
+
+	void wait( mtx_id _mtx ) { cnd_wait(this, _mtx); }
+	void give( void )        { cnd_give(this);       }
+};
+
+#endif
+
+/* -------------------------------------------------------------------------- */

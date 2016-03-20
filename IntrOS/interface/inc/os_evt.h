@@ -164,3 +164,33 @@ typedef struct __evt
 #ifdef __cplusplus
 }
 #endif
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef __cplusplus
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Class             : Event                                                                                          *
+ *                                                                                                                    *
+ * Description       : create and initilize an event object                                                           *
+ *                                                                                                                    *
+ * Constructor parameters                                                                                             *
+ *                   : none                                                                                           *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+class Event : public __evt, private EventGuard<__evt>
+{
+public:
+
+	explicit
+	Event( void ): __evt(_EVT_INIT()) {}
+
+	unsigned wait( void )            { return evt_wait(this);         }
+	void     give( unsigned _event ) {        evt_give(this, _event); }
+};
+
+#endif
+
+/* -------------------------------------------------------------------------- */

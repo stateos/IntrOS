@@ -240,3 +240,39 @@ typedef struct __box
 #ifdef __cplusplus
 }
 #endif
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef __cplusplus
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Class             : MailBoxQueue                                                                                   *
+ *                                                                                                                    *
+ * Description       : create and initilize a mailbox queue object                                                    *
+ *                                                                                                                    *
+ * Constructor parameters                                                                                             *
+ *   T               : class of a single mail                                                                         *
+ *   limit           : size of a queue (max number of stored mails)                                                   *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+template<class T, unsigned _limit>
+class MailBoxQueueT : public __box, private EventGuard<__box>
+{
+	T _data[_limit];
+
+public:
+
+	explicit
+	MailBoxQueueT( void ): __box(_BOX_INIT(_limit, sizeof(T), _data)) {}
+
+	void     wait( T *_data ) {        box_wait(this, _data); }
+	unsigned take( T *_data ) { return box_take(this, _data); }
+	void     send( T *_data ) {        box_send(this, _data); }
+	unsigned give( T *_data ) { return box_give(this, _data); }
+};
+
+#endif
+
+/* -------------------------------------------------------------------------- */

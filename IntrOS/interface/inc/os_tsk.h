@@ -472,3 +472,156 @@ static inline unsigned tsk_suspend( void ) { return tsk_sleep(); }
 #ifdef __cplusplus
 }
 #endif
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef __cplusplus
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Class             : TaskBase                                                                                       *
+ *                                                                                                                    *
+ * Description       : create and initilize a task object, internal                                                   *
+ *                                                                                                                    *
+ * Constructor parameters                                                                                             *
+ *   state           : task state (initial task function) doesn't have to be noreturn-type                            *
+ *                     it will be executed into an infinite system-implemented loop                                   *
+ *   top             : initial value of task's stack pointer                                                          *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+class TaskBase : public __tsk, private ObjectGuard<__tsk>
+{
+public:
+
+	explicit
+	TaskBase( const fun_id _state, const os_id _top ): __tsk(_TSK_INIT(_state, _top)) {}
+
+	void     start     ( void )            {        tsk_start     (this);         }
+	void     startFrom ( fun_id   _state ) {        tsk_startFrom (this, _state); }
+	void     resume    ( unsigned _event ) {        tsk_resume    (this, _event); }
+};
+
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef __cplusplus
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Namespace         : ThisTask                                                                                       *
+ *                                                                                                                    *
+ * Description       : provide set of functions for Current Task                                                      *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+namespace ThisTask
+{
+	void     pass      ( void )            {        tsk_pass      ();             }
+	void     yield     ( void )            {        tsk_yield     ();             }
+	void     flip      ( fun_id   _state ) {        tsk_flip      (_state);       }
+	void     stop      ( void )            {        tsk_stop      ();             }
+
+	unsigned sleepUntil( unsigned _time )  { return tsk_sleepUntil(_time);        }
+	unsigned sleepFor  ( unsigned _delay ) { return tsk_sleepFor  (_delay);       }
+	unsigned sleep     ( void )            { return tsk_sleep     ();             }
+	unsigned delay     ( unsigned _delay ) { return tsk_delay     (_delay);       }
+	unsigned suspend   ( void )            { return tsk_suspend   ();             }
+}
+
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef __cplusplus
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Class             : TaskT                                                                                          *
+ *                                                                                                                    *
+ * Description       : create and initilize complete work area for task object                                        *
+ *                                                                                                                    *
+ * Constructor parameters                                                                                             *
+ *   size            : size of task private stack (in bytes)                                                          *
+ *   prio            : initial task priority (any unsigned int value)                                                 *
+ *   state           : task state (initial task function) doesn't have to be noreturn-type                            *
+ *                     it will be executed into an infinite system-implemented loop                                   *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+template<unsigned _size>
+class TaskT : public TaskBase
+{
+	char _stack[ASIZE(_size)] __osalign;
+
+public:
+
+	explicit
+	TaskT( const fun_id _state ): TaskBase(_state, _stack+ASIZE(_size)) {}
+};
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Class             : Task                                                                                           *
+ *                                                                                                                    *
+ * Description       : create and initilize complete work area for task object with default stack size                *
+ *                                                                                                                    *
+ * Constructor parameters                                                                                             *
+ *   prio            : initial task priority (any unsigned int value)                                                 *
+ *   state           : task state (initial task function) doesn't have to be noreturn-type                            *
+ *                     it will be executed into an infinite system-implemented loop                                   *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+typedef TaskT<OS_STACK_SIZE> Task;
+
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef __cplusplus
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Class             : startTaskT                                                                                     *
+ *                                                                                                                    *
+ * Description       : create and initilize complete work area for task object                                        *
+ *                     and start task object                                                                          *
+ *                                                                                                                    *
+ * Constructor parameters                                                                                             *
+ *   size            : size of task private stack (in bytes)                                                          *
+ *   prio            : initial task priority (any unsigned int value)                                                 *
+ *   state           : task state (initial task function) doesn't have to be noreturn-type                            *
+ *                     it will be executed into an infinite system-implemented loop                                   *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+template<unsigned _size>
+class startTaskT : public TaskT<_size>
+{
+public:
+
+	explicit
+	startTaskT( const fun_id _state ): TaskT<_size>(_state) { tsk_start(this); }
+};
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Class             : startTask                                                                                      *
+ *                                                                                                                    *
+ * Description       : create and initilize complete work area for task object with default stack size                *
+ *                     and start task object                                                                          *
+ *                                                                                                                    *
+ * Constructor parameters                                                                                             *
+ *   prio            : initial task priority (any unsigned int value)                                                 *
+ *   state           : task state (initial task function) doesn't have to be noreturn-type                            *
+ *                     it will be executed into an infinite system-implemented loop                                   *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+typedef startTaskT<OS_STACK_SIZE> startTask;
+
+#endif
+
+/* -------------------------------------------------------------------------- */
