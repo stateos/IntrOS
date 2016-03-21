@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_box.h
     @author  Rajmund Szymanski
-    @date    20.03.2016
+    @date    21.03.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -265,7 +265,7 @@ class MailBoxQueueT : public __box, private EventGuard<__box>
 public:
 
 	explicit
-	MailBoxQueueT( void ): __box(_BOX_INIT(_limit, sizeof(T), _data)) {}
+	MailBoxQueueT( void ): __box(_BOX_INIT(_limit, sizeof(T), reinterpret_cast<char *>(_data))) {}
 
 	void     wait( T *_data ) {        box_wait(this, _data); }
 	unsigned take( T *_data ) { return box_take(this, _data); }

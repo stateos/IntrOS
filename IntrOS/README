@@ -23,7 +23,7 @@ Features:
 ---------
 1.2
 - reorganization of the code
-- added c++ wrapper
+- fixed bug in MailBoxQueueT<> class
 ---------
 1.1
 - add signal object
