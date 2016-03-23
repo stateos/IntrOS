@@ -613,7 +613,7 @@ class startTask: public Task
 public:
 
 	explicit
-	startTask( const fun_id _state ): Task(_state) {}
+	startTask( const fun_id _state ): Task(_state) { tsk_start(this); }
 };
 
 #endif
