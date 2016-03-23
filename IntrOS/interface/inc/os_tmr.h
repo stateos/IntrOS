@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.h
     @author  Rajmund Szymanski
-    @date    20.03.2016
+    @date    23.03.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -302,12 +302,6 @@ public:
 	unsigned take     ( void )                            { return tmr_take         (this);                       }
 };
 
-#endif
-
-/* -------------------------------------------------------------------------- */
-
-#ifdef __cplusplus
-
 /**********************************************************************************************************************
  *                                                                                                                    *
  * Namespace         : ThisTimer                                                                                      *
@@ -321,12 +315,6 @@ namespace ThisTimer
 	void flip ( fun_id   _state ) { tmr_flip (_state); }
 	void delay( unsigned _delay ) { tmr_delay(_delay); }
 }
-
-#endif
-
-/* -------------------------------------------------------------------------- */
-
-#ifdef __cplusplus
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -349,12 +337,6 @@ public:
 	explicit
 	startTimerUntil( const unsigned _time, const fun_id _state ): Timer() { tmr_startUntil(this, _time, _state); }
 };
-
-#endif
-
-/* -------------------------------------------------------------------------- */
-
-#ifdef __cplusplus
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -379,12 +361,6 @@ public:
 	explicit
 	startTimerFor( const unsigned _delay, const fun_id _state ): Timer() { tmr_startFor(this, _delay, _state); }
 };
-
-#endif
-
-/* -------------------------------------------------------------------------- */
-
-#ifdef __cplusplus
 
 /**********************************************************************************************************************
  *                                                                                                                    *

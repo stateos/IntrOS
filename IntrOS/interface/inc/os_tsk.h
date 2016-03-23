@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    20.03.2016
+    @date    23.03.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -502,12 +502,6 @@ public:
 	void     resume    ( unsigned _event ) {        tsk_resume    (this, _event); }
 };
 
-#endif
-
-/* -------------------------------------------------------------------------- */
-
-#ifdef __cplusplus
-
 /**********************************************************************************************************************
  *                                                                                                                    *
  * Namespace         : ThisTask                                                                                       *
@@ -529,12 +523,6 @@ namespace ThisTask
 	unsigned delay     ( unsigned _delay ) { return tsk_delay     (_delay);       }
 	unsigned suspend   ( void )            { return tsk_suspend   ();             }
 }
-
-#endif
-
-/* -------------------------------------------------------------------------- */
-
-#ifdef __cplusplus
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -574,13 +562,13 @@ public:
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-typedef TaskT<OS_STACK_SIZE> Task;
+class Task: public TaskT<OS_STACK_SIZE>
+{
+public:
 
-#endif
-
-/* -------------------------------------------------------------------------- */
-
-#ifdef __cplusplus
+	explicit
+	Task( const fun_id _state ): TaskT<OS_STACK_SIZE>(_state) {}
+};
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -620,7 +608,13 @@ public:
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-typedef startTaskT<OS_STACK_SIZE> startTask;
+class startTask: public Task
+{
+public:
+
+	explicit
+	startTask( const fun_id _state ): Task(_state) {}
+};
 
 #endif
 
