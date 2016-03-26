@@ -25,6 +25,7 @@ Features:
 - minor update
 - added c++ examples
 - example files moved to dedicated folder
+- changed makefiles
 ---------
 1.2
 - reorganization of the code
