@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.h
     @author  Rajmund Szymanski
-    @date    20.03.2016
+    @date    15.04.2016
     @brief   This file defines set of kernel functions for IntrOS.
 
  ******************************************************************************
@@ -43,7 +43,8 @@ extern sys_t System; // system data
 /* -------------------------------------------------------------------------- */
 
 // initiating and running the system timer
-void port_sys_init( void );
+// the port_sys_init procedure is normally called as a constructor
+void port_sys_init( void ) __attribute__(( constructor ));
 
 /* -------------------------------------------------------------------------- */
 

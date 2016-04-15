@@ -5,8 +5,6 @@ int main()
 {
 	LED_Config();
 
-	sys_init();
-
 	for (;;)
 	{
 		tsk_delay(SEC);

@@ -24,6 +24,5 @@ int main()
 {
 	LED_Config();
 
-	sys_init();
 	tsk_flip(master);
 }

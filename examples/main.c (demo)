@@ -31,7 +31,6 @@ int main()
     LED_Config();
     GRN_Config();
 	
-	sys_init();
 	tsk_start(TSK_CREATE(proc));
 	tsk_start(TSK_CREATE(proc));
 	tsk_start(TSK_CREATE(proc));

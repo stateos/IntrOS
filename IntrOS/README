@@ -21,6 +21,9 @@ Features:
 - timers (one-shot, periodic)
 - all documentation is contained within the source files
 ---------
+1.4
+- sys_init (port_sys_init) is invoked as a constructor
+---------
 1.3
 - minor update
 - added c++ examples

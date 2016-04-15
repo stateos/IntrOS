@@ -2,7 +2,7 @@
 
     @file    IntrOS: os.h
     @author  Rajmund Szymanski
-    @date    04.02.2016
+    @date    15.04.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -55,7 +55,8 @@ extern "C" {
  *                                                                                                                    *
  * Return            : none                                                                                           *
  *                                                                                                                    *
- * Note              : call sys_init as the first instruction in function main                                        *
+ * Note              : function port_sys_init should be invoked as a constructor                                      *
+ *                   : otherwise, call sys_init as the first instruction in function main                             *
  *                                                                                                                    *
  **********************************************************************************************************************/
 

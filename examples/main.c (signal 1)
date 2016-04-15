@@ -24,7 +24,6 @@ int main()
 {
 	LED_Config();
 
-	sys_init();
 	tsk_start(&sla);
 	tsk_start(&mas);
 	tsk_stop();

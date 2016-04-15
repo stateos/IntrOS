@@ -22,7 +22,5 @@ auto t5 = startTask([]{ proc(grn,   1000*MSEC); });
 
 int main()
 {
-    sys_init();
-
 	ThisTask::stop();
 }

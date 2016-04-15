@@ -21,7 +21,6 @@ int main()
 {
 	LED_Config();
 
-	sys_init();
 	tsk_start(TSK_CREATE(slave));
 	tsk_start(TSK_CREATE(master));
 	tsk_sleep();
