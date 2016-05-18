@@ -22,6 +22,9 @@ Features:
 - all documentation is contained within the source files
 ---------
 1.4
+- added support for arm clang
+---------
+1.4
 - sys_init (port_sys_init) is invoked as a constructor
 ---------
 1.3

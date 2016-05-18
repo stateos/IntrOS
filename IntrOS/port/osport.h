@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.h
     @author  Rajmund Szymanski
-    @date    03.03.2016
+    @date    18.05.2016
     @brief   IntrOS port definitions for Cortex-Mx uC.
 
  ******************************************************************************
@@ -82,9 +82,9 @@ extern   char            __initial_sp[];
 
 /* -------------------------------------------------------------------------- */
 
-#if     defined(__CC_ARM)
+#if   defined(__ARMCC_VERSION)
 #define __noreturn  __attribute__((noreturn))
-#elif   defined(__GNUC__)
+#elif defined(__GNUC__)
 #define __noreturn  __attribute__((noreturn, naked))
 #endif
 
