@@ -26,7 +26,7 @@
 
  ******************************************************************************/
 
-#if defined(__GNUC__) && !defined(__ARMCC_VERSION)
+#if defined(__ARMCOMPILER_VERSION)
 
 #include <stddef.h>
 #include <os.h>
@@ -124,4 +124,4 @@ void core_ctx_switch( void )
 
 /* -------------------------------------------------------------------------- */
 
-#endif // __GNUC__ && !__ARMCC_VERSION
+#endif // __ARMCOMPILER_VERSION
