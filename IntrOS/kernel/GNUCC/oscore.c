@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.c
     @author  Rajmund Szymanski
-    @date    18.05.2016
+    @date    20.05.2016
     @brief   IntrOS port file for ARM Cotrex-M4F.
 
  ******************************************************************************
@@ -110,6 +110,7 @@ void core_ctx_switch( void )
 "	ldr   r3,  [ r0, %[state] ]    \n"
 "	blx   r3                       \n"
 	
+"	.thumb_func                    \n"
 "core_tsk_break:                   \n"
 
 "	movs  r1,   #0                 \n"

@@ -23,6 +23,8 @@ Features:
 ---------
 1.5
 - added support for arm clang
+- fixed bugs in arm clang code
+- fixed stack alignment
 ---------
 1.4
 - sys_init (port_sys_init) is invoked as a constructor

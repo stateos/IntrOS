@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    23.03.2016
+    @date    20.05.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -90,7 +90,7 @@ struct __tsk
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define               _TSK_STACK( size ) (__osalign char[ASIZE(size)]){ 0 } + ASIZE(size)
+#define               _TSK_STACK( size ) (stk_t[ASIZE(size)]){ 0 } + ASIZE(size)
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -107,7 +107,7 @@ struct __tsk
  **********************************************************************************************************************/
 
 #define             OS_WRK( tsk, state, size )                                        \
-                       char tsk##__stk[ASIZE( size )] __osalign;                       \
+                       stk_t tsk##__stk[ASIZE( size )];                                \
                        tsk_t tsk##__tsk = _TSK_INIT( state, tsk##__stk+ASIZE( size ) ); \
                        tsk_id tsk = & tsk##__tsk
 
@@ -159,7 +159,7 @@ struct __tsk
  **********************************************************************************************************************/
 
 #define         static_WRK( tsk, state, size )                                        \
-                static char tsk##__stk[ASIZE( size )] __osalign;                       \
+                static stk_t tsk##__stk[ASIZE( size )];                                \
                 static tsk_t tsk##__tsk = _TSK_INIT( state, tsk##__stk+ASIZE( size ) ); \
                 static tsk_id tsk = & tsk##__tsk
 
@@ -541,7 +541,7 @@ namespace ThisTask
 template<unsigned _size>
 class TaskT : public TaskBase
 {
-	char _stack[ASIZE(_size)] __osalign;
+	stk_t _stack[ASIZE(_size)];
 
 public:
 
