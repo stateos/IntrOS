@@ -21,10 +21,13 @@ Features:
 - timers (one-shot, periodic)
 - all documentation is contained within the source files
 ---------
+1.6
+- fixed some bugs in arm clang code
+- fixed stack alignment
+- fixed some bugs
+---------
 1.5
 - added support for arm clang
-- fixed bugs in arm clang code
-- fixed stack alignment
 ---------
 1.4
 - sys_init (port_sys_init) is invoked as a constructor
