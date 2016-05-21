@@ -23,6 +23,7 @@ Features:
 ---------
 1.7
 - changed startup files
+- fixed bug in core_ctx_switch for armclang and Cortex-M0
 ---------
 1.6
 - fixed some bugs in arm clang code
