@@ -2,7 +2,7 @@
 
     @file    IntrOS: osconfig.h
     @author  Rajmund Szymanski
-    @date    03.02.2016
+    @date    21.05.2016
     @brief   IntrOS config file for STM32F4 uC.
 
  ******************************************************************************
