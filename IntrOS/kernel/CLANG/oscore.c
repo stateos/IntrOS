@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.c
     @author  Rajmund Szymanski
-    @date    20.05.2016
+    @date    21.05.2016
     @brief   IntrOS port file for ARM Cotrex-M4F.
 
  ******************************************************************************
@@ -81,14 +81,14 @@ void core_ctx_switch( void )
 #endif
 "	mov   sp,    r1                \n"
 #if __CORTEX_M < 3
-"	add   r1,   #20                \n"
+"	adds  r1,   #20                \n"
 "	ldm   r1!, { r3  - r7 }        \n"
 "	mov   r8,    r3                \n"
 "	mov   r9,    r4                \n"
 "	mov   r10,   r5                \n"
 "	mov   r11,   r6                \n"
 "	mov   lr,    r7                \n"
-"	sub   r1,   #40                \n"
+"	subs  r1,   #40                \n"
 "	ldm   r1!, { r3  - r7 }        \n"
 "	add   sp,   #40                \n"
 #else
