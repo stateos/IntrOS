@@ -21,11 +21,13 @@ Features:
 - timers (one-shot, periodic)
 - all documentation is contained within the source files
 ---------
+1.7
+- changed startup files
+---------
 1.6
 - fixed some bugs in arm clang code
 - fixed stack alignment
 - fixed some bugs
-- changed startup files
 ---------
 1.5
 - added support for arm clang
