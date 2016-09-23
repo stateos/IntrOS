@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.h
     @author  Rajmund Szymanski
-    @date    18.05.2016
+    @date    23.09.2016
     @brief   IntrOS port definitions for Cortex-Mx uC.
 
  ******************************************************************************
@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include <stdint.h>
 #include <osconfig.h>
 
 #ifdef __cplusplus
@@ -49,7 +50,7 @@ extern "C" {
 /* -------------------------------------------------------------------------- */
 
 #ifndef  OS_FREQUENCY
-#define  OS_FREQUENCY   1000 /* Hz */
+#define  OS_FREQUENCY      1000 /* Hz */
 #else
 
 #if      OS_FREQUENCY > 1000
@@ -61,7 +62,7 @@ extern "C" {
 /* -------------------------------------------------------------------------- */
 
 #ifndef  OS_STACK_SIZE
-#define  OS_STACK_SIZE   256 /* default task stack size in bytes           */
+#define  OS_STACK_SIZE      256 /* default task stack size in bytes           */
 #else
 
 #if      OS_STACK_SIZE < 256
@@ -77,29 +78,35 @@ extern "C" {
 
 /* -------------------------------------------------------------------------- */
 
+typedef  uint64_t          stk_t;
+
+/* -------------------------------------------------------------------------- */
+
 extern   char            __initial_sp[];
 #define  MAIN_SP         __initial_sp
 
 /* -------------------------------------------------------------------------- */
 
 #if   defined(__ARMCC_VERSION)
-#define __noreturn  __attribute__((noreturn))
+#define  __noreturn      __attribute__((noreturn))
 #elif defined(__GNUC__)
-#define __noreturn  __attribute__((noreturn, naked))
+#define  __noreturn      __attribute__((noreturn, naked))
 #endif
+#define  __constructor   __attribute__((constructor))
 
 /* -------------------------------------------------------------------------- */
 
-static inline unsigned port_get_lock( void )           { return __get_PRIMASK();      }
-static inline void     port_put_lock( unsigned state ) {        __set_PRIMASK(state); }
-static inline void     port_set_lock( void )           {        __disable_irq();      }
-static inline void     port_clr_lock( void )           {         __enable_irq();      }
+#define  port_get_lock()            __get_PRIMASK()
+#define  port_put_lock(state)       __set_PRIMASK(state)
 
-#define port_sys_lock()          do { unsigned __LOCK = port_get_lock(); port_set_lock()
-#define port_sys_unlock()             port_put_lock(__LOCK); } while(0)
+#define  port_set_lock()            __disable_irq()
+#define  port_clr_lock()            __enable_irq()
 
-#define port_isr_lock()          do { port_set_lock()
-#define port_isr_unlock()             port_clr_lock(); } while(0)
+#define  port_sys_lock()       do { unsigned __LOCK = port_get_lock(); port_set_lock()
+#define  port_sys_unlock()          port_put_lock(__LOCK); } while(0)
+
+#define  port_isr_lock()       do { port_set_lock()
+#define  port_isr_unlock()          port_clr_lock(); } while(0)
 
 /* -------------------------------------------------------------------------- */
 

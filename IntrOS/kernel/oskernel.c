@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    20.05.2016
+    @date    23.09.2016
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -72,6 +72,7 @@ void core_rdy_remove( os_id item )
 tsk_id core_tsk_handler( void )
 {
 	tsk_id cur;
+	tmr_id tmr;
 
 	for (;;)
 	{
@@ -100,7 +101,7 @@ tsk_id core_tsk_handler( void )
 		{
 			port_set_lock();
 
-			tmr_id tmr = (tmr_id) cur;
+			tmr = (tmr_id) cur;
 			
 			tmr->start += tmr->delay;
 			tmr->delay  = tmr->period;

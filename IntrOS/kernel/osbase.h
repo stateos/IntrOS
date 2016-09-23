@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    20.05.2016
+    @date    23.09.2016
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -29,7 +29,6 @@
 #pragma once
 
 #include <stdbool.h>
-#include <stdint.h>
 #include <osport.h>
 
 #ifdef __cplusplus
@@ -60,10 +59,6 @@ extern "C" {
 
 #define IMMEDIATE  ( 0U) // no waiting
 #define INFINITE   (~0U) // infinite waiting
-
-/* -------------------------------------------------------------------------- */
-
-typedef uint64_t stk_t;
 
 /* -------------------------------------------------------------------------- */
 
