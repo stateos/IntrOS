@@ -21,6 +21,9 @@ Features:
 - timers (one-shot, periodic)
 - all documentation is contained within the source files
 ---------
+1.8
+- program code cleaned
+---------
 1.7
 - changed startup files
 - fixed bug in core_ctx_switch for armclang and Cortex-M0
