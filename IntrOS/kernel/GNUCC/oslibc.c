@@ -2,7 +2,7 @@
 
     @file    IntrOS: oslibc.c
     @author  Rajmund Szymanski
-    @date    18.05.2016
+    @date    27.10.2016
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************

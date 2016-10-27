@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    23.09.2016
+    @date    27.10.2016
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************

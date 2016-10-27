@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.c
     @author  Rajmund Szymanski
-    @date    21.02.2016
+    @date    27.10.2016
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************

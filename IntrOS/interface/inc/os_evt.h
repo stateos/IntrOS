@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_evt.h
     @author  Rajmund Szymanski
-    @date    20.03.2016
+    @date    27.10.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -26,7 +26,8 @@
 
  ******************************************************************************/
 
-#pragma once
+#ifndef __OS_EVT_H
+#define __OS_EVT_H
 
 #include <oskernel.h>
 
@@ -194,3 +195,5 @@ public:
 #endif
 
 /* -------------------------------------------------------------------------- */
+
+#endif//__OS_EVT_H

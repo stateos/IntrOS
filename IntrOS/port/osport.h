@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.h
     @author  Rajmund Szymanski
-    @date    23.09.2016
+    @date    27.10.2016
     @brief   IntrOS port definitions for Cortex-Mx uC.
 
  ******************************************************************************
@@ -26,7 +26,8 @@
 
  ******************************************************************************/
 
-#pragma once
+#ifndef __OSPORT_H
+#define __OSPORT_H
 
 #include <stdint.h>
 #include <osconfig.h>
@@ -82,19 +83,33 @@ typedef  uint64_t          stk_t;
 
 /* -------------------------------------------------------------------------- */
 
+#if   defined(__CSMC__)
+extern   char             _stack[];
+#define  MAIN_SP          _stack
+#else
 extern   char            __initial_sp[];
 #define  MAIN_SP         __initial_sp
+#endif
 
 /* -------------------------------------------------------------------------- */
 
 #if   defined(__ARMCC_VERSION)
 #define  __noreturn      __attribute__((noreturn))
+#define  __constructor   __attribute__((constructor))
 #elif defined(__GNUC__)
 #define  __noreturn      __attribute__((noreturn, naked))
-#endif
 #define  __constructor   __attribute__((constructor))
+#elif defined(__CSMC__)
+#define  __noreturn
+#define  __constructor
+#endif
 
 /* -------------------------------------------------------------------------- */
+
+#if   defined(__CSMC__)
+#define  __disable_irq()             _asm("cpsid i")
+#define  __enable_irq()              _asm("cpsie i")
+#endif
 
 #define  port_get_lock()            __get_PRIMASK()
 #define  port_put_lock(state)       __set_PRIMASK(state)
@@ -113,3 +128,5 @@ extern   char            __initial_sp[];
 #ifdef __cplusplus
 }
 #endif
+
+#endif//__OSPORT_H

@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    23.09.2016
+    @date    27.10.2016
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -26,7 +26,8 @@
 
  ******************************************************************************/
 
-#pragma once
+#ifndef __OSBASE_H
+#define __OSBASE_H
 
 #include <stdbool.h>
 #include <osport.h>
@@ -104,3 +105,5 @@ typedef struct __sys
 #ifdef __cplusplus
 }
 #endif
+
+#endif//__OSBASE_H

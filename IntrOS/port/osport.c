@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.c
     @author  Rajmund Szymanski
-    @date    03.03.2016
+    @date    27.10.2016
     @brief   IntrOS port file for Cortex-Mx uC.
 
  ******************************************************************************
@@ -32,6 +32,14 @@
 
 void port_sys_init( void )
 {
+#if 0
+	static  stk_t   IRQ_STACK[ASIZE(OS_STACK_SIZE)];
+	#define IRQ_SP (IRQ_STACK+ASIZE(OS_STACK_SIZE))
+
+	__set_PSP(__get_MSP());
+	__set_MSP((unsigned)IRQ_SP);
+	__set_CONTROL(CONTROL_SPSEL_Msk);
+#endif
 /******************************************************************************
  Put here configuration of system timer
 
@@ -39,7 +47,7 @@ void port_sys_init( void )
 
 	NVIC_SetPriority(TIM1_UP_TIM10_IRQn, 0xFF);
 	NVIC_EnableIRQ  (TIM1_UP_TIM10_IRQn);
-	BB(RCC->APB2ENR, RCC_APB2ENR_TIM1EN) = 1;
+	RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
 
 	TIM1->PSC  = CPU_FREQUENCY / 10000 - 1;
 	TIM1->ARR  = 10000 /  OS_FREQUENCY - 1;

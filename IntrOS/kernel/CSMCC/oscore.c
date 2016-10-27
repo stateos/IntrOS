@@ -26,26 +26,31 @@
 
  ******************************************************************************/
 
-#if defined(__CC_ARM)
+#if defined(__CSMC__)
 
 #include <stddef.h>
 #include <os.h>
 
 /* -------------------------------------------------------------------------- */
 
-__asm void core_ctx_switch( void )
+void core_ctx_switch( void )
 {
-	PRESERVE8
-	IMPORT System
-	IMPORT core_tsk_handler
-	EXPORT core_tsk_break
+	#asm
+
+	xref  _System
+	xref  _core_tsk_handler
+	xdef  _core_tsk_break
+
+;	mov	  r0,   #4096
+;	ldr   r1,   =27.10.2016
+;	str   r0,   [r1]
 
 	mrs   r2,    IPSR
 #if __CORTEX_M < 3
 	cmp   r2,   #0
-	bne   priv_ctx_exit        // inside ISR
+	bne   _priv_ctx_exit    ; inside ISR
 #else
-	cbnz  r2,    priv_ctx_exit // inside ISR
+	cbnz  r2,_priv_ctx_exit ; inside ISR
 #endif
 	mrs   r3,    PRIMASK
 #if __CORTEX_M < 3
@@ -66,18 +71,18 @@ __asm void core_ctx_switch( void )
 #endif
 	mov   r1,    sp
 
-priv_tsk_save
+_priv_tsk_save:
 	
-	ldr   r0,   =System
-	ldr   r0,  [ r0, #__cpp(offsetof(sys_t, cur)) ]
-	str   r1,  [ r0, #__cpp(offsetof(tsk_t, sp)) ]
-	bl    core_tsk_handler
-	ldr   r1,  [ r0, #__cpp(offsetof(tsk_t, sp)) ]
+	ldr   r0,  =_System
+	ldr   r0,  [ r0,  #0 ]  ; (offsetof(sys_t, cur))
+	str   r1,  [ r0, #32 ]  ; (offsetof(tsk_t, sp))
+	bl    _core_tsk_handler
+	ldr   r1,  [ r0, #32 ]  ; (offsetof(tsk_t, sp))
 #if __CORTEX_M < 3
 	cmp   r1,   #0
-	beq   priv_tsk_start
+	beq   _priv_tsk_start
 #else
-	cbz   r1,    priv_tsk_start
+	cbz   r1,_priv_tsk_start
 #endif
 	mov   sp,    r1
 #if __CORTEX_M < 3
@@ -99,25 +104,25 @@ priv_tsk_save
 #endif
 	msr   PRIMASK, r3
 
-priv_ctx_exit
+_priv_ctx_exit:
 
 	bx    lr
 
-priv_tsk_start
+_priv_tsk_start:
 
-	ldr   r1,  [ r0, #__cpp(offsetof(tsk_t, top)) ]
+	ldr   r1,  [ r0, #36 ]  ; (offsetof(tsk_t, top))
 	mov   sp,    r1
-	ldr   r3,  [ r0, #__cpp(offsetof(tsk_t, state)) ]
+	ldr   r3,  [ r0, #16 ]  ; (offsetof(tsk_t, state))
 	blx   r3
 	
-core_tsk_break
+_core_tsk_break:
 
 	movs  r1,   #0
-	b     priv_tsk_save
+	b     _priv_tsk_save
 
-	ALIGN
+	#endasm
 }
 
 /* -------------------------------------------------------------------------- */
 
-#endif // __CC_ARM
+#endif // __CSMC__

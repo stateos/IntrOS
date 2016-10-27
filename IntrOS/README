@@ -21,6 +21,9 @@ Features:
 - timers (one-shot, periodic)
 - all documentation is contained within the source files
 ---------
+1.9
+- added support for COSMIC Software CORTEX-M C Cross Compiler
+---------
 1.8
 - program code cleaned
 ---------
