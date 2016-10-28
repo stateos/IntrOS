@@ -26,8 +26,8 @@
 
  ******************************************************************************/
 
-#ifndef __OSPORT_H
-#define __OSPORT_H
+#ifndef __INTROSPORT_H
+#define __INTROSPORT_H
 
 #include <stdint.h>
 #include <osconfig.h>
@@ -129,4 +129,4 @@ extern   char            __initial_sp[];
 }
 #endif
 
-#endif//__OSPORT_H
+#endif//__INTROSPORT_H

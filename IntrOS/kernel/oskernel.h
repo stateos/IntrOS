@@ -26,8 +26,8 @@
 
  ******************************************************************************/
 
-#ifndef __OSKERNEL_H
-#define __OSKERNEL_H
+#ifndef __INTROSKERNEL_H
+#define __INTROSKERNEL_H
 
 #include <stdlib.h>
 #include <osbase.h>
@@ -151,4 +151,4 @@ public:
 
 /* -------------------------------------------------------------------------- */
 
-#endif//__OSKERNEL_H
+#endif//__INTROSKERNEL_H

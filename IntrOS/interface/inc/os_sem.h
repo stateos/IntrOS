@@ -26,8 +26,8 @@
 
  ******************************************************************************/
 
-#ifndef __OS_SEM_H
-#define __OS_SEM_H
+#ifndef __INTROS_SEM_H
+#define __INTROS_SEM_H
 
 #include <oskernel.h>
 
@@ -238,4 +238,4 @@ public:
 
 /* -------------------------------------------------------------------------- */
 
-#endif//__OS_SEM_H
+#endif//__INTROS_SEM_H

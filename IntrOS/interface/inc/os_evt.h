@@ -26,8 +26,8 @@
 
  ******************************************************************************/
 
-#ifndef __OS_EVT_H
-#define __OS_EVT_H
+#ifndef __INTROS_EVT_H
+#define __INTROS_EVT_H
 
 #include <oskernel.h>
 
@@ -196,4 +196,4 @@ public:
 
 /* -------------------------------------------------------------------------- */
 
-#endif//__OS_EVT_H
+#endif//__INTROS_EVT_H

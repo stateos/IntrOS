@@ -26,8 +26,8 @@
 
  ******************************************************************************/
 
-#ifndef __OS_BOX_H
-#define __OS_BOX_H
+#ifndef __INTROS_BOX_H
+#define __INTROS_BOX_H
 
 #include <oskernel.h>
 
@@ -278,4 +278,4 @@ public:
 
 /* -------------------------------------------------------------------------- */
 
-#endif//__OS_BOX_H
+#endif//__INTROS_BOX_H

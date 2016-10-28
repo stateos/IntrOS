@@ -26,8 +26,8 @@
 
  ******************************************************************************/
 
-#ifndef __OS_CND_H
-#define __OS_CND_H
+#ifndef __INTROS_CND_H
+#define __INTROS_CND_H
 
 #include <oskernel.h>
 
@@ -195,4 +195,4 @@ public:
 
 /* -------------------------------------------------------------------------- */
 
-#endif//__OS_CND_H
+#endif//__INTROS_CND_H

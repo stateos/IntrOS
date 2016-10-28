@@ -26,8 +26,8 @@
 
  ******************************************************************************/
 
-#ifndef __OS_SIG_H
-#define __OS_SIG_H
+#ifndef __INTROS_SIG_H
+#define __INTROS_SIG_H
 
 #include <oskernel.h>
 
@@ -251,4 +251,4 @@ public:
 
 /* -------------------------------------------------------------------------- */
 
-#endif//__OS_SIG_H
+#endif//__INTROS_SIG_H

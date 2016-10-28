@@ -26,8 +26,8 @@
 
  ******************************************************************************/
 
-#ifndef __OS_H
-#define __OS_H
+#ifndef __INTROS_H
+#define __INTROS_H
 
 #include <oskernel.h>
 #include <os_sig.h> // signal
@@ -95,4 +95,4 @@ static inline void     sys_init( void ) { port_sys_init(); }
 }
 #endif
 
-#endif//__OS_H
+#endif//__INTROS_H

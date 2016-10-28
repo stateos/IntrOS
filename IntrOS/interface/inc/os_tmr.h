@@ -26,8 +26,8 @@
 
  ******************************************************************************/
 
-#ifndef __OS_TMR_H
-#define __OS_TMR_H
+#ifndef __INTROS_TMR_H
+#define __INTROS_TMR_H
 
 #include <oskernel.h>
 
@@ -392,4 +392,4 @@ public:
 
 /* -------------------------------------------------------------------------- */
 
-#endif//__OS_TMR_H
+#endif//__INTROS_TMR_H

@@ -26,8 +26,8 @@
 
  ******************************************************************************/
 
-#ifndef __OS_BAR_H
-#define __OS_BAR_H
+#ifndef __INTROS_BAR_H
+#define __INTROS_BAR_H
 
 #include <oskernel.h>
 
@@ -184,4 +184,4 @@ public:
 
 /* -------------------------------------------------------------------------- */
 
-#endif//__OS_BAR_H
+#endif//__INTROS_BAR_H

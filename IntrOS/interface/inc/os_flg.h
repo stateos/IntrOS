@@ -26,8 +26,8 @@
 
  ******************************************************************************/
 
-#ifndef __OS_FLG_H
-#define __OS_FLG_H
+#ifndef __INTROS_FLG_H
+#define __INTROS_FLG_H
 
 #include <oskernel.h>
 
@@ -225,4 +225,4 @@ public:
 
 /* -------------------------------------------------------------------------- */
 
-#endif//__OS_FLG_H
+#endif//__INTROS_FLG_H

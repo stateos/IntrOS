@@ -26,8 +26,8 @@
 
  ******************************************************************************/
 
-#ifndef __OSBASE_H
-#define __OSBASE_H
+#ifndef __INTROSBASE_H
+#define __INTROSBASE_H
 
 #include <stdbool.h>
 #include <osport.h>
@@ -106,4 +106,4 @@ typedef struct __sys
 }
 #endif
 
-#endif//__OSBASE_H
+#endif//__INTROSBASE_H

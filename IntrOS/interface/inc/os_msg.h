@@ -26,8 +26,8 @@
 
  ******************************************************************************/
 
-#ifndef __OS_MSG_H
-#define __OS_MSG_H
+#ifndef __INTROS_MSG_H
+#define __INTROS_MSG_H
 
 #include <oskernel.h>
 
@@ -270,4 +270,4 @@ public:
 
 /* -------------------------------------------------------------------------- */
 
-#endif//__OS_MSG_H
+#endif//__INTROS_MSG_H

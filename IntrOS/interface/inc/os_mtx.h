@@ -26,8 +26,8 @@
 
  ******************************************************************************/
 
-#ifndef __OS_MTX_H
-#define __OS_MTX_H
+#ifndef __INTROS_MTX_H
+#define __INTROS_MTX_H
 
 #include <oskernel.h>
 
@@ -218,4 +218,4 @@ public:
 
 /* -------------------------------------------------------------------------- */
 
-#endif//__OS_MTX_H
+#endif//__INTROS_MTX_H

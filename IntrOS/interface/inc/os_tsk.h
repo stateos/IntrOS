@@ -26,8 +26,8 @@
 
  ******************************************************************************/
 
-#ifndef __OS_TSK_H
-#define __OS_TSK_H
+#ifndef __INTROS_TSK_H
+#define __INTROS_TSK_H
 
 #include <oskernel.h>
 
@@ -621,4 +621,4 @@ public:
 
 /* -------------------------------------------------------------------------- */
 
-#endif//__OS_TSK_H
+#endif//__INTROS_TSK_H
