@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.c
     @author  Rajmund Szymanski
-    @date    27.10.2016
+    @date    29.10.2016
     @brief   IntrOS port file for Cortex-Mx uC.
 
  ******************************************************************************
@@ -32,14 +32,6 @@
 
 void port_sys_init( void )
 {
-#if 0
-	static  stk_t   IRQ_STACK[ASIZE(OS_STACK_SIZE)];
-	#define IRQ_SP (IRQ_STACK+ASIZE(OS_STACK_SIZE))
-
-	__set_PSP(__get_MSP());
-	__set_MSP((unsigned)IRQ_SP);
-	__set_CONTROL(CONTROL_SPSEL_Msk);
-#endif
 /******************************************************************************
  Put here configuration of system timer
 

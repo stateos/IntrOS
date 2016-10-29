@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.h
     @author  Rajmund Szymanski
-    @date    27.10.2016
+    @date    29.10.2016
     @brief   IntrOS port definitions for Cortex-Mx uC.
 
  ******************************************************************************
@@ -94,14 +94,16 @@ extern   char            __initial_sp[];
 /* -------------------------------------------------------------------------- */
 
 #if   defined(__ARMCC_VERSION)
+#define  __constructor   __attribute__((constructor))
 #define  __noreturn      __attribute__((noreturn))
-#define  __constructor   __attribute__((constructor))
 #elif defined(__GNUC__)
-#define  __noreturn      __attribute__((noreturn, naked))
 #define  __constructor   __attribute__((constructor))
+#define  __noreturn      __attribute__((noreturn, naked))
 #elif defined(__CSMC__)
-#define  __noreturn
 #define  __constructor
+#define  __noreturn
+#else
+#error   Unknown compiler!
 #endif
 
 /* -------------------------------------------------------------------------- */
