@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_flg.h
     @author  Rajmund Szymanski
-    @date    27.10.2016
+    @date    04.11.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -214,7 +214,7 @@ class Flag : public __flg, private EventGuard<__flg>
 public:
 
 	explicit
-	Flag( void ): __flg(_FLG_INIT()) {}
+	Flag( void ): __flg _FLG_INIT() {}
 
 	void     wait( unsigned _flags, bool _all = true ) {        flg_wait(this, _flags, _all); }
 	unsigned take( unsigned _flags, bool _all = true ) { return flg_take(this, _flags, _all); }

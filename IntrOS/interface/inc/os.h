@@ -2,7 +2,7 @@
 
     @file    IntrOS: os.h
     @author  Rajmund Szymanski
-    @date    27.10.2016
+    @date    04.11.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -37,6 +37,7 @@
 #include <os_sem.h> // semaphore
 #include <os_mtx.h> // mutex
 #include <os_cnd.h> // condition variable
+#include <os_mem.h> // memory pool
 #include <os_box.h> // mailbox queue
 #include <os_msg.h> // message queue
 #include <os_tmr.h> // timer

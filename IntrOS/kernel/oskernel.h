@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.h
     @author  Rajmund Szymanski
-    @date    27.10.2016
+    @date    04.11.2016
     @brief   This file defines set of kernel functions for IntrOS.
 
  ******************************************************************************
@@ -60,11 +60,11 @@ void core_tsk_break( void ) __noreturn;
 
 // insert object 'obj' into tasks/timers queue before the 'nxt' object
 // set object id to 'id'
-void core_rdy_insert( os_id obj, unsigned id, os_id nxt );
+void core_rdy_insert( void *obj, unsigned id, void *nxt );
 
 // remove object 'obj' from tasks/timers queue
 // set object id to ID_STOPPED
-void core_rdy_remove( os_id obj );
+void core_rdy_remove( void *obj );
 
 /* -------------------------------------------------------------------------- */
 

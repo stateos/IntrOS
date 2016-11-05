@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    27.10.2016
+    @date    04.11.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -496,7 +496,7 @@ class TaskBase : public __tsk, private ObjectGuard<__tsk>
 public:
 
 	explicit
-	TaskBase( const fun_id _state, const os_id _top ): __tsk(_TSK_INIT(_state, _top)) {}
+	TaskBase( const fun_id _state, void *_top ): __tsk _TSK_INIT(_state, _top) {}
 
 	void     start     ( void )            {        tsk_start     (this);         }
 	void     startFrom ( fun_id   _state ) {        tsk_startFrom (this, _state); }

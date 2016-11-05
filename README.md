@@ -19,6 +19,7 @@ Features
 - semaphores
 - mutexes
 - condition variables
+- memory pools
 - message queues
 - mailbox queues
 - timers (one-shot, periodic)

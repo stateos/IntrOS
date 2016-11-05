@@ -1,9 +1,9 @@
 /******************************************************************************
 
-    @file    IntrOS: oskernel.c
+    @file    IntrOS: os_mem.c
     @author  Rajmund Szymanski
-    @date    04.11.2016
-    @brief   This file provides set of variables and functions for IntrOS.
+    @date    05.11.2016
+    @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
 
@@ -29,96 +29,60 @@
 #include <os.h>
 
 /* -------------------------------------------------------------------------- */
-
-#ifndef MAIN_SP
-static  stk_t    MAIN_STACK[ASIZE(OS_STACK_SIZE)];
-#define MAIN_SP (MAIN_STACK+ASIZE(OS_STACK_SIZE))
-#endif
-
-static  tsk_t MAIN   = { .id=ID_READY, .next=&MAIN, .prev=&MAIN, .top=MAIN_SP }; // main task
-
-        sys_t System = { .cur=&MAIN };
-
+void mem_init( mem_id mem )
 /* -------------------------------------------------------------------------- */
-
-void core_rdy_insert( void *item, unsigned id, void *next )
 {
-	obj_id obj = item;
-	obj_id nxt = next;
-	obj_id prv = nxt->prev;
+	port_sys_lock();
+	
+	void   **ptr = mem->data;
+	unsigned cnt = mem->limit;
 
-	obj->id   = id;
-	obj->prev = prv;
-	obj->next = nxt;
-	nxt->prev = obj;
-	prv->next = obj;
+	mem->next = 0;
+	while (cnt--) { mem_give(mem, ptr); ptr += mem->size; }
+
+	port_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
-
-void core_rdy_remove( void *item )
-{
-	obj_id obj = item;
-	obj_id nxt = obj->next;
-	obj_id prv = obj->prev;
-
-	nxt->prev = prv;
-	prv->next = nxt;
-	obj->id   = ID_STOPPED;
-}
-
+unsigned mem_take( mem_id mem, void **data )
 /* -------------------------------------------------------------------------- */
-
-tsk_id core_tsk_handler( void )
 {
-	tsk_id cur;
-	tmr_id tmr;
+	unsigned event = E_FAILURE;
 
-	for (;;)
+	port_sys_lock();
+
+	if (mem->next)
 	{
-		port_set_lock();
-
-		cur = Current = Current->next;
-
-		port_clr_lock();
-
-		if (cur->id == ID_STOPPED)
-			continue;
-
-		if (cur->id == ID_READY)
-			break;
-
-		if (cur->delay >= Counter - cur->start + 1)
-			continue;
-
-		if (cur->id == ID_DELAYED)
-		{
-			cur->id =  ID_READY;
-			cur->event = E_SUCCESS;
-			break;
-		}
-//		if (cur->id == ID_TIMER)
-		{
-			port_set_lock();
-
-			tmr = (tmr_id) cur;
-			
-			tmr->start += tmr->delay;
-			tmr->delay  = tmr->period;
-
-			if (tmr->state)
-			tmr->state();
-
-			if (tmr->delay == 0)
-			core_tmr_remove(tmr);
-
-			tmr->signal++;
-
-			port_clr_lock();
-		}
+		*data = mem->next;
+		mem->next = *mem->next;
+		void   **ptr = *data;
+		unsigned cnt = mem->size;
+		while (cnt--) *ptr++ = 0;
+		event = E_SUCCESS;
 	}
+	
+	port_sys_unlock();
 
-	return cur;
+	return event;
+}
+
+/* -------------------------------------------------------------------------- */
+void mem_wait( mem_id mem, void **data )
+/* -------------------------------------------------------------------------- */
+{
+	while (mem_take(mem, data) != E_SUCCESS) tsk_yield();
+}
+
+/* -------------------------------------------------------------------------- */
+void mem_give( mem_id mem, void *data )
+/* -------------------------------------------------------------------------- */
+{
+	port_sys_lock();
+
+	*(void**)data = mem->next;
+	mem->next = data;
+
+	port_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */

@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_msg.h
     @author  Rajmund Szymanski
-    @date    27.10.2016
+    @date    04.11.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -258,7 +258,7 @@ class MessageQueueT : public __msg, private EventGuard<__msg>
 public:
 
 	explicit
-	MessageQueueT( void ): __msg(_MSG_INIT(_limit, _data)) {}
+	MessageQueueT( void ): __msg _MSG_INIT(_limit, _data) {}
 
 	void     wait( unsigned*_data ) {        msg_wait(this, _data); }
 	unsigned take( unsigned*_data ) { return msg_take(this, _data); }

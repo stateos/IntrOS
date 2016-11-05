@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_cnd.h
     @author  Rajmund Szymanski
-    @date    27.10.2016
+    @date    04.11.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -185,7 +185,7 @@ class ConditionVariable : public __cnd, private EventGuard<__cnd>
 public:
 
 	explicit
-	ConditionVariable( void ): __cnd(_CND_INIT()) {}
+	ConditionVariable( void ): __cnd _CND_INIT() {}
 
 	void wait( mtx_id _mtx ) { cnd_wait(this, _mtx); }
 	void give( void )        { cnd_give(this);       }

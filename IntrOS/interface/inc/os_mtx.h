@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_mtx.h
     @author  Rajmund Szymanski
-    @date    27.10.2016
+    @date    04.11.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -207,7 +207,7 @@ class Mutex : public __mtx, private MutexGuard<__mtx>
 public:
 
 	explicit
-	Mutex( void ): __mtx(_MTX_INIT()) {}
+	Mutex( void ): __mtx _MTX_INIT() {}
 
 	void     wait( void ) {        mtx_wait(this); }
 	unsigned take( void ) { return mtx_take(this); }

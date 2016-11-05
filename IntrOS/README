@@ -21,6 +21,10 @@ Features:
 - timers (one-shot, periodic)
 - all documentation is contained within the source files
 ---------
+2.0
+- added memory pool object
+- added memory pool example
+---------
 1.9
 - added support for COSMIC Software CORTEX-M C Cross Compiler
 ---------

@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_sig.h
     @author  Rajmund Szymanski
-    @date    27.10.2016
+    @date    04.11.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -239,7 +239,7 @@ class Signal : public __sig, private EventGuard<__sig>
 public:
 
 	explicit
-	Signal( const unsigned _type = sigClear ): __sig(_SIG_INIT(_type)) {}
+	Signal( const unsigned _type = sigClear ): __sig _SIG_INIT(_type) {}
 
 	void     wait ( void ) {        sig_wait (this); }
 	unsigned take ( void ) { return sig_take (this); }

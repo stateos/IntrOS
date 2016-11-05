@@ -1,8 +1,8 @@
 /******************************************************************************
 
-    @file    IntrOS: os_box.h
+    @file    IntrOS: os_mem.h
     @author  Rajmund Szymanski
-    @date    04.11.2016
+    @date    05.11.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -26,8 +26,8 @@
 
  ******************************************************************************/
 
-#ifndef __INTROS_BOX_H
-#define __INTROS_BOX_H
+#ifndef __INTROS_MEM_H
+#define __INTROS_MEM_H
 
 #include <oskernel.h>
 
@@ -37,206 +37,202 @@ extern "C" {
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Name              : mailbox queue                                                                                  *
+ * Name              : memory pool                                                                                    *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-typedef struct __box
+typedef struct __mem
 {
-	unsigned count; // inherited from semaphore
-	unsigned limit; // inherited from semaphore
+	unsigned limit; // size of a memory pool (max number of objects)
+	unsigned size;  // size of memory object (in words)
+	void    *data;  // pointer to memory pool buffer
+	void   **next;  // next memory object in memory pool
 
-	unsigned first; // first element to read from queue
-	unsigned next;  // next element to write into queue
-	char    *data;  // queue data
-	unsigned size;  // size of a single mail (in bytes)
+}	mem_t, *mem_id;
 
-}	box_t, *box_id;
+/* -------------------------------------------------------------------------- */
+
+#define MSIZE( size ) \
+ (((unsigned)( size )+(sizeof(void*)-1))/sizeof(void*))
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Name              : _BOX_INIT                                                                                      *
+ * Name              : _MEM_INIT                                                                                      *
  *                                                                                                                    *
- * Description       : create and initilize a mailbox queue object                                                    *
+ * Description       : create and initilize a memory pool object                                                      *
  *                                                                                                                    *
  * Parameters                                                                                                         *
- *   limit           : size of a queue (max number of stored mails)                                                   *
- *   size            : size of a single mail (in bytes)                                                               *
- *   data            : mailbox queue data buffer                                                                      *
+ *   size            : size of memory object (in bytes)                                                               *
+ *   data            : memory pool data buffer                                                                        *
  *                                                                                                                    *
- * Return            : mailbox queue object                                                                           *
+ * Return            : memory pool object                                                                             *
  *                                                                                                                    *
  * Note              : for internal use                                                                               *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define               _BOX_INIT( limit, size, data ) { 0, limit, 0, 0, data, size }
+#define               _MEM_INIT( limit, size, data ) { limit, MSIZE(size), data, 0 }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Name              : _BOX_DATA                                                                                      *
+ * Name              : _MEM_DATA                                                                                      *
  *                                                                                                                    *
- * Description       : create a mailbox queue data buffer                                                             *
+ * Description       : create a memory pool data buffer                                                               *
  *                                                                                                                    *
  * Parameters                                                                                                         *
- *   limit           : size of a queue (max number of stored mails)                                                   *
- *   size            : size of a single mail (in bytes)                                                               *
+ *   limit           : size of a buffer (max number of objects)                                                       *
+ *   size            : size of memory object (in bytes)                                                               *
  *                                                                                                                    *
- * Return            : mailbox queue data buffer                                                                      *
+ * Return            : memory pool data buffer                                                                        *
  *                                                                                                                    *
  * Note              : for internal use                                                                               *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define               _BOX_DATA( limit, size ) (char[limit*size]){ 0 }
+#define               _MEM_DATA( limit, size ) (void*[limit*MSIZE(size)]){ 0 }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Name              : OS_BOX                                                                                         *
+ * Name              : OS_MEM                                                                                         *
  *                                                                                                                    *
- * Description       : define and initilize a mailbox queue object                                                    *
+ * Description       : define and initilize a memory pool object                                                      *
  *                                                                                                                    *
  * Parameters                                                                                                         *
- *   box             : name of a pointer to mailbox queue object                                                      *
- *   limit           : size of a queue (max number of stored mails)                                                   *
- *   size            : size of a single mail (in bytes)                                                               *
+ *   mem             : name of a pointer to memory pool object                                                        *
+ *   limit           : size of a buffer (max number of objects)                                                       *
+ *   size            : size of memory object (in bytes)                                                               *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define             OS_BOX( box, limit, size )                                \
-                       char box##__buf[limit*size];                            \
-                       box_t box##__box = _BOX_INIT( limit, size, box##__buf ); \
-                       box_id box = & box##__box
+#define             OS_MEM( mem, limit, size )                                \
+                       void*mem##__buf[limit*MSIZE(size)];                     \
+                       mem_t mem##__mem = _MEM_INIT( limit, size, mem##__buf ); \
+                       mem_id mem = & mem##__mem
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Name              : static_BOX                                                                                     *
+ * Name              : static_MEM                                                                                     *
  *                                                                                                                    *
- * Description       : define and initilize a static mailbox queue object                                             *
+ * Description       : define and initilize a static memory pool object                                               *
  *                                                                                                                    *
  * Parameters                                                                                                         *
- *   box             : name of a pointer to mailbox queue object                                                      *
- *   limit           : size of a queue (max number of stored mails)                                                   *
- *   size            : size of a single mail (in bytes)                                                               *
+ *   mem             : name of a pointer to memory pool object                                                        *
+ *   limit           : size of a buffer (max number of objects)                                                       *
+ *   size            : size of memory object (in bytes)                                                               *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define         static_BOX( box, limit, size )                                \
-                static char box##__buf[limit*size];                            \
-                static box_t box##__box = _BOX_INIT( limit, size, box##__buf ); \
-                static box_id box = & box##__box
+#define         static_MEM( mem, limit, size )                                \
+                static void*mem##__buf[limit*MSIZE(size)];                     \
+                static mem_t mem##__mem = _MEM_INIT( limit, size, mem##__buf ); \
+                static mem_id mem = & mem##__mem
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Name              : BOX_INIT                                                                                       *
+ * Name              : MEM_INIT                                                                                       *
  *                                                                                                                    *
- * Description       : create and initilize a mailbox queue object                                                    *
+ * Description       : create and initilize a memory pool object                                                      *
  *                                                                                                                    *
  * Parameters                                                                                                         *
- *   limit           : size of a queue (max number of stored mails)                                                   *
- *   size            : size of a single mail (in bytes)                                                               *
+ *   limit           : size of a buffer (max number of objects)                                                       *
+ *   size            : size of memory object (in bytes)                                                               *
  *                                                                                                                    *
- * Return            : mailbox queue object                                                                           *
+ * Return            : memory pool object                                                                             *
  *                                                                                                                    *
  * Note              : use only in 'C' code                                                                           *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define                BOX_INIT( limit, size ) \
-                      _BOX_INIT( limit, size, _BOX_DATA( limit, size ) )
+#define                MEM_INIT( limit, size ) \
+                      _MEM_INIT( limit, size, _MEM_DATA( limit, size ) )
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Name              : BOX_CREATE                                                                                     *
+ * Name              : MEM_CREATE                                                                                     *
  *                                                                                                                    *
- * Description       : create and initilize a mailbox queue object                                                    *
+ * Description       : create and initilize a memory pool object                                                      *
  *                                                                                                                    *
  * Parameters                                                                                                         *
- *   limit           : size of a queue (max number of stored mails)                                                   *
- *   size            : size of a single mail (in bytes)                                                               *
+ *   limit           : size of a buffer (max number of objects)                                                       *
+ *   size            : size of memory object (in bytes)                                                               *
  *                                                                                                                    *
- * Return            : pointer to mailbox queue object                                                                *
+ * Return            : pointer to memory pool object                                                                  *
  *                                                                                                                    *
  * Note              : use only in 'C' code                                                                           *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
 #ifndef __cplusplus
-#define                BOX_CREATE( limit, size ) \
-               &(box_t)BOX_INIT( limit, size )
+#define                MEM_CREATE( limit, size ) \
+               &(mem_t)MEM_INIT( limit, size )
 #endif
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Name              : box_wait                                                                                       *
+ * Name              : mem_init                                                                                       *
  *                                                                                                                    *
- * Description       : try to transfer mailbox data from the mailbox queue object,                                    *
- *                     wait indefinitly while the mailbox queue object is empty                                       *
+ * Description       : initialize the memory pool object                                                              *
  *                                                                                                                    *
  * Parameters                                                                                                         *
- *   box             : pointer to mailbox queue object                                                                *
- *   data            : pointer to store mailbox data                                                                  *
+ *   mem             : pointer to memory pool object                                                                  *
  *                                                                                                                    *
  * Return            : none                                                                                           *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              void     box_wait( box_id box, void *data );
+              void     mem_init( mem_id mem );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Name              : box_take                                                                                       *
+ * Name              : mem_wait                                                                                       *
  *                                                                                                                    *
- * Description       : try to transfer mailbox data from the mailbox queue object,                                    *
- *                     don't wait if the mailbox queue object is empty                                                *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   box             : pointer to mailbox queue object                                                                *
- *   data            : pointer to store mailbox data                                                                  *
- *                                                                                                                    *
- * Return                                                                                                             *
- *   E_SUCCESS       : mailbox data was successfully transfered from the mailbox queue object                         *
- *   E_FAILURE       : mailbox queue object is empty                                                                  *
- *                                                                                                                    *
- **********************************************************************************************************************/
-
-              unsigned box_take( box_id box, void *data );
-
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : box_send                                                                                       *
- *                                                                                                                    *
- * Description       : try to transfer mailbox data to the mailbox queue object,                                      *
- *                     wait indefinitly while the mailbox queue object is full                                        *
+ * Description       : try to get memory object from the memory pool object,                                          *
+ *                     wait indefinitly while the memory pool object is empty                                         *
  *                                                                                                                    *
  * Parameters                                                                                                         *
- *   box             : pointer to mailbox queue object                                                                *
- *   data            : pointer to mailbox data                                                                        *
+ *   mem             : pointer to memory pool object                                                                  *
+ *   data            : pointer to store the pointer to the memory object                                              *
  *                                                                                                                    *
  * Return            : none                                                                                           *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              void     box_send( box_id box, void *data );
+              void     mem_wait( mem_id mem, void **data );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Name              : box_give                                                                                       *
+ * Name              : mem_take                                                                                       *
  *                                                                                                                    *
- * Description       : try to transfer mailbox data to the mailbox queue object,                                      *
- *                     don't wait if the mailbox queue object is full                                                 *
+ * Description       : try to get memory object from the memory pool object,                                          *
+ *                     don't wait if the memory pool object is empty                                                  *
  *                                                                                                                    *
  * Parameters                                                                                                         *
- *   box             : pointer to mailbox queue object                                                                *
- *   data            : pointer to mailbox data                                                                        *
+ *   mem             : pointer to memory pool object                                                                  *
+ *   data            : pointer to store the pointer to the memory object                                              *
  *                                                                                                                    *
  * Return                                                                                                             *
- *   E_SUCCESS       : mailbox data was successfully transfered to the mailbox queue object                           *
- *   E_FAILURE       : mailbox queue object is full                                                                   *
+ *   E_SUCCESS       : pointer to memory object was successfully transfered to the data pointer                       *
+ *   E_FAILURE       : memory pool object is empty                                                                    *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              unsigned box_give( box_id box, void *data );
+              unsigned mem_take( mem_id mem, void **data );
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : mem_give                                                                                       *
+ *                                                                                                                    *
+ * Description       : transfer memory object to the memory pool object,                                              *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   mem             : pointer to memory pool object                                                                  *
+ *   data            : pointer to memory object                                                                       *
+ *                                                                                                                    *
+ * Return            : none                                                                                           *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+              void     mem_give( mem_id mem, void *data );
 
 #ifdef __cplusplus
 }
@@ -248,34 +244,33 @@ typedef struct __box
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Class             : MailBoxQueue                                                                                   *
+ * Class             : MemoryPool                                                                                     *
  *                                                                                                                    *
- * Description       : create and initilize a mailbox queue object                                                    *
+ * Description       : create and initilize a memory pool object                                                      *
  *                                                                                                                    *
  * Constructor parameters                                                                                             *
- *   T               : class of a single mail                                                                         *
- *   limit           : size of a queue (max number of stored mails)                                                   *
+ *   T               : class of a memory object                                                                       *
+ *   limit           : size of a buffer (max number of objects)                                                       *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
 template<class T, unsigned _limit>
-class MailBoxQueueT : public __box, private EventGuard<__box>
+class MemoryPoolT : public __mem, private EventGuard<__mem>
 {
 	T _data[_limit];
 
 public:
 
 	explicit
-	MailBoxQueueT( void ): __box _BOX_INIT(_limit, sizeof(T), reinterpret_cast<char *>(_data)) {}
+	MemoryPoolT( void ): __mem _MEM_INIT(_limit, sizeof(T), reinterpret_cast<void**>(_data)) { mem_init(this); }
 
-	void     wait( T *_data ) {        box_wait(this, _data); }
-	unsigned take( T *_data ) { return box_take(this, _data); }
-	void     send( T *_data ) {        box_send(this, _data); }
-	unsigned give( T *_data ) { return box_give(this, _data); }
+	unsigned wait( T **_data ) { return mem_wait(this, (void**)_data); }
+	unsigned take( T **_data ) { return mem_take(this, (void**)_data); }
+	void     give( T  *_data ) {        mem_give(this,         _data); }
 };
 
 #endif
 
 /* -------------------------------------------------------------------------- */
 
-#endif//__INTROS_BOX_H
+#endif//__INTROS_MEM_H

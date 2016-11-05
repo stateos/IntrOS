@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_evt.h
     @author  Rajmund Szymanski
-    @date    27.10.2016
+    @date    04.11.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -186,7 +186,7 @@ class Event : public __evt, private EventGuard<__evt>
 public:
 
 	explicit
-	Event( void ): __evt(_EVT_INIT()) {}
+	Event( void ): __evt _EVT_INIT() {}
 
 	unsigned wait( void )            { return evt_wait(this);         }
 	void     give( unsigned _event ) {        evt_give(this, _event); }

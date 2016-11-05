@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.h
     @author  Rajmund Szymanski
-    @date    27.10.2016
+    @date    04.11.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -290,7 +290,7 @@ class Timer : public __tmr, private ObjectGuard<__tmr>
 public:
 
 	explicit
-	Timer( const fun_id _state = 0 ): __tmr(_TMR_INIT(_state)) {}
+	Timer( const fun_id _state = 0 ): __tmr _TMR_INIT(_state) {}
 
 	void startUntil   ( unsigned _time   )                {        tmr_startUntil   (this, _time,   this->state); }
 	void startUntil   ( unsigned _time,   fun_id _state ) {        tmr_startUntil   (this, _time,        _state); }

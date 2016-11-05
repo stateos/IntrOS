@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    27.10.2016
+    @date    05.11.2016
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -54,7 +54,7 @@ extern "C" {
 /* -------------------------------------------------------------------------- */
 
 #define E_SUCCESS  ( 0U) // process released by taking the supervising object
-#define E_FAILURE  (!E_SUCCESS)
+#define E_FAILURE  (~0U)
 
 /* -------------------------------------------------------------------------- */
 
@@ -68,13 +68,9 @@ extern "C" {
 
 /* -------------------------------------------------------------------------- */
 
-typedef void   *os_id;    // os pointer
-typedef void (*fun_id)(); // task/timer procedure
-
-/* -------------------------------------------------------------------------- */
-
-typedef struct __tmr tmr_t, *tmr_id; // timer
-typedef struct __tsk tsk_t, *tsk_id; // task
+typedef               void (*fun_id)(); // task/timer procedure
+typedef struct __tmr tmr_t, *tmr_id;    // timer
+typedef struct __tsk tsk_t, *tsk_id;    // task
 
 /* -------------------------------------------------------------------------- */
 
