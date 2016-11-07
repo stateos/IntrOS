@@ -24,6 +24,7 @@ Features:
 2.0
 - added memory pool object
 - added memory pool example
+- fixed bug in memory pool object
 ---------
 1.9
 - added support for COSMIC Software CORTEX-M C Cross Compiler

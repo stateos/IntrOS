@@ -38,7 +38,7 @@ void mem_init( mem_id mem )
 	unsigned cnt = mem->limit;
 
 	mem->next = 0;
-	while (cnt--) { mem_give(mem, ptr + 1); ptr += mem->size; }
+	while (cnt--) { mem_give(mem, ++ptr); ptr += mem->size; }
 
 	port_sys_unlock();
 }
@@ -54,7 +54,7 @@ unsigned mem_take( mem_id mem, void **data )
 	if (mem->next)
 	{
 		*data = mem->next + 1;
-		mem->next = *mem->next;
+		mem->next = *(mem->next);
 		event = E_SUCCESS;
 	}
 	
@@ -62,7 +62,7 @@ unsigned mem_take( mem_id mem, void **data )
 	{
 		void   **ptr = *data;
 		unsigned cnt = mem->size;
-		while (--cnt) *ptr++ = 0;
+		while (cnt--) *ptr++ = 0;
 	}
 
 	port_sys_unlock();
@@ -83,7 +83,7 @@ void mem_give( mem_id mem, void *data )
 {
 	port_sys_lock();
 
-	void **ptr = (void**)&mem->next;
+	void **ptr = (void**)&(mem->next);
 	while (*ptr) ptr = *ptr;
 	ptr = *ptr = (void**)data - 1; *ptr = 0;
 
