@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_mem.c
     @author  Rajmund Szymanski
-    @date    05.11.2016
+    @date    07.11.2016
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -38,7 +38,7 @@ void mem_init( mem_id mem )
 	unsigned cnt = mem->limit;
 
 	mem->next = 0;
-	while (cnt--) { mem_give(mem, ptr); ptr += mem->size; }
+	while (cnt--) { mem_give(mem, ptr + 1); ptr += mem->size; }
 
 	port_sys_unlock();
 }
@@ -53,14 +53,18 @@ unsigned mem_take( mem_id mem, void **data )
 
 	if (mem->next)
 	{
-		*data = mem->next;
+		*data = mem->next + 1;
 		mem->next = *mem->next;
-		void   **ptr = *data;
-		unsigned cnt = mem->size;
-		while (cnt--) *ptr++ = 0;
 		event = E_SUCCESS;
 	}
 	
+	if (event == E_SUCCESS)
+	{
+		void   **ptr = *data;
+		unsigned cnt = mem->size;
+		while (--cnt) *ptr++ = 0;
+	}
+
 	port_sys_unlock();
 
 	return event;
@@ -79,8 +83,9 @@ void mem_give( mem_id mem, void *data )
 {
 	port_sys_lock();
 
-	*(void**)data = mem->next;
-	mem->next = data;
+	void **ptr = (void**)&mem->next;
+	while (*ptr) ptr = *ptr;
+	ptr = *ptr = (void**)data - 1; *ptr = 0;
 
 	port_sys_unlock();
 }
