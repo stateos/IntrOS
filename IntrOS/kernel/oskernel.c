@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    04.11.2016
+    @date    08.11.2016
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -35,7 +35,7 @@ static  stk_t    MAIN_STACK[ASIZE(OS_STACK_SIZE)];
 #define MAIN_SP (MAIN_STACK+ASIZE(OS_STACK_SIZE))
 #endif
 
-static  tsk_t MAIN   = { .id=ID_READY, .next=&MAIN, .prev=&MAIN, .top=MAIN_SP }; // main task
+static  tsk_t MAIN   = { .id=ID_READY, .prev=&MAIN, .next=&MAIN, .top=MAIN_SP }; // main task
 
         sys_t System = { .cur=&MAIN };
 

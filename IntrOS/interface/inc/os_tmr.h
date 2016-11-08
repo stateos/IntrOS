@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.h
     @author  Rajmund Szymanski
-    @date    04.11.2016
+    @date    08.11.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -44,8 +44,8 @@ extern "C" {
 struct __tmr
 {
 	unsigned id;    // inherited from object
-	tmr_id   next;  // inherited from object
 	tmr_id   prev;  // inherited from object
+	tmr_id   next;  // inherited from object
 	unsigned signal;
 
 	fun_id   state; // callback procedure

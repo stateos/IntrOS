@@ -21,6 +21,10 @@ Features:
 - timers (one-shot, periodic)
 - all documentation is contained within the source files
 ---------
+2.1
+- added list object
+- updated memory pool object
+---------
 2.0
 - added memory pool object
 - added memory pool example

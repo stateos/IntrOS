@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    04.11.2016
+    @date    08.11.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -44,8 +44,8 @@ extern "C" {
 struct __tsk
 {
 	unsigned id;    // inherited from timer
-	tsk_id   next;  // inherited from timer
 	tsk_id   prev;  // inherited from timer
+	tsk_id   next;  // inherited from timer
 	unsigned event; // wakeup event
 
 	fun_id   state; // inherited from timer

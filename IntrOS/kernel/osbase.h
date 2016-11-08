@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    05.11.2016
+    @date    08.11.2016
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -69,18 +69,28 @@ extern "C" {
 /* -------------------------------------------------------------------------- */
 
 typedef               void (*fun_id)(); // task/timer procedure
+typedef struct __que que_t, *que_id;    // queue
 typedef struct __tmr tmr_t, *tmr_id;    // timer
 typedef struct __tsk tsk_t, *tsk_id;    // task
 
 /* -------------------------------------------------------------------------- */
 
-// object header (timer, task)
+// queue
+
+struct __que
+{
+	que_id   next;
+};
+
+/* -------------------------------------------------------------------------- */
+
+// object (timer, task) header
 
 typedef struct __obj
 {
 	unsigned id;    // object id: ID_STOPPED, ID_READY, ID_DELAYED, ID_TIMER
-	struct __obj*next; // next object in the READY queue
-	struct __obj*prev; // previous object in the READY queue
+	void    *prev;  // previous object in the READY queue
+	void    *next;  // next object in the READY queue
 
 }	obj_t, *obj_id;
 

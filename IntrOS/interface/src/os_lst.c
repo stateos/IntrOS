@@ -1,6 +1,6 @@
 /******************************************************************************
 
-    @file    IntrOS: os_mem.c
+    @file    IntrOS: os_lst.c
     @author  Rajmund Szymanski
     @date    08.11.2016
     @brief   This file provides set of functions for IntrOS.
@@ -29,66 +29,41 @@
 #include <os.h>
 
 /* -------------------------------------------------------------------------- */
-void mem_init( mem_id mem )
-/* -------------------------------------------------------------------------- */
-{
-	void   **ptr;
-	unsigned cnt;
-
-	port_sys_lock();
-
-	ptr = mem->data;
-	cnt = mem->limit;
-
-	mem->next = 0;
-	while (cnt--) { mem_give(mem, ++ptr); ptr += mem->size; }
-
-	port_sys_unlock();
-}
-
-/* -------------------------------------------------------------------------- */
-unsigned mem_take( mem_id mem, void **data )
+unsigned lst_take( lst_id lst, void **data )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned event = E_FAILURE;
 
 	port_sys_lock();
 
-	if (mem->next)
+	if (lst->next)
 	{
-		*data = mem->next + 1;
-		mem->next = mem->next->next;
+		*data = lst->next + 1;
+		lst->next = lst->next->next;
 		event = E_SUCCESS;
 	}
 	
-	if (event == E_SUCCESS)
-	{
-		void   **ptr = *data;
-		unsigned cnt = mem->size;
-		while (cnt--) *ptr++ = 0;
-	}
-
 	port_sys_unlock();
 
 	return event;
 }
 
 /* -------------------------------------------------------------------------- */
-void mem_wait( mem_id mem, void **data )
+void lst_wait( lst_id lst, void **data )
 /* -------------------------------------------------------------------------- */
 {
-	while (mem_take(mem, data) != E_SUCCESS) tsk_yield();
+	while (lst_take(lst, data) != E_SUCCESS) tsk_yield();
 }
 
 /* -------------------------------------------------------------------------- */
-void mem_give( mem_id mem, void *data )
+void lst_give( lst_id lst, void *data )
 /* -------------------------------------------------------------------------- */
 {
 	que_id ptr;
 	
 	port_sys_lock();
 
-	ptr = (que_id)&(mem->next);
+	ptr = (que_id)&(lst->next);
 	while (ptr->next) ptr = ptr->next;
 	ptr->next = (que_id)data - 1;
 	ptr->next->next = 0;
