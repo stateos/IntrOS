@@ -24,6 +24,7 @@ Features:
 2.1
 - added list object
 - updated memory pool object
+- optimized c++ code
 ---------
 2.0
 - added memory pool object

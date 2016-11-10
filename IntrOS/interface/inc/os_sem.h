@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_sem.h
     @author  Rajmund Szymanski
-    @date    04.11.2016
+    @date    10.11.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -226,7 +226,7 @@ class Semaphore : public __sem, private EventGuard<__sem>
 public:
 
 	explicit
-	Semaphore( const unsigned _init ): __sem _SEM_INIT(_init) {}
+	Semaphore( const unsigned _init ): __sem _SEM_INIT() { count = _init; }
 
 	void     wait( void ) {        sem_wait(this); }
 	unsigned take( void ) { return sem_take(this); }

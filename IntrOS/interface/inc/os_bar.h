@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_bar.h
     @author  Rajmund Szymanski
-    @date    04.11.2016
+    @date    10.11.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -175,7 +175,7 @@ class Barrier : public __bar, private EventGuard<__bar>
 public:
 
 	explicit
-	Barrier( const unsigned _limit ): __bar _BAR_INIT(_limit) {}
+	Barrier( const unsigned _limit ): __bar _BAR_INIT(0) { limit = _limit; }
 
 	void wait( void ) { bar_wait(this); }
 };

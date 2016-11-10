@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.h
     @author  Rajmund Szymanski
-    @date    29.10.2016
+    @date    10.11.2016
     @brief   IntrOS port definitions for Cortex-Mx uC.
 
  ******************************************************************************
@@ -109,8 +109,8 @@ extern   char            __initial_sp[];
 /* -------------------------------------------------------------------------- */
 
 #if   defined(__CSMC__)
-#define  __disable_irq()             _asm("cpsid i")
-#define  __enable_irq()              _asm("cpsie i")
+#define  __disable_irq()            __ASM("cpsid i")
+#define  __enable_irq()             __ASM("cpsie i")
 #endif
 
 #define  port_get_lock()            __get_PRIMASK()
