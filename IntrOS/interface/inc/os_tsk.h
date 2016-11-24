@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    10.11.2016
+    @date    24.11.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -324,7 +324,7 @@ struct __tsk
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              void     tsk_stop( void ) __noreturn;
+              void     tsk_stop( void ) __NORETURN;
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -367,7 +367,38 @@ static inline void     tsk_yield( void ) { core_ctx_switch(); }
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              void     tsk_flip( fun_id state ) __noreturn;
+              void     tsk_flip( fun_id state ) __NORETURN;
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : tsk_wait                                                                                       *
+ *                                                                                                                    *
+ * Description       : delay indefinitly execution of current task and wait for flags or message                      *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   flags           : all flags to wait                                                                              *
+ *                                                                                                                    *
+ * Return            : none                                                                                           *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+              void     tsk_wait( unsigned flags );
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : tsk_give                                                                                       *
+ *                                                                                                                    *
+ * Description       : set given flags in waiting task (tsk_wait)                                                     *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   tsk             : pointer to delayed task object                                                                 *
+ *   flags           : flags or message transfered to the task                                                        *
+ *                                                                                                                    *
+ * Return            : none                                                                                           *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+              void     tsk_give( tsk_id tsk, unsigned flags );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -527,6 +558,8 @@ public:
 	void     start     ( void )            {        tsk_start     (this);         }
 	void     startFrom ( fun_id   _state ) {        tsk_startFrom (this, _state); }
 	void     resume    ( unsigned _event ) {        tsk_resume    (this, _event); }
+
+	bool     operator! ( void )            { return __tsk::id == ID_STOPPED;      }
 };
 
 /**********************************************************************************************************************

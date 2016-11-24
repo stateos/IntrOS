@@ -21,6 +21,10 @@ Features:
 - timers (one-shot, periodic)
 - all documentation is contained within the source files
 ---------
+2.2
+- updated timer object (tmr_start)
+- updated task object (tsk_wait, tsk_give)
+---------
 2.1
 - added list object
 - updated memory pool object

@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    08.11.2016
+    @date    24.11.2016
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -35,9 +35,10 @@ static  stk_t    MAIN_STACK[ASIZE(OS_STACK_SIZE)];
 #define MAIN_SP (MAIN_STACK+ASIZE(OS_STACK_SIZE))
 #endif
 
-static  tsk_t MAIN   = { .id=ID_READY, .prev=&MAIN, .next=&MAIN, .top=MAIN_SP }; // main task
+tsk_t MAIN   = { .id=ID_READY, .prev=&IDLE, .next=&IDLE, .top=MAIN_SP }; // main task
+tsk_t IDLE   = { .id=ID_IDLE,  .prev=&MAIN, .next=&MAIN };               // dummy task
 
-        sys_t System = { .cur=&MAIN };
+sys_t System = { .cur=&MAIN };
 
 /* -------------------------------------------------------------------------- */
 
@@ -83,6 +84,9 @@ tsk_id core_tsk_handler( void )
 		port_clr_lock();
 
 		if (cur->id == ID_STOPPED)
+			continue;
+
+		if (cur->id == ID_IDLE)
 			continue;
 
 		if (cur->id == ID_READY)

@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.h
     @author  Rajmund Szymanski
-    @date    10.11.2016
+    @date    24.11.2016
     @brief   IntrOS port definitions for Cortex-Mx uC.
 
  ******************************************************************************
@@ -44,6 +44,11 @@ extern "C" {
 
 /* -------------------------------------------------------------------------- */
 
+#define  Counter System.cnt
+#define  Current System.cur
+
+/* -------------------------------------------------------------------------- */
+
 #ifndef CPU_FREQUENCY
 #error   osconfig.h: Undefined CPU_FREQUENCY value!
 #endif
@@ -54,7 +59,7 @@ extern "C" {
 #define  OS_FREQUENCY      1000 /* Hz */
 #else
 
-#if      OS_FREQUENCY > 1000
+#if     (OS_FREQUENCY > 1000)
 #error   osconfig.h: Incorrect OS_FREQUENCY value!
 #endif
 
@@ -64,60 +69,85 @@ extern "C" {
 
 #ifndef  OS_STACK_SIZE
 #define  OS_STACK_SIZE      256 /* default task stack size in bytes           */
-#else
-
-#if      OS_STACK_SIZE < 256
-#error   osconfig.h: Incorrect OS_STACK_SIZE value!
-#endif
-
 #endif
 
 /* -------------------------------------------------------------------------- */
 
-#define  Current           System.cur
-#define  Counter           System.cnt
+typedef  uint64_t             stk_t;
 
 /* -------------------------------------------------------------------------- */
 
-typedef  uint64_t          stk_t;
-
-/* -------------------------------------------------------------------------- */
-
-#if   defined(__CSMC__)
-extern   char             _stack[];
-#define  MAIN_SP          _stack
-#else
-extern   char            __initial_sp[];
-#define  MAIN_SP         __initial_sp
+#if      defined(__CSMC__)
+#define  __initial_sp        _stack
 #endif
 
+extern   char               __initial_sp[];
+#define  MAIN_SP            __initial_sp
+
 /* -------------------------------------------------------------------------- */
 
-#if   defined(__ARMCC_VERSION)
-#define  __constructor   __attribute__((constructor))
-#define  __noreturn      __attribute__((noreturn))
-#elif defined(__GNUC__)
-#define  __constructor   __attribute__((constructor))
-#define  __noreturn      __attribute__((noreturn, naked))
-#elif defined(__CSMC__)
-#define  __constructor
-#define  __noreturn
+#if      defined(__ARMCC_VERSION)
+
+#ifndef  __ALWAYS
+#define  __ALWAYS                 __attribute__((always_inline))
+#endif
+#ifndef  __CONSTRUCTOR
+#define  __CONSTRUCTOR            __attribute__((constructor))
+#endif
+#ifndef  __NORETURN
+#define  __NORETURN               __attribute__((noreturn))
+#endif
+#ifndef  __WEAK
+#define  __WEAK                   __attribute__((weak))
+#endif
+
+#elif    defined(__GNUC__)
+
+#ifndef  __ALWAYS
+#define  __ALWAYS                 __attribute__((always_inline))
+#endif
+#ifndef  __CONSTRUCTOR
+#define  __CONSTRUCTOR            __attribute__((constructor))
+#endif
+#ifndef  __NORETURN
+#define  __NORETURN               __attribute__((noreturn, naked))
+#endif
+#ifndef  __WEAK
+#define  __WEAK                   __attribute__((weak))
+#endif
+
+#elif    defined(__CSMC__)
+
+#ifndef  __ALWAYS
+#define  __ALWAYS
+#endif
+#ifndef  __CONSTRUCTOR
+#define  __CONSTRUCTOR
+#warning No compiler specific solution for __CONSTRUCTOR. __CONSTRUCTOR is ignored.
+#endif
+#ifndef  __NORETURN
+#define  __NORETURN
+#endif
+#ifndef  __WEAK
+#define  __WEAK                   __weak
+#endif
+
+#define  __disable_irq()          __ASM("cpsid i")
+#define  __enable_irq()           __ASM("cpsie i")
+
 #else
+
 #error   Unknown compiler!
+
 #endif
 
 /* -------------------------------------------------------------------------- */
 
-#if   defined(__CSMC__)
-#define  __disable_irq()            __ASM("cpsid i")
-#define  __enable_irq()             __ASM("cpsie i")
-#endif
+#define  port_get_lock()          __get_PRIMASK()
+#define  port_put_lock(state)     __set_PRIMASK(state)
 
-#define  port_get_lock()            __get_PRIMASK()
-#define  port_put_lock(state)       __set_PRIMASK(state)
-
-#define  port_set_lock()            __disable_irq()
-#define  port_clr_lock()            __enable_irq()
+#define  port_set_lock()          __disable_irq()
+#define  port_clr_lock()          __enable_irq()
 
 #define  port_sys_lock()       do { unsigned __LOCK = port_get_lock(); port_set_lock()
 #define  port_sys_unlock()          port_put_lock(__LOCK); } while(0)
@@ -130,5 +160,7 @@ extern   char            __initial_sp[];
 #ifdef __cplusplus
 }
 #endif
+
+/* -------------------------------------------------------------------------- */
 
 #endif//__INTROSPORT_H

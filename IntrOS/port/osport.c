@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.c
     @author  Rajmund Szymanski
-    @date    29.10.2016
+    @date    24.11.2016
     @brief   IntrOS port file for Cortex-Mx uC.
 
  ******************************************************************************
@@ -55,13 +55,13 @@ void port_sys_init( void )
 /* -------------------------------------------------------------------------- */
 
 /******************************************************************************
- Put here the procedure of interrupt handler of system timer for non-tick-less mode
+ Put here the procedure of interrupt handler of system timer
 
  Example for TIM1 (STM32F4):
 
 void TIM1_UP_TIM10_IRQHandler( void )
 {
-	TIM1->SR = 0; // clear timer's status register
+	TIM1->SR = ~TIM_SR_UIF; // clear timer's status register
 
 	Counter++;
 }

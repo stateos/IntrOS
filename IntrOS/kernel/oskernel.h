@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.h
     @author  Rajmund Szymanski
-    @date    04.11.2016
+    @date    24.11.2016
     @brief   This file defines set of kernel functions for IntrOS.
 
  ******************************************************************************
@@ -38,13 +38,15 @@ extern "C" {
 
 /* -------------------------------------------------------------------------- */
 
+extern tsk_t MAIN;   // main task
+extern tsk_t IDLE;   // dummy task
 extern sys_t System; // system data
 
 /* -------------------------------------------------------------------------- */
 
 // initiating and running the system timer
 // the port_sys_init procedure is normally called as a constructor
-void port_sys_init( void ) __constructor;
+void port_sys_init( void ) __CONSTRUCTOR;
 
 /* -------------------------------------------------------------------------- */
 
@@ -54,7 +56,7 @@ void core_ctx_switch( void );
 /* -------------------------------------------------------------------------- */
 
 // abort and reset current process and force yield system control to the next
-void core_tsk_break( void ) __noreturn;
+void core_tsk_break( void ) __NORETURN;
 
 /* -------------------------------------------------------------------------- */
 
