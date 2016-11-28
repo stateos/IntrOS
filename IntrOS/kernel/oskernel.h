@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.h
     @author  Rajmund Szymanski
-    @date    24.11.2016
+    @date    27.11.2016
     @brief   This file defines set of kernel functions for IntrOS.
 
  ******************************************************************************
@@ -38,8 +38,6 @@ extern "C" {
 
 /* -------------------------------------------------------------------------- */
 
-extern tsk_t MAIN;   // main task
-extern tsk_t IDLE;   // dummy task
 extern sys_t System; // system data
 
 /* -------------------------------------------------------------------------- */

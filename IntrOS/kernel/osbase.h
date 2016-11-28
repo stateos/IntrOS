@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    24.11.2016
+    @date    27.11.2016
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -50,7 +50,6 @@ extern "C" {
 #define ID_READY   ( 1U) // task ready to run
 #define ID_DELAYED ( 2U) // task in the delayed state
 #define ID_TIMER   ( 3U) // timer in the countdown state
-#define ID_IDLE    ( 4U) // dummy process
 
 /* -------------------------------------------------------------------------- */
 
