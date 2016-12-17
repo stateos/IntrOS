@@ -21,7 +21,11 @@ Features:
 - timers (one-shot, periodic)
 - all documentation is contained within the source files
 ---------
+2.3
+- some kernel improvements
+---------
 2.2
+- added support for STM8S-Discovery board
 - updated timer object (tmr_start)
 - updated task object (tsk_wait, tsk_give)
 ---------

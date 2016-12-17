@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.h
     @author  Rajmund Szymanski
-    @date    24.11.2016
+    @date    16.12.2016
     @brief   IntrOS port definitions for Cortex-Mx uC.
 
  ******************************************************************************
@@ -77,59 +77,37 @@ typedef  uint64_t             stk_t;
 
 /* -------------------------------------------------------------------------- */
 
-#if      defined(__CSMC__)
-#define  __initial_sp        _stack
-#endif
-
-extern   char               __initial_sp[];
-#define  MAIN_SP            __initial_sp
+extern   stk_t              __initial_sp[];
+#define  MAIN_TOP           __initial_sp
 
 /* -------------------------------------------------------------------------- */
 
 #if      defined(__ARMCC_VERSION)
 
-#ifndef  __ALWAYS
-#define  __ALWAYS                 __attribute__((always_inline))
-#endif
 #ifndef  __CONSTRUCTOR
 #define  __CONSTRUCTOR            __attribute__((constructor))
 #endif
 #ifndef  __NORETURN
 #define  __NORETURN               __attribute__((noreturn))
 #endif
-#ifndef  __WEAK
-#define  __WEAK                   __attribute__((weak))
-#endif
 
 #elif    defined(__GNUC__)
 
-#ifndef  __ALWAYS
-#define  __ALWAYS                 __attribute__((always_inline))
-#endif
 #ifndef  __CONSTRUCTOR
 #define  __CONSTRUCTOR            __attribute__((constructor))
 #endif
 #ifndef  __NORETURN
 #define  __NORETURN               __attribute__((noreturn, naked))
 #endif
-#ifndef  __WEAK
-#define  __WEAK                   __attribute__((weak))
-#endif
 
 #elif    defined(__CSMC__)
 
-#ifndef  __ALWAYS
-#define  __ALWAYS
-#endif
 #ifndef  __CONSTRUCTOR
 #define  __CONSTRUCTOR
 #warning No compiler specific solution for __CONSTRUCTOR. __CONSTRUCTOR is ignored.
 #endif
 #ifndef  __NORETURN
 #define  __NORETURN
-#endif
-#ifndef  __WEAK
-#define  __WEAK                   __weak
 #endif
 
 #define  __disable_irq()          __ASM("cpsid i")

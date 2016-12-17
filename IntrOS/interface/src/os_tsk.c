@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.c
     @author  Rajmund Szymanski
-    @date    24.11.2016
+    @date    16.12.2016
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -78,7 +78,7 @@ void tsk_flip( fun_id state )
 }
 
 /* -------------------------------------------------------------------------- */
-static inline
+static
 unsigned priv_tsk_sleep( tsk_id cur )
 /* -------------------------------------------------------------------------- */
 {
