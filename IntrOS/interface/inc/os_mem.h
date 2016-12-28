@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_mem.h
     @author  Rajmund Szymanski
-    @date    08.11.2016
+    @date    28.12.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -41,14 +41,15 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-typedef struct __mem
+typedef struct __mem mem_t, *mem_id;
+
+struct __mem
 {
 	que_id   next;  // inherited from list
 	unsigned limit; // size of a memory pool (max number of objects)
 	unsigned size;  // size of memory object (in words)
 	void    *data;  // pointer to memory pool buffer
-
-}	mem_t, *mem_id;
+};
 
 /* -------------------------------------------------------------------------- */
 
@@ -255,7 +256,7 @@ typedef struct __mem
  **********************************************************************************************************************/
 
 template<class T, unsigned _limit>
-class MemoryPoolT : public __mem, private EventGuard<__mem>
+class MemoryPoolT : public __mem
 {
 	T _data[_limit];
 

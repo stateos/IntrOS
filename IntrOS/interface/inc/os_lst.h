@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_lst.h
     @author  Rajmund Szymanski
-    @date    08.11.2016
+    @date    28.12.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -41,11 +41,12 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-typedef struct __lst
+typedef struct __lst lst_t, *lst_id;
+
+struct __lst
 {
 	que_id   next;  // next memory object in the queue, previously created in the memory pool
-
-}	lst_t, *lst_id;
+};
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -200,7 +201,7 @@ typedef struct __lst
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-class List : public __lst, private EventGuard<__lst>
+class List : public __lst
 {
 public:
 

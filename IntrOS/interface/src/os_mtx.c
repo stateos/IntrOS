@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_mtx.c
     @author  Rajmund Szymanski
-    @date    27.10.2016
+    @date    28.12.2016
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -34,6 +34,8 @@ unsigned mtx_take( mtx_id mtx )
 {
 	unsigned event = E_FAILURE;
 
+	assert(mtx);
+
 	if (mtx->owner == 0)
 	{
 		mtx->owner = Current;
@@ -60,6 +62,8 @@ unsigned mtx_give( mtx_id mtx )
 {
 	unsigned event = E_FAILURE;
 	
+	assert(mtx);
+
 	if (mtx->owner == Current)
 	{
 	    mtx->owner = 0;

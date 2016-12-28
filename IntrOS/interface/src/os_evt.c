@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_evt.c
     @author  Rajmund Szymanski
-    @date    27.10.2016
+    @date    28.12.2016
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -34,6 +34,8 @@ unsigned evt_wait( evt_id evt )
 {
 	unsigned signal = evt->signal;
 
+	assert(evt);
+
 	while (evt->signal == signal) tsk_yield();
 
 	return evt->event;
@@ -43,6 +45,8 @@ unsigned evt_wait( evt_id evt )
 void evt_give( evt_id evt, unsigned event )
 /* -------------------------------------------------------------------------- */
 {
+	assert(evt);
+
 	port_sys_lock();
 
 	evt->event = event;

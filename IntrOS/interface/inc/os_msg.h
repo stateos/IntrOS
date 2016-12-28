@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_msg.h
     @author  Rajmund Szymanski
-    @date    04.11.2016
+    @date    28.12.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -41,7 +41,9 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-typedef struct __msg
+typedef struct __msg msg_t, *msg_id;
+
+struct __msg
 {
 	unsigned count; // inherited from semaphore
 	unsigned limit; // inherited from semaphore
@@ -49,8 +51,7 @@ typedef struct __msg
 	unsigned first; // first element to read from queue
 	unsigned next;  // next element to write into queue
 	unsigned*data;  // queue data
-
-}	msg_t, *msg_id;
+};
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -251,7 +252,7 @@ typedef struct __msg
  **********************************************************************************************************************/
 
 template<unsigned _limit>
-class MessageQueueT : public __msg, private EventGuard<__msg>
+class MessageQueueT : public __msg
 {
 	unsigned _data[_limit];
 

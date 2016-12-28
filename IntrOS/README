@@ -23,6 +23,8 @@ Features:
 ---------
 2.3
 - some kernel improvements
+- added tsk_join function
+- added assertions
 ---------
 2.2
 - added support for STM8S-Discovery board

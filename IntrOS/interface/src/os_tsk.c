@@ -32,6 +32,9 @@
 void tsk_start( tsk_id tsk )
 /* -------------------------------------------------------------------------- */
 {
+	assert(tsk);
+	assert(tsk->state);
+
 	port_sys_lock();
 
 	if (tsk->id == ID_STOPPED)
@@ -46,6 +49,9 @@ void tsk_start( tsk_id tsk )
 void tsk_startFrom( tsk_id tsk, fun_id state )
 /* -------------------------------------------------------------------------- */
 {
+	assert(tsk);
+	assert(state);
+
 	port_sys_lock();
 
 	if (tsk->id == ID_STOPPED)
@@ -72,6 +78,8 @@ void tsk_stop( void )
 void tsk_join( tsk_id tsk )
 /* -------------------------------------------------------------------------- */
 {
+	assert(tsk);
+
 	while (tsk->id != ID_STOPPED) tsk_yield();
 }
 
@@ -79,6 +87,8 @@ void tsk_join( tsk_id tsk )
 void tsk_flip( fun_id state )
 /* -------------------------------------------------------------------------- */
 {
+	assert(state);
+
 	Current->state = state;
 
 	core_tsk_break();
@@ -131,6 +141,8 @@ void tsk_wait( unsigned flags )
 void tsk_give( tsk_id tsk, unsigned flags )
 /* -------------------------------------------------------------------------- */
 {
+	assert(tsk);
+
 	if (tsk->id == ID_READY)
 	{
 		port_sys_lock();
@@ -143,6 +155,8 @@ void tsk_give( tsk_id tsk, unsigned flags )
 void tsk_resume( tsk_id tsk, unsigned event )
 /* -------------------------------------------------------------------------- */
 {
+	assert(tsk);
+
 	if (tsk->id == ID_DELAYED)
 	{
 		tsk->event = event;

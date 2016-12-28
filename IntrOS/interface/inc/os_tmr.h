@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.h
     @author  Rajmund Szymanski
-    @date    24.11.2016
+    @date    28.12.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -52,6 +52,9 @@ struct __tmr
 	unsigned start;
 	unsigned delay;
 	unsigned period;
+#ifdef __cplusplus
+	~__tmr( void ) { assert(id == ID_STOPPED); }
+#endif
 };
 
 /**********************************************************************************************************************
@@ -323,7 +326,7 @@ namespace ThisTimer
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-class Timer : public __tmr, private ObjectGuard<__tmr>
+class Timer : public __tmr
 {
 public:
 

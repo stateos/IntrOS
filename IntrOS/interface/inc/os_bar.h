@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_bar.h
     @author  Rajmund Szymanski
-    @date    10.11.2016
+    @date    28.12.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -41,13 +41,14 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-typedef struct __bar
+typedef struct __bar bar_t, *bar_id;
+
+struct __bar
 {
 	unsigned signal;
 	unsigned count; // barrier's current value
 	unsigned limit; // barrier's value limit
-
-}	bar_t, *bar_id;
+};
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -170,7 +171,7 @@ typedef struct __bar
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-class Barrier : public __bar, private EventGuard<__bar>
+class Barrier : public __bar
 {
 public:
 

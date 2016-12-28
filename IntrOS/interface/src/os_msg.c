@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_msg.c
     @author  Rajmund Szymanski
-    @date    16.12.2016
+    @date    28.12.2016
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -54,6 +54,9 @@ unsigned msg_take( msg_id msg, unsigned *data )
 {
 	unsigned event = E_FAILURE;
 
+	assert(msg);
+	assert(data);
+
 	port_sys_lock();
 
 	if (msg->count > 0)
@@ -82,6 +85,9 @@ unsigned msg_give( msg_id msg, unsigned data )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned event = E_FAILURE;
+
+	assert(msg);
+	assert(data);
 
 	port_sys_lock();
 

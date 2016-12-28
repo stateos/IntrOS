@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_mem.c
     @author  Rajmund Szymanski
-    @date    08.11.2016
+    @date    28.12.2016
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -35,6 +35,10 @@ void mem_init( mem_id mem )
 	void   **ptr;
 	unsigned cnt;
 
+	assert(mem);
+	assert(mem->data);
+	assert(mem->limit);
+
 	port_sys_lock();
 
 	ptr = mem->data;
@@ -51,6 +55,9 @@ unsigned mem_take( mem_id mem, void **data )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned event = E_FAILURE;
+
+	assert(mem);
+	assert(data);
 
 	port_sys_lock();
 
@@ -86,6 +93,9 @@ void mem_give( mem_id mem, void *data )
 {
 	que_id ptr;
 	
+	assert(mem);
+	assert(data);
+
 	port_sys_lock();
 
 	ptr = (que_id)&(mem->next);

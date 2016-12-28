@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_mtx.h
     @author  Rajmund Szymanski
-    @date    04.11.2016
+    @date    28.12.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -41,11 +41,15 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-typedef struct __mtx
+typedef struct __mtx mtx_t, *mtx_id;
+
+struct __mtx
 {
 	tsk_id   owner; // owner task
-
-}	mtx_t, *mtx_id; // mutex
+#ifdef __cplusplus
+	~__mtx( void ) { assert(owner == nullptr); }
+#endif
+};
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -202,7 +206,7 @@ typedef struct __mtx
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-class Mutex : public __mtx, private MutexGuard<__mtx>
+class Mutex : public __mtx
 {
 public:
 

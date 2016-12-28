@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_evt.h
     @author  Rajmund Szymanski
-    @date    04.11.2016
+    @date    28.12.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -41,12 +41,13 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-typedef struct __evt
+typedef struct __evt evt_t, *evt_id;
+
+struct __evt
 {
 	unsigned signal;
 	unsigned event;
-
-}	evt_t, *evt_id;
+};
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -181,7 +182,7 @@ typedef struct __evt
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-class Event : public __evt, private EventGuard<__evt>
+class Event : public __evt
 {
 public:
 

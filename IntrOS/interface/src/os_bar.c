@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_bar.c
     @author  Rajmund Szymanski
-    @date    27.10.2016
+    @date    28.12.2016
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -32,6 +32,8 @@
 void bar_wait( bar_id bar )
 /* -------------------------------------------------------------------------- */
 {
+	assert(bar);
+
 		bar->count--;
 
 	if (bar->count == 0)

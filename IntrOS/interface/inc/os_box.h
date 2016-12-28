@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_box.h
     @author  Rajmund Szymanski
-    @date    04.11.2016
+    @date    28.12.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -41,7 +41,9 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-typedef struct __box
+typedef struct __box box_t, *box_id;
+
+struct __box
 {
 	unsigned count; // inherited from semaphore
 	unsigned limit; // inherited from semaphore
@@ -50,8 +52,7 @@ typedef struct __box
 	unsigned next;  // next element to write into queue
 	char    *data;  // queue data
 	unsigned size;  // size of a single mail (in bytes)
-
-}	box_t, *box_id;
+};
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -259,7 +260,7 @@ typedef struct __box
  **********************************************************************************************************************/
 
 template<class T, unsigned _limit>
-class MailBoxQueueT : public __box, private EventGuard<__box>
+class MailBoxQueueT : public __box
 {
 	T _data[_limit];
 

@@ -2,7 +2,7 @@
 
     @file    IntrOS: oslibc.c
     @author  Rajmund Szymanski
-    @date    27.10.2016
+    @date    28.12.2016
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -57,6 +57,7 @@ caddr_t _sbrk_r( struct _reent *reent, size_t size )
 }
 
 /* -------------------------------------------------------------------------- */
+#if !defined(USE_SEMIHOST) && !defined(USE_NOHOST)
 
 static
 int __enosys()
@@ -78,6 +79,17 @@ int  _fstat_r( struct _reent *reent, int file, struct stat *st )             __a
 int _getpid_r( struct _reent *reent )                                        __attribute__((weak, alias("__enosys")));
 int   _kill_r( struct _reent *reent, int pid, int sig )                      __attribute__((weak, alias("__enosys")));
 
+#endif // !USE_SEMIHOST && !USE_NOHOST
 /* -------------------------------------------------------------------------- */
 
+#include <stdlib.h>
+
+void __assert_func(const char* const file, const int line, const char* const func, const char* const expr)
+{
+	(void) expr; (void) file; (void) line; (void) func;
+
+	abort();
+}
+
+/* -------------------------------------------------------------------------- */
 #endif // __GNUC__ && !__ARMCC_VERSION

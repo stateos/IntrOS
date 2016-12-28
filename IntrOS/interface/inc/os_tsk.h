@@ -55,6 +55,9 @@ struct __tsk
 
 	void    *sp;    // stack pointer
 	void    *top;   // top of stack
+#ifdef __cplusplus
+	~__tsk( void ) { assert(id == ID_STOPPED); }
+#endif
 };
 
 /**********************************************************************************************************************
@@ -561,7 +564,7 @@ namespace ThisTask
  **********************************************************************************************************************/
 
 template<unsigned _size>
-class TaskT : public __tsk, private ObjectGuard<__tsk>
+class TaskT : public __tsk
 {
 	stk_t _stack[ASIZE(_size)];
 

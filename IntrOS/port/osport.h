@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.h
     @author  Rajmund Szymanski
-    @date    16.12.2016
+    @date    28.12.2016
     @brief   IntrOS port definitions for Cortex-Mx uC.
 
  ******************************************************************************
@@ -70,6 +70,24 @@ extern "C" {
 #ifndef  OS_STACK_SIZE
 #define  OS_STACK_SIZE      256 /* default task stack size in bytes           */
 #endif
+
+/* -------------------------------------------------------------------------- */
+
+#ifndef  OS_ASSERT
+#define  OS_ASSERT            0 /* don't include standard assertions */
+#endif
+
+#if     (OS_ASSERT == 0)
+#ifndef  NDEBUG
+#define  NDEBUG
+#endif
+#endif
+
+#ifndef  NDEBUG
+#define  __ASSERT_MSG
+#endif
+
+#include <assert.h>
 
 /* -------------------------------------------------------------------------- */
 

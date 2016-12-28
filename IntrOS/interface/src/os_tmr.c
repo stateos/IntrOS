@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.c
     @author  Rajmund Szymanski
-    @date    16.12.2016
+    @date    28.12.2016
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -41,6 +41,8 @@ void priv_tmr_start( tmr_id tmr )
 void tmr_startUntil( tmr_id tmr, unsigned time, fun_id proc )
 /* -------------------------------------------------------------------------- */
 {
+	assert(tmr);
+
 	port_sys_lock();
 
 	tmr->state  = proc;
@@ -57,6 +59,8 @@ void tmr_startUntil( tmr_id tmr, unsigned time, fun_id proc )
 void tmr_start( tmr_id tmr, unsigned delay, unsigned period, fun_id proc )
 /* -------------------------------------------------------------------------- */
 {
+	assert(tmr);
+
 	port_sys_lock();
 
 	tmr->state  = proc;
@@ -75,6 +79,8 @@ unsigned tmr_take( tmr_id tmr )
 {
 	unsigned event = E_FAILURE;
 
+	assert(tmr);
+
 	if (tmr->id == ID_STOPPED)
 	{
 		event = E_SUCCESS;
@@ -87,6 +93,8 @@ unsigned tmr_take( tmr_id tmr )
 void tmr_wait( tmr_id tmr )
 /* -------------------------------------------------------------------------- */
 {
+	assert(tmr);
+
 	if (tmr->id != ID_STOPPED)
 	{
 		unsigned signal = tmr->signal;

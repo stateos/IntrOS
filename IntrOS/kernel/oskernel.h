@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.h
     @author  Rajmund Szymanski
-    @date    27.11.2016
+    @date    28.12.2016
     @brief   This file defines set of kernel functions for IntrOS.
 
  ******************************************************************************
@@ -95,58 +95,6 @@ tsk_id core_tsk_handler( void );
 
 #ifdef __cplusplus
 }
-#endif
-
-/* -------------------------------------------------------------------------- */
-
-#ifdef __cplusplus
-
-template <class T>
-class EventGuard
-{
-public:
-
-	~EventGuard( void )
-	{
-	}
-};
-
-#endif
-
-/* -------------------------------------------------------------------------- */
-
-#ifdef __cplusplus
-
-template <class T>
-class MutexGuard
-{
-public:
-	// a mutex can be safely destroyed if it has no owner
-	~MutexGuard( void )
-	{
-		auto obj = reinterpret_cast<T *>(this);
-		while (obj->owner != nullptr);
-	}
-};
-
-#endif
-
-/* -------------------------------------------------------------------------- */
-
-#ifdef __cplusplus
-
-template <class T>
-class ObjectGuard
-{
-public:
-	// an object (Timer, Task) can be safely destroyed if it is stopped
-	~ObjectGuard( void )
-	{
-		auto obj = reinterpret_cast<T *>(this);
-		while (obj->id != ID_STOPPED);
-	}
-};
-
 #endif
 
 /* -------------------------------------------------------------------------- */

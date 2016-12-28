@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_flg.h
     @author  Rajmund Szymanski
-    @date    04.11.2016
+    @date    28.12.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -41,11 +41,12 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-typedef struct __flg
+typedef struct __flg flg_t, *flg_id;
+
+struct __flg
 {
 	unsigned flags; // flag's current value
-
-}	flg_t, *flg_id;
+};
 
 /* -------------------------------------------------------------------------- */
 
@@ -209,7 +210,7 @@ typedef struct __flg
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-class Flag : public __flg, private EventGuard<__flg>
+class Flag : public __flg
 {
 public:
 

@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_cnd.h
     @author  Rajmund Szymanski
-    @date    04.11.2016
+    @date    28.12.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -41,11 +41,12 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-typedef struct __cnd
+typedef struct __cnd cnd_t, *cnd_id;
+
+struct __cnd
 {
 	unsigned signal;
-
-}	cnd_t, *cnd_id;
+};
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -180,7 +181,7 @@ typedef struct __cnd
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-class ConditionVariable : public __cnd, private EventGuard<__cnd>
+class ConditionVariable : public __cnd
 {
 public:
 
