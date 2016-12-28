@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    24.11.2016
+    @date    28.12.2016
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -328,7 +328,22 @@ struct __tsk
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Name              : tsk_pass                                                                                       *
+ * Name              : tsk_join                                                                                       *
+ *                                                                                                                    *
+ * Description       : delay execution of current task until termination of given task                                *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   tsk             : pointer to task object                                                                         *
+ *                                                                                                                    *
+ * Return            : none                                                                                           *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+              void     tsk_join( tsk_id tsk );
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : tsk_yield                                                                                      *
  *                                                                                                                    *
  * Description       : yield system control to the next task                                                          *
  *                                                                                                                    *
@@ -338,13 +353,13 @@ struct __tsk
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-static inline void     tsk_pass ( void ) { core_ctx_switch(); }
+static inline void     tsk_yield( void ) { core_ctx_switch(); }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Name              : tsk_yield                                                                                      *
+ * Name              : tsk_pass                                                                                       *
  *                                                                                                                    *
- * Description       : the same as tsk_pass (force context switch)                                                    *
+ * Description       : the same as tsk_yield (force context switch)                                                   *
  *                                                                                                                    *
  * Parameters        : none                                                                                           *
  *                                                                                                                    *
@@ -352,7 +367,7 @@ static inline void     tsk_pass ( void ) { core_ctx_switch(); }
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-static inline void     tsk_yield( void ) { core_ctx_switch(); }
+static inline void     tsk_pass ( void ) { core_ctx_switch(); }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -555,6 +570,7 @@ public:
 	explicit
 	TaskT( const fun_id _state ): __tsk _TSK_INIT(0, _stack+ASIZE(_size)) { state = _state; }
 
+	void     join      ( void )            {        tsk_join      (this);         }
 	void     start     ( void )            {        tsk_start     (this);         }
 	void     startFrom ( fun_id   _state ) {        tsk_startFrom (this, _state); }
 	void     resume    ( unsigned _event ) {        tsk_resume    (this, _event); }

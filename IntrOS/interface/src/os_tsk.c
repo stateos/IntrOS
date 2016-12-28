@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.c
     @author  Rajmund Szymanski
-    @date    16.12.2016
+    @date    28.12.2016
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -66,6 +66,13 @@ void tsk_stop( void )
 
 	core_tsk_remove(Current);
 	core_tsk_break();
+}
+
+/* -------------------------------------------------------------------------- */
+void tsk_join( tsk_id tsk )
+/* -------------------------------------------------------------------------- */
+{
+	while (tsk->id != ID_STOPPED) tsk_yield();
 }
 
 /* -------------------------------------------------------------------------- */
