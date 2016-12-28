@@ -35,17 +35,15 @@ unsigned mtx_take( mtx_id mtx )
 	unsigned event = E_FAILURE;
 
 	assert(mtx);
+	assert(mtx->owner != Current);
 
 	if (mtx->owner == 0)
 	{
 		mtx->owner = Current;
-	}
 
-	if (mtx->owner == Current)
-	{
 		event = E_SUCCESS;
 	}
-	
+
 	return event;
 }
 
