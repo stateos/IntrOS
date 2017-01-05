@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_msg.h
     @author  Rajmund Szymanski
-    @date    28.12.2016
+    @date    05.01.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -69,7 +69,7 @@ struct __msg
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define               _MSG_INIT( limit, data ) { 0, limit, 0, 0, data }
+#define               _MSG_INIT( _limit, _data ) { 0, _limit, 0, 0, _data }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -86,7 +86,25 @@ struct __msg
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define               _MSG_DATA( limit ) (unsigned[limit]){ 0 }
+#define               _MSG_DATA( _limit ) (unsigned[_limit]){ 0 }
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : MSG_DEF                                                                                        *
+ *                                                                                                                    *
+ * Description       : define and initilize complete message queue area                                               *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   msg             : name of a pointer to message queue object                                                      *
+ *   limit           : size of a queue (max number of stored messages)                                                *
+ *                                                                                                                    *
+ * Note              : for internal use                                                                               *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+#define                MSG_DEF( _msg, _limit )                            \
+                       struct { msg_t obj; unsigned data[_limit]; } _msg = \
+                       { _MSG_INIT( _limit, _msg.data ), { 0 } }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -100,10 +118,9 @@ struct __msg
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define             OS_MSG( msg, limit )                                \
-                       unsigned msg##__buf[limit];                       \
-                       msg_t msg##__msg = _MSG_INIT( limit, msg##__buf ); \
-                       msg_id msg = & msg##__msg
+#define             OS_MSG( msg, limit )            \
+                       MSG_DEF( msg##__msg, limit ); \
+                       msg_id msg = & msg##__msg.obj
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -117,10 +134,9 @@ struct __msg
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define         static_MSG( msg, limit )                                \
-                static unsigned msg##__buf[limit];                       \
-                static msg_t msg##__msg = _MSG_INIT( limit, msg##__buf ); \
-                static msg_id msg = & msg##__msg
+#define         static_MSG( msg, limit )            \
+                static MSG_DEF( msg##__msg, limit ); \
+                static msg_id msg = & msg##__msg.obj
 
 /**********************************************************************************************************************
  *                                                                                                                    *
