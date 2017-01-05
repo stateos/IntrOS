@@ -22,7 +22,7 @@ Features:
 - all documentation is contained within the source files
 ---------
 2.4
-- rebuilded OS_DEF macro definition
+- rebuilded internal preprocessor definitions
 ---------
 2.3
 - some kernel improvements
