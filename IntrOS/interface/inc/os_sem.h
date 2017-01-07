@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_sem.h
     @author  Rajmund Szymanski
-    @date    28.12.2016
+    @date    07.01.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -112,8 +112,10 @@ struct __sem
  *                                                                                                                    *
  **********************************************************************************************************************/
 
+#ifndef __cplusplus
 #define                SEM_INIT( init ) \
                       _SEM_INIT( init )
+#endif
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -222,10 +224,8 @@ struct __sem
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-class Semaphore : public __sem
+struct Semaphore : public __sem
 {
-public:
-
 	explicit
 	Semaphore( const unsigned _init ): __sem _SEM_INIT() { count = _init; }
 

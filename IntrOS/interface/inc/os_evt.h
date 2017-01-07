@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_evt.h
     @author  Rajmund Szymanski
-    @date    28.12.2016
+    @date    07.01.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -69,7 +69,7 @@ struct __evt
  *                                                                                                                    *
  * Name              : OS_EVT                                                                                         *
  *                                                                                                                    *
- * Description       : define and initilize a event object                                                            *
+ * Description       : define and initilize an event object                                                           *
  *                                                                                                                    *
  * Parameters                                                                                                         *
  *   evt             : name of a pointer to event object                                                              *
@@ -109,8 +109,10 @@ struct __evt
  *                                                                                                                    *
  **********************************************************************************************************************/
 
+#ifndef __cplusplus
 #define                EVT_INIT() \
                       _EVT_INIT()
+#endif
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -182,10 +184,8 @@ struct __evt
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-class Event : public __evt
+struct Event : public __evt
 {
-public:
-
 	explicit
 	Event( void ): __evt _EVT_INIT() {}
 

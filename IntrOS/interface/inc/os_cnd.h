@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_cnd.h
     @author  Rajmund Szymanski
-    @date    28.12.2016
+    @date    07.01.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -108,8 +108,10 @@ struct __cnd
  *                                                                                                                    *
  **********************************************************************************************************************/
 
+#ifndef __cplusplus
 #define                CND_INIT() \
                       _CND_INIT()
+#endif
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -181,10 +183,8 @@ struct __cnd
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-class ConditionVariable : public __cnd
+struct ConditionVariable : public __cnd
 {
-public:
-
 	explicit
 	ConditionVariable( void ): __cnd _CND_INIT() {}
 

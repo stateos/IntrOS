@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_msg.h
     @author  Rajmund Szymanski
-    @date    05.01.2017
+    @date    07.01.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -86,7 +86,9 @@ struct __msg
  *                                                                                                                    *
  **********************************************************************************************************************/
 
+#ifndef __cplusplus
 #define               _MSG_DATA( _limit ) (unsigned[_limit]){ 0 }
+#endif
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -153,8 +155,10 @@ struct __msg
  *                                                                                                                    *
  **********************************************************************************************************************/
 
+#ifndef __cplusplus
 #define                MSG_INIT( limit ) \
                       _MSG_INIT( limit, _MSG_DATA( limit ) )
+#endif
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -268,12 +272,8 @@ struct __msg
  **********************************************************************************************************************/
 
 template<unsigned _limit>
-class MessageQueueT : public __msg
+struct MessageQueueT : public __msg
 {
-	unsigned _data[_limit];
-
-public:
-
 	explicit
 	MessageQueueT( void ): __msg _MSG_INIT(_limit, _data) {}
 
@@ -281,6 +281,9 @@ public:
 	unsigned take( unsigned*_data ) { return msg_take(this, _data); }
 	void     send( unsigned _data ) {        msg_send(this, _data); }
 	unsigned give( unsigned _data ) { return msg_give(this, _data); }
+
+	private:
+	unsigned _data[_limit];
 };
 
 #endif

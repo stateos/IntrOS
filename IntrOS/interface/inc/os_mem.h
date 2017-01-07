@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_mem.h
     @author  Rajmund Szymanski
-    @date    28.12.2016
+    @date    07.01.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -90,7 +90,9 @@ struct __mem
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define               _MEM_DATA( limit, size ) (void*[limit*(1+MSIZE(size))]){ 0 }
+#ifndef __cplusplus
+#define               _MEM_DATA( _limit, _size ) (void*[_limit*(1+MSIZE(_size))]){ 0 }
+#endif
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -144,8 +146,10 @@ struct __mem
  *                                                                                                                    *
  **********************************************************************************************************************/
 
+#ifndef __cplusplus
 #define                MEM_INIT( limit, size ) \
                       _MEM_INIT( limit, size, _MEM_DATA( limit, size ) )
+#endif
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -250,21 +254,40 @@ struct __mem
  * Description       : create and initilize a memory pool object                                                      *
  *                                                                                                                    *
  * Constructor parameters                                                                                             *
- *   T               : class of a memory object                                                                       *
  *   limit           : size of a buffer (max number of objects)                                                       *
+ *   size            : size of memory object (in bytes)                                                               *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-template<class T, unsigned _limit>
-class MemoryPoolT : public __mem
+template<unsigned _limit, unsigned _size>
+struct MemoryPoolT : public __mem
 {
-	T _data[_limit];
-
-public:
-
 	explicit
-	MemoryPoolT( void ): __mem _MEM_INIT(_limit, sizeof(T), reinterpret_cast<void**>(_data)) { mem_init(this); }
+	MemoryPoolT( void ): __mem _MEM_INIT(_limit, _size, _data) { mem_init(this); }
 
+	void     wait( void **_data ) {        mem_wait(this, (void**)_data); }
+	unsigned take( void **_data ) { return mem_take(this, (void**)_data); }
+	void     give( void  *_data ) {        mem_give(this,         _data); }
+
+	private:
+	void *_data[_limit * (1 + MSIZE(_size))];
+};
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Class             : MemoryPool                                                                                     *
+ *                                                                                                                    *
+ * Description       : create and initilize a memory pool object                                                      *
+ *                                                                                                                    *
+ * Constructor parameters                                                                                             *
+ *   limit           : size of a buffer (max number of objects)                                                       *
+ *   T               : class of a memory object                                                                       *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+template<unsigned _limit, class T>
+struct MemoryPoolTT : public MemoryPoolT<_limit, sizeof(T)>
+{
 	void     wait( T **_data ) {        mem_wait(this, (void**)_data); }
 	unsigned take( T **_data ) { return mem_take(this, (void**)_data); }
 	void     give( T  *_data ) {        mem_give(this,         _data); }

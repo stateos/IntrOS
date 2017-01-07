@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_bar.h
     @author  Rajmund Szymanski
-    @date    28.12.2016
+    @date    07.01.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -114,8 +114,10 @@ struct __bar
  *                                                                                                                    *
  **********************************************************************************************************************/
 
+#ifndef __cplusplus
 #define                BAR_INIT( limit ) \
                       _BAR_INIT( limit )
+#endif
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -171,10 +173,8 @@ struct __bar
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-class Barrier : public __bar
+struct Barrier : public __bar
 {
-public:
-
 	explicit
 	Barrier( const unsigned _limit ): __bar _BAR_INIT(0) { limit = _limit; }
 

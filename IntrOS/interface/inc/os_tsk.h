@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    05.01.2017
+    @date    07.01.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -55,9 +55,6 @@ struct __tsk
 
 	void    *sp;    // stack pointer
 	void    *top;   // top of stack
-#ifdef __cplusplus
-	~__tsk( void ) { assert(id == ID_STOPPED); }
-#endif
 };
 
 /**********************************************************************************************************************
@@ -237,8 +234,10 @@ struct __tsk
  *                                                                                                                    *
  **********************************************************************************************************************/
 
+#ifndef __cplusplus
 #define                WRK_INIT( state, size ) \
                       _TSK_INIT( state, _TSK_STACK( size ) )
+#endif
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -257,8 +256,10 @@ struct __tsk
  *                                                                                                                    *
  **********************************************************************************************************************/
 
+#ifndef __cplusplus
 #define                WRK_CREATE( state, size ) \
                &(tsk_t)WRK_INIT( state, size )
+#endif
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -581,14 +582,11 @@ namespace ThisTask
  **********************************************************************************************************************/
 
 template<unsigned _size>
-class TaskT : public __tsk
+struct TaskT : public __tsk
 {
-	stk_t _stack[ASIZE(_size)];
-
-public:
-
 	explicit
-	TaskT( const fun_id _state ): __tsk _TSK_INIT(0, _stack+ASIZE(_size)) { state = _state; }
+	 TaskT( const fun_id _state ): __tsk _TSK_INIT(0, _stack+ASIZE(_size)) { state = _state; }
+	~TaskT( void ) { assert(obj.id == ID_STOPPED); }
 
 	void     join      ( void )            {        tsk_join      (this);         }
 	void     start     ( void )            {        tsk_start     (this);         }
@@ -596,6 +594,9 @@ public:
 	void     resume    ( unsigned _event ) {        tsk_resume    (this, _event); }
 
 	bool     operator! ( void )            { return __tsk::id == ID_STOPPED;      }
+
+	private:
+	stk_t _stack[ASIZE(_size)];
 };
 
 /**********************************************************************************************************************
@@ -611,10 +612,8 @@ public:
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-class Task: public TaskT<OS_STACK_SIZE>
+struct Task: public TaskT<OS_STACK_SIZE>
 {
-public:
-
 	explicit
 	Task( const fun_id _state ): TaskT<OS_STACK_SIZE>(_state) {}
 };
@@ -635,10 +634,8 @@ public:
  **********************************************************************************************************************/
 
 template<unsigned _size>
-class startTaskT : public TaskT<_size>
+struct startTaskT : public TaskT<_size>
 {
-public:
-
 	explicit
 	startTaskT( const fun_id _state ): TaskT<_size>(_state) { tsk_start(this); }
 };
@@ -657,15 +654,13 @@ public:
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-class startTask : public startTaskT<OS_STACK_SIZE>
+struct startTask : public startTaskT<OS_STACK_SIZE>
 {
-public:
-
 	explicit
 	startTask( const fun_id _state ): startTaskT<OS_STACK_SIZE>(_state) {}
 };
 
-#endif
+#endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */
 

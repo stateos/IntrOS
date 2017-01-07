@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_mtx.h
     @author  Rajmund Szymanski
-    @date    28.12.2016
+    @date    07.01.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -46,9 +46,6 @@ typedef struct __mtx mtx_t, *mtx_id;
 struct __mtx
 {
 	tsk_id   owner; // owner task
-#ifdef __cplusplus
-	~__mtx( void ) { assert(owner == nullptr); }
-#endif
 };
 
 /**********************************************************************************************************************
@@ -111,8 +108,10 @@ struct __mtx
  *                                                                                                                    *
  **********************************************************************************************************************/
 
+#ifndef __cplusplus
 #define                MTX_INIT() \
                       _MTX_INIT()
+#endif
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -206,12 +205,11 @@ struct __mtx
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-class Mutex : public __mtx
+struct Mutex : public __mtx
 {
-public:
-
 	explicit
-	Mutex( void ): __mtx _MTX_INIT() {}
+	 Mutex( void ): __mtx _MTX_INIT() {}
+	~Mutex( void ) { assert(owner == nullptr); }
 
 	void     wait( void ) {        mtx_wait(this); }
 	unsigned take( void ) { return mtx_take(this); }

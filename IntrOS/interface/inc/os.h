@@ -2,7 +2,7 @@
 
     @file    IntrOS: os.h
     @author  Rajmund Szymanski
-    @date    08.11.2016
+    @date    07.01.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -77,7 +77,7 @@ static inline void     sys_init( void ) { port_sys_init(); }
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define                sys_lock()         port_sys_lock()
+#define                sys_lock()       port_sys_lock()
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -91,10 +91,27 @@ static inline void     sys_init( void ) { port_sys_init(); }
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define                sys_unlock()       port_sys_unlock()
+#define                sys_unlock()     port_sys_unlock()
 
 #ifdef __cplusplus
 }
 #endif
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef __cplusplus
+
+struct CriticalSection
+{
+	 CriticalSection( void ) { state = port_get_lock(); port_set_lock(); }
+	~CriticalSection( void ) { port_put_lock(state); }
+
+	private:
+	unsigned state;
+};
+
+#endif
+
+/* -------------------------------------------------------------------------- */
 
 #endif//__INTROS_H

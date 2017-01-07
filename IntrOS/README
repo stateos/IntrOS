@@ -23,6 +23,7 @@ Features:
 ---------
 2.4
 - rebuilded internal preprocessor definitions
+- rebuilded c++ classes
 ---------
 2.3
 - some kernel improvements
