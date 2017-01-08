@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    07.01.2017
+    @date    08.01.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -99,10 +99,10 @@ struct __tsk
  *                                                                                                                    *
  * Name              : WRK_DEF                                                                                        *
  *                                                                                                                    *
- * Description       : define and initilize complete work area for task object                                        *
+ * Description       : define and initilize complete task work area                                                   *
  *                                                                                                                    *
  * Parameters                                                                                                         *
- *   wrk             : name of a work area                                                                            *
+ *   wrk             : name of a task work area                                                                       *
  *   state           : task state (initial task function) doesn't have to be noreturn-type                            *
  *                     it will be executed into an infinite system-implemented loop                                   *
  *   size            : size of task private stack (in bytes)                                                          *
@@ -277,8 +277,10 @@ struct __tsk
  *                                                                                                                    *
  **********************************************************************************************************************/
 
+#ifndef __cplusplus
 #define                TSK_INIT( state ) \
                        WRK_INIT( state, OS_STACK_SIZE )
+#endif
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -296,9 +298,10 @@ struct __tsk
  *                                                                                                                    *
  **********************************************************************************************************************/
 
+#ifndef __cplusplus
 #define                TSK_CREATE( state ) \
                        WRK_CREATE( state, OS_STACK_SIZE )
-
+#endif
 
 /**********************************************************************************************************************
  *                                                                                                                    *
