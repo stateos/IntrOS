@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_box.c
     @author  Rajmund Szymanski
-    @date    28.12.2016
+    @date    11.01.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -30,7 +30,7 @@
 
 /* -------------------------------------------------------------------------- */
 static
-void priv_box_get( box_id box, void *data )
+void priv_box_get( box_t *box, void *data )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned i;
@@ -43,7 +43,7 @@ void priv_box_get( box_id box, void *data )
 
 /* -------------------------------------------------------------------------- */
 static
-void priv_box_put( box_id box, void *data )
+void priv_box_put( box_t *box, void *data )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned i;
@@ -55,7 +55,7 @@ void priv_box_put( box_id box, void *data )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned box_take( box_id box, void *data )
+unsigned box_take( box_t *box, void *data )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned event = E_FAILURE;
@@ -80,14 +80,14 @@ unsigned box_take( box_id box, void *data )
 }
 
 /* -------------------------------------------------------------------------- */
-void box_wait( box_id box, void *data )
+void box_wait( box_t *box, void *data )
 /* -------------------------------------------------------------------------- */
 {
 	while (box_take(box, data) != E_SUCCESS) tsk_yield();
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned box_give( box_id box, void *data )
+unsigned box_give( box_t *box, void *data )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned event = E_FAILURE;
@@ -112,7 +112,7 @@ unsigned box_give( box_id box, void *data )
 }
 
 /* -------------------------------------------------------------------------- */
-void box_send( box_id box, void *data )
+void box_send( box_t *box, void *data )
 /* -------------------------------------------------------------------------- */
 {
 	while (box_give(box, data) != E_SUCCESS) tsk_yield();

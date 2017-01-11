@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_sem.c
     @author  Rajmund Szymanski
-    @date    28.12.2016
+    @date    11.01.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -29,7 +29,7 @@
 #include <os.h>
 
 /* -------------------------------------------------------------------------- */
-unsigned sem_take( sem_id sem )
+unsigned sem_take( sem_t *sem )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned event = E_FAILURE;
@@ -51,14 +51,14 @@ unsigned sem_take( sem_id sem )
 }
 
 /* -------------------------------------------------------------------------- */
-void sem_wait( sem_id sem )
+void sem_wait( sem_t *sem )
 /* -------------------------------------------------------------------------- */
 {
 	while (sem_take(sem) != E_SUCCESS) tsk_yield();
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned sem_give( sem_id sem )
+unsigned sem_give( sem_t *sem )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned event = E_FAILURE;
@@ -80,7 +80,7 @@ unsigned sem_give( sem_id sem )
 }
 
 /* -------------------------------------------------------------------------- */
-void sem_send( sem_id sem )
+void sem_send( sem_t *sem )
 /* -------------------------------------------------------------------------- */
 {
 	while (sem_give(sem) != E_SUCCESS) tsk_yield();

@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_bar.h
     @author  Rajmund Szymanski
-    @date    07.01.2017
+    @date    11.01.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -41,14 +41,14 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-typedef struct __bar bar_t, *bar_id;
-
 struct __bar
 {
 	unsigned signal;
 	unsigned count; // barrier's current value
 	unsigned limit; // barrier's value limit
 };
+
+typedef struct __bar bar_t, bar_id[1];
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -79,9 +79,8 @@ struct __bar
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define             OS_BAR( bar, limit )                     \
-                       bar_t bar##__bar = _BAR_INIT( limit ); \
-                       bar_id bar = & bar##__bar
+#define             OS_BAR( bar, limit ) \
+                       bar_id bar = { _BAR_INIT( limit ) }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -95,9 +94,8 @@ struct __bar
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define         static_BAR( bar, limit )                     \
-                static bar_t bar##__bar = _BAR_INIT( limit ); \
-                static bar_id bar = & bar##__bar
+#define         static_BAR( bar, limit ) \
+                static bar_id bar = { _BAR_INIT( limit ) }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -136,7 +134,7 @@ struct __bar
 
 #ifndef __cplusplus
 #define                BAR_CREATE( limit ) \
-               &(bar_t)BAR_INIT( limit )
+                     { BAR_INIT( limit ) }
 #endif
 
 /**********************************************************************************************************************
@@ -152,7 +150,7 @@ struct __bar
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              void     bar_wait( bar_id bar );
+              void     bar_wait( bar_t *bar );
 
 #ifdef __cplusplus
 }

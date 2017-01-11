@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_mtx.c
     @author  Rajmund Szymanski
-    @date    28.12.2016
+    @date    11.01.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -29,7 +29,7 @@
 #include <os.h>
 
 /* -------------------------------------------------------------------------- */
-unsigned mtx_take( mtx_id mtx )
+unsigned mtx_take( mtx_t *mtx )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned event = E_FAILURE;
@@ -48,14 +48,14 @@ unsigned mtx_take( mtx_id mtx )
 }
 
 /* -------------------------------------------------------------------------- */
-void mtx_wait( mtx_id mtx )
+void mtx_wait( mtx_t *mtx )
 /* -------------------------------------------------------------------------- */
 {
 	while (mtx_take(mtx) != E_SUCCESS) tsk_yield();
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned mtx_give( mtx_id mtx )
+unsigned mtx_give( mtx_t *mtx )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned event = E_FAILURE;

@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_msg.c
     @author  Rajmund Szymanski
-    @date    28.12.2016
+    @date    11.01.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -30,7 +30,7 @@
 
 /* -------------------------------------------------------------------------- */
 static
-void priv_msg_get( msg_id msg, unsigned *data )
+void priv_msg_get( msg_t *msg, unsigned *data )
 /* -------------------------------------------------------------------------- */
 {
 	*data = msg->data[msg->first];
@@ -40,7 +40,7 @@ void priv_msg_get( msg_id msg, unsigned *data )
 
 /* -------------------------------------------------------------------------- */
 static
-void priv_msg_put( msg_id msg, unsigned data )
+void priv_msg_put( msg_t *msg, unsigned data )
 /* -------------------------------------------------------------------------- */
 {
 	msg->data[msg->next] = data;
@@ -49,7 +49,7 @@ void priv_msg_put( msg_id msg, unsigned data )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned msg_take( msg_id msg, unsigned *data )
+unsigned msg_take( msg_t *msg, unsigned *data )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned event = E_FAILURE;
@@ -74,14 +74,14 @@ unsigned msg_take( msg_id msg, unsigned *data )
 }
 
 /* -------------------------------------------------------------------------- */
-void msg_wait( msg_id msg, unsigned *data )
+void msg_wait( msg_t *msg, unsigned *data )
 /* -------------------------------------------------------------------------- */
 {
 	while (msg_take(msg, data) != E_SUCCESS) tsk_yield();
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned msg_give( msg_id msg, unsigned data )
+unsigned msg_give( msg_t *msg, unsigned data )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned event = E_FAILURE;
@@ -106,7 +106,7 @@ unsigned msg_give( msg_id msg, unsigned data )
 }
 
 /* -------------------------------------------------------------------------- */
-void msg_send( msg_id msg, unsigned data )
+void msg_send( msg_t *msg, unsigned data )
 /* -------------------------------------------------------------------------- */
 {
 	while (msg_give(msg, data) != E_SUCCESS) tsk_yield();

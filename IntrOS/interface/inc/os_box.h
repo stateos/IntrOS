@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_box.h
     @author  Rajmund Szymanski
-    @date    07.01.2017
+    @date    11.01.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -41,8 +41,6 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-typedef struct __box box_t, *box_id;
-
 struct __box
 {
 	unsigned count; // inherited from semaphore
@@ -50,9 +48,11 @@ struct __box
 
 	unsigned first; // first element to read from queue
 	unsigned next;  // next element to write into queue
-	char    *data;  // queue data
+	char   * data;  // queue data
 	unsigned size;  // size of a single mail (in bytes)
 };
+
+typedef struct __box box_t, box_id[1];
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -95,25 +95,6 @@ struct __box
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Name              : BOX_DEF                                                                                        *
- *                                                                                                                    *
- * Description       : define and initilize complete mail box queue area                                              *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   box             : name of a mailbox queue area                                                                   *
- *   limit           : size of a queue (max number of stored mails)                                                   *
- *   size            : size of a single mail (in bytes)                                                               *
- *                                                                                                                    *
- * Note              : for internal use                                                                               *
- *                                                                                                                    *
- **********************************************************************************************************************/
-
-#define                BOX_DEF( _box, _limit, _size )                         \
-                       struct { box_t obj; char data[_limit * _size]; } _box = \
-                       { _BOX_INIT( _limit, _size, _box.data ), { 0 } }
-
-/**********************************************************************************************************************
- *                                                                                                                    *
  * Name              : OS_BOX                                                                                         *
  *                                                                                                                    *
  * Description       : define and initilize a mailbox queue object                                                    *
@@ -125,9 +106,9 @@ struct __box
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define             OS_BOX( box, limit, size )            \
-                       BOX_DEF( box##__box, limit, size ); \
-                       box_id box = & box##__box.obj
+#define             OS_BOX( box, limit, size )      \
+                       char box##__buf[limt * size]; \
+                       box_id box = { _BOX_INIT( limit, size, box##__buf ) }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -142,9 +123,9 @@ struct __box
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define         static_BOX( box, limit, size )            \
-                static BOX_DEF( box##__box, limit, size ); \
-                static box_id box = & box##__box.obj
+#define         static_BOX( box, limit, size )      \
+                static char box##__buf[limt * size]; \
+                static box_id box = { _BOX_INIT( limit, size, box##__buf ) }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -185,7 +166,7 @@ struct __box
 
 #ifndef __cplusplus
 #define                BOX_CREATE( limit, size ) \
-               &(box_t)BOX_INIT( limit, size )
+                     { BOX_INIT( limit, size ) }
 #endif
 
 /**********************************************************************************************************************
@@ -203,7 +184,7 @@ struct __box
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              void     box_wait( box_id box, void *data );
+              void     box_wait( box_t *box, void *data );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -222,7 +203,7 @@ struct __box
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              unsigned box_take( box_id box, void *data );
+              unsigned box_take( box_t *box, void *data );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -239,7 +220,7 @@ struct __box
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              void     box_send( box_id box, void *data );
+              void     box_send( box_t *box, void *data );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -258,7 +239,7 @@ struct __box
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              unsigned box_give( box_id box, void *data );
+              unsigned box_give( box_t *box, void *data );
 
 #ifdef __cplusplus
 }

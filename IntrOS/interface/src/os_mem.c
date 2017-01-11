@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_mem.c
     @author  Rajmund Szymanski
-    @date    28.12.2016
+    @date    11.01.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -29,7 +29,7 @@
 #include <os.h>
 
 /* -------------------------------------------------------------------------- */
-void mem_init( mem_id mem )
+void mem_init( mem_t *mem )
 /* -------------------------------------------------------------------------- */
 {
 	void   **ptr;
@@ -51,7 +51,7 @@ void mem_init( mem_id mem )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned mem_take( mem_id mem, void **data )
+unsigned mem_take( mem_t *mem, void **data )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned event = E_FAILURE;
@@ -81,26 +81,26 @@ unsigned mem_take( mem_id mem, void **data )
 }
 
 /* -------------------------------------------------------------------------- */
-void mem_wait( mem_id mem, void **data )
+void mem_wait( mem_t *mem, void **data )
 /* -------------------------------------------------------------------------- */
 {
 	while (mem_take(mem, data) != E_SUCCESS) tsk_yield();
 }
 
 /* -------------------------------------------------------------------------- */
-void mem_give( mem_id mem, void *data )
+void mem_give( mem_t *mem, void *data )
 /* -------------------------------------------------------------------------- */
 {
-	que_id ptr;
+	que_t *ptr;
 	
 	assert(mem);
 	assert(data);
 
 	port_sys_lock();
 
-	ptr = (que_id)&(mem->next);
+	ptr = (que_t *)&(mem->next);
 	while (ptr->next) ptr = ptr->next;
-	ptr->next = (que_id)data - 1;
+	ptr->next = (que_t *)data - 1;
 	ptr->next->next = 0;
 
 	port_sys_unlock();

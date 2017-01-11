@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_mem.h
     @author  Rajmund Szymanski
-    @date    08.01.2017
+    @date    11.01.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -41,15 +41,15 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-typedef struct __mem mem_t, *mem_id;
-
 struct __mem
 {
-	que_id   next;  // inherited from list
+	que_t  * next;  // inherited from list
 	unsigned limit; // size of a memory pool (max number of objects)
 	unsigned size;  // size of memory object (in words)
-	void    *data;  // pointer to memory pool buffer
+	void   * data;  // pointer to memory pool buffer
 };
+
+typedef struct __mem mem_t, mem_id[1];
 
 /* -------------------------------------------------------------------------- */
 
@@ -91,27 +91,8 @@ struct __mem
  **********************************************************************************************************************/
 
 #ifndef __cplusplus
-#define               _MEM_DATA( _limit, _size ) (void*[_limit*(1+MSIZE(_size))]){ 0 }
+#define               _MEM_DATA( _limit, _size ) (void *[_limit * (1 + MSIZE(_size))]){ 0 }
 #endif
-
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : MEM_DEF                                                                                        *
- *                                                                                                                    *
- * Description       : define and initilize complete memory pool area                                                 *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   mem             : name of a memory pool area                                                                     *
- *   limit           : size of a buffer (max number of objects)                                                       *
- *   size            : size of memory object (in bytes)                                                               *
- *                                                                                                                    *
- * Note              : for internal use                                                                               *
- *                                                                                                                    *
- **********************************************************************************************************************/
-
-#define                MEM_DEF( _mem, _limit, _size )                                   \
-                       struct { mem_t obj; void *data[_limit*(1+MSIZE(_size))]; } _mem = \
-                       { _MEM_INIT( _limit, _size, _mem.data ), { 0 } }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -126,9 +107,9 @@ struct __mem
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define             OS_MEM( mem, limit, size )            \
-                       MEM_DEF( mem##__mem, limit, size ); \
-                       mem_id mem = & mem##__mem.obj
+#define             OS_MEM( mem, limit, size )                     \
+                       void *mem##__buf[limit * (1 + MSIZE(size))]; \
+                       mem_id mem = { _MEM_INIT( limit, size, mem##__buf ) }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -143,9 +124,9 @@ struct __mem
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define         static_MEM( mem, limit, size )            \
-                static MEM_DEF( mem##__mem, limit, size ); \
-                static mem_id mem = & mem##__mem.obj
+#define         static_MEM( mem, limit, size )                     \
+                static void *mem##__buf[limit * (1 + MSIZE(size))]; \
+                static mem_id mem = { _MEM_INIT( limit, size, mem##__buf ) }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -186,7 +167,7 @@ struct __mem
 
 #ifndef __cplusplus
 #define                MEM_CREATE( limit, size ) \
-               &(mem_t)MEM_INIT( limit, size )
+                     { MEM_INIT( limit, size ) }
 #endif
 
 /**********************************************************************************************************************
@@ -202,7 +183,7 @@ struct __mem
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              void     mem_init( mem_id mem );
+              void     mem_init( mem_t *mem );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -219,7 +200,7 @@ struct __mem
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              void     mem_wait( mem_id mem, void **data );
+              void     mem_wait( mem_t *mem, void **data );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -238,7 +219,7 @@ struct __mem
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              unsigned mem_take( mem_id mem, void **data );
+              unsigned mem_take( mem_t *mem, void **data );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -254,7 +235,7 @@ struct __mem
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              void     mem_give( mem_id mem, void *data );
+              void     mem_give( mem_t *mem, void *data );
 
 #ifdef __cplusplus
 }

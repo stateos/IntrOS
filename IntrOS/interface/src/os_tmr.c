@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.c
     @author  Rajmund Szymanski
-    @date    28.12.2016
+    @date    11.01.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -30,7 +30,7 @@
 
 /* -------------------------------------------------------------------------- */
 static
-void priv_tmr_start( tmr_id tmr )
+void priv_tmr_start( tmr_t *tmr )
 /* -------------------------------------------------------------------------- */
 {
 	if (tmr->id == ID_STOPPED)
@@ -38,7 +38,7 @@ void priv_tmr_start( tmr_id tmr )
 }
 
 /* -------------------------------------------------------------------------- */
-void tmr_startUntil( tmr_id tmr, unsigned time, fun_id proc )
+void tmr_startUntil( tmr_t *tmr, unsigned time, fun_id proc )
 /* -------------------------------------------------------------------------- */
 {
 	assert(tmr);
@@ -56,7 +56,7 @@ void tmr_startUntil( tmr_id tmr, unsigned time, fun_id proc )
 }
 
 /* -------------------------------------------------------------------------- */
-void tmr_start( tmr_id tmr, unsigned delay, unsigned period, fun_id proc )
+void tmr_start( tmr_t *tmr, unsigned delay, unsigned period, fun_id proc )
 /* -------------------------------------------------------------------------- */
 {
 	assert(tmr);
@@ -74,7 +74,7 @@ void tmr_start( tmr_id tmr, unsigned delay, unsigned period, fun_id proc )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned tmr_take( tmr_id tmr )
+unsigned tmr_take( tmr_t *tmr )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned event = E_FAILURE;
@@ -90,7 +90,7 @@ unsigned tmr_take( tmr_id tmr )
 }
 
 /* -------------------------------------------------------------------------- */
-void tmr_wait( tmr_id tmr )
+void tmr_wait( tmr_t *tmr )
 /* -------------------------------------------------------------------------- */
 {
 	assert(tmr);

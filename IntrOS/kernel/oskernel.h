@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.h
     @author  Rajmund Szymanski
-    @date    28.12.2016
+    @date    11.01.2017
     @brief   This file defines set of kernel functions for IntrOS.
 
  ******************************************************************************
@@ -71,25 +71,25 @@ void core_rdy_remove( void *obj );
 // add timer 'tmr' to tasks/timers queue
 // start countdown
 static inline
-void core_tmr_insert( tmr_id tmr ) { core_rdy_insert(tmr, ID_TIMER, Current); }
+void core_tmr_insert( tmr_t *tmr ) { core_rdy_insert(tmr, ID_TIMER, Current); }
 
 // remove timer 'tmr' from tasks/timers queue
 static inline
-void core_tmr_remove( tmr_id tmr ) { core_rdy_remove(tmr); }
+void core_tmr_remove( tmr_t *tmr ) { core_rdy_remove(tmr); }
 
 /* -------------------------------------------------------------------------- */
 
 // add task 'tsk' to tasks/timers queue with id ID_READY
 static inline
-void core_tsk_insert( tsk_id tsk ) { core_rdy_insert(tsk, ID_READY, Current); }
+void core_tsk_insert( tsk_t *tsk ) { core_rdy_insert(tsk, ID_READY, Current); }
 
 // remove task 'tsk' from tasks/timers queue
 static inline
-void   core_tsk_remove( tsk_id tsk ) { core_rdy_remove(tsk); }
+void   core_tsk_remove( tsk_t *tsk ) { core_rdy_remove(tsk); }
 
 // tasks queue handler procedure
 // return a pointer to next READY task
-tsk_id core_tsk_handler( void );
+tsk_t *core_tsk_handler( void );
 
 /* -------------------------------------------------------------------------- */
 

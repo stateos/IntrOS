@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    16.12.2016
+    @date    11.01.2017
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -42,9 +42,9 @@ sys_t System = { .cur=&MAIN };
 
 void core_rdy_insert( void *item, unsigned id, void *next )
 {
-	obj_id obj = item;
-	obj_id nxt = next;
-	obj_id prv = nxt->prev;
+	obj_t *obj = item;
+	obj_t *nxt = next;
+	obj_t *prv = nxt->prev;
 
 	obj->id   = id;
 	obj->prev = prv;
@@ -57,9 +57,9 @@ void core_rdy_insert( void *item, unsigned id, void *next )
 
 void core_rdy_remove( void *item )
 {
-	obj_id obj = item;
-	obj_id nxt = obj->next;
-	obj_id prv = obj->prev;
+	obj_t *obj = item;
+	obj_t *nxt = obj->next;
+	obj_t *prv = obj->prev;
 
 	nxt->prev = prv;
 	prv->next = nxt;
@@ -68,10 +68,10 @@ void core_rdy_remove( void *item )
 
 /* -------------------------------------------------------------------------- */
 
-tsk_id core_tsk_handler( void )
+tsk_t *core_tsk_handler( void )
 {
-	tsk_id cur;
-	tmr_id tmr;
+	tsk_t *cur;
+	tmr_t *tmr;
 
 	for (;;)
 	{
@@ -100,7 +100,7 @@ tsk_id core_tsk_handler( void )
 		{
 			port_set_lock();
 
-			tmr = (tmr_id) cur;
+			tmr = (tmr_t *) cur;
 			
 			tmr->start += tmr->delay;
 			tmr->delay  = tmr->period;

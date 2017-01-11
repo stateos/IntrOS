@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_evt.c
     @author  Rajmund Szymanski
-    @date    28.12.2016
+    @date    11.01.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -29,7 +29,7 @@
 #include <os.h>
 
 /* -------------------------------------------------------------------------- */
-unsigned evt_wait( evt_id evt )
+unsigned evt_wait( evt_t *evt )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned signal = evt->signal;
@@ -42,7 +42,7 @@ unsigned evt_wait( evt_id evt )
 }
 
 /* -------------------------------------------------------------------------- */
-void evt_give( evt_id evt, unsigned event )
+void evt_give( evt_t *evt, unsigned event )
 /* -------------------------------------------------------------------------- */
 {
 	assert(evt);

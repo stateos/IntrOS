@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_lst.c
     @author  Rajmund Szymanski
-    @date    28.12.2016
+    @date    11.01.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -29,7 +29,7 @@
 #include <os.h>
 
 /* -------------------------------------------------------------------------- */
-unsigned lst_take( lst_id lst, void **data )
+unsigned lst_take( lst_t *lst, void **data )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned event = E_FAILURE;
@@ -52,26 +52,26 @@ unsigned lst_take( lst_id lst, void **data )
 }
 
 /* -------------------------------------------------------------------------- */
-void lst_wait( lst_id lst, void **data )
+void lst_wait( lst_t *lst, void **data )
 /* -------------------------------------------------------------------------- */
 {
 	while (lst_take(lst, data) != E_SUCCESS) tsk_yield();
 }
 
 /* -------------------------------------------------------------------------- */
-void lst_give( lst_id lst, void *data )
+void lst_give( lst_t *lst, void *data )
 /* -------------------------------------------------------------------------- */
 {
-	que_id ptr;
+	que_t *ptr;
 	
 	assert(lst);
 	assert(data);
 
 	port_sys_lock();
 
-	ptr = (que_id)&(lst->next);
+	ptr = (que_t *)&(lst->next);
 	while (ptr->next) ptr = ptr->next;
-	ptr->next = (que_id)data - 1;
+	ptr->next = (que_t *)data - 1;
 	ptr->next->next = 0;
 
 	port_sys_unlock();

@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.c
     @author  Rajmund Szymanski
-    @date    28.12.2016
+    @date    11.01.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -29,7 +29,7 @@
 #include <os.h>
 
 /* -------------------------------------------------------------------------- */
-void tsk_start( tsk_id tsk )
+void tsk_start( tsk_t *tsk )
 /* -------------------------------------------------------------------------- */
 {
 	assert(tsk);
@@ -46,7 +46,7 @@ void tsk_start( tsk_id tsk )
 }
 
 /* -------------------------------------------------------------------------- */
-void tsk_startFrom( tsk_id tsk, fun_id state )
+void tsk_startFrom( tsk_t *tsk, fun_id state )
 /* -------------------------------------------------------------------------- */
 {
 	assert(tsk);
@@ -75,7 +75,7 @@ void tsk_stop( void )
 }
 
 /* -------------------------------------------------------------------------- */
-void tsk_join( tsk_id tsk )
+void tsk_join( tsk_t *tsk )
 /* -------------------------------------------------------------------------- */
 {
 	assert(tsk);
@@ -96,7 +96,7 @@ void tsk_flip( fun_id state )
 
 /* -------------------------------------------------------------------------- */
 static
-unsigned priv_tsk_sleep( tsk_id cur )
+unsigned priv_tsk_sleep( tsk_t *cur )
 /* -------------------------------------------------------------------------- */
 {
 	cur->id = ID_DELAYED;
@@ -109,7 +109,7 @@ unsigned priv_tsk_sleep( tsk_id cur )
 unsigned tsk_sleepUntil( unsigned time )
 /* -------------------------------------------------------------------------- */
 {
-	tsk_id cur = Current;
+	tsk_t *cur = Current;
 
 	cur->start = Counter;
 	cur->delay = time - cur->start;
@@ -121,7 +121,7 @@ unsigned tsk_sleepUntil( unsigned time )
 unsigned tsk_sleepFor( unsigned delay )
 /* -------------------------------------------------------------------------- */
 {
-	tsk_id cur = Current;
+	tsk_t *cur = Current;
 
 	cur->start = Counter;
 	cur->delay = delay;
@@ -138,7 +138,7 @@ void tsk_wait( unsigned flags )
 }
 
 /* -------------------------------------------------------------------------- */
-void tsk_give( tsk_id tsk, unsigned flags )
+void tsk_give( tsk_t *tsk, unsigned flags )
 /* -------------------------------------------------------------------------- */
 {
 	assert(tsk);
@@ -152,7 +152,7 @@ void tsk_give( tsk_id tsk, unsigned flags )
 }
 
 /* -------------------------------------------------------------------------- */
-void tsk_resume( tsk_id tsk, unsigned event )
+void tsk_resume( tsk_t *tsk, unsigned event )
 /* -------------------------------------------------------------------------- */
 {
 	assert(tsk);

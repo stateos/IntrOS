@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    27.11.2016
+    @date    11.01.2017
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -68,10 +68,10 @@ extern "C" {
 
 /* -------------------------------------------------------------------------- */
 
-typedef               void (*fun_id)(); // task/timer procedure
-typedef struct __que que_t, *que_id;    // queue
-typedef struct __tmr tmr_t, *tmr_id;    // timer
-typedef struct __tsk tsk_t, *tsk_id;    // task
+typedef   void (*fun_id)(); // task/timer procedure
+typedef struct __que que_t; // queue
+typedef struct __tmr tmr_t; // timer
+typedef struct __tsk tsk_t; // task
 
 /* -------------------------------------------------------------------------- */
 
@@ -79,7 +79,7 @@ typedef struct __tsk tsk_t, *tsk_id;    // task
 
 struct __que
 {
-	que_id   next;
+	que_t  * next;
 };
 
 /* -------------------------------------------------------------------------- */
@@ -89,10 +89,10 @@ struct __que
 typedef struct __obj
 {
 	unsigned id;    // object id: ID_STOPPED, ID_READY, ID_DELAYED, ID_TIMER
-	void    *prev;  // previous object in the READY queue
-	void    *next;  // next object in the READY queue
+	void   * prev;  // previous object in the READY queue
+	void   * next;  // next object in the READY queue
 
-}	obj_t, *obj_id;
+}	obj_t;
 
 /* -------------------------------------------------------------------------- */
 
@@ -100,11 +100,11 @@ typedef struct __obj
 
 typedef struct __sys
 {
-	tsk_id   cur;   // pointer to the current task control block
+	tsk_t  * cur;   // pointer to the current task control block
 	volatile
 	unsigned cnt;   // system timer counter
 
-}	sys_t, *sys_id;
+}	sys_t;
 
 /* -------------------------------------------------------------------------- */
 
