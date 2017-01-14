@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.c
     @author  Rajmund Szymanski
-    @date    11.01.2017
+    @date    14.01.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -46,7 +46,7 @@ void tsk_start( tsk_t *tsk )
 }
 
 /* -------------------------------------------------------------------------- */
-void tsk_startFrom( tsk_t *tsk, fun_id state )
+void tsk_startFrom( tsk_t *tsk, fun_t *state )
 /* -------------------------------------------------------------------------- */
 {
 	assert(tsk);
@@ -84,7 +84,7 @@ void tsk_join( tsk_t *tsk )
 }
 
 /* -------------------------------------------------------------------------- */
-void tsk_flip( fun_id state )
+void tsk_flip( fun_t *state )
 /* -------------------------------------------------------------------------- */
 {
 	assert(state);

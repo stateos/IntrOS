@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    11.01.2017
+    @date    14.01.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -48,7 +48,7 @@ struct __tsk
 	tsk_t  * next;  // inherited from timer
 	unsigned event; // wakeup event
 
-	fun_id   state; // inherited from timer
+	fun_t  * state; // inherited from timer
 	unsigned start; // inherited from timer
 	unsigned delay; // inherited from timer
 	unsigned period;// inherited from timer
@@ -315,7 +315,7 @@ typedef struct __tsk tsk_id[1];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              void     tsk_startFrom( tsk_t *tsk, fun_id state );
+              void     tsk_startFrom( tsk_t *tsk, fun_t *state );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -388,7 +388,7 @@ static inline void     tsk_pass ( void ) { core_ctx_switch(); }
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              void     tsk_flip( fun_id state ) __NORETURN;
+              void     tsk_flip( fun_t *state ) __NORETURN;
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -542,7 +542,7 @@ namespace ThisTask
 {
 	void     pass      ( void )            {        tsk_pass      ();             }
 	void     yield     ( void )            {        tsk_yield     ();             }
-	void     flip      ( fun_id   _state ) {        tsk_flip      (_state);       }
+	void     flip      ( fun_t  * _state ) {        tsk_flip      (_state);       }
 	void     stop      ( void )            {        tsk_stop      ();             }
 
 	unsigned sleepUntil( unsigned _time )  { return tsk_sleepUntil(_time);        }
@@ -570,12 +570,12 @@ template<unsigned _size>
 struct TaskT : public __tsk
 {
 	explicit
-	 TaskT( const fun_id _state ): __tsk _TSK_INIT(0, _stack+ASIZE(_size)) { state = _state; }
+	 TaskT( fun_t *_state ): __tsk _TSK_INIT(0, _stack+ASIZE(_size)) { state = _state; }
 	~TaskT( void ) { assert(obj.id == ID_STOPPED); }
 
 	void     join      ( void )            {        tsk_join      (this);         }
 	void     start     ( void )            {        tsk_start     (this);         }
-	void     startFrom ( fun_id   _state ) {        tsk_startFrom (this, _state); }
+	void     startFrom ( fun_t  * _state ) {        tsk_startFrom (this, _state); }
 	void     resume    ( unsigned _event ) {        tsk_resume    (this, _event); }
 
 	bool     operator! ( void )            { return __tsk::id == ID_STOPPED;      }
@@ -600,7 +600,7 @@ struct TaskT : public __tsk
 struct Task: public TaskT<OS_STACK_SIZE>
 {
 	explicit
-	Task( const fun_id _state ): TaskT<OS_STACK_SIZE>(_state) {}
+	Task( fun_t *_state ): TaskT<OS_STACK_SIZE>(_state) {}
 };
 
 /**********************************************************************************************************************
@@ -622,7 +622,7 @@ template<unsigned _size>
 struct startTaskT : public TaskT<_size>
 {
 	explicit
-	startTaskT( const fun_id _state ): TaskT<_size>(_state) { tsk_start(this); }
+	startTaskT( fun_t *_state ): TaskT<_size>(_state) { tsk_start(this); }
 };
 
 /**********************************************************************************************************************
@@ -642,7 +642,7 @@ struct startTaskT : public TaskT<_size>
 struct startTask : public startTaskT<OS_STACK_SIZE>
 {
 	explicit
-	startTask( const fun_id _state ): startTaskT<OS_STACK_SIZE>(_state) {}
+	startTask( fun_t *_state ): startTaskT<OS_STACK_SIZE>(_state) {}
 };
 
 #endif//__cplusplus

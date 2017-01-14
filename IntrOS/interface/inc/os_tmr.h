@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.h
     @author  Rajmund Szymanski
-    @date    11.01.2017
+    @date    14.01.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -48,7 +48,7 @@ struct __tmr
 	tmr_t  * next;  // inherited from object
 	unsigned signal;
 
-	fun_id   state; // callback procedure
+	fun_t  * state; // callback procedure
 	unsigned start;
 	unsigned delay;
 	unsigned period;
@@ -156,7 +156,7 @@ typedef struct __tmr tmr_id[1];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              void     tmr_startUntil( tmr_t *tmr, unsigned time, fun_id proc );
+              void     tmr_startUntil( tmr_t *tmr, unsigned time, fun_t *proc );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -180,7 +180,7 @@ typedef struct __tmr tmr_id[1];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              void     tmr_start( tmr_t *tmr, unsigned delay, unsigned period, fun_id proc );
+              void     tmr_start( tmr_t *tmr, unsigned delay, unsigned period, fun_t *proc );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -200,7 +200,7 @@ typedef struct __tmr tmr_id[1];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-static inline void     tmr_startFor( tmr_t *tmr, unsigned delay, fun_id proc ) { tmr_start(tmr, delay, 0, proc); }
+static inline void     tmr_startFor( tmr_t *tmr, unsigned delay, fun_t *proc ) { tmr_start(tmr, delay, 0, proc); }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -221,7 +221,7 @@ static inline void     tmr_startFor( tmr_t *tmr, unsigned delay, fun_id proc ) {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-static inline void     tmr_startPeriodic( tmr_t *tmr, unsigned period, fun_id proc ) { tmr_start(tmr, period, period, proc); }
+static inline void     tmr_startPeriodic( tmr_t *tmr, unsigned period, fun_t *proc ) { tmr_start(tmr, period, period, proc); }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -271,7 +271,7 @@ static inline void     tmr_startPeriodic( tmr_t *tmr, unsigned period, fun_id pr
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-static inline void     tmr_flip( fun_id proc ) { ((tmr_t *)Current)->state = proc; }
+static inline void     tmr_flip( fun_t *proc ) { ((tmr_t *)Current)->state = proc; }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -310,7 +310,7 @@ static inline void     tmr_delay( unsigned delay ) { ((tmr_t *)Current)->delay =
 
 namespace ThisTimer
 {
-	void flip ( fun_id   _state ) { tmr_flip (_state); }
+	void flip ( fun_t  * _state ) { tmr_flip (_state); }
 	void delay( unsigned _delay ) { tmr_delay(_delay); }
 }
 
@@ -328,16 +328,16 @@ namespace ThisTimer
 struct Timer : public __tmr
 {
 	explicit
-	Timer( const fun_id _state = 0 ): __tmr _TMR_INIT(0) { state = _state; }
+	Timer( fun_t *_state = nullptr ): __tmr _TMR_INIT(0) { state = _state; }
 
 	void startUntil   ( unsigned _time )                                   {        tmr_startUntil   (this, _time,           this->state); }
-	void startUntil   ( unsigned _time,                    fun_id _state ) {        tmr_startUntil   (this, _time,                _state); }
+	void startUntil   ( unsigned _time,                    fun_t *_state ) {        tmr_startUntil   (this, _time,                _state); }
 	void start        ( unsigned _delay, unsigned _period )                {        tmr_start        (this, _delay, _period, this->state); }
-	void start        ( unsigned _delay, unsigned _period, fun_id _state ) {        tmr_start        (this, _delay, _period,      _state); }
+	void start        ( unsigned _delay, unsigned _period, fun_t *_state ) {        tmr_start        (this, _delay, _period,      _state); }
 	void startFor     ( unsigned _delay )                                  {        tmr_startFor     (this, _delay,          this->state); }
-	void startFor     ( unsigned _delay,                   fun_id _state ) {        tmr_startFor     (this, _delay,               _state); }
+	void startFor     ( unsigned _delay,                   fun_t *_state ) {        tmr_startFor     (this, _delay,               _state); }
 	void startPeriodic( unsigned _period )                                 {        tmr_startPeriodic(this,         _period, this->state); }
-	void startPeriodic( unsigned _period,                  fun_id _state ) {        tmr_startPeriodic(this,         _period,      _state); }
+	void startPeriodic( unsigned _period,                  fun_t *_state ) {        tmr_startPeriodic(this,         _period,      _state); }
 
 	void     wait     ( void )                                             {        tmr_wait         (this);                               }
 	unsigned take     ( void )                                             { return tmr_take         (this);                               }
@@ -362,7 +362,7 @@ struct Timer : public __tmr
 struct startTimerUntil : public Timer
 {
 	explicit
-	startTimerUntil( const unsigned _time, const fun_id _state ): Timer() { tmr_startUntil(this, _time, _state); }
+	startTimerUntil( const unsigned _time, fun_t *_state ): Timer() { tmr_startUntil(this, _time, _state); }
 };
 
 /**********************************************************************************************************************
@@ -388,7 +388,7 @@ struct startTimerUntil : public Timer
 struct startTimer : public Timer
 {
 	explicit
-	startTimer( const unsigned _delay, const unsigned _period, const fun_id _state ): Timer() { tmr_start(this, _delay, _period, _state); }
+	startTimer( const unsigned _delay, const unsigned _period, fun_t *_state ): Timer() { tmr_start(this, _delay, _period, _state); }
 };
 
 /**********************************************************************************************************************
@@ -410,7 +410,7 @@ struct startTimer : public Timer
 struct startTimerFor : public Timer
 {
 	explicit
-	startTimerFor( const unsigned _delay, const fun_id _state ): Timer() { tmr_startFor(this, _delay, _state); }
+	startTimerFor( const unsigned _delay, fun_t *_state ): Timer() { tmr_startFor(this, _delay, _state); }
 };
 
 /**********************************************************************************************************************
@@ -433,7 +433,7 @@ struct startTimerFor : public Timer
 struct startTimerPeriodic : public Timer
 {
 	explicit
-	startTimerPeriodic( const unsigned _period, const fun_id _state ): Timer() { tmr_startPeriodic(this, _period, _state); }
+	startTimerPeriodic( const unsigned _period, fun_t *_state ): Timer() { tmr_startPeriodic(this, _period, _state); }
 };
 
 #endif//__cplusplus

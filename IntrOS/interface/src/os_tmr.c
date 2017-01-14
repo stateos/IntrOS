@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.c
     @author  Rajmund Szymanski
-    @date    11.01.2017
+    @date    14.01.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -38,7 +38,7 @@ void priv_tmr_start( tmr_t *tmr )
 }
 
 /* -------------------------------------------------------------------------- */
-void tmr_startUntil( tmr_t *tmr, unsigned time, fun_id proc )
+void tmr_startUntil( tmr_t *tmr, unsigned time, fun_t *proc )
 /* -------------------------------------------------------------------------- */
 {
 	assert(tmr);
@@ -56,7 +56,7 @@ void tmr_startUntil( tmr_t *tmr, unsigned time, fun_id proc )
 }
 
 /* -------------------------------------------------------------------------- */
-void tmr_start( tmr_t *tmr, unsigned delay, unsigned period, fun_id proc )
+void tmr_start( tmr_t *tmr, unsigned delay, unsigned period, fun_t *proc )
 /* -------------------------------------------------------------------------- */
 {
 	assert(tmr);

@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    11.01.2017
+    @date    14.01.2017
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -68,7 +68,8 @@ extern "C" {
 
 /* -------------------------------------------------------------------------- */
 
-typedef   void (*fun_id)(); // task/timer procedure
+typedef   void       fun_t(); // timer/task procedure
+
 typedef struct __que que_t; // queue
 typedef struct __tmr tmr_t; // timer
 typedef struct __tsk tsk_t; // task
