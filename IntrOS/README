@@ -25,6 +25,7 @@ Features:
 - rebuilded internal preprocessor definitions
 - rebuilded data structures
 - rebuilded c++ classes
+- updated examples
 - added support for Small Device C Compiler
 ---------
 2.3
