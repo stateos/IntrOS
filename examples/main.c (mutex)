@@ -6,18 +6,14 @@ mtx_t mtx = MTX_INIT();
 void slave()
 {
 	mtx_wait(&mtx);
-
 	LED_Tick();
-
 	mtx_give(&mtx);
 }
 
 void master()
 {
 	mtx_wait(&mtx);
-
 	tsk_delay(SEC);
-
 	mtx_give(&mtx);
 }
 

@@ -7,7 +7,6 @@ tmr_t tmr = TMR_INIT();
 void slave()
 {
 	sem_wait(&sem);
-
 	LED_Tick();
 }
 
