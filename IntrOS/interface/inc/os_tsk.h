@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    14.01.2017
+    @date    17.01.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -77,6 +77,26 @@ typedef struct __tsk tsk_id[1];
  **********************************************************************************************************************/
 
 #define               _TSK_INIT( _state, _top ) { 0, 0, 0, 0, _state, 0, 0, 0, 0, _top }
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : _TSK_CREATE                                                                                    *
+ *                                                                                                                    *
+ * Description       : create and initilize a task object                                                             *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   state           : task state (initial task function) doesn't have to be noreturn-type                            *
+ *                     it will be executed into an infinite system-implemented loop                                   *
+ *   top             : top of task's private stack storage                                                            *
+ *                                                                                                                    *
+ * Return            : pointer to task object                                                                         *
+ *                                                                                                                    *
+ * Note              : for internal use                                                                               *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+#define               _TSK_CREATE( _state, _top ) \
+                    { _TSK_INIT( _state, _top ) }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -240,7 +260,7 @@ typedef struct __tsk tsk_id[1];
 
 #ifndef __cplusplus
 #define                WRK_CREATE( state, size ) \
-                     { WRK_INIT( state, size ) }
+                      _TSK_CREATE( state, _TSK_STACK( size ) )
 #endif
 
 /**********************************************************************************************************************
@@ -261,7 +281,7 @@ typedef struct __tsk tsk_id[1];
 
 #ifndef __cplusplus
 #define                TSK_INIT( state ) \
-                      _TSK_INIT( state, _TSK_STACK( OS_STACK_SIZE ) )
+                       WRK_INIT( state, OS_STACK_SIZE )
 #endif
 
 /**********************************************************************************************************************
@@ -282,7 +302,7 @@ typedef struct __tsk tsk_id[1];
 
 #ifndef __cplusplus
 #define                TSK_CREATE( state ) \
-                     { TSK_INIT( state ) }
+                       WRK_CREATE( state, OS_STACK_SIZE )
 #endif
 
 /**********************************************************************************************************************
