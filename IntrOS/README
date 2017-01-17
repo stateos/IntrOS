@@ -21,6 +21,9 @@ Features:
 - timers (one-shot, periodic)
 - all documentation is contained within the source files
 ---------
+2.5
+- added oslibc.c file for COSMIC Software CORTEX-M C Cross Compiler
+---------
 2.4
 - rebuilded internal preprocessor definitions
 - rebuilded data structures
