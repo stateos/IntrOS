@@ -155,6 +155,24 @@ typedef struct __tsk tsk_id[1];
  *                                                                                                                    *
  * Name              : OS_DEF                                                                                         *
  *                                                                                                                    *
+ * Description       : define and initilize complete work area for task object                                        *
+ *                     task state (function body) must be defined immediately below                                   *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   tsk             : name of a pointer to task object                                                               *
+ *   size            : size of task private stack (in bytes)                                                          *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+#define             OS_DEF( tsk, size )            \
+                       void tsk##__fun( void );     \
+                    OS_WRK( tsk, tsk##__fun, size ); \
+                       void tsk##__fun( void )
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : OS_NEW                                                                                         *
+ *                                                                                                                    *
  * Description       : define and initilize complete work area for task obj. with stack size defined by OS_STACK_SIZE *
  *                     task state (function body) must be defined immediately below                                   *
  *                                                                                                                    *
@@ -163,10 +181,8 @@ typedef struct __tsk tsk_id[1];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define             OS_DEF( tsk )              \
-                       void tsk##__fun( void ); \
-                    OS_TSK( tsk, tsk##__fun );   \
-                       void tsk##__fun( void )
+#define             OS_NEW( tsk ) \
+                    OS_DEF( tsk, OS_STACK_SIZE )
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -206,6 +222,24 @@ typedef struct __tsk tsk_id[1];
  *                                                                                                                    *
  * Name              : static_DEF                                                                                     *
  *                                                                                                                    *
+ * Description       : define and initilize static work area for task object                                          *
+ *                     task state (function body) must be defined immediately below                                   *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   tsk             : name of a pointer to task object                                                               *
+ *   size            : size of task private stack (in bytes)                                                          *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+#define         static_DEF( tsk, size )            \
+                static void tsk##__fun( void );     \
+                static_WRK( tsk, tsk##__fun, size ); \
+                static void tsk##__fun( void )
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : static_NEW                                                                                     *
+ *                                                                                                                    *
  * Description       : define and initilize static work area for task object with stack size defined by OS_STACK_SIZE *
  *                     task state (function body) must be defined immediately below                                   *
  *                                                                                                                    *
@@ -214,10 +248,8 @@ typedef struct __tsk tsk_id[1];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define         static_DEF( tsk )              \
-                static void tsk##__fun( void ); \
-                static_TSK( tsk, tsk##__fun );   \
-                static void tsk##__fun( void )
+#define         static_NEW( tsk ) \
+                static_DEF( tsk, OS_STACK_SIZE )
 
 /**********************************************************************************************************************
  *                                                                                                                    *

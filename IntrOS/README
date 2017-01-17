@@ -24,6 +24,7 @@ Features:
 2.5
 - added oslibc.c file for COSMIC Software CORTEX-M C Cross Compiler
 - added _TSK_CREATE macro in os_tsk.h file
+- changed OS_DEF macro and added OS_NEW macro in os_tsk.h file
 ---------
 2.4
 - rebuilded internal preprocessor definitions
