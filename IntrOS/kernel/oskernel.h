@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.h
     @author  Rajmund Szymanski
-    @date    11.01.2017
+    @date    24.01.2017
     @brief   This file defines set of kernel functions for IntrOS.
 
  ******************************************************************************
@@ -44,7 +44,8 @@ extern sys_t System; // system data
 
 // initiating and running the system timer
 // the port_sys_init procedure is normally called as a constructor
-void port_sys_init( void ) __CONSTRUCTOR;
+__CONSTRUCTOR
+void port_sys_init( void );
 
 /* -------------------------------------------------------------------------- */
 
@@ -54,7 +55,8 @@ void core_ctx_switch( void );
 /* -------------------------------------------------------------------------- */
 
 // abort and reset current process and force yield system control to the next
-void core_tsk_break( void ) __NORETURN;
+__NO_RETURN
+void core_tsk_break( void );
 
 /* -------------------------------------------------------------------------- */
 
@@ -70,22 +72,22 @@ void core_rdy_remove( void *obj );
 
 // add timer 'tmr' to tasks/timers queue
 // start countdown
-static inline
+__STATIC_INLINE
 void core_tmr_insert( tmr_t *tmr ) { core_rdy_insert(tmr, ID_TIMER, Current); }
 
 // remove timer 'tmr' from tasks/timers queue
-static inline
+__STATIC_INLINE
 void core_tmr_remove( tmr_t *tmr ) { core_rdy_remove(tmr); }
 
 /* -------------------------------------------------------------------------- */
 
 // add task 'tsk' to tasks/timers queue with id ID_READY
-static inline
+__STATIC_INLINE
 void core_tsk_insert( tsk_t *tsk ) { core_rdy_insert(tsk, ID_READY, Current); }
 
 // remove task 'tsk' from tasks/timers queue
-static inline
-void   core_tsk_remove( tsk_t *tsk ) { core_rdy_remove(tsk); }
+__STATIC_INLINE
+void core_tsk_remove( tsk_t *tsk ) { core_rdy_remove(tsk); }
 
 // tasks queue handler procedure
 // return a pointer to next READY task

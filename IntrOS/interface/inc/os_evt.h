@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_evt.h
     @author  Rajmund Szymanski
-    @date    11.01.2017
+    @date    24.01.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -145,7 +145,7 @@ typedef struct __evt evt_t, evt_id[1];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              unsigned evt_wait( evt_t *evt );
+unsigned evt_wait( evt_t *evt );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -161,7 +161,7 @@ typedef struct __evt evt_t, evt_id[1];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              void     evt_give( evt_t *evt, unsigned event );
+void evt_give( evt_t *evt, unsigned event );
 
 #ifdef __cplusplus
 }

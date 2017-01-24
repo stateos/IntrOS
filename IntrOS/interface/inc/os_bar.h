@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_bar.h
     @author  Rajmund Szymanski
-    @date    11.01.2017
+    @date    24.01.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -150,7 +150,7 @@ typedef struct __bar bar_t, bar_id[1];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              void     bar_wait( bar_t *bar );
+void bar_wait( bar_t *bar );
 
 #ifdef __cplusplus
 }

@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_flg.h
     @author  Rajmund Szymanski
-    @date    11.01.2017
+    @date    24.01.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -152,7 +152,7 @@ typedef struct __flg flg_t, flg_id[1];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              void     flg_wait( flg_t *flg, unsigned flags, bool all );
+void flg_wait( flg_t *flg, unsigned flags, bool all );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -173,7 +173,7 @@ typedef struct __flg flg_t, flg_id[1];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              unsigned flg_take( flg_t *flg, unsigned flags, bool all );
+unsigned flg_take( flg_t *flg, unsigned flags, bool all );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -189,7 +189,7 @@ typedef struct __flg flg_t, flg_id[1];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-              void     flg_give( flg_t *flg, unsigned flags );
+void flg_give( flg_t *flg, unsigned flags );
 
 #ifdef __cplusplus
 }

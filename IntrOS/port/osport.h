@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.h
     @author  Rajmund Szymanski
-    @date    28.12.2016
+    @date    24.01.2017
     @brief   IntrOS port definitions for Cortex-Mx uC.
 
  ******************************************************************************
@@ -74,7 +74,7 @@ extern "C" {
 /* -------------------------------------------------------------------------- */
 
 #ifndef  OS_ASSERT
-#define  OS_ASSERT            0 /* don't include standard assertions */
+#define  OS_ASSERT            0 /* don't include standard assertions          */
 #endif
 
 #if     (OS_ASSERT == 0)
@@ -100,40 +100,21 @@ extern   stk_t              __initial_sp[];
 
 /* -------------------------------------------------------------------------- */
 
-#if      defined(__ARMCC_VERSION)
-
-#ifndef  __CONSTRUCTOR
-#define  __CONSTRUCTOR            __attribute__((constructor))
-#endif
-#ifndef  __NORETURN
-#define  __NORETURN               __attribute__((noreturn))
-#endif
-
-#elif    defined(__GNUC__)
-
-#ifndef  __CONSTRUCTOR
-#define  __CONSTRUCTOR            __attribute__((constructor))
-#endif
-#ifndef  __NORETURN
-#define  __NORETURN               __attribute__((noreturn, naked))
-#endif
-
-#elif    defined(__CSMC__)
+#if      defined(__CSMC__)
 
 #ifndef  __CONSTRUCTOR
 #define  __CONSTRUCTOR
 #warning No compiler specific solution for __CONSTRUCTOR. __CONSTRUCTOR is ignored.
 #endif
-#ifndef  __NORETURN
-#define  __NORETURN
-#endif
 
-#define  __disable_irq()          __ASM("cpsid i")
-#define  __enable_irq()           __ASM("cpsie i")
+#define  __disable_irq()    __ASM("cpsid i")
+#define  __enable_irq()     __ASM("cpsie i")
 
 #else
 
-#error   Unknown compiler!
+#ifndef  __CONSTRUCTOR
+#define  __CONSTRUCTOR      __attribute__((constructor))
+#endif
 
 #endif
 
