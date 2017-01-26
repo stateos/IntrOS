@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.c
     @author  Rajmund Szymanski
-    @date    27.10.2016
+    @date    26.01.2017
     @brief   IntrOS port file for ARM Cotrex-M4F.
 
  ******************************************************************************
@@ -28,100 +28,49 @@
 
 #if defined(__ARMCOMPILER_VERSION)
 
-#include <stddef.h>
 #include <os.h>
 
 /* -------------------------------------------------------------------------- */
 
+#if __FPU_USED
+
 __attribute__((naked))
-void core_ctx_switch( void )
+int setjmp(/*jmp_buf buf*/)
 {
 	__asm volatile
 	(
-"	.global      core_tsk_break    \n"
-
-"	mrs   r2,    IPSR              \n"
-#if __CORTEX_M < 3
-"	cmp   r2,   #0                 \n"
-"	bne   priv_ctx_exit            \n"
-#else
-"	cbnz  r2,    priv_ctx_exit     \n"
-#endif
-"	mrs   r3,    PRIMASK           \n"
-#if __CORTEX_M < 3
-"	sub   sp,   #40                \n"
-"	mov   r1,    sp                \n"
-"	stm   r1!, { r3  - r7 }        \n"
-"	mov   r3,    r8                \n"
-"	mov   r4,    r9                \n"
-"	mov   r5,    r10               \n"
-"	mov   r6,    r11               \n"
-"	mov   r7,    lr                \n"
-"	stm   r1!, { r3  - r7 }        \n"
-#else
-"	push       { r3  - r11, lr }   \n"
-#if __FPU_USED
-"	vpush      { s16 - s31 }       \n"
-#endif
-#endif
-"	mov   r1,    sp                \n"
-
-"priv_tsk_save:                    \n"
-
-"	ldr   r0,   =System            \n"
-"	ldr   r0,  [ r0, %[cur] ]      \n"
-"	str   r1,  [ r0, %[sp] ]       \n"
-"	bl    core_tsk_handler         \n"
-"	ldr   r1,  [ r0, %[sp] ]       \n"
-#if __CORTEX_M < 3
-"	cmp   r1,   #0                 \n"
-"	beq   priv_tsk_start           \n"
-#else
-"	cbz   r1,    priv_tsk_start    \n"
-#endif
-"	mov   sp,    r1                \n"
-#if __CORTEX_M < 3
-"	adds  r1,   #20                \n"
-"	ldm   r1!, { r3  - r7 }        \n"
-"	mov   r8,    r3                \n"
-"	mov   r9,    r4                \n"
-"	mov   r10,   r5                \n"
-"	mov   r11,   r6                \n"
-"	mov   lr,    r7                \n"
-"	subs  r1,   #40                \n"
-"	ldm   r1!, { r3  - r7 }        \n"
-"	add   sp,   #40                \n"
-#else
-#if __FPU_USED
-"	vpop       { s16 - s31 }       \n"
-#endif
-"	pop        { r3  - r11, lr }   \n"
-#endif
-"	msr   PRIMASK, r3              \n"
-
-"priv_ctx_exit:                    \n"
-
-"	bx    lr                       \n"
-
-"priv_tsk_start:                   \n"
-
-"	ldr   r1,  [ r0, %[top] ]      \n"
-"	mov   sp,    r1                \n"
-"	ldr   r3,  [ r0, %[state] ]    \n"
-"	blx   r3                       \n"
-	
-"	.thumb_func                    \n"
-"core_tsk_break:                   \n"
-
-"	movs  r1,   #0                 \n"
-"	b     priv_tsk_save            \n"
-
-::	[cur]   "n" (offsetof(sys_t, cur)),
-	[state] "n" (offsetof(tsk_t, state)),
-	[sp]    "n" (offsetof(tsk_t, sp)),
-	[top]   "n" (offsetof(tsk_t, top))
+"	mov    ip,    sp          \n"
+"	stmia  r0!, { r8-r11,lr } \n"
+"	stmia  r0!, { r4-r7,ip }  \n"
+"	vstmia r0!, { s16-s31 }   \n"
+"	movs   r0,  # 0           \n"
+"	bx     lr                 \n"
 	);
 }
+
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+#if __FPU_USED
+
+__attribute__((naked))
+void longjmp(/*jmp_buf buf, int val*/)
+{
+	__asm volatile
+	(
+"	ldmia  r0!, { r8-r11,lr } \n"
+"	ldmia  r0!, { r4-r7,ip }  \n"
+"	vldmia r0!, { s16-s31 }   \n"
+"	mov    sp,    ip          \n"
+"	movs   r0,    r1          \n"
+"	it     eq                 \n"
+"	moveq  r0,  # 1           \n"
+"	bx     lr                 \n"
+	);
+}
+
+#endif
 
 /* -------------------------------------------------------------------------- */
 

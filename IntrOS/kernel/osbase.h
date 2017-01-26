@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    14.01.2017
+    @date    25.01.2017
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -30,6 +30,7 @@
 #define __INTROSBASE_H
 
 #include <stdbool.h>
+#include <setjmp.h>
 #include <osport.h>
 
 #ifdef __cplusplus
@@ -106,6 +107,58 @@ typedef struct __sys
 	unsigned cnt;   // system timer counter
 
 }	sys_t;
+
+/* -------------------------------------------------------------------------- */
+
+// task context
+
+#if   defined(__ARMCC_VERSION)
+
+typedef struct __ctx
+{
+	unsigned h[4];  // r8-r11
+	fun_t  * pc;
+	unsigned l[4];  // r4-r7
+	void   * sp;
+#if __FPU_USED
+	float    s[16]; // s16-s31
+#endif
+}	ctx_t;
+
+#elif defined(__GNUC__)
+
+typedef struct __ctx
+{
+	unsigned r[8];  // r4-r11
+	void   * sp;
+	fun_t  * pc;
+#if __FPU_USED
+	float    s[16]; // s16-s31
+#endif
+}	ctx_t;
+
+#elif defined(__CSMC__)
+
+typedef struct __ctx
+{
+	unsigned r[8];  // r4-r11
+	fun_t  * pc;
+	void   * sp;
+#if __FPU_USED
+	float    s[16]; // s16-s31
+#endif
+}	ctx_t;
+
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+__STATIC_INLINE
+void port_ctx_init( ctx_t *ctx, stk_t *sp, fun_t *pc )
+{
+	ctx->sp = sp;
+	ctx->pc = pc;
+}
 
 /* -------------------------------------------------------------------------- */
 

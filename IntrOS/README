@@ -26,6 +26,8 @@ Features:
 - added _TSK_CREATE macro in os_tsk.h file
 - changed OS_DEF macro and added OS_NEW macro in os_tsk.h file
 - added changes in some definitions
+- context switch is realized by functions setjmp / longjmp
+- rebuilded kernel
 ---------
 2.4
 - rebuilded internal preprocessor definitions

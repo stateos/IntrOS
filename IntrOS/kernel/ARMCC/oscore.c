@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.c
     @author  Rajmund Szymanski
-    @date    27.10.2016
+    @date    26.01.2017
     @brief   IntrOS port file for ARM Cotrex-M4F.
 
  ******************************************************************************
@@ -28,95 +28,49 @@
 
 #if defined(__CC_ARM)
 
-#include <stddef.h>
 #include <os.h>
 
 /* -------------------------------------------------------------------------- */
 
-__asm void core_ctx_switch( void )
+#if __FPU_USED
+
+__asm int setjmp( jmp_buf buf )
 {
 	PRESERVE8
-	IMPORT System
-	IMPORT core_tsk_handler
-	EXPORT core_tsk_break
 
-	mrs   r2,    IPSR
-#if __CORTEX_M < 3
-	cmp   r2,   #0
-	bne   priv_ctx_exit        // inside ISR
-#else
-	cbnz  r2,    priv_ctx_exit // inside ISR
-#endif
-	mrs   r3,    PRIMASK
-#if __CORTEX_M < 3
-	sub   sp,   #40
-	mov   r1,    sp
-	stm   r1!, { r3  - r7 }
-	mov   r3,    r8
-	mov   r4,    r9
-	mov   r5,    r10
-	mov   r6,    r11
-	mov   r7,    lr
-	stm   r1!, { r3  - r7 }
-#else
-	push       { r3  - r11, lr }
-#if __FPU_USED
-	vpush      { s16 - s31 }
-#endif
-#endif
-	mov   r1,    sp
-
-priv_tsk_save
-	
-	ldr   r0,   =System
-	ldr   r0,  [ r0, #__cpp(offsetof(sys_t, cur)) ]
-	str   r1,  [ r0, #__cpp(offsetof(tsk_t, sp)) ]
-	bl    core_tsk_handler
-	ldr   r1,  [ r0, #__cpp(offsetof(tsk_t, sp)) ]
-#if __CORTEX_M < 3
-	cmp   r1,   #0
-	beq   priv_tsk_start
-#else
-	cbz   r1,    priv_tsk_start
-#endif
-	mov   sp,    r1
-#if __CORTEX_M < 3
-	adds  r1,   #20
-	ldm   r1!, { r3  - r7 }
-	mov   r8,    r3
-	mov   r9,    r4
-	mov   r10,   r5
-	mov   r11,   r6
-	mov   lr,    r7
-	subs  r1,   #40
-	ldm   r1!, { r3  - r7 }
-	add   sp,   #40
-#else
-#if __FPU_USED
-	vpop       { s16 - s31 }
-#endif
-	pop        { r3  - r11, lr }
-#endif
-	msr   PRIMASK, r3
-
-priv_ctx_exit
-
-	bx    lr
-
-priv_tsk_start
-
-	ldr   r1,  [ r0, #__cpp(offsetof(tsk_t, top)) ]
-	mov   sp,    r1
-	ldr   r3,  [ r0, #__cpp(offsetof(tsk_t, state)) ]
-	blx   r3
-	
-core_tsk_break
-
-	movs  r1,   #0
-	b     priv_tsk_save
+	mov    ip,    sp
+	stmia  r0!, { r8-r11,lr }
+	stmia  r0!, { r4-r7,ip }
+	vstmia r0!, { s16-s31 }
+	movs   r0,  # 0
+	bx     lr
 
 	ALIGN
 }
+
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+#if __FPU_USED
+
+__asm void longjmp( jmp_buf buf, int val )
+{
+	PRESERVE8
+
+	ldmia  r0!, { r8-r11,lr }
+	ldmia  r0!, { r4-r7,ip }
+	vldmia r0!, { s16-s31 }
+	mov    sp,    ip
+	movs   r0,    r1
+	it     eq
+	moveq  r0,  # 1
+	bx     lr
+
+	ALIGN
+}
+
+#endif
 
 /* -------------------------------------------------------------------------- */
 

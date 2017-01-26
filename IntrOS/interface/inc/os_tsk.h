@@ -51,10 +51,12 @@ struct __tsk
 	fun_t  * state; // inherited from timer
 	unsigned start; // inherited from timer
 	unsigned delay; // inherited from timer
-	unsigned period;// inherited from timer
-
-	void   * sp;    // stack pointer
 	void   * top;   // top of stack
+
+	union  {
+	jmp_buf  buf;   // setjmp/longjmp buffer
+	ctx_t    reg;   // task context
+	}        ctx;
 };
 
 typedef struct __tsk tsk_id[1];
@@ -76,7 +78,7 @@ typedef struct __tsk tsk_id[1];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define               _TSK_INIT( _state, _top ) { 0, 0, 0, 0, _state, 0, 0, 0, 0, _top }
+#define               _TSK_INIT( _state, _top ) { 0, 0, 0, 0, _state, 0, 0, _top, { { 0 } } }
 
 /**********************************************************************************************************************
  *                                                                                                                    *

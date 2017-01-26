@@ -49,12 +49,17 @@ void port_sys_init( void );
 
 /* -------------------------------------------------------------------------- */
 
+// init task 'tsk' for context switch
+void core_ctx_init( tsk_t *tsk );
+
 // save status of current process and force yield system control to the next
 void core_ctx_switch( void );
 
-/* -------------------------------------------------------------------------- */
+// start current process
+__NO_RETURN
+void core_tsk_start( void );
 
-// abort and reset current process and force yield system control to the next
+// force yield system control to the next process
 __NO_RETURN
 void core_tsk_break( void );
 
@@ -88,10 +93,6 @@ void core_tsk_insert( tsk_t *tsk ) { core_rdy_insert(tsk, ID_READY, Current); }
 // remove task 'tsk' from tasks/timers queue
 __STATIC_INLINE
 void core_tsk_remove( tsk_t *tsk ) { core_rdy_remove(tsk); }
-
-// tasks queue handler procedure
-// return a pointer to next READY task
-tsk_t *core_tsk_handler( void );
 
 /* -------------------------------------------------------------------------- */
 

@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.c
     @author  Rajmund Szymanski
-    @date    27.10.2016
+    @date    26.01.2017
     @brief   IntrOS port file for ARM Cotrex-M4F.
 
  ******************************************************************************
@@ -28,100 +28,47 @@
 
 #if defined(__CSMC__)
 
-#include <stddef.h>
 #include <os.h>
 
 /* -------------------------------------------------------------------------- */
 
-void core_ctx_switch( void )
+#if __FPU_USED
+
+int setjmp( jmp_buf buf )
 {
 	#asm
 
-	xref  _System
-	xref  _core_tsk_handler
-	xdef  _core_tsk_break
-
-;	mov	  r0,   #4096
-;	ldr   r1,   =27.10.2016
-;	str   r0,   [r1]
-
-	mrs   r2,    IPSR
-#if __CORTEX_M < 3
-	cmp   r2,   #0
-	bne   _priv_ctx_exit    ; inside ISR
-#else
-	cbnz  r2,_priv_ctx_exit ; inside ISR
-#endif
-	mrs   r3,    PRIMASK
-#if __CORTEX_M < 3
-	sub   sp,   #40
-	mov   r1,    sp
-	stm   r1!, { r3  - r7 }
-	mov   r3,    r8
-	mov   r4,    r9
-	mov   r5,    r10
-	mov   r6,    r11
-	mov   r7,    lr
-	stm   r1!, { r3  - r7 }
-#else
-	push       { r3  - r11, lr }
-#if __FPU_USED
-	vpush      { s16 - s31 }
-#endif
-#endif
-	mov   r1,    sp
-
-_priv_tsk_save:
-	
-	ldr   r0,  =_System
-	ldr   r0,  [ r0,  #0 ]  ; (offsetof(sys_t, cur))
-	str   r1,  [ r0, #32 ]  ; (offsetof(tsk_t, sp))
-	bl    _core_tsk_handler
-	ldr   r1,  [ r0, #32 ]  ; (offsetof(tsk_t, sp))
-#if __CORTEX_M < 3
-	cmp   r1,   #0
-	beq   _priv_tsk_start
-#else
-	cbz   r1,_priv_tsk_start
-#endif
-	mov   sp,    r1
-#if __CORTEX_M < 3
-	adds  r1,   #20
-	ldm   r1!, { r3  - r7 }
-	mov   r8,    r3
-	mov   r9,    r4
-	mov   r10,   r5
-	mov   r11,   r6
-	mov   lr,    r7
-	subs  r1,   #40
-	ldm   r1!, { r3  - r7 }
-	add   sp,   #40
-#else
-#if __FPU_USED
-	vpop       { s16 - s31 }
-#endif
-	pop        { r3  - r11, lr }
-#endif
-	msr   PRIMASK, r3
-
-_priv_ctx_exit:
-
-	bx    lr
-
-_priv_tsk_start:
-
-	ldr   r1,  [ r0, #36 ]  ; (offsetof(tsk_t, top))
-	mov   sp,    r1
-	ldr   r3,  [ r0, #16 ]  ; (offsetof(tsk_t, state))
-	blx   r3
-	
-_core_tsk_break:
-
-	movs  r1,   #0
-	b     _priv_tsk_save
+	mov    r12,   sp
+	stmia  r0!, { r4-r11,lr }
+	stmia  r0!, { r12 }
+	vstmia r0!, { s16-s31 }
+	movs   r0,  # 0
 
 	#endasm
 }
+
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+#if __FPU_USED
+
+void longjmp( jmp_buf buf, int val )
+{
+	#asm
+
+	ldmia  r0!, { r4-r11,lr }
+	ldmia  r0!, { r12 }
+	vldmia r0!, { s16-s31 }
+	mov    sp,    r12
+	movs   r0,    r1
+	it     eq
+	moveq  r0,  # 1
+
+	#endasm
+}
+
+#endif
 
 /* -------------------------------------------------------------------------- */
 
