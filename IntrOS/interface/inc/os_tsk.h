@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    24.01.2017
+    @date    31.01.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -54,8 +54,8 @@ struct __tsk
 	void   * top;   // top of stack
 
 	union  {
-	jmp_buf  buf;   // setjmp/longjmp buffer
 	ctx_t    reg;   // task context
+	jmp_buf  buf;   // setjmp/longjmp buffer
 	}        ctx;
 };
 
@@ -78,7 +78,7 @@ typedef struct __tsk tsk_id[1];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define               _TSK_INIT( _state, _top ) { 0, 0, 0, 0, _state, 0, 0, _top, { { 0 } } }
+#define               _TSK_INIT( _state, _top ) { 0, 0, 0, 0, _state, 0, 0, _top, { _CTX_INIT() } }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -632,7 +632,7 @@ struct TaskT : public __tsk
 {
 	explicit
 	 TaskT( fun_t *_state ): __tsk _TSK_INIT(0, _stack+ASIZE(_size)) { state = _state; }
-	~TaskT( void ) { assert(obj.id == ID_STOPPED); }
+	~TaskT( void ) { assert(id == ID_STOPPED); }
 
 	void     join      ( void )            {        tsk_join      (this);         }
 	void     start     ( void )            {        tsk_start     (this);         }

@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    25.01.2017
+    @date    31.01.2017
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -59,8 +59,12 @@ extern "C" {
 
 /* -------------------------------------------------------------------------- */
 
+#ifndef IMMEDIATE
 #define IMMEDIATE  ( 0U) // no waiting
+#endif
+#ifndef INFINITE
 #define INFINITE   (~0U) // infinite waiting
+#endif
 
 /* -------------------------------------------------------------------------- */
 
@@ -116,9 +120,9 @@ typedef struct __sys
 
 typedef struct __ctx
 {
-	unsigned h[4];  // r8-r11
+	unsigned r8, r9, r10, r11;
 	fun_t  * pc;
-	unsigned l[4];  // r4-r7
+	unsigned r4, r5, r6, r7;
 	void   * sp;
 #if __FPU_USED
 	float    s[16]; // s16-s31
@@ -129,7 +133,7 @@ typedef struct __ctx
 
 typedef struct __ctx
 {
-	unsigned r[8];  // r4-r11
+	unsigned r4, r5, r6, r7, r8, r9, r10, r11;
 	void   * sp;
 	fun_t  * pc;
 #if __FPU_USED
@@ -141,7 +145,7 @@ typedef struct __ctx
 
 typedef struct __ctx
 {
-	unsigned r[8];  // r4-r11
+	unsigned r4, r5, r6, r7, r8, r9, r10, r11;
 	fun_t  * pc;
 	void   * sp;
 #if __FPU_USED
@@ -149,6 +153,12 @@ typedef struct __ctx
 #endif
 }	ctx_t;
 
+#endif
+
+#if __FPU_USED
+#define _CTX_INIT() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, { 0 } }
+#else
+#define _CTX_INIT() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 #endif
 
 /* -------------------------------------------------------------------------- */
