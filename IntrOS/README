@@ -11,7 +11,7 @@ Features:
 - kernel works in cooperative mode only
 - signals (auto clearing, protected)
 - events
-- flags (one, all)
+- flags (any, all)
 - barriers
 - semaphores
 - mutexes
@@ -20,6 +20,9 @@ Features:
 - mailbox queues
 - timers (one-shot, periodic)
 - all documentation is contained within the source files
+---------
+2.6
+- rename flgOne to flgAny
 ---------
 2.5
 - added oslibc.c file for COSMIC Software CORTEX-M C Cross Compiler

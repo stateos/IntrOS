@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_flg.h
     @author  Rajmund Szymanski
-    @date    24.01.2017
+    @date    16.02.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -50,7 +50,7 @@ typedef struct __flg flg_t, flg_id[1];
 
 /* -------------------------------------------------------------------------- */
 
-#define  flgOne      ( false )
+#define  flgAny      ( false )
 #define  flgAll      ( true  )
 
 /**********************************************************************************************************************
@@ -145,7 +145,7 @@ typedef struct __flg flg_t, flg_id[1];
  *   flg             : pointer to flag object                                                                         *
  *   flags           : all flags to wait                                                                              *
  *   all             : waiting mode                                                                                   *
- *                     flgOne:    wait for any flags to be set                                                        *
+ *                     flgAny:    wait for any flags to be set                                                        *
  *                     flgAll:    wait for all flags to be set                                                        *
  *                                                                                                                    *
  * Return            : none                                                                                           *
@@ -164,7 +164,7 @@ void flg_wait( flg_t *flg, unsigned flags, bool all );
  *   flg             : pointer to flag object                                                                         *
  *   flags           : all flags to wait                                                                              *
  *   all             : waiting mode                                                                                   *
- *                     flgOne:    wait for any flags to be set                                                        *
+ *                     flgAny:    wait for any flags to be set                                                        *
  *                     flgAll:    wait for all flags to be set                                                        *
  *                                                                                                                    *
  * Return                                                                                                             *
