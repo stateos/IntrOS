@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_mem.h
     @author  Rajmund Szymanski
-    @date    24.01.2017
+    @date    24.02.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -172,9 +172,9 @@ typedef struct __mem mem_t, mem_id[1];
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Name              : mem_init                                                                                       *
+ * Name              : mem_reset                                                                                      *
  *                                                                                                                    *
- * Description       : initialize the memory pool object                                                              *
+ * Description       : reset (initialize) data buffer of a memory pool object                                         *
  *                                                                                                                    *
  * Parameters                                                                                                         *
  *   mem             : pointer to memory pool object                                                                  *
@@ -183,7 +183,7 @@ typedef struct __mem mem_t, mem_id[1];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-void mem_init( mem_t *mem );
+void mem_reset( mem_t *mem );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -261,7 +261,7 @@ template<unsigned _limit, unsigned _size>
 struct MemoryPoolT : public __mem
 {
 	explicit
-	MemoryPoolT( void ): __mem _MEM_INIT(_limit, _size, _data) { mem_init(this); }
+	MemoryPoolT( void ): __mem _MEM_INIT(_limit, _size, _data) { mem_reset(this); }
 
 	void     wait( void **_data ) {        mem_wait(this, (void**)_data); }
 	unsigned take( void **_data ) { return mem_take(this, (void**)_data); }

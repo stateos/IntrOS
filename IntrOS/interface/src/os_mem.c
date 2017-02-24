@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_mem.c
     @author  Rajmund Szymanski
-    @date    11.01.2017
+    @date    24.02.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -29,7 +29,7 @@
 #include <os.h>
 
 /* -------------------------------------------------------------------------- */
-void mem_init( mem_t *mem )
+void mem_reset( mem_t *mem )
 /* -------------------------------------------------------------------------- */
 {
 	void   **ptr;
