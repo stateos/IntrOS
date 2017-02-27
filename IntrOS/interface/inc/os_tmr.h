@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.h
     @author  Rajmund Szymanski
-    @date    24.01.2017
+    @date    27.01.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -62,9 +62,7 @@ typedef struct __tmr tmr_id[1];
  *                                                                                                                    *
  * Description       : create and initilize a timer object                                                            *
  *                                                                                                                    *
- * Parameters                                                                                                         *
- *   state           : callback procedure                                                                             *
- *                     0: no callback                                                                                 *
+ * Parameters        : none                                                                                           *
  *                                                                                                                    *
  * Return            : timer object                                                                                   *
  *                                                                                                                    *
@@ -72,7 +70,7 @@ typedef struct __tmr tmr_id[1];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define               _TMR_INIT( state ) { 0, 0, 0, 0, state, 0, 0, 0 }
+#define               _TMR_INIT() { 0, 0, 0, 0, 0, 0, 0, 0 }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -86,7 +84,7 @@ typedef struct __tmr tmr_id[1];
  **********************************************************************************************************************/
 
 #define             OS_TMR( tmr ) \
-                       tmr_id tmr = { _TMR_INIT( 0 ) }
+                       tmr_id tmr = { _TMR_INIT() }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -100,7 +98,7 @@ typedef struct __tmr tmr_id[1];
  **********************************************************************************************************************/
 
 #define         static_TMR( tmr ) \
-                static tmr_id tmr = { _TMR_INIT( 0 ) }
+                static tmr_id tmr = { _TMR_INIT() }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -118,7 +116,7 @@ typedef struct __tmr tmr_id[1];
 
 #ifndef __cplusplus
 #define                TMR_INIT() \
-                      _TMR_INIT( 0 )
+                      _TMR_INIT()
 #endif
 
 /**********************************************************************************************************************
@@ -332,7 +330,7 @@ namespace ThisTimer
 struct Timer : public __tmr
 {
 	explicit
-	Timer( fun_t *_state = nullptr ): __tmr _TMR_INIT(0) { state = _state; }
+	Timer( fun_t *_state = nullptr ): __tmr _TMR_INIT() { state = _state; }
 
 	void startUntil   ( unsigned _time )                                   {        tmr_startUntil   (this, _time,           this->state); }
 	void startUntil   ( unsigned _time,                    fun_t *_state ) {        tmr_startUntil   (this, _time,                _state); }
