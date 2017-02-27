@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_cnd.c
     @author  Rajmund Szymanski
-    @date    11.01.2017
+    @date    27.02.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -35,6 +35,7 @@ void cnd_wait( cnd_t *cnd, mtx_t *mtx )
 	unsigned signal;
 
 	assert(cnd);
+	assert(mtx);
 
 	mtx_give(mtx);
 

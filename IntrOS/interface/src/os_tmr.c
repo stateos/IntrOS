@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.c
     @author  Rajmund Szymanski
-    @date    14.01.2017
+    @date    27.02.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -82,9 +82,7 @@ unsigned tmr_take( tmr_t *tmr )
 	assert(tmr);
 
 	if (tmr->id == ID_STOPPED)
-	{
 		event = E_SUCCESS;
-	}
 
 	return event;
 }
@@ -93,12 +91,13 @@ unsigned tmr_take( tmr_t *tmr )
 void tmr_wait( tmr_t *tmr )
 /* -------------------------------------------------------------------------- */
 {
+	unsigned signal;
+
 	assert(tmr);
 
 	if (tmr->id != ID_STOPPED)
 	{
-		unsigned signal = tmr->signal;
-	
+		signal = tmr->signal;
 		while (tmr->signal == signal) tsk_yield();
 	}
 }
