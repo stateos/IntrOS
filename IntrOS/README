@@ -9,7 +9,7 @@ There's a dedicated function for immediate change the task state.
 ---------
 Features:
 - kernel works in cooperative mode only
-- signals (auto clearing, protected)
+- signals (clear, protect)
 - events
 - flags (any, all)
 - barriers
@@ -23,8 +23,8 @@ Features:
 ---------
 2.6
 - rename flgOne to flgAny
-- macro _TMR_INIT has no parameters
 - function mem_reset renamed to mem_bind
+- redefined timer macros and procedures
 ---------
 2.5
 - added oslibc.c file for COSMIC Software CORTEX-M C Cross Compiler
