@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    31.01.2017
+    @date    04.03.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -59,7 +59,7 @@ struct __tsk
 	}        ctx;
 };
 
-typedef struct __tsk tsk_id[1];
+typedef struct __tsk *tsk_id;
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -98,7 +98,7 @@ typedef struct __tsk tsk_id[1];
  **********************************************************************************************************************/
 
 #define               _TSK_CREATE( _state, _top ) \
-                    { _TSK_INIT( _state, _top ) }
+            & (tsk_t) _TSK_INIT( _state, _top )
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -135,7 +135,7 @@ typedef struct __tsk tsk_id[1];
 
 #define             OS_WRK( tsk, state, size )         \
                        stk_t tsk##__stk[ASIZE( size )]; \
-                       tsk_id tsk = { _TSK_INIT( state, tsk##__stk + ASIZE( size ) ) }
+                       tsk_t tsk[1] = { _TSK_INIT( state, tsk##__stk + ASIZE( size ) ) }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -202,7 +202,7 @@ typedef struct __tsk tsk_id[1];
 
 #define         static_WRK( tsk, state, size )         \
                 static stk_t tsk##__stk[ASIZE( size )]; \
-                static tsk_id tsk = { _TSK_INIT( state, tsk##__stk + ASIZE( size ) ) }
+                static tsk_t tsk[1] = { _TSK_INIT( state, tsk##__stk + ASIZE( size ) ) }
 
 /**********************************************************************************************************************
  *                                                                                                                    *

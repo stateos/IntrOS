@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_mem.h
     @author  Rajmund Szymanski
-    @date    27.02.2017
+    @date    04.03.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -49,7 +49,7 @@ struct __mem
 	void   * data;  // pointer to memory pool buffer
 };
 
-typedef struct __mem mem_t, mem_id[1];
+typedef struct __mem mem_t, *mem_id;
 
 /* -------------------------------------------------------------------------- */
 
@@ -109,7 +109,7 @@ typedef struct __mem mem_t, mem_id[1];
 
 #define             OS_MEM( mem, limit, size )                     \
                        void *mem##__buf[limit * (1 + MSIZE(size))]; \
-                       mem_id mem = { _MEM_INIT( limit, size, mem##__buf ) }
+                       mem_t mem[1] = { _MEM_INIT( limit, size, mem##__buf ) }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -126,7 +126,7 @@ typedef struct __mem mem_t, mem_id[1];
 
 #define         static_MEM( mem, limit, size )                     \
                 static void *mem##__buf[limit * (1 + MSIZE(size))]; \
-                static mem_id mem = { _MEM_INIT( limit, size, mem##__buf ) }
+                static mem_t mem[1] = { _MEM_INIT( limit, size, mem##__buf ) }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -167,7 +167,7 @@ typedef struct __mem mem_t, mem_id[1];
 
 #ifndef __cplusplus
 #define                MEM_CREATE( limit, size ) \
-                     { MEM_INIT( limit, size ) }
+             & (mem_t) MEM_INIT( limit, size )
 #endif
 
 /**********************************************************************************************************************

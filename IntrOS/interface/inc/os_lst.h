@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_lst.h
     @author  Rajmund Szymanski
-    @date    24.01.2017
+    @date    04.03.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -46,7 +46,7 @@ struct __lst
 	que_t  * next;  // next memory object in the queue, previously created in the memory pool
 };
 
-typedef struct __lst lst_t, lst_id[1];
+typedef struct __lst lst_t, *lst_id;
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -76,7 +76,7 @@ typedef struct __lst lst_t, lst_id[1];
  **********************************************************************************************************************/
 
 #define             OS_LST( lst ) \
-                       lst_id lst = { _LST_INIT() }
+                       lst_t lst[1] = { _LST_INIT() }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -90,7 +90,7 @@ typedef struct __lst lst_t, lst_id[1];
  **********************************************************************************************************************/
 
 #define         static_LST( lst ) \
-                static lst_id lst = { _LST_INIT() }
+                static lst_t[1] lst = { _LST_INIT() }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -127,7 +127,7 @@ typedef struct __lst lst_t, lst_id[1];
 
 #ifndef __cplusplus
 #define                LST_CREATE() \
-                     { LST_INIT() }
+             & (lst_t) LST_INIT()
 #endif
 
 /**********************************************************************************************************************

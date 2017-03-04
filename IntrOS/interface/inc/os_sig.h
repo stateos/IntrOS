@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_sig.h
     @author  Rajmund Szymanski
-    @date    24.01.2017
+    @date    04.03.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -47,19 +47,19 @@ struct __sig
 	unsigned type;  // signal type: sigClear, sigProtect
 };
 
-typedef struct __sig sig_t, sig_id[1];
+typedef struct __sig sig_t, *sig_id;
 
 /* -------------------------------------------------------------------------- */
 
-#define  sigClear    ( 0U )
-#define  sigProtect  ( 1U )
-#define  sigMASK     ( 1U )
+#define sigClear     ( 0U << 0 ) // auto clearing signal
+#define sigProtect   ( 1U << 0 ) // protected signal
+#define sigMASK      ( 1U )
 
 /**********************************************************************************************************************
  *                                                                                                                    *
  * Name              : _SIG_INIT                                                                                      *
  *                                                                                                                    *
- * Description       : create and initilize an signal object                                                          *
+ * Description       : create and initilize a signal object                                                           *
  *                                                                                                                    *
  * Parameters                                                                                                         *
  *   type            : signal type                                                                                    *
@@ -89,7 +89,7 @@ typedef struct __sig sig_t, sig_id[1];
  **********************************************************************************************************************/
 
 #define             OS_SIG( sig, type ) \
-                       sig_id sig = { _SIG_INIT( type ) }
+                       sig_t sig[1] = { _SIG_INIT( type ) }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -106,13 +106,13 @@ typedef struct __sig sig_t, sig_id[1];
  **********************************************************************************************************************/
 
 #define         static_SIG( sig, type ) \
-                static sig_id sig = { _SIG_INIT( type ) }
+                static sig_t sig[1] = { _SIG_INIT( type ) }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
  * Name              : SIG_INIT                                                                                       *
  *                                                                                                                    *
- * Description       : create and initilize an signal object                                                          *
+ * Description       : create and initilize a signal object                                                           *
  *                                                                                                                    *
  * Parameters                                                                                                         *
  *   type            : signal type                                                                                    *
@@ -149,7 +149,7 @@ typedef struct __sig sig_t, sig_id[1];
 
 #ifndef __cplusplus
 #define                SIG_CREATE( type ) \
-                     { SIG_INIT( type ) }
+             & (sig_t) SIG_INIT( type )
 #endif
 
 /**********************************************************************************************************************

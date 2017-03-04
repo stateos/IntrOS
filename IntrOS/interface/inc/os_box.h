@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_box.h
     @author  Rajmund Szymanski
-    @date    24.01.2017
+    @date    04.03.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -52,7 +52,7 @@ struct __box
 	unsigned size;  // size of a single mail (in bytes)
 };
 
-typedef struct __box box_t, box_id[1];
+typedef struct __box box_t, *box_id;
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -108,7 +108,7 @@ typedef struct __box box_t, box_id[1];
 
 #define             OS_BOX( box, limit, size )      \
                        char box##__buf[limt * size]; \
-                       box_id box = { _BOX_INIT( limit, size, box##__buf ) }
+                       box_t box[1] = { _BOX_INIT( limit, size, box##__buf ) }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -125,7 +125,7 @@ typedef struct __box box_t, box_id[1];
 
 #define         static_BOX( box, limit, size )      \
                 static char box##__buf[limt * size]; \
-                static box_id box = { _BOX_INIT( limit, size, box##__buf ) }
+                static box_t box[1] = { _BOX_INIT( limit, size, box##__buf ) }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -166,7 +166,7 @@ typedef struct __box box_t, box_id[1];
 
 #ifndef __cplusplus
 #define                BOX_CREATE( limit, size ) \
-                     { BOX_INIT( limit, size ) }
+             & (box_t) BOX_INIT( limit, size )
 #endif
 
 /**********************************************************************************************************************

@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_sem.h
     @author  Rajmund Szymanski
-    @date    24.01.2017
+    @date    04.03.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -46,7 +46,7 @@ struct __sem
 	unsigned count; // semaphore's current value
 };
 
-typedef struct __sem sem_t, sem_id[1];
+typedef struct __sem sem_t, *sem_id;
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -78,7 +78,7 @@ typedef struct __sem sem_t, sem_id[1];
  **********************************************************************************************************************/
 
 #define             OS_SEM( sem, init ) \
-                       sem_id sem = { _SEM_INIT( init ) }
+                       sem_t sem[1] = { _SEM_INIT( init ) }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -93,7 +93,7 @@ typedef struct __sem sem_t, sem_id[1];
  **********************************************************************************************************************/
 
 #define         static_SEM( sem, init ) \
-                static sem_id sem = { _SEM_INIT( init ) }
+                static sem_t sem[1] = { _SEM_INIT( init ) }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -132,7 +132,7 @@ typedef struct __sem sem_t, sem_id[1];
 
 #ifndef __cplusplus
 #define                SEM_CREATE( init ) \
-                     { SEM_INIT( init ) }
+             & (sem_t) SEM_INIT( init )
 #endif
 
 /**********************************************************************************************************************
