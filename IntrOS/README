@@ -25,6 +25,7 @@ Features:
 - rename flgOne to flgAny
 - function mem_reset renamed to mem_bind
 - redefined timer macros and procedures
+- function core_tsk_start renamed to core_tsk_loop
 ---------
 2.5
 - added oslibc.c file for COSMIC Software CORTEX-M C Cross Compiler

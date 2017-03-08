@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.h
     @author  Rajmund Szymanski
-    @date    24.01.2017
+    @date    08.03.2017
     @brief   This file defines set of kernel functions for IntrOS.
 
  ******************************************************************************
@@ -57,7 +57,7 @@ void core_ctx_switch( void );
 
 // start current process
 __NO_RETURN
-void core_tsk_start( void );
+void core_tsk_loop( void );
 
 // force yield system control to the next process
 __NO_RETURN

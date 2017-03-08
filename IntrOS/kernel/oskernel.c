@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    02.02.2017
+    @date    08.03.2017
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -70,7 +70,7 @@ void core_rdy_remove( void *item )
 
 void core_ctx_init( tsk_t *tsk )
 {
-	port_ctx_init(&tsk->ctx.reg, tsk->top, core_tsk_start);
+	port_ctx_init(&tsk->ctx.reg, tsk->top, core_tsk_loop);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -87,7 +87,7 @@ void core_ctx_switch( void )
 
 /* -------------------------------------------------------------------------- */
 
-void core_tsk_start( void )
+void core_tsk_loop( void )
 {
 	for (;;)
 	{
