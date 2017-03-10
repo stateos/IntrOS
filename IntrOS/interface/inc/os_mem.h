@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_mem.h
     @author  Rajmund Szymanski
-    @date    04.03.2017
+    @date    10.03.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -41,6 +41,8 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
+typedef struct __mem mem_t, *mem_id;
+
 struct __mem
 {
 	que_t  * next;  // inherited from list
@@ -48,8 +50,6 @@ struct __mem
 	unsigned size;  // size of memory object (in words)
 	void   * data;  // pointer to memory pool buffer
 };
-
-typedef struct __mem mem_t, *mem_id;
 
 /* -------------------------------------------------------------------------- */
 

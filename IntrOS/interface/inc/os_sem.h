@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_sem.h
     @author  Rajmund Szymanski
-    @date    04.03.2017
+    @date    10.03.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -41,12 +41,12 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
+typedef struct __sem sem_t, *sem_id;
+
 struct __sem
 {
 	unsigned count; // semaphore's current value
 };
-
-typedef struct __sem sem_t, *sem_id;
 
 /**********************************************************************************************************************
  *                                                                                                                    *

@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    04.03.2017
+    @date    10.03.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -58,8 +58,6 @@ struct __tsk
 	jmp_buf  buf;   // setjmp/longjmp buffer
 	}        ctx;
 };
-
-typedef struct __tsk *tsk_id;
 
 /**********************************************************************************************************************
  *                                                                                                                    *
