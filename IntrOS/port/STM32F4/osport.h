@@ -3,7 +3,7 @@
     @file    IntrOS: osport.h
     @author  Rajmund Szymanski
     @date    20.03.2017
-    @brief   IntrOS port definitions for Cortex-Mx uC.
+    @brief   IntrOS port definitions for STM32F4 uC.
 
  ******************************************************************************
 
@@ -38,8 +38,32 @@ extern "C" {
 
 /* -------------------------------------------------------------------------- */
 
+#define GLUE( a, b, c )            a##b##c
+#define  CAT( a, b, c )       GLUE(a, b, c)
+
+/* -------------------------------------------------------------------------- */
+
 #ifndef  __CORTEX_M
 #error   osconfig.h: Include CMSIS device peripheral access layer header file!
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+#ifndef  OS_TIMER
+#define  OS_TIMER             0 /* os uses SysTick as system timer            */
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+#if      OS_TIMER
+
+#define  OS_TIM            CAT(TIM,OS_TIMER,)
+#define  OS_TIM_CLK_ENABLE CAT(RCC_APB1ENR_TIM,OS_TIMER,EN)
+#define  OS_TIM_IRQn       CAT(TIM,OS_TIMER,_IRQn)
+#define  OS_TIM_IRQHandler CAT(TIM,OS_TIMER,_IRQHandler)
+
+#define  Counter           OS_TIM->CNT
+
 #endif
 
 /* -------------------------------------------------------------------------- */
@@ -51,14 +75,24 @@ extern "C" {
 /* -------------------------------------------------------------------------- */
 
 #ifndef  OS_FREQUENCY
+
+#if      OS_TIMER
+#define  OS_FREQUENCY   1000000 /* Hz */
+#else
 #define  OS_FREQUENCY      1000 /* Hz */
+#endif
+
 #else
 
-#if     (OS_FREQUENCY > 1000)
+#if     (OS_TIMER == 0) && (OS_FREQUENCY > 1000)
 #error   osconfig.h: Incorrect OS_FREQUENCY value!
 #endif
 
 #endif //OS_FREQUENCY
+
+/* -------------------------------------------------------------------------- */
+
+#define  ST_FREQUENCY (CPU_FREQUENCY/8) /* alternate clock source for SysTick */
 
 /* -------------------------------------------------------------------------- */
 

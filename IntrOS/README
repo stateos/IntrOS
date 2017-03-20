@@ -9,6 +9,7 @@ There's a dedicated function for immediate change the task state.
 ---------
 Features:
 - kernel works in cooperative mode only
+- kernel can operate in tick-less mode (32-bit timer required)
 - signals (clear, protect)
 - events
 - flags (any, all)
@@ -20,6 +21,9 @@ Features:
 - mailbox queues
 - timers (one-shot, periodic)
 - all documentation is contained within the source files
+---------
+2.7
+- added tick-less mode
 ---------
 2.6
 - rename flgOne to flgAny
