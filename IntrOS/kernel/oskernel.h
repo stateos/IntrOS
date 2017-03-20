@@ -42,7 +42,9 @@ extern sys_t System; // system data
 
 /* -------------------------------------------------------------------------- */
 
+#ifndef Counter
 #define Counter System.cnt
+#endif
 #define Current System.cur
 
 /* -------------------------------------------------------------------------- */
