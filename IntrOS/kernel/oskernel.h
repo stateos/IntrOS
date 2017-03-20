@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.h
     @author  Rajmund Szymanski
-    @date    08.03.2017
+    @date    20.03.2017
     @brief   This file defines set of kernel functions for IntrOS.
 
  ******************************************************************************
@@ -39,6 +39,11 @@ extern "C" {
 /* -------------------------------------------------------------------------- */
 
 extern sys_t System; // system data
+
+/* -------------------------------------------------------------------------- */
+
+#define Counter System.cnt
+#define Current System.cur
 
 /* -------------------------------------------------------------------------- */
 

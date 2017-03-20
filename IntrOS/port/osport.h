@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.h
     @author  Rajmund Szymanski
-    @date    24.01.2017
+    @date    20.03.2017
     @brief   IntrOS port definitions for Cortex-Mx uC.
 
  ******************************************************************************
@@ -41,11 +41,6 @@ extern "C" {
 #ifndef  __CORTEX_M
 #error   osconfig.h: Include CMSIS device peripheral access layer header file!
 #endif
-
-/* -------------------------------------------------------------------------- */
-
-#define  Counter System.cnt
-#define  Current System.cur
 
 /* -------------------------------------------------------------------------- */
 
