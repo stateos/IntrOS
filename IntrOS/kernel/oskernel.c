@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    08.03.2017
+    @date    22.03.2017
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -80,7 +80,7 @@ void core_ctx_switch( void )
 	port_sys_lock();
 
 	if (setjmp(Current->ctx.buf) == 0)
-		core_tsk_break();
+		core_tsk_switch();
 
 	port_sys_unlock();
 }
@@ -99,7 +99,7 @@ void core_tsk_loop( void )
 
 /* -------------------------------------------------------------------------- */
 
-void core_tsk_break( void )
+void core_tsk_switch( void )
 {
 	tsk_t *cur;
 	tmr_t *tmr;

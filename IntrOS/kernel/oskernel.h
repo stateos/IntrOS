@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.h
     @author  Rajmund Szymanski
-    @date    20.03.2017
+    @date    22.03.2017
     @brief   This file defines set of kernel functions for IntrOS.
 
  ******************************************************************************
@@ -68,7 +68,7 @@ void core_tsk_loop( void );
 
 // force yield system control to the next process
 __NO_RETURN
-void core_tsk_break( void );
+void core_tsk_switch( void );
 
 /* -------------------------------------------------------------------------- */
 

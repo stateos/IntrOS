@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.c
     @author  Rajmund Szymanski
-    @date    22.01.2017
+    @date    22.03.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -73,7 +73,7 @@ void tsk_stop( void )
 	port_set_lock();
 
 	core_tsk_remove(Current);
-	core_tsk_break();
+	core_tsk_switch();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -94,7 +94,7 @@ void tsk_flip( fun_t *state )
 	Current->state = state;
 
 	core_ctx_init(Current);
-	core_tsk_break();
+	core_tsk_switch();
 }
 
 /* -------------------------------------------------------------------------- */
