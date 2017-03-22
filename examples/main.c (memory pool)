@@ -3,6 +3,8 @@
 
 OS_MEM(mem, 1, sizeof(unsigned));
 OS_BOX(box, 1, sizeof(void*));
+OS_TSK(sla, slave);
+OS_TSK(mas, master);
 
 void slave()
 {
@@ -29,9 +31,6 @@ void master()
 		box_give(box, &p);
 	}
 }
-
-OS_TSK(sla, slave);
-OS_TSK(mas, master);
 
 int main()
 {

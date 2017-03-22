@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    10.03.2017
+    @date    22.03.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -131,7 +131,8 @@ struct __tsk
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define             OS_WRK( tsk, state, size )         \
+#define             OS_WRK( tsk, state, size )        \
+                       fun_t state;                    \
                        stk_t tsk##__stk[ASIZE( size )]; \
                        tsk_t tsk[1] = { _TSK_INIT( state, tsk##__stk + ASIZE( size ) ) }
 
@@ -164,8 +165,7 @@ struct __tsk
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define             OS_DEF( tsk, size )            \
-                       void tsk##__fun( void );     \
+#define             OS_DEF( tsk, size )             \
                     OS_WRK( tsk, tsk##__fun, size ); \
                        void tsk##__fun( void )
 
@@ -198,7 +198,8 @@ struct __tsk
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define         static_WRK( tsk, state, size )         \
+#define         static_WRK( tsk, state, size )        \
+                static fun_t state;                    \
                 static stk_t tsk##__stk[ASIZE( size )]; \
                 static tsk_t tsk[1] = { _TSK_INIT( state, tsk##__stk + ASIZE( size ) ) }
 
@@ -231,8 +232,7 @@ struct __tsk
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define         static_DEF( tsk, size )            \
-                static void tsk##__fun( void );     \
+#define         static_DEF( tsk, size )             \
                 static_WRK( tsk, tsk##__fun, size ); \
                 static void tsk##__fun( void )
 
