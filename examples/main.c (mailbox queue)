@@ -31,7 +31,7 @@ tsk_t mas = TSK_INIT(master);
 
 int main()
 {
-	LED_Config();
+	LED_Init();
 
 	tsk_start(&sla);
 	tsk_start(&mas);

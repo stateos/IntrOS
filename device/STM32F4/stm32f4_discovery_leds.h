@@ -1,7 +1,7 @@
 /******************************************************************************
  * @file    stm32f4_discovery_leds.h
  * @author  Rajmund Szymanski
- * @date    04.10.2016
+ * @date    23.03.2017
  * @brief   This file contains definitions for STM32F4-Discovery Kit.
  ******************************************************************************/
 
@@ -30,20 +30,20 @@ struct  __LEDs { uint16_t: 12; volatile uint16_t f: 4; uint16_t: 0; };
 
 /* -------------------------------------------------------------------------- */
 
-// config usb green led (PA9)
+// init usb green led (PA9)
 
 static inline
-void GRN_Config( void )
+void GRN_Init( void )
 {
 	GPIO_Init(GPIOA, GPIO_Pin_9, GPIO_Output_PushPull);
 }
 
 /* -------------------------------------------------------------------------- */
 
-// config leds (PD12..PD15) as pushpull output
+// init leds (PD12..PD15) as pushpull output
 
 static inline
-void LED_Config( void )
+void LED_Init( void )
 {
 	GPIO_Init(GPIOD, GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15, GPIO_Output_PushPull);
 }
@@ -75,7 +75,7 @@ void LED_Tick( void )
 class GreenLed
 {
 public:
-	GreenLed( void ) { GRN_Config(); }
+	GreenLed( void ) { GRN_Init(); }
 
 	operator   unsigned & ( void )                  { return (unsigned &)GRN; }
 	unsigned   operator = ( const unsigned status ) { return   GRN = status; }
@@ -92,7 +92,7 @@ class Led
 	void     set( unsigned status ) { GPIOD->BSRR = (~status << 28) | (uint16_t)(status << 12); }
 
 public:
-	Led( void ) { LED_Config(); }
+	Led( void ) { LED_Init(); }
 
 	unsigned & operator []( const unsigned number ) { return (unsigned &)LED[number]; }
 	unsigned   operator = ( const unsigned status ) {                              set(status); return status & 0xF; }

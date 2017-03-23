@@ -17,7 +17,7 @@ void master()
 
 int main()
 {
-	LED_Config();
+	LED_Init();
 
 	tsk_start(TSK_CREATE(slave));
 	tsk_start(TSK_CREATE(master));
