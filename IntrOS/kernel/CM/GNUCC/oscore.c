@@ -2,8 +2,8 @@
 
     @file    IntrOS: oscore.c
     @author  Rajmund Szymanski
-    @date    26.01.2017
-    @brief   IntrOS port file for ARM Cotrex-M4F.
+    @date    26.03.2017
+    @brief   IntrOS port file for ARM Cotrex-M uC.
 
  ******************************************************************************
 

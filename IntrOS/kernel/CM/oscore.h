@@ -1,9 +1,9 @@
 /******************************************************************************
 
-    @file    IntrOS: oscore.c
+    @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    26.01.2017
-    @brief   IntrOS port file for ARM Cotrex-M4F.
+    @date    26.03.2017
+    @brief   IntrOS port file for ARM Cotrex-M uC.
 
  ******************************************************************************
 
@@ -26,50 +26,79 @@
 
  ******************************************************************************/
 
-#if defined(__CSMC__)
+#ifndef __INTROSCORE_H
+#define __INTROSCORE_H
 
-#include <os.h>
+#include <osbase.h>
 
-/* -------------------------------------------------------------------------- */
-
-#if __FPU_USED
-
-int setjmp( jmp_buf buf )
-{
-	#asm
-
-	mov    r12,   sp
-	stmia  r0!, { r4-r11,lr }
-	stmia  r0!, { r12 }
-	vstmia r0!, { s16-s31 }
-	movs   r0,  # 0
-
-	#endasm
-}
-
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 /* -------------------------------------------------------------------------- */
 
-#if __FPU_USED
+// task context
 
-void longjmp( jmp_buf buf, int val )
+typedef struct __ctx ctx_t;
+
+#if   defined(__ARMCC_VERSION)
+
+struct __ctx
 {
-	#asm
+	unsigned r8, r9, r10, r11;
+	fun_t  * pc;
+	unsigned r4, r5, r6, r7;
+	void   * sp;
+#if __FPU_USED
+	float    s[16]; // s16-s31
+#endif
+};
 
-	ldmia  r0!, { r4-r11,lr }
-	ldmia  r0!, { r12 }
-	vldmia r0!, { s16-s31 }
-	mov    sp,    r12
-	movs   r0,    r1
-	it     eq
-	moveq  r0,  # 1
+#elif defined(__GNUC__)
 
-	#endasm
-}
+struct __ctx
+{
+	unsigned r4, r5, r6, r7, r8, r9, r10, r11;
+	void   * sp;
+	fun_t  * pc;
+#if __FPU_USED
+	float    s[16]; // s16-s31
+#endif
+};
 
+#elif defined(__CSMC__)
+
+struct __ctx
+{
+	unsigned r4, r5, r6, r7, r8, r9, r10, r11;
+	fun_t  * pc;
+	void   * sp;
+#if __FPU_USED
+	float    s[16]; // s16-s31
+#endif
+};
+
+#endif
+
+#if __FPU_USED
+#define _CTX_INIT() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, { 0 } }
+#else
+#define _CTX_INIT() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 #endif
 
 /* -------------------------------------------------------------------------- */
 
-#endif // __CSMC__
+__STATIC_INLINE
+void port_ctx_init( ctx_t *ctx, stk_t *sp, fun_t *pc )
+{
+	ctx->sp = sp;
+	ctx->pc = pc;
+}
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif//__INTROSCORE_H

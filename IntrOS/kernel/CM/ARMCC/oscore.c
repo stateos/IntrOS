@@ -2,8 +2,8 @@
 
     @file    IntrOS: oscore.c
     @author  Rajmund Szymanski
-    @date    26.01.2017
-    @brief   IntrOS port file for ARM Cotrex-M4F.
+    @date    26.03.2017
+    @brief   IntrOS port file for ARM Cotrex-M uC.
 
  ******************************************************************************
 
@@ -26,7 +26,7 @@
 
  ******************************************************************************/
 
-#if defined(__ARMCOMPILER_VERSION)
+#if defined(__CC_ARM)
 
 #include <os.h>
 
@@ -34,18 +34,18 @@
 
 #if __FPU_USED
 
-__attribute__((naked))
-int setjmp(/*jmp_buf buf*/)
+__asm int setjmp( jmp_buf buf )
 {
-	__asm volatile
-	(
-"	mov    ip,    sp          \n"
-"	stmia  r0!, { r8-r11,lr } \n"
-"	stmia  r0!, { r4-r7,ip }  \n"
-"	vstmia r0!, { s16-s31 }   \n"
-"	movs   r0,  # 0           \n"
-"	bx     lr                 \n"
-	);
+	PRESERVE8
+
+	mov    ip,    sp
+	stmia  r0!, { r8-r11,lr }
+	stmia  r0!, { r4-r7,ip }
+	vstmia r0!, { s16-s31 }
+	movs   r0,  # 0
+	bx     lr
+
+	ALIGN
 }
 
 #endif
@@ -54,24 +54,24 @@ int setjmp(/*jmp_buf buf*/)
 
 #if __FPU_USED
 
-__attribute__((naked))
-void longjmp(/*jmp_buf buf, int val*/)
+__asm void longjmp( jmp_buf buf, int val )
 {
-	__asm volatile
-	(
-"	ldmia  r0!, { r8-r11,lr } \n"
-"	ldmia  r0!, { r4-r7,ip }  \n"
-"	vldmia r0!, { s16-s31 }   \n"
-"	mov    sp,    ip          \n"
-"	movs   r0,    r1          \n"
-"	it     eq                 \n"
-"	moveq  r0,  # 1           \n"
-"	bx     lr                 \n"
-	);
+	PRESERVE8
+
+	ldmia  r0!, { r8-r11,lr }
+	ldmia  r0!, { r4-r7,ip }
+	vldmia r0!, { s16-s31 }
+	mov    sp,    ip
+	movs   r0,    r1
+	it     eq
+	moveq  r0,  # 1
+	bx     lr
+
+	ALIGN
 }
 
 #endif
 
 /* -------------------------------------------------------------------------- */
 
-#endif // __ARMCOMPILER_VERSION
+#endif // __CC_ARM

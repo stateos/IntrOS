@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    10.03.2017
+    @date    25.03.2017
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -114,66 +114,6 @@ struct __sys
 	volatile
 	unsigned cnt;   // system timer counter
 };
-
-/* -------------------------------------------------------------------------- */
-
-// task context
-
-typedef struct __ctx ctx_t;
-
-#if   defined(__ARMCC_VERSION)
-
-struct __ctx
-{
-	unsigned r8, r9, r10, r11;
-	fun_t  * pc;
-	unsigned r4, r5, r6, r7;
-	void   * sp;
-#if __FPU_USED
-	float    s[16]; // s16-s31
-#endif
-};
-
-#elif defined(__GNUC__)
-
-struct __ctx
-{
-	unsigned r4, r5, r6, r7, r8, r9, r10, r11;
-	void   * sp;
-	fun_t  * pc;
-#if __FPU_USED
-	float    s[16]; // s16-s31
-#endif
-};
-
-#elif defined(__CSMC__)
-
-struct __ctx
-{
-	unsigned r4, r5, r6, r7, r8, r9, r10, r11;
-	fun_t  * pc;
-	void   * sp;
-#if __FPU_USED
-	float    s[16]; // s16-s31
-#endif
-};
-
-#endif
-
-#if __FPU_USED
-#define _CTX_INIT() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, { 0 } }
-#else
-#define _CTX_INIT() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-#endif
-
-/* -------------------------------------------------------------------------- */
-
-__STATIC_INLINE
-void port_ctx_init( ctx_t *ctx, stk_t *sp, fun_t *pc )
-{
-	ctx->sp = sp;
-	ctx->pc = pc;
-}
 
 /* -------------------------------------------------------------------------- */
 

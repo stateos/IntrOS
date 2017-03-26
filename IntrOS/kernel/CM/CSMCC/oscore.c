@@ -2,8 +2,8 @@
 
     @file    IntrOS: oscore.c
     @author  Rajmund Szymanski
-    @date    26.01.2017
-    @brief   IntrOS port file for ARM Cotrex-M4F.
+    @date    26.03.2017
+    @brief   IntrOS port file for ARM Cotrex-M uC.
 
  ******************************************************************************
 
@@ -26,7 +26,7 @@
 
  ******************************************************************************/
 
-#if defined(__CC_ARM)
+#if defined(__CSMC__)
 
 #include <os.h>
 
@@ -34,18 +34,17 @@
 
 #if __FPU_USED
 
-__asm int setjmp( jmp_buf buf )
+int setjmp( jmp_buf buf )
 {
-	PRESERVE8
+	#asm
 
-	mov    ip,    sp
-	stmia  r0!, { r8-r11,lr }
-	stmia  r0!, { r4-r7,ip }
+	mov    r12,   sp
+	stmia  r0!, { r4-r11,lr }
+	stmia  r0!, { r12 }
 	vstmia r0!, { s16-s31 }
 	movs   r0,  # 0
-	bx     lr
 
-	ALIGN
+	#endasm
 }
 
 #endif
@@ -54,24 +53,23 @@ __asm int setjmp( jmp_buf buf )
 
 #if __FPU_USED
 
-__asm void longjmp( jmp_buf buf, int val )
+void longjmp( jmp_buf buf, int val )
 {
-	PRESERVE8
+	#asm
 
-	ldmia  r0!, { r8-r11,lr }
-	ldmia  r0!, { r4-r7,ip }
+	ldmia  r0!, { r4-r11,lr }
+	ldmia  r0!, { r12 }
 	vldmia r0!, { s16-s31 }
-	mov    sp,    ip
+	mov    sp,    r12
 	movs   r0,    r1
 	it     eq
 	moveq  r0,  # 1
-	bx     lr
 
-	ALIGN
+	#endasm
 }
 
 #endif
 
 /* -------------------------------------------------------------------------- */
 
-#endif // __CC_ARM
+#endif // __CSMC__
