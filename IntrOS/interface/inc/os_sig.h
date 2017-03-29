@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_sig.h
     @author  Rajmund Szymanski
-    @date    10.03.2017
+    @date    29.03.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -41,13 +41,15 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-typedef struct __sig sig_t, *sig_id;
+typedef struct __sig sig_t;
 
 struct __sig
 {
 	unsigned flag;  // signal's current value
 	unsigned type;  // signal type: sigClear, sigProtect
 };
+
+typedef struct __sig sig_id[];
 
 /* -------------------------------------------------------------------------- */
 

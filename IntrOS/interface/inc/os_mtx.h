@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_mtx.h
     @author  Rajmund Szymanski
-    @date    10.03.2017
+    @date    29.03.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -41,12 +41,14 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-typedef struct __mtx mtx_t, *mtx_id;
+typedef struct __mtx mtx_t;
 
 struct __mtx
 {
 	tsk_t  * owner; // owner task
 };
+
+typedef struct __mtx mtx_id[];
 
 /**********************************************************************************************************************
  *                                                                                                                    *

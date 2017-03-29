@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    22.03.2017
+    @date    29.03.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -58,6 +58,8 @@ struct __tsk
 	jmp_buf  buf;   // setjmp/longjmp buffer
 	}        ctx;
 };
+
+typedef struct __tsk tsk_id[];
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -132,7 +134,7 @@ struct __tsk
  **********************************************************************************************************************/
 
 #define             OS_WRK( tsk, state, size )        \
-                       fun_t state;                    \
+                       void state( void );             \
                        stk_t tsk##__stk[ASIZE( size )]; \
                        tsk_t tsk[1] = { _TSK_INIT( state, tsk##__stk + ASIZE( size ) ) }
 
@@ -199,7 +201,7 @@ struct __tsk
  **********************************************************************************************************************/
 
 #define         static_WRK( tsk, state, size )        \
-                static fun_t state;                    \
+                static void state( void );             \
                 static stk_t tsk##__stk[ASIZE( size )]; \
                 static tsk_t tsk[1] = { _TSK_INIT( state, tsk##__stk + ASIZE( size ) ) }
 
