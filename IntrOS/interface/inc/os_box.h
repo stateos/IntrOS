@@ -109,7 +109,7 @@ struct __box
 #define             OS_BOX( box, limit, size )                                \
                        char box##__buf[limit*size];                            \
                        box_t box##__box = _BOX_INIT( limit, size, box##__buf ); \
-                       box_t * const box = & box##__box
+                       box_id box = & box##__box
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -127,7 +127,7 @@ struct __box
 #define         static_BOX( box, limit, size )                                \
                 static char box##__buf[limit*size];                            \
                 static box_t box##__box = _BOX_INIT( limit, size, box##__buf ); \
-                static box_t * const box = & box##__box
+                static box_id box = & box##__box
 
 /**********************************************************************************************************************
  *                                                                                                                    *

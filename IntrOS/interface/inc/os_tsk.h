@@ -136,7 +136,7 @@ struct __tsk
                        void state( void );                                              \
                        stk_t tsk##__stk[ASIZE( size )];                                  \
                        tsk_t tsk##__tsk = _TSK_INIT( state, tsk##__stk + ASIZE( size ) ); \
-                       tsk_t * const tsk = & tsk##__tsk
+                       tsk_id tsk = & tsk##__tsk
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -204,7 +204,7 @@ struct __tsk
                 static void state( void );                                              \
                 static stk_t tsk##__stk[ASIZE( size )];                                  \
                 static tsk_t tsk##__tsk = _TSK_INIT( state, tsk##__stk + ASIZE( size ) ); \
-                static tsk_t * const tsk = & tsk##__tsk
+                static tsk_id tsk = & tsk##__tsk
 
 /**********************************************************************************************************************
  *                                                                                                                    *

@@ -15,11 +15,14 @@ void master()
 	sig_give(sig);
 }
 
+tsk_id sla = TSK_CREATE(slave);
+tsk_id mas = TSK_CREATE(master);
+
 int main()
 {
 	LED_Init();
 
-	tsk_start(TSK_CREATE(slave));
-	tsk_start(TSK_CREATE(master));
+	tsk_start(sla);
+	tsk_start(mas);
 	tsk_sleep();
 }

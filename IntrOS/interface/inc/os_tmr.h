@@ -88,7 +88,7 @@ struct __tmr
 #define             OS_TMR( tmr, state )                    \
                        void state( void );                   \
                        tmr_t tmr##__tmr = _TMR_INIT( state ); \
-                       tmr_t * const tmr = & tmr##__tmr
+                       tmr_id tmr = & tmr##__tmr
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -106,7 +106,7 @@ struct __tmr
 #define         static_TMR( tmr, state )                    \
                 static void state( void );                   \
                 static tmr_t tmr##__tmr = _TMR_INIT( state ); \
-                static tmr_t * const tmr = & tmr##__tmr
+                static tmr_id tmr = & tmr##__tmr
 
 /**********************************************************************************************************************
  *                                                                                                                    *
