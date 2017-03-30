@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_box.h
     @author  Rajmund Szymanski
-    @date    29.03.2017
+    @date    30.03.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -41,7 +41,7 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-typedef struct __box box_t;
+typedef struct __box box_t, * const box_id;
 
 struct __box
 {
@@ -53,8 +53,6 @@ struct __box
 	char   * data;  // queue data
 	unsigned size;  // size of a single mail (in bytes)
 };
-
-typedef struct __box box_id[];
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -108,9 +106,10 @@ typedef struct __box box_id[];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define             OS_BOX( box, limit, size )      \
-                       char box##__buf[limt * size]; \
-                       box_t box[1] = { _BOX_INIT( limit, size, box##__buf ) }
+#define             OS_BOX( box, limit, size )                                \
+                       char box##__buf[limit*size];                            \
+                       box_t box##__box = _BOX_INIT( limit, size, box##__buf ); \
+                       box_t * const box = & box##__box
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -125,9 +124,10 @@ typedef struct __box box_id[];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define         static_BOX( box, limit, size )      \
-                static char box##__buf[limt * size]; \
-                static box_t box[1] = { _BOX_INIT( limit, size, box##__buf ) }
+#define         static_BOX( box, limit, size )                                \
+                static char box##__buf[limit*size];                            \
+                static box_t box##__box = _BOX_INIT( limit, size, box##__buf ); \
+                static box_t * const box = & box##__box
 
 /**********************************************************************************************************************
  *                                                                                                                    *

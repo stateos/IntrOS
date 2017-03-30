@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    29.03.2017
+    @date    30.03.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -59,8 +59,6 @@ struct __tsk
 	}        ctx;
 };
 
-typedef struct __tsk tsk_id[];
-
 /**********************************************************************************************************************
  *                                                                                                                    *
  * Name              : _TSK_INIT                                                                                      *
@@ -97,8 +95,9 @@ typedef struct __tsk tsk_id[];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define               _TSK_CREATE( _state, _top ) \
-            & (tsk_t) _TSK_INIT( _state, _top )
+#ifndef __cplusplus
+#define               _TSK_CREATE( _state, _top ) & (tsk_t) _TSK_INIT( _state, _top )
+#endif
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -133,10 +132,11 @@ typedef struct __tsk tsk_id[];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define             OS_WRK( tsk, state, size )        \
-                       void state( void );             \
-                       stk_t tsk##__stk[ASIZE( size )]; \
-                       tsk_t tsk[1] = { _TSK_INIT( state, tsk##__stk + ASIZE( size ) ) }
+#define             OS_WRK( tsk, state, size )                                         \
+                       void state( void );                                              \
+                       stk_t tsk##__stk[ASIZE( size )];                                  \
+                       tsk_t tsk##__tsk = _TSK_INIT( state, tsk##__stk + ASIZE( size ) ); \
+                       tsk_t * const tsk = & tsk##__tsk
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -200,10 +200,11 @@ typedef struct __tsk tsk_id[];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define         static_WRK( tsk, state, size )        \
-                static void state( void );             \
-                static stk_t tsk##__stk[ASIZE( size )]; \
-                static tsk_t tsk[1] = { _TSK_INIT( state, tsk##__stk + ASIZE( size ) ) }
+#define         static_WRK( tsk, state, size )                                         \
+                static void state( void );                                              \
+                static stk_t tsk##__stk[ASIZE( size )];                                  \
+                static tsk_t tsk##__tsk = _TSK_INIT( state, tsk##__stk + ASIZE( size ) ); \
+                static tsk_t * const tsk = & tsk##__tsk
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -294,7 +295,7 @@ typedef struct __tsk tsk_id[];
 
 #ifndef __cplusplus
 #define                WRK_CREATE( state, size ) \
-                      _TSK_CREATE( state, _TSK_STACK( size ) )
+             & (tsk_t) WRK_INIT( state, size )
 #endif
 
 /**********************************************************************************************************************

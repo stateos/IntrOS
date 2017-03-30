@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_msg.h
     @author  Rajmund Szymanski
-    @date    29.03.2017
+    @date    30.03.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -41,7 +41,7 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-typedef struct __msg msg_t;
+typedef struct __msg msg_t, * const msg_id;
 
 struct __msg
 {
@@ -52,8 +52,6 @@ struct __msg
 	unsigned next;  // next element to write into queue
 	unsigned*data;  // queue data
 };
-
-typedef struct __msg msg_id[];
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -104,9 +102,10 @@ typedef struct __msg msg_id[];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define             OS_MSG( msg, limit )          \
-                       unsigned msg##__buf[limit]; \
-                       msg_t msg[1] = { _MSG_INIT( limit, msg##__buf ) }
+#define             OS_MSG( msg, limit )                                \
+                       unsigned msg##__buf[limit];                       \
+                       msg_t msg##__msg = _MSG_INIT( limit, msg##__buf ); \
+                       msg_t * const msg = & msg##__msg
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -120,9 +119,10 @@ typedef struct __msg msg_id[];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define         static_MSG( msg, limit )          \
-                static unsigned msg##__buf[limit]; \
-                static msg_t msg[1] = { _MSG_INIT( limit, msg##__buf ) }
+#define         static_MSG( msg, limit )                                \
+                static unsigned msg##__buf[limit];                       \
+                static msg_t msg##__msg = _MSG_INIT( limit, msg##__buf ); \
+                static msg_t * const msg = & msg##__msg
 
 /**********************************************************************************************************************
  *                                                                                                                    *

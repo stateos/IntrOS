@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_lst.h
     @author  Rajmund Szymanski
-    @date    29.03.2017
+    @date    30.03.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -41,14 +41,12 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-typedef struct __lst lst_t;
+typedef struct __lst lst_t, * const lst_id;
 
 struct __lst
 {
 	que_t  * next;  // next memory object in the queue, previously created in the memory pool
 };
-
-typedef struct __lst lst_id[];
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -77,8 +75,9 @@ typedef struct __lst lst_id[];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define             OS_LST( lst ) \
-                       lst_t lst[1] = { _LST_INIT() }
+#define             OS_LST( lst )                     \
+                       lst_t lst##__lst = _LST_INIT(); \
+                       lst_t * const lst = & lst##__lst
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -91,8 +90,9 @@ typedef struct __lst lst_id[];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define         static_LST( lst ) \
-                static lst_t[1] lst = { _LST_INIT() }
+#define         static_LST( lst )                     \
+                static lst_t lst##__lst = _LST_INIT(); \
+                static lst * const lst = & lst##__lst
 
 /**********************************************************************************************************************
  *                                                                                                                    *

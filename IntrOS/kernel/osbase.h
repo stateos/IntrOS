@@ -73,8 +73,8 @@ extern "C" {
 
 /* -------------------------------------------------------------------------- */
 
-typedef struct __tmr tmr_t;   // timer
-typedef struct __tsk tsk_t;   // task
+typedef struct __tmr tmr_t, * const tmr_id; // timer
+typedef struct __tsk tsk_t, * const tsk_id; // task
 typedef         void fun_t(); // timer/task procedure
 
 /* -------------------------------------------------------------------------- */

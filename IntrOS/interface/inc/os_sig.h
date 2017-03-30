@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_sig.h
     @author  Rajmund Szymanski
-    @date    29.03.2017
+    @date    30.03.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -41,15 +41,13 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-typedef struct __sig sig_t;
+typedef struct __sig sig_t, * const sig_id;
 
 struct __sig
 {
 	unsigned flag;  // signal's current value
 	unsigned type;  // signal type: sigClear, sigProtect
 };
-
-typedef struct __sig sig_id[];
 
 /* -------------------------------------------------------------------------- */
 
@@ -90,8 +88,9 @@ typedef struct __sig sig_id[];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define             OS_SIG( sig, type ) \
-                       sig_t sig[1] = { _SIG_INIT( type ) }
+#define             OS_SIG( sig, type )                     \
+                       sig_t sig##__sig = _SIG_INIT( type ); \
+                       sig_t * const sig = & sig##__sig
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -107,8 +106,9 @@ typedef struct __sig sig_id[];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define         static_SIG( sig, type ) \
-                static sig_t sig[1] = { _SIG_INIT( type ) }
+#define         static_SIG( sig, type )                     \
+                static sig_t sig##__sig = _SIG_INIT( type ); \
+                static sig_t * const sig = & sig##__sig
 
 /**********************************************************************************************************************
  *                                                                                                                    *

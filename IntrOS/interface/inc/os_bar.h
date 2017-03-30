@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_bar.h
     @author  Rajmund Szymanski
-    @date    29.03.2017
+    @date    30.03.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -41,7 +41,7 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-typedef struct __bar bar_t;
+typedef struct __bar bar_t, * const bar_id;
 
 struct __bar
 {
@@ -49,8 +49,6 @@ struct __bar
 	unsigned count; // barrier's current value
 	unsigned limit; // barrier's value limit
 };
-
-typedef struct __bar bar_id[];
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -81,8 +79,9 @@ typedef struct __bar bar_id[];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define             OS_BAR( bar, limit ) \
-                       bar_t bar[1] = { _BAR_INIT( limit ) }
+#define             OS_BAR( bar, limit )                     \
+                       bar_t bar##__bar = _BAR_INIT( limit ); \
+                       bar_t * const bar = & bar##__bar
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -96,8 +95,9 @@ typedef struct __bar bar_id[];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define         static_BAR( bar, limit ) \
-                static bar_t bar[1] = { _BAR_INIT( limit ) }
+#define         static_BAR( bar, limit )                     \
+                static bar_t bar##__bar = _BAR_INIT( limit ); \
+                static bar_t * const bar = & bar##__bar
 
 /**********************************************************************************************************************
  *                                                                                                                    *

@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_sem.h
     @author  Rajmund Szymanski
-    @date    29.03.2017
+    @date    30.03.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -41,14 +41,12 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-typedef struct __sem sem_t;
+typedef struct __sem sem_t, * const sem_id;
 
 struct __sem
 {
 	unsigned count; // semaphore's current value
 };
-
-typedef struct __sem sem_id[];
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -79,8 +77,9 @@ typedef struct __sem sem_id[];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define             OS_SEM( sem, init ) \
-                       sem_t sem[1] = { _SEM_INIT( init ) }
+#define             OS_SEM( sem, init )                     \
+                       sem_t sem##__sem = _SEM_INIT( init ); \
+                       sem_t * const sem = & sem##__sem
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -94,8 +93,9 @@ typedef struct __sem sem_id[];
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define         static_SEM( sem, init ) \
-                static sem_t sem[1] = { _SEM_INIT( init ) }
+#define         static_SEM( sem, init )                     \
+                static sem_t sem##__sem = _SEM_INIT( init ); \
+                static sem_t * const sem = & sem##__sem
 
 /**********************************************************************************************************************
  *                                                                                                                    *
