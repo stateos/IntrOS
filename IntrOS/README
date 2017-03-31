@@ -28,6 +28,7 @@ Features:
 - updated macros for task and timer objects
 - updated examples
 - reorganized kernel directories
+- updated objects definitions
 ---------
 2.6
 - rename flgOne to flgAny
