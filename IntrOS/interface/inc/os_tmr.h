@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.h
     @author  Rajmund Szymanski
-    @date    30.03.2017
+    @date    02.04.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -85,8 +85,7 @@ struct __tmr
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define             OS_TMR( tmr, state )                    \
-                       void state( void );                   \
+#define             OS_TMR( tmr, state )                     \
                        tmr_t tmr##__tmr = _TMR_INIT( state ); \
                        tmr_id tmr = & tmr##__tmr
 
@@ -103,8 +102,7 @@ struct __tmr
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define         static_TMR( tmr, state )                    \
-                static void state( void );                   \
+#define         static_TMR( tmr, state )                     \
                 static tmr_t tmr##__tmr = _TMR_INIT( state ); \
                 static tmr_id tmr = & tmr##__tmr
 
