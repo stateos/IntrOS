@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    30.03.2017
+    @date    02.04.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -132,8 +132,7 @@ struct __tsk
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define             OS_WRK( tsk, state, size )                                         \
-                       void state( void );                                              \
+#define             OS_WRK( tsk, state, size )                                          \
                        stk_t tsk##__stk[ASIZE( size )];                                  \
                        tsk_t tsk##__tsk = _TSK_INIT( state, tsk##__stk + ASIZE( size ) ); \
                        tsk_id tsk = & tsk##__tsk
@@ -156,7 +155,7 @@ struct __tsk
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Name              : OS_DEF                                                                                         *
+ * Name              : OS_WRK_DEF                                                                                     *
  *                                                                                                                    *
  * Description       : define and initilize complete work area for task object                                        *
  *                     task state (function body) must be defined immediately below                                   *
@@ -167,13 +166,14 @@ struct __tsk
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define             OS_DEF( tsk, size )             \
+#define             OS_WRK_DEF( tsk, size )        \
+                       void tsk##__fun( void );     \
                     OS_WRK( tsk, tsk##__fun, size ); \
                        void tsk##__fun( void )
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Name              : OS_NEW                                                                                         *
+ * Name              : OS_TSK_DEF                                                                                     *
  *                                                                                                                    *
  * Description       : define and initilize complete work area for task obj. with stack size defined by OS_STACK_SIZE *
  *                     task state (function body) must be defined immediately below                                   *
@@ -183,8 +183,8 @@ struct __tsk
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define             OS_NEW( tsk ) \
-                    OS_DEF( tsk, OS_STACK_SIZE )
+#define             OS_TSK_DEF( tsk ) \
+                    OS_WRK_DEF( tsk, OS_STACK_SIZE )
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -200,8 +200,7 @@ struct __tsk
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define         static_WRK( tsk, state, size )                                         \
-                static void state( void );                                              \
+#define         static_WRK( tsk, state, size )                                          \
                 static stk_t tsk##__stk[ASIZE( size )];                                  \
                 static tsk_t tsk##__tsk = _TSK_INIT( state, tsk##__stk + ASIZE( size ) ); \
                 static tsk_id tsk = & tsk##__tsk
@@ -224,7 +223,7 @@ struct __tsk
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Name              : static_DEF                                                                                     *
+ * Name              : static_WRK_DEF                                                                                 *
  *                                                                                                                    *
  * Description       : define and initilize static work area for task object                                          *
  *                     task state (function body) must be defined immediately below                                   *
@@ -235,13 +234,14 @@ struct __tsk
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define         static_DEF( tsk, size )             \
+#define         static_WRK_DEF( tsk, size )        \
+                static void tsk##__fun( void );     \
                 static_WRK( tsk, tsk##__fun, size ); \
                 static void tsk##__fun( void )
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Name              : static_NEW                                                                                     *
+ * Name              : static_TSK_DEF                                                                                 *
  *                                                                                                                    *
  * Description       : define and initilize static work area for task object with stack size defined by OS_STACK_SIZE *
  *                     task state (function body) must be defined immediately below                                   *
@@ -251,8 +251,8 @@ struct __tsk
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define         static_NEW( tsk ) \
-                static_DEF( tsk, OS_STACK_SIZE )
+#define         static_TSK_DEF( tsk ) \
+                static_WRK_DEF( tsk, OS_STACK_SIZE )
 
 /**********************************************************************************************************************
  *                                                                                                                    *
