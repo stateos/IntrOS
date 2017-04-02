@@ -2,8 +2,6 @@
 #include <os.h>
 
 OS_SEM(sem, 0);
-OS_TSK(sla, slave);
-OS_TMR(tmr, proc);
 
 void slave()
 {
@@ -15,6 +13,9 @@ void proc()
 {
 	sem_give(sem);
 }
+
+OS_TSK(sla, slave);
+OS_TMR(tmr, proc);
 
 int main()
 {

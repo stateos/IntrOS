@@ -22,6 +22,14 @@ Features:
 - timers (one-shot, periodic)
 - all documentation is contained within the source files
 ---------
+2.8
+- updated OS_TMR / static_TMR macros
+- added OS_TMR_DEF / static_TMR_DEF macros
+- updated OS_WRK / static_WRK macros
+- renamed OS_DEF / static_DEF macros to OS_WRK_DEF / static_WRK_DEF
+- renamed OS_NEW / static_NEW macros to OS_TSK_DEF / static_TSK_DEF
+- updated examples
+---------
 2.7
 - added tick-less mode
 - function core_tsk_break renamed to core_tsk_switch
