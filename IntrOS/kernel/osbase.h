@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    29.03.2017
+    @date    05.04.2017
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -110,8 +110,10 @@ typedef struct __sys sys_t;
 struct __sys
 {
 	tsk_t  * cur;   // pointer to the current task control block
+#if OS_TIMER == 0
 	volatile
 	unsigned cnt;   // system timer counter
+#endif
 };
 
 /* -------------------------------------------------------------------------- */
