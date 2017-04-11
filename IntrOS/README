@@ -22,6 +22,10 @@ Features:
 - timers (one-shot, periodic)
 - all documentation is contained within the source files
 ---------
+2.9
+- changed tsk_suspend / tsk_resume functions
+- added tsk_suspend example
+---------
 2.8
 - updated OS_TMR / static_TMR macros
 - added OS_TMR_DEF / static_TMR_DEF macros

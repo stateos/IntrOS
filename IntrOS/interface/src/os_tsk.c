@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.c
     @author  Rajmund Szymanski
-    @date    22.03.2017
+    @date    11.04.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -155,16 +155,49 @@ void tsk_give( tsk_t *tsk, unsigned flags )
 }
 
 /* -------------------------------------------------------------------------- */
-void tsk_resume( tsk_t *tsk, unsigned event )
+unsigned tsk_suspend( tsk_t *tsk )
 /* -------------------------------------------------------------------------- */
 {
+	unsigned event = E_FAILURE;
+
 	assert(tsk);
+
+	port_sys_lock();
+
+	if (tsk->id == ID_READY)
+	{
+		tsk->delay = INFINITE;
+		tsk->id = ID_DELAYED;
+		if (tsk == Current)
+			tsk_yield();
+		event = E_SUCCESS;
+	}
+
+	port_sys_unlock();
+
+	return event;
+}
+
+/* -------------------------------------------------------------------------- */
+unsigned tsk_resume( tsk_t *tsk )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned event = E_FAILURE;
+
+	assert(tsk);
+
+	port_sys_lock();
 
 	if (tsk->id == ID_DELAYED)
 	{
-		tsk->event = event;
+		tsk->event = E_FAILURE;
 		tsk->id = ID_READY;
+		event = E_SUCCESS;
 	}
+
+	port_sys_unlock();
+
+	return event;
 }
 
 /* -------------------------------------------------------------------------- */
