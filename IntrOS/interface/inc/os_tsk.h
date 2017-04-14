@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    11.04.2017
+    @date    14.04.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -52,7 +52,9 @@ struct __tsk
 	unsigned start; // inherited from timer
 	unsigned delay; // inherited from timer
 	void   * top;   // top of stack
-
+#if !defined(port_get_lock) || !defined(port_put_lock)
+	unsigned lock;  // lock level
+#endif
 	union  {
 	ctx_t    reg;   // task context
 	jmp_buf  buf;   // setjmp/longjmp buffer
@@ -76,7 +78,11 @@ struct __tsk
  *                                                                                                                    *
  **********************************************************************************************************************/
 
+#if !defined(port_get_lock) || !defined(port_put_lock)
+#define               _TSK_INIT( _state, _top ) { 0, 0, 0, 0, _state, 0, 0, _top, 0, { _CTX_INIT() } }
+#else
 #define               _TSK_INIT( _state, _top ) { 0, 0, 0, 0, _state, 0, 0, _top, { _CTX_INIT() } }
+#endif
 
 /**********************************************************************************************************************
  *                                                                                                                    *

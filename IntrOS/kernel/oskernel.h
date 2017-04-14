@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.h
     @author  Rajmund Szymanski
-    @date    25.03.2017
+    @date    14.04.2017
     @brief   This file defines set of kernel functions for IntrOS.
 
  ******************************************************************************
@@ -53,6 +53,24 @@ extern sys_t System; // system data
 // the port_sys_init procedure is normally called as a constructor
 __CONSTRUCTOR
 void port_sys_init( void );
+
+/* -------------------------------------------------------------------------- */
+
+// disable interrupts / enter into critical section
+#if !defined(port_get_lock) || !defined(port_put_lock)
+void core_sys_lock( void );
+#else
+#define core_sys_lock() \
+        port_sys_lock()
+#endif
+
+// enable interrupts / exit from critical section
+#if !defined(port_get_lock) || !defined(port_put_lock)
+void core_sys_unlock( void );
+#else
+#define core_sys_unlock() \
+        port_sys_unlock()
+#endif
 
 /* -------------------------------------------------------------------------- */
 

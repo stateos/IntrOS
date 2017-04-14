@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_cnd.c
     @author  Rajmund Szymanski
-    @date    20.03.2017
+    @date    14.04.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -51,11 +51,11 @@ void cnd_give( cnd_t *cnd )
 {
 	assert(cnd);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	cnd->signal++;
 
-	port_sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
