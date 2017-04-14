@@ -36,7 +36,7 @@ unsigned sem_take( sem_t *sem )
 
 	assert(sem);
 
-	core_sys_lock();
+	sys_lock();
 
 	if (sem->count > 0)
 	{
@@ -45,7 +45,7 @@ unsigned sem_take( sem_t *sem )
 		event = E_SUCCESS;
 	}
 
-	core_sys_unlock();
+	sys_unlock();
 
 	return event;
 }
@@ -65,7 +65,7 @@ unsigned sem_give( sem_t *sem )
 
 	assert(sem);
 
-	core_sys_lock();
+	sys_lock();
 
 	if (sem->count < ~0U)
 	{
@@ -74,7 +74,7 @@ unsigned sem_give( sem_t *sem )
 		event = E_SUCCESS;
 	}
 
-	core_sys_unlock();
+	sys_unlock();
 
 	return event;
 }

@@ -63,7 +63,7 @@ unsigned box_take( box_t *box, void *data )
 	assert(box);
 	assert(data);
 
-	core_sys_lock();
+	sys_lock();
 
 	if (box->count > 0)
 	{
@@ -74,7 +74,7 @@ unsigned box_take( box_t *box, void *data )
 		event = E_SUCCESS;
 	}
 
-	core_sys_unlock();
+	sys_unlock();
 
 	return event;
 }
@@ -95,7 +95,7 @@ unsigned box_give( box_t *box, void *data )
 	assert(box);
 	assert(data);
 
-	core_sys_lock();
+	sys_lock();
 
 	if (box->count < box->limit)
 	{
@@ -106,7 +106,7 @@ unsigned box_give( box_t *box, void *data )
 		event = E_SUCCESS;
 	}
 
-	core_sys_unlock();
+	sys_unlock();
 
 	return event;
 }

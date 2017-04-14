@@ -37,7 +37,7 @@ unsigned lst_take( lst_t *lst, void **data )
 	assert(lst);
 	assert(data);
 
-	core_sys_lock();
+	sys_lock();
 
 	if (lst->next)
 	{
@@ -46,7 +46,7 @@ unsigned lst_take( lst_t *lst, void **data )
 		event = E_SUCCESS;
 	}
 	
-	core_sys_unlock();
+	sys_unlock();
 
 	return event;
 }
@@ -67,14 +67,14 @@ void lst_give( lst_t *lst, void *data )
 	assert(lst);
 	assert(data);
 
-	core_sys_lock();
+	sys_lock();
 
 	ptr = (que_t *)&(lst->next);
 	while (ptr->next) ptr = ptr->next;
 	ptr->next = (que_t *)data - 1;
 	ptr->next->next = 0;
 
-	core_sys_unlock();
+	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */

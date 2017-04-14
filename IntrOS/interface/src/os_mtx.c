@@ -37,7 +37,7 @@ unsigned mtx_take( mtx_t *mtx )
 	assert(mtx);
 	assert(mtx->owner != Current);
 
-	core_sys_lock();
+	sys_lock();
 
 	if (mtx->owner == 0)
 	{
@@ -46,7 +46,7 @@ unsigned mtx_take( mtx_t *mtx )
 		event = E_SUCCESS;
 	}
 
-	core_sys_unlock();
+	sys_unlock();
 
 	return event;
 }
@@ -66,7 +66,7 @@ unsigned mtx_give( mtx_t *mtx )
 	
 	assert(mtx);
 
-	core_sys_lock();
+	sys_lock();
 
 	if (mtx->owner == Current)
 	{
@@ -75,7 +75,7 @@ unsigned mtx_give( mtx_t *mtx )
 		event = E_SUCCESS;
 	}
 
-	core_sys_unlock();
+	sys_unlock();
 
 	return event;
 }
