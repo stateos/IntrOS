@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    14.04.2017
+    @date    17.04.2017
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -40,7 +40,7 @@ sys_t System = { .cur=&MAIN };
 
 /* -------------------------------------------------------------------------- */
 
-#if !defined(port_get_lock) || !defined(port_put_lock)
+#ifndef OS_PORT_LOCK
 void core_sys_lock( void )
 {
 	port_set_lock();
@@ -50,7 +50,7 @@ void core_sys_lock( void )
 
 /* -------------------------------------------------------------------------- */
 
-#if !defined(port_get_lock) || !defined(port_put_lock)
+#ifndef OS_PORT_LOCK
 void core_sys_unlock( void )
 {
 	port_set_lock();
@@ -113,7 +113,7 @@ void core_tsk_loop( void )
 	for (;;)
 	{
 		port_clr_lock();
-#if !defined(port_get_lock) || !defined(port_put_lock)
+#ifndef OS_PORT_LOCK
 		Current->lock = 0;
 #endif
 		Current->state();
