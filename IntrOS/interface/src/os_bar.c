@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_bar.c
     @author  Rajmund Szymanski
-    @date    14.04.2017
+    @date    22.03.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -39,7 +39,7 @@ void bar_wait( bar_t *bar )
 
 	signal = bar->signal;
 
-	core_sys_lock();
+	port_sys_lock();
 
 	if (--bar->count == 0)
 	{
@@ -47,7 +47,7 @@ void bar_wait( bar_t *bar )
 		bar->signal++;
 	}
 
-	core_sys_unlock();
+	port_sys_unlock();
 
 	while (bar->signal == signal) tsk_yield();
 }

@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_evt.c
     @author  Rajmund Szymanski
-    @date    14.04.2017
+    @date    27.02.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -48,12 +48,12 @@ void evt_give( evt_t *evt, unsigned event )
 {
 	assert(evt);
 
-	core_sys_lock();
+	port_sys_lock();
 
 	evt->event = event;
 	evt->signal++;
 
-	core_sys_unlock();
+	port_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */

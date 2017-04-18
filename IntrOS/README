@@ -25,7 +25,6 @@ Features:
 2.9
 - changed tsk_suspend / tsk_resume functions
 - added tsk_suspend example
-- changed sys_lock / sys_unlock macros
 ---------
 2.8
 - updated OS_TMR / static_TMR macros

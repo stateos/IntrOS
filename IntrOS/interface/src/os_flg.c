@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_flg.c
     @author  Rajmund Szymanski
-    @date    14.04.2017
+    @date    11.01.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -36,7 +36,7 @@ unsigned flg_take( flg_t *flg, unsigned flags, bool all )
 
 	assert(flg);
 
-	core_sys_lock();
+	port_sys_lock();
 
 	if (flags & flg->flags)
 	{
@@ -45,7 +45,7 @@ unsigned flg_take( flg_t *flg, unsigned flags, bool all )
 		flg->flags &= ~flags;
 	}
 
-	core_sys_unlock();
+	port_sys_unlock();
 
 	return event;
 }
@@ -63,11 +63,11 @@ void flg_give( flg_t *flg, unsigned flags )
 {
 	assert(flg);
 
-	core_sys_lock();
+	port_sys_lock();
 
 	flg->flags |= flags;
 
-	core_sys_unlock();
+	port_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
