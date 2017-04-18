@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    22.03.2017
+    @date    18.04.2017
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -106,11 +106,11 @@ void core_tsk_switch( void )
 
 	for (;;)
 	{
-		port_set_lock();
+		port_isr_lock();
 
 		cur = Current = Current->next;
 
-		port_clr_lock();
+		port_isr_unlock();
 
 		if (cur->id == ID_STOPPED)
 			continue;
@@ -129,7 +129,7 @@ void core_tsk_switch( void )
 		}
 //		if (cur->id == ID_TIMER)
 		{
-			port_set_lock();
+			port_isr_lock();
 
 			tmr = (tmr_t *) cur;
 			
@@ -144,7 +144,7 @@ void core_tsk_switch( void )
 
 			tmr->signal++;
 
-			port_clr_lock();
+			port_isr_unlock();
 		}
 	}
 
