@@ -51,11 +51,11 @@ void cnd_give( cnd_t *cnd )
 {
 	assert(cnd);
 
-	sys_lock();
+	core_sys_lock();
 
 	cnd->signal++;
 
-	sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */

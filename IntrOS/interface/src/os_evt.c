@@ -48,12 +48,12 @@ void evt_give( evt_t *evt, unsigned event )
 {
 	assert(evt);
 
-	sys_lock();
+	core_sys_lock();
 
 	evt->event = event;
 	evt->signal++;
 
-	sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */

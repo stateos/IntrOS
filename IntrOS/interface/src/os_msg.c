@@ -57,7 +57,7 @@ unsigned msg_take( msg_t *msg, unsigned *data )
 	assert(msg);
 	assert(data);
 
-	sys_lock();
+	core_sys_lock();
 
 	if (msg->count > 0)
 	{
@@ -68,7 +68,7 @@ unsigned msg_take( msg_t *msg, unsigned *data )
 		event = E_SUCCESS;
 	}
 
-	sys_unlock();
+	core_sys_unlock();
 
 	return event;
 }
@@ -89,7 +89,7 @@ unsigned msg_give( msg_t *msg, unsigned data )
 	assert(msg);
 	assert(data);
 
-	sys_lock();
+	core_sys_lock();
 
 	if (msg->count < msg->limit)
 	{
@@ -100,7 +100,7 @@ unsigned msg_give( msg_t *msg, unsigned data )
 		event = E_SUCCESS;
 	}
 
-	sys_unlock();
+	core_sys_unlock();
 
 	return event;
 }

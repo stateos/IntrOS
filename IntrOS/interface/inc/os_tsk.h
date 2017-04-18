@@ -53,7 +53,7 @@ struct __tsk
 	unsigned delay; // inherited from timer
 	void   * top;   // top of stack
 #if !defined(port_get_lock) || !defined(port_put_lock)
-	lck_t    lock;  // lock level
+	unsigned lock;  // lock level
 #endif
 	union  {
 	ctx_t    reg;   // task context

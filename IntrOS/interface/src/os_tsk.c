@@ -35,7 +35,7 @@ void tsk_start( tsk_t *tsk )
 	assert(tsk);
 	assert(tsk->state);
 
-	sys_lock();
+	core_sys_lock();
 
 	if (tsk->id == ID_STOPPED)
 	{
@@ -43,7 +43,7 @@ void tsk_start( tsk_t *tsk )
 		core_tsk_insert(tsk);
 	}
 
-	sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -53,7 +53,7 @@ void tsk_startFrom( tsk_t *tsk, fun_t *state )
 	assert(tsk);
 	assert(state);
 
-	sys_lock();
+	core_sys_lock();
 
 	if (tsk->id == ID_STOPPED)
 	{
@@ -63,7 +63,7 @@ void tsk_startFrom( tsk_t *tsk, fun_t *state )
 		core_tsk_insert(tsk);
 	}
 
-	sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -148,9 +148,9 @@ void tsk_give( tsk_t *tsk, unsigned flags )
 
 	if (tsk->id == ID_READY)
 	{
-		sys_lock();
+		core_sys_lock();
 		tsk->event &= ~flags;
-		sys_unlock();
+		core_sys_unlock();
 	}
 }
 

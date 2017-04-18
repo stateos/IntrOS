@@ -39,7 +39,6 @@ tsk_t MAIN   = { .id=ID_READY, .prev=&MAIN, .next=&MAIN, .top=MAIN_TOP }; // mai
 sys_t System = { .cur=&MAIN };
 
 /* -------------------------------------------------------------------------- */
-
 #if !defined(port_get_lock) || !defined(port_put_lock)
 void core_sys_lock( void )
 {
@@ -47,9 +46,7 @@ void core_sys_lock( void )
 	Current->lock++;
 }
 #endif
-
 /* -------------------------------------------------------------------------- */
-
 #if !defined(port_get_lock) || !defined(port_put_lock)
 void core_sys_unlock( void )
 {
@@ -58,7 +55,6 @@ void core_sys_unlock( void )
 		port_clr_lock();
 }
 #endif
-
 /* -------------------------------------------------------------------------- */
 
 void core_rdy_insert( void *item, unsigned id, void *next )
@@ -98,12 +94,12 @@ void core_ctx_init( tsk_t *tsk )
 
 void core_ctx_switch( void )
 {
-	sys_lock();
+	core_sys_lock();
 
 	if (setjmp(Current->ctx.buf) == 0)
 		core_tsk_switch();
 
-	sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */

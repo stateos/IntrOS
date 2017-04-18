@@ -78,13 +78,8 @@ void sys_init( void ) { port_sys_init(); }
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#if !defined(port_get_lock) || !defined(port_put_lock)
 #define                sys_lock() \
-                       do { core_sys_lock()
-#else
-#define                sys_lock() \
-                       do { lck_t __LOCK = port_get_lock(); port_set_lock()
-#endif
+                       core_sys_lock()
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -98,13 +93,8 @@ void sys_init( void ) { port_sys_init(); }
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#if !defined(port_get_lock) || !defined(port_put_lock)
 #define                sys_unlock() \
-                       core_sys_unlock(); } while(0)
-#else
-#define                sys_unlock() \
-                       port_put_lock(__LOCK); } while(0)
-#endif
+                       core_sys_unlock()
 
 #ifdef __cplusplus
 }
@@ -124,7 +114,7 @@ struct CriticalSection
 	~CriticalSection( void ) { port_put_lock(state); }
 
 	private:
-	lck_t state;
+	unsigned state;
 #endif
 };
 

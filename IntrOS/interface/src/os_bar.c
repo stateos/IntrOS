@@ -39,7 +39,7 @@ void bar_wait( bar_t *bar )
 
 	signal = bar->signal;
 
-	sys_lock();
+	core_sys_lock();
 
 	if (--bar->count == 0)
 	{
@@ -47,7 +47,7 @@ void bar_wait( bar_t *bar )
 		bar->signal++;
 	}
 
-	sys_unlock();
+	core_sys_unlock();
 
 	while (bar->signal == signal) tsk_yield();
 }

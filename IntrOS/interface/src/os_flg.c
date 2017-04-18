@@ -36,7 +36,7 @@ unsigned flg_take( flg_t *flg, unsigned flags, bool all )
 
 	assert(flg);
 
-	sys_lock();
+	core_sys_lock();
 
 	if (flags & flg->flags)
 	{
@@ -45,7 +45,7 @@ unsigned flg_take( flg_t *flg, unsigned flags, bool all )
 		flg->flags &= ~flags;
 	}
 
-	sys_unlock();
+	core_sys_unlock();
 
 	return event;
 }
@@ -63,11 +63,11 @@ void flg_give( flg_t *flg, unsigned flags )
 {
 	assert(flg);
 
-	sys_lock();
+	core_sys_lock();
 
 	flg->flags |= flags;
 
-	sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */

@@ -36,7 +36,7 @@ unsigned sig_take( sig_t *sig )
 
 	assert(sig);
 
-	sys_lock();
+	core_sys_lock();
 
 	if (sig->flag)
 	{
@@ -45,7 +45,7 @@ unsigned sig_take( sig_t *sig )
 		event = E_SUCCESS;
 	}
 
-	sys_unlock();
+	core_sys_unlock();
 
 	return event;
 }

@@ -59,11 +59,17 @@ void port_sys_init( void );
 // disable interrupts / enter into critical section
 #if !defined(port_get_lock) || !defined(port_put_lock)
 void core_sys_lock( void );
+#else
+#define core_sys_lock() \
+        port_sys_lock()
 #endif
 
 // enable interrupts / exit from critical section
 #if !defined(port_get_lock) || !defined(port_put_lock)
 void core_sys_unlock( void );
+#else
+#define core_sys_unlock() \
+        port_sys_unlock()
 #endif
 
 /* -------------------------------------------------------------------------- */

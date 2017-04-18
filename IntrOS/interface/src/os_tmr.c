@@ -43,7 +43,7 @@ void tmr_startUntil( tmr_t *tmr, unsigned time )
 {
 	assert(tmr);
 
-	sys_lock();
+	core_sys_lock();
 
 	tmr->start  = Counter;
 	tmr->delay  = time - tmr->start;
@@ -51,7 +51,7 @@ void tmr_startUntil( tmr_t *tmr, unsigned time )
 
 	priv_tmr_start(tmr);
 
-	sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -60,7 +60,7 @@ void tmr_start( tmr_t *tmr, unsigned delay, unsigned period )
 {
 	assert(tmr);
 
-	sys_lock();
+	core_sys_lock();
 
 	tmr->start  = Counter;
 	tmr->delay  = delay;
@@ -68,7 +68,7 @@ void tmr_start( tmr_t *tmr, unsigned delay, unsigned period )
 
 	priv_tmr_start(tmr);
 
-	sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -77,7 +77,7 @@ void tmr_startFrom( tmr_t *tmr, unsigned delay, unsigned period, fun_t *proc )
 {
 	assert(tmr);
 
-	sys_lock();
+	core_sys_lock();
 
 	tmr->state  = proc;
 	tmr->start  = Counter;
@@ -86,7 +86,7 @@ void tmr_startFrom( tmr_t *tmr, unsigned delay, unsigned period, fun_t *proc )
 
 	priv_tmr_start(tmr);
 
-	sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
