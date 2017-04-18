@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.h
     @author  Rajmund Szymanski
-    @date    15.04.2017
+    @date    14.04.2017
     @brief   IntrOS port definitions for STM32F4 uC.
 
  ******************************************************************************
@@ -149,14 +149,13 @@ extern   stk_t              __initial_sp[];
 
 /* -------------------------------------------------------------------------- */
 
+typedef  unsigned             lck_t;
+
 #define  port_get_lock()    __get_PRIMASK()
 #define  port_put_lock(lck) __set_PRIMASK(lck)
 
 #define  port_set_lock()    __disable_irq()
 #define  port_clr_lock()    __enable_irq()
-
-#define  port_sys_lock()      unsigned __LOCK = port_get_lock(); port_set_lock()
-#define  port_sys_unlock()    port_put_lock(__LOCK)
 
 /* -------------------------------------------------------------------------- */
 
