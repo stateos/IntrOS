@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.h
     @author  Rajmund Szymanski
-    @date    17.04.2017
+    @date    14.04.2017
     @brief   This file defines set of kernel functions for IntrOS.
 
  ******************************************************************************
@@ -56,14 +56,14 @@ void port_sys_init( void );
 
 /* -------------------------------------------------------------------------- */
 
-#ifndef OS_PORT_LOCK
-
 // disable interrupts / enter into critical section
+#if !defined(port_get_lock) || !defined(port_put_lock)
 void core_sys_lock( void );
+#endif
 
 // enable interrupts / exit from critical section
+#if !defined(port_get_lock) || !defined(port_put_lock)
 void core_sys_unlock( void );
-
 #endif
 
 /* -------------------------------------------------------------------------- */
