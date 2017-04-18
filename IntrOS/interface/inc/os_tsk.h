@@ -52,14 +52,13 @@ struct __tsk
 	unsigned start; // inherited from timer
 	unsigned delay; // inherited from timer
 	void   * top;   // top of stack
-
+#if !defined(port_get_lock) || !defined(port_put_lock)
+	lck_t    lock;  // lock level
+#endif
 	union  {
 	ctx_t    reg;   // task context
 	jmp_buf  buf;   // setjmp/longjmp buffer
 	}        ctx;
-#if !defined(port_get_lock) || !defined(port_put_lock)
-	lck_t    lock;  // lock level
-#endif
 };
 
 /**********************************************************************************************************************
@@ -80,7 +79,7 @@ struct __tsk
  **********************************************************************************************************************/
 
 #if !defined(port_get_lock) || !defined(port_put_lock)
-#define               _TSK_INIT( _state, _top ) { 0, 0, 0, 0, _state, 0, 0, _top, { _CTX_INIT() }, 0 }
+#define               _TSK_INIT( _state, _top ) { 0, 0, 0, 0, _state, 0, 0, _top, 0, { _CTX_INIT() } }
 #else
 #define               _TSK_INIT( _state, _top ) { 0, 0, 0, 0, _state, 0, 0, _top, { _CTX_INIT() } }
 #endif
