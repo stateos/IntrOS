@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    26.03.2017
+    @date    21.04.2017
     @brief   IntrOS port file for ARM Cotrex-M uC.
 
  ******************************************************************************
@@ -94,6 +94,29 @@ void port_ctx_init( ctx_t *ctx, stk_t *sp, fun_t *pc )
 	ctx->sp = sp;
 	ctx->pc = pc;
 }
+
+/* -------------------------------------------------------------------------- */
+
+#if   defined(__CSMC__)
+
+#define  __disable_irq()    __ASM("cpsid i")
+#define  __enable_irq()     __ASM("cpsie i")
+
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+#define  port_get_lock()    __get_PRIMASK()
+#define  port_put_lock(lck) __set_PRIMASK(lck)
+
+#define  port_set_lock()    __disable_irq()
+#define  port_clr_lock()    __enable_irq()
+
+#define  port_sys_lock()      do { unsigned __LOCK = port_get_lock(); port_set_lock()
+#define  port_sys_unlock()         port_put_lock(__LOCK); } while(0)
+
+#define  port_isr_lock()      do { port_set_lock()
+#define  port_isr_unlock()         port_clr_lock(); } while(0)
 
 /* -------------------------------------------------------------------------- */
 
