@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    05.04.2017
+    @date    21.04.2017
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -65,11 +65,6 @@ extern "C" {
 #ifndef INFINITE
 #define INFINITE   (~0U) // infinite waiting
 #endif
-
-/* -------------------------------------------------------------------------- */
-
-#define ASIZE( size ) \
- (((unsigned)( size )+(sizeof(stk_t)-1))/sizeof(stk_t))
 
 /* -------------------------------------------------------------------------- */
 
