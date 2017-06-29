@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.c
     @author  Rajmund Szymanski
-    @date    12.04.2017
+    @date    29.06.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -114,8 +114,12 @@ unsigned tsk_sleepUntil( unsigned time )
 {
 	tsk_t *cur = Current;
 
+	port_sys_lock();
+
 	cur->start = Counter;
 	cur->delay = time - cur->start;
+
+	port_sys_unlock();
 
 	return priv_tsk_sleep(cur);
 }
@@ -126,8 +130,12 @@ unsigned tsk_sleepFor( unsigned delay )
 {
 	tsk_t *cur = Current;
 
+	port_sys_lock();
+
 	cur->start = Counter;
 	cur->delay = delay;
+
+	port_sys_unlock();
 
 	return priv_tsk_sleep(cur);
 }

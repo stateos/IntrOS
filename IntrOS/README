@@ -22,6 +22,9 @@ Features:
 - timers (one-shot, periodic)
 - all documentation is contained within the source files
 ---------
+3.0
+- updated kernel security
+---------
 2.9
 - changed tsk_suspend / tsk_resume functions
 - added tsk_suspend example
