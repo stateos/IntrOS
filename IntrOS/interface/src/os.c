@@ -1,9 +1,9 @@
 /******************************************************************************
 
-    @file    IntrOS: oslibc.c
+    @file    IntrOS: os.c
     @author  Rajmund Szymanski
-    @date    05.07.2017
-    @brief   This file provides set of variables and functions for IntrOS.
+    @date    06.07.2017
+    @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
 
@@ -28,34 +28,19 @@
 
 #include <os.h>
 
-#if  defined(__ARMCOMPILER_VERSION)
-#if !defined(__MICROLIB)
-
 /* -------------------------------------------------------------------------- */
-
-__attribute__((weak))
-char *_sys_command_string( char *cmd, int len )
+uint32_t sys_time( void )
+/* -------------------------------------------------------------------------- */
 {
-	(void) len;
+	uint32_t cnt;
 
-	return cmd;
+	port_cnt_lock();
+
+	cnt = Counter;
+
+	port_cnt_unlock();
+
+	return cnt;
 }
 
 /* -------------------------------------------------------------------------- */
-
-#endif // !__MICROLIB
-
-/* -------------------------------------------------------------------------- */
-
-#include <stdlib.h>
-
-void __aeabi_assert(const char* expr, const char* file, int line)
-{
-	(void) expr; (void) file; (void) line;
-
-	abort();
-}
-
-/* -------------------------------------------------------------------------- */
-
-#endif // __ARMCOMPILER_VERSION

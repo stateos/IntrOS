@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    11.04.2017
+    @date    06.07.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -49,8 +49,8 @@ struct __tsk
 	unsigned event; // wakeup event
 
 	fun_t  * state; // inherited from timer
-	unsigned start; // inherited from timer
-	unsigned delay; // inherited from timer
+	uint32_t    start; // inherited from timer
+	uint32_t    delay; // inherited from timer
 	void   * top;   // top of stack
 
 	union  {
@@ -495,7 +495,7 @@ void tsk_give( tsk_t *tsk, unsigned flags );
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-unsigned tsk_sleepUntil( unsigned time );
+unsigned tsk_sleepUntil( uint32_t time );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -514,7 +514,7 @@ unsigned tsk_sleepUntil( unsigned time );
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-unsigned tsk_sleepFor( unsigned delay );
+unsigned tsk_sleepFor( uint32_t delay );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -550,7 +550,7 @@ unsigned tsk_sleep( void ) { return tsk_sleepFor(INFINITE); }
  **********************************************************************************************************************/
 
 __STATIC_INLINE
-unsigned tsk_delay( unsigned delay ) { return tsk_sleepFor(delay); }
+unsigned tsk_delay( uint32_t delay ) { return tsk_sleepFor(delay); }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -609,10 +609,10 @@ namespace ThisTask
 	void     flip      ( fun_t  * _state ) {        tsk_flip      (_state);       }
 	void     stop      ( void )            {        tsk_stop      ();             }
 
-	unsigned sleepUntil( unsigned _time )  { return tsk_sleepUntil(_time);        }
-	unsigned sleepFor  ( unsigned _delay ) { return tsk_sleepFor  (_delay);       }
+	unsigned sleepUntil( uint32_t _time )  { return tsk_sleepUntil(_time);        }
+	unsigned sleepFor  ( uint32_t _delay ) { return tsk_sleepFor  (_delay);       }
 	unsigned sleep     ( void )            { return tsk_sleep     ();             }
-	unsigned delay     ( unsigned _delay ) { return tsk_delay     (_delay);       }
+	unsigned delay     ( uint32_t _delay ) { return tsk_delay     (_delay);       }
 	void     suspend   ( void )            {        tsk_suspend   (Current);      }
 }
 

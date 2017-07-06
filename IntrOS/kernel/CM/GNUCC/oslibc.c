@@ -2,7 +2,7 @@
 
     @file    IntrOS: oslibc.c
     @author  Rajmund Szymanski
-    @date    28.12.2016
+    @date    05.07.2017
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -26,11 +26,11 @@
 
  ******************************************************************************/
 
-#if defined(__GNUC__) && !defined(__ARMCC_VERSION)
-
 #include <errno.h>
 #include <sys/stat.h>
 #include <os.h>
+
+#if defined(__GNUC__) && !defined(__ARMCC_VERSION)
 
 /* -------------------------------------------------------------------------- */
 

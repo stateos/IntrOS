@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.c
     @author  Rajmund Szymanski
-    @date    29.06.2017
+    @date    06.07.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -109,7 +109,7 @@ unsigned priv_tsk_sleep( tsk_t *cur )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned tsk_sleepUntil( unsigned time )
+unsigned tsk_sleepUntil( uint32_t time )
 /* -------------------------------------------------------------------------- */
 {
 	tsk_t *cur = Current;
@@ -125,7 +125,7 @@ unsigned tsk_sleepUntil( unsigned time )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned tsk_sleepFor( unsigned delay )
+unsigned tsk_sleepFor( uint32_t delay )
 /* -------------------------------------------------------------------------- */
 {
 	tsk_t *cur = Current;
