@@ -2,7 +2,7 @@
 
     @file    IntrOS: osconfig.h
     @author  Rajmund Szymanski
-    @date    22.04.2017
+    @date    12.07.2017
     @brief   IntrOS config file for STM32F4 uC.
 
  ******************************************************************************
@@ -54,3 +54,8 @@
 // using standard assertions
 // default value: 0
 #define  OS_ASSERT            0
+
+// ----------------------------
+// include c++ functional
+// default value: 0
+#define  OS_FUNCTIONAL        1

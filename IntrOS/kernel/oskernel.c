@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    06.07.2017
+    @date    11.07.2017
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -92,7 +92,7 @@ void core_tsk_loop( void )
 	for (;;)
 	{
 		port_clr_lock();
-		Current->state();
+		Current->state(Current);
 		core_ctx_switch();
 	}
 }
@@ -139,7 +139,7 @@ void core_tsk_switch( void )
 			tmr->delay  = tmr->period;
 
 			if (tmr->state)
-			tmr->state();
+			tmr->state(tmr);
 
 			if (tmr->delay == 0)
 			core_tmr_remove(tmr);

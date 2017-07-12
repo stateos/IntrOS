@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.h
     @author  Rajmund Szymanski
-    @date    06.07.2017
+    @date    12.07.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -49,9 +49,9 @@ struct __tmr
 	unsigned signal;
 
 	fun_t  * state; // callback procedure
-	uint32_t    start;
-	uint32_t    delay;
-	uint32_t    period;
+	uint32_t start;
+	uint32_t delay;
+	uint32_t period;
 };
 
 /**********************************************************************************************************************
@@ -364,44 +364,36 @@ void tmr_delay( uint32_t delay ) { ((tmr_t *)Current)->delay = delay; }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Namespace         : ThisTimer                                                                                      *
- *                                                                                                                    *
- * Description       : provide set of functions for Current Timer                                                     *
- *                                                                                                                    *
- **********************************************************************************************************************/
-
-namespace ThisTimer
-{
-	void flip ( fun_t  * _state ) { tmr_flip (_state); }
-	void delay( uint32_t _delay ) { tmr_delay(_delay); }
-}
-
-/**********************************************************************************************************************
- *                                                                                                                    *
  * Class             : Timer                                                                                          *
  *                                                                                                                    *
  * Description       : create and initilize a timer object                                                            *
  *                                                                                                                    *
  * Constructor parameters                                                                                             *
- *                   : none                                                                                           *
+ *   state           : callback procedure                                                                             *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
 struct Timer : public __tmr
 {
 	explicit
-	Timer( fun_t *_state = nullptr ): __tmr _TMR_INIT(0) { state = _state; }
+	Timer( void ):         __tmr _TMR_INIT(0) {}
+	explicit
+	Timer( FUN_t _state ): __tmr _TMR_INIT((fun_t *) run), _start(_state) {}
 
-	void startUntil   ( uint32_t _time )                                   {        tmr_startUntil   (this, _time);                   }
-	void start        ( uint32_t _delay, uint32_t _period )                {        tmr_start        (this, _delay, _period);         }
-	void startFor     ( uint32_t _delay )                                  {        tmr_startFor     (this, _delay);                  }
-	void startPeriodic( uint32_t _period )                                 {        tmr_startPeriodic(this,         _period);         }
-	void startFrom    ( uint32_t _delay, uint32_t _period, fun_t *_state ) {        tmr_startFrom    (this, _delay, _period, _state); }
+	void startUntil   ( uint32_t _time )                                  {        tmr_startUntil   (this, _time);                          }
+	void start        ( uint32_t _delay, uint32_t _period )               {        tmr_start        (this, _delay, _period);                }
+	void startFor     ( uint32_t _delay )                                 {        tmr_startFor     (this, _delay);                         }
+	void startPeriodic( uint32_t _period )                                {        tmr_startPeriodic(this,         _period);                }
+	void startFrom    ( uint32_t _delay, uint32_t _period, FUN_t _state ) {        _start = _state;
+	                                                                               tmr_startFrom    (this, _delay, _period, (fun_t *) run); }
+	void     wait     ( void )                                            {        tmr_wait         (this);                                 }
+	unsigned take     ( void )                                            { return tmr_take         (this);                                 }
 
-	void     wait     ( void )                                             {        tmr_wait         (this);                          }
-	unsigned take     ( void )                                             { return tmr_take         (this);                          }
+	bool     operator!( void )                                            { return __tmr::id == ID_STOPPED;                                 }
 
-	bool     operator!( void )                                             { return __tmr::id == ID_STOPPED;                          }
+	static
+	void     run( Timer &tmr ) { tmr._start(); }
+	FUN_t    _start;
 };
 
 /**********************************************************************************************************************
@@ -414,14 +406,15 @@ struct Timer : public __tmr
  * Constructor parameters                                                                                             *
  *   time            : timepoint value                                                                                *
  *   state           : callback procedure                                                                             *
- *                     nullptr: no callback                                                                           *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
 struct startTimerUntil : public Timer
 {
 	explicit
-	startTimerUntil( const uint32_t _time, fun_t *_state = nullptr ): Timer(_state) { tmr_startUntil(this, _time); }
+	startTimerUntil( const uint32_t _time ):               Timer()       { tmr_startUntil(this, _time); }
+	explicit
+	startTimerUntil( const uint32_t _time, FUN_t _state ): Timer(_state) { tmr_startUntil(this, _time); }
 };
 
 /**********************************************************************************************************************
@@ -440,14 +433,15 @@ struct startTimerUntil : public Timer
  *                     IMMEDIATE: don't countdown                                                                     *
  *                     INFINITE:  countdown indefinitly                                                               *
  *   state           : callback procedure                                                                             *
- *                     nullptr: no callback                                                                           *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
 struct startTimer : public Timer
 {
 	explicit
-	startTimer( const uint32_t _delay, const uint32_t _period, fun_t *_state = nullptr ): Timer(_state) { tmr_start(this, _delay, _period); }
+	startTimer( const uint32_t _delay, const uint32_t _period ):               Timer()       { tmr_start(this, _delay, _period); }
+	explicit
+	startTimer( const uint32_t _delay, const uint32_t _period, FUN_t _state ): Timer(_state) { tmr_start(this, _delay, _period); }
 };
 
 /**********************************************************************************************************************
@@ -462,14 +456,15 @@ struct startTimer : public Timer
  *                     IMMEDIATE: don't countdown                                                                     *
  *                     INFINITE:  countdown indefinitly                                                               *
  *   state           : callback procedure                                                                             *
- *                     nullptr: no callback                                                                           *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
 struct startTimerFor : public Timer
 {
 	explicit
-	startTimerFor( const uint32_t _delay, fun_t *_state = nullptr ): Timer(_state) { tmr_startFor(this, _delay); }
+	startTimerFor( const uint32_t _delay ):               Timer()       { tmr_startFor(this, _delay); }
+	explicit
+	startTimerFor( const uint32_t _delay, FUN_t _state ): Timer(_state) { tmr_startFor(this, _delay); }
 };
 
 /**********************************************************************************************************************
@@ -485,15 +480,31 @@ struct startTimerFor : public Timer
  *                     IMMEDIATE: don't countdown                                                                     *
  *                     INFINITE:  countdown indefinitly                                                               *
  *   state           : callback procedure                                                                             *
- *                     nullptr: no callback                                                                           *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
 struct startTimerPeriodic : public Timer
 {
 	explicit
-	startTimerPeriodic( const uint32_t _period, fun_t *_state = nullptr ): Timer(_state) { tmr_startPeriodic(this, _period); }
+	startTimerPeriodic( const uint32_t _period ):               Timer()       { tmr_startPeriodic(this, _period); }
+	explicit
+	startTimerPeriodic( const uint32_t _period, FUN_t _state ): Timer(_state) { tmr_startPeriodic(this, _period); }
 };
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Namespace         : ThisTimer                                                                                      *
+ *                                                                                                                    *
+ * Description       : provide set of functions for Current Timer                                                     *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+namespace ThisTimer
+{
+	static inline void flip ( FUN_t    _state ) { ((Timer *) Current)->_start = _state;
+	                                              tmr_flip ((fun_t *) Timer::run);      }
+	static inline void delay( uint32_t _delay ) { tmr_delay(_delay);                    }
+}
 
 #endif//__cplusplus
 

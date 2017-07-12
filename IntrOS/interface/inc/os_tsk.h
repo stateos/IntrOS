@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    06.07.2017
+    @date    12.07.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -49,8 +49,8 @@ struct __tsk
 	unsigned event; // wakeup event
 
 	fun_t  * state; // inherited from timer
-	uint32_t    start; // inherited from timer
-	uint32_t    delay; // inherited from timer
+	uint32_t start; // inherited from timer
+	uint32_t delay; // inherited from timer
 	void   * top;   // top of stack
 
 	union  {
@@ -596,25 +596,36 @@ unsigned tsk_resume( tsk_t *tsk );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
- * Namespace         : ThisTask                                                                                       *
+ * Class             : baseTask                                                                                       *
  *                                                                                                                    *
- * Description       : provide set of functions for Current Task                                                      *
+ * Description       : create task object                                                                             *
+ *                                                                                                                    *
+ * Constructor parameters                                                                                             *
+ *   stack           : initial value of task private stack pointer                                                    *
+ *   state           : task state (initial task function) doesn't have to be noreturn-type                            *
+ *                     it will be executed into an infinite system-implemented loop                                   *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-namespace ThisTask
+struct baseTask : public __tsk
 {
-	void     pass      ( void )            {        tsk_pass      ();             }
-	void     yield     ( void )            {        tsk_yield     ();             }
-	void     flip      ( fun_t  * _state ) {        tsk_flip      (_state);       }
-	void     stop      ( void )            {        tsk_stop      ();             }
+	 explicit
+	 baseTask( FUN_t _state, stk_t *_stack ): __tsk _TSK_INIT((fun_t *) run, _stack), _start(_state) {}
+	~baseTask( void ) { assert(id == ID_STOPPED); }
 
-	unsigned sleepUntil( uint32_t _time )  { return tsk_sleepUntil(_time);        }
-	unsigned sleepFor  ( uint32_t _delay ) { return tsk_sleepFor  (_delay);       }
-	unsigned sleep     ( void )            { return tsk_sleep     ();             }
-	unsigned delay     ( uint32_t _delay ) { return tsk_delay     (_delay);       }
-	void     suspend   ( void )            {        tsk_suspend   (Current);      }
-}
+	void     join     ( void )         {        tsk_join     (this);                }
+	void     start    ( void )         {        tsk_start    (this);                }
+	void     startFrom( FUN_t _state ) {        _start = _state;
+	                                            tsk_startFrom(this, (fun_t *) run); }
+	unsigned suspend  ( void )         { return tsk_resume   (this);                }
+	unsigned resume   ( void )         { return tsk_resume   (this);                }
+
+	bool     operator!( void )         { return __tsk::id == ID_STOPPED;            }
+
+	static
+	void     run( baseTask &tsk ) { tsk._start(); }
+	FUN_t    _start;
+};
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -624,26 +635,16 @@ namespace ThisTask
  *                                                                                                                    *
  * Constructor parameters                                                                                             *
  *   size            : size of task private stack (in bytes)                                                          *
- *   prio            : initial task priority (any unsigned int value)                                                 *
  *   state           : task state (initial task function) doesn't have to be noreturn-type                            *
  *                     it will be executed into an infinite system-implemented loop                                   *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
 template<unsigned _size>
-struct TaskT : public __tsk
+struct TaskT : public baseTask
 {
 	explicit
-	 TaskT( fun_t *_state ): __tsk _TSK_INIT(0, _stack+ASIZE(_size)) { state = _state; }
-	~TaskT( void ) { assert(id == ID_STOPPED); }
-
-	void     join      ( void )            {        tsk_join      (this);         }
-	void     start     ( void )            {        tsk_start     (this);         }
-	void     startFrom ( fun_t  * _state ) {        tsk_startFrom (this, _state); }
-	unsigned suspend   ( void )            { return tsk_resume    (this);         }
-	unsigned resume    ( void )            { return tsk_resume    (this);         }
-
-	bool     operator! ( void )            { return __tsk::id == ID_STOPPED;      }
+	TaskT( FUN_t _state ): baseTask(_state, _stack+ASIZE(_size)) {}
 
 	private:
 	stk_t _stack[ASIZE(_size)];
@@ -656,7 +657,6 @@ struct TaskT : public __tsk
  * Description       : create and initilize complete work area for task object with default stack size                *
  *                                                                                                                    *
  * Constructor parameters                                                                                             *
- *   prio            : initial task priority (any unsigned int value)                                                 *
  *   state           : task state (initial task function) doesn't have to be noreturn-type                            *
  *                     it will be executed into an infinite system-implemented loop                                   *
  *                                                                                                                    *
@@ -665,7 +665,7 @@ struct TaskT : public __tsk
 struct Task: public TaskT<OS_STACK_SIZE>
 {
 	explicit
-	Task( fun_t *_state ): TaskT<OS_STACK_SIZE>(_state) {}
+	Task( FUN_t _state ): TaskT<OS_STACK_SIZE>(_state) {}
 };
 
 /**********************************************************************************************************************
@@ -677,7 +677,6 @@ struct Task: public TaskT<OS_STACK_SIZE>
  *                                                                                                                    *
  * Constructor parameters                                                                                             *
  *   size            : size of task private stack (in bytes)                                                          *
- *   prio            : initial task priority (any unsigned int value)                                                 *
  *   state           : task state (initial task function) doesn't have to be noreturn-type                            *
  *                     it will be executed into an infinite system-implemented loop                                   *
  *                                                                                                                    *
@@ -687,7 +686,7 @@ template<unsigned _size>
 struct startTaskT : public TaskT<_size>
 {
 	explicit
-	startTaskT( fun_t *_state ): TaskT<_size>(_state) { tsk_start(this); }
+	startTaskT( FUN_t _state ): TaskT<_size>(_state) { tsk_start(this); }
 };
 
 /**********************************************************************************************************************
@@ -698,7 +697,6 @@ struct startTaskT : public TaskT<_size>
  *                     and start task object                                                                          *
  *                                                                                                                    *
  * Constructor parameters                                                                                             *
- *   prio            : initial task priority (any unsigned int value)                                                 *
  *   state           : task state (initial task function) doesn't have to be noreturn-type                            *
  *                     it will be executed into an infinite system-implemented loop                                   *
  *                                                                                                                    *
@@ -707,8 +705,30 @@ struct startTaskT : public TaskT<_size>
 struct startTask : public startTaskT<OS_STACK_SIZE>
 {
 	explicit
-	startTask( fun_t *_state ): startTaskT<OS_STACK_SIZE>(_state) {}
+	startTask( FUN_t _state ): startTaskT<OS_STACK_SIZE>(_state) {}
 };
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Namespace         : ThisTask                                                                                       *
+ *                                                                                                                    *
+ * Description       : provide set of functions for Current Task                                                      *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+namespace ThisTask
+{
+	static inline void     pass      ( void )            {        tsk_pass      ();                        }
+	static inline void     yield     ( void )            {        tsk_yield     ();                        }
+	static inline void     flip      ( FUN_t    _state ) {        ((baseTask *) Current)->_start = _state;
+	                                                              tsk_flip      ((fun_t *) baseTask::run); }
+	static inline void     stop      ( void )            {        tsk_stop      ();                        }
+	static inline unsigned sleepUntil( uint32_t _time )  { return tsk_sleepUntil(_time);                   }
+	static inline unsigned sleepFor  ( uint32_t _delay ) { return tsk_sleepFor  (_delay);                  }
+	static inline unsigned sleep     ( void )            { return tsk_sleep     ();                        }
+	static inline unsigned delay     ( uint32_t _delay ) { return tsk_delay     (_delay);                  }
+	static inline void     suspend   ( void )            {        tsk_suspend   (Current);                 }
+}
 
 #endif//__cplusplus
 

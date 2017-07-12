@@ -29,6 +29,8 @@ Features:
 - added port_cnt_lock / port_cnt_unlock macros
 - added sys_time function for read current value of system counter
 - reorganized port directories
+- optionally included c++ functional library (not available for all compilers)
+- added examplees for new feature
 ---------
 2.9
 - changed tsk_suspend / tsk_resume functions
