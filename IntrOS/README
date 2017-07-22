@@ -22,6 +22,9 @@ Features:
 - timers (one-shot, periodic)
 - all documentation is contained within the source files
 ---------
+3.1
+- updated access to the c++ functional library
+---------
 3.0
 - updated kernel security
 - updated osport header file
@@ -30,7 +33,7 @@ Features:
 - added sys_time function for read current value of system counter
 - reorganized port directories
 - optionally included c++ functional library (not available for all compilers)
-- added examplees for new feature
+- added examples for new feature
 ---------
 2.9
 - changed tsk_suspend / tsk_resume functions

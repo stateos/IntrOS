@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.h
     @author  Rajmund Szymanski
-    @date    12.07.2017
+    @date    22.07.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -377,23 +377,32 @@ struct Timer : public __tmr
 {
 	explicit
 	Timer( void ):         __tmr _TMR_INIT(0) {}
+#if OS_FUNCTIONAL
 	explicit
 	Timer( FUN_t _state ): __tmr _TMR_INIT((fun_t *) run), _start(_state) {}
-
+#else
+	explicit
+	Timer( FUN_t _state ): __tmr _TMR_INIT(_state) {}
+#endif
 	void startUntil   ( uint32_t _time )                                  {        tmr_startUntil   (this, _time);                          }
 	void start        ( uint32_t _delay, uint32_t _period )               {        tmr_start        (this, _delay, _period);                }
 	void startFor     ( uint32_t _delay )                                 {        tmr_startFor     (this, _delay);                         }
 	void startPeriodic( uint32_t _period )                                {        tmr_startPeriodic(this,         _period);                }
+#if OS_FUNCTIONAL
 	void startFrom    ( uint32_t _delay, uint32_t _period, FUN_t _state ) {        _start = _state;
 	                                                                               tmr_startFrom    (this, _delay, _period, (fun_t *) run); }
+#else
+	void startFrom    ( uint32_t _delay, uint32_t _period, FUN_t _state ) {        tmr_startFrom    (this, _delay, _period, _state);        }
+#endif
 	void     wait     ( void )                                            {        tmr_wait         (this);                                 }
 	unsigned take     ( void )                                            { return tmr_take         (this);                                 }
 
 	bool     operator!( void )                                            { return __tmr::id == ID_STOPPED;                                 }
-
+#if OS_FUNCTIONAL
 	static
 	void     run( Timer &tmr ) { tmr._start(); }
 	FUN_t    _start;
+#endif
 };
 
 /**********************************************************************************************************************
@@ -501,8 +510,12 @@ struct startTimerPeriodic : public Timer
 
 namespace ThisTimer
 {
+#if OS_FUNCTIONAL
 	static inline void flip ( FUN_t    _state ) { ((Timer *) Current)->_start = _state;
 	                                              tmr_flip ((fun_t *) Timer::run);      }
+#else
+	static inline void flip ( FUN_t    _state ) { tmr_flip (_state);                    }
+#endif
 	static inline void delay( uint32_t _delay ) { tmr_delay(_delay);                    }
 }
 
