@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.h
     @author  Rajmund Szymanski
-    @date    23.07.2017
+    @date    24.07.2017
     @brief   This file defines set of kernel functions for IntrOS.
 
  ******************************************************************************
@@ -29,6 +29,9 @@
 #ifndef __INTROSKERNEL_H
 #define __INTROSKERNEL_H
 
+#include <stdlib.h>
+#include <oscore.h>
+
 /* -------------------------------------------------------------------------- */
 
 #ifndef  OS_ASSERT
@@ -46,8 +49,6 @@
 #endif
 
 #include <assert.h>
-#include <stdlib.h>
-#include <oscore.h>
 
 /* -------------------------------------------------------------------------- */
 
