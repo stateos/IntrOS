@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    06.07.2017
+    @date    23.07.2017
     @brief   IntrOS port file for ARM Cotrex-M uC.
 
  ******************************************************************************
@@ -33,6 +33,47 @@
 
 #ifdef __cplusplus
 extern "C" {
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+#ifndef  OS_STACK_SIZE
+#define  OS_STACK_SIZE      256 /* default task stack size in bytes           */
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+#ifndef  OS_FUNCTIONAL
+
+#if      defined(__CC_ARM) || defined(__CSMC__)
+#define  OS_FUNCTIONAL        0 /* c++ functional library header not included */
+#else
+#define  OS_FUNCTIONAL        1 /* include c++ functional library header      */
+#endif
+
+#elif    OS_FUNCTIONAL
+
+#if      defined(__CC_ARM) || defined(__CSMC__)
+#error   c++ functional library not allowed for this compiler.
+#endif
+
+#endif //OS_FUNCTIONAL
+
+/* -------------------------------------------------------------------------- */
+
+#if      defined(__CSMC__)
+
+#ifndef  __CONSTRUCTOR
+#define  __CONSTRUCTOR
+#warning No compiler specific solution for __CONSTRUCTOR. __CONSTRUCTOR is ignored.
+#endif
+
+#else
+
+#ifndef  __CONSTRUCTOR
+#define  __CONSTRUCTOR      __attribute__((constructor))
+#endif
+
 #endif
 
 /* -------------------------------------------------------------------------- */

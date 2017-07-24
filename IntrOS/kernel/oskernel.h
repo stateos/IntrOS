@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.h
     @author  Rajmund Szymanski
-    @date    25.03.2017
+    @date    23.07.2017
     @brief   This file defines set of kernel functions for IntrOS.
 
  ******************************************************************************
@@ -29,8 +29,40 @@
 #ifndef __INTROSKERNEL_H
 #define __INTROSKERNEL_H
 
+/* -------------------------------------------------------------------------- */
+
+#ifndef  OS_ASSERT
+#define  OS_ASSERT            0 /* do not include standard assertions         */
+#endif
+
+#if     (OS_ASSERT == 0)
+#ifndef  NDEBUG
+#define  NDEBUG
+#endif
+#endif
+
+#ifndef  NDEBUG
+#define  __ASSERT_MSG
+#endif
+
+#include <assert.h>
 #include <stdlib.h>
 #include <oscore.h>
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef __cplusplus
+
+#if OS_FUNCTIONAL
+#include <functional>
+typedef std::function<void()> FUN_t;
+#else
+typedef               void (* FUN_t)( void );
+#endif
+
+#endif
+
+/* -------------------------------------------------------------------------- */
 
 #ifdef __cplusplus
 extern "C" {
@@ -62,7 +94,7 @@ void core_ctx_init( tsk_t *tsk );
 // save status of current process and force yield system control to the next
 void core_ctx_switch( void );
 
-// start current process
+// system infinite loop for current process
 __NO_RETURN
 void core_tsk_loop( void );
 
@@ -106,7 +138,5 @@ void core_tsk_remove( tsk_t *tsk ) { core_rdy_remove(tsk); }
 #ifdef __cplusplus
 }
 #endif
-
-/* -------------------------------------------------------------------------- */
 
 #endif//__INTROSKERNEL_H
