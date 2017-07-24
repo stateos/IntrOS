@@ -25,6 +25,7 @@ Features:
 3.1
 - updated access to the c++ functional library
 - updated port files
+- added osdefs.h header file
 ---------
 3.0
 - updated kernel security
