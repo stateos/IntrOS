@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    22.07.2017
+    @date    27.07.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -616,7 +616,7 @@ struct baseTask : public __tsk
 	 explicit
 	 baseTask( FUN_t _state, stk_t *_stack ): __tsk _TSK_INIT(_state, _stack) {}
 #endif
-	~baseTask( void ) { assert(id == ID_STOPPED); }
+	~baseTask( void ) { assert(__tsk::id == ID_STOPPED); }
 
 	void     join     ( void )         {        tsk_join     (this);                }
 	void     start    ( void )         {        tsk_start    (this);                }
