@@ -26,6 +26,7 @@ Features:
 - updated access to the c++ functional library
 - updated port files
 - added osdefs.h header file
+- used config OS_TICKLESS instead of OS_TIMER
 ---------
 3.0
 - updated kernel security

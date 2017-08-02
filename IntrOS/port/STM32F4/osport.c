@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.c
     @author  Rajmund Szymanski
-    @date    20.03.2017
+    @date    01.08.2017
     @brief   IntrOS port file for STM32F4 uC.
 
  ******************************************************************************
@@ -32,7 +32,7 @@
 
 void port_sys_init( void )
 {
-#if OS_TIMER
+#if OS_TICKLESS
 
 /******************************************************************************
  Put here configuration of system timer for tick-less mode
@@ -42,16 +42,16 @@ void port_sys_init( void )
 	#error Incorrect Timer frequency!
 	#endif
 
-	RCC->APB1ENR |= OS_TIM_CLK_ENABLE;
-	OS_TIM->PSC  = CPU_FREQUENCY/OS_FREQUENCY/2-1;
-	OS_TIM->EGR  = TIM_EGR_UG;
-	OS_TIM->CR1  = TIM_CR1_CEN;
+	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+	TIM2->PSC  = CPU_FREQUENCY/OS_FREQUENCY/2-1;
+	TIM2->EGR  = TIM_EGR_UG;
+	TIM2->CR1  = TIM_CR1_CEN;
 
 /******************************************************************************
  End of configuration
 *******************************************************************************/
 
-#else //OS_TIMER == 0
+#else //OS_TICKLESS == 0
 
 /******************************************************************************
  Put here configuration of system timer for non-tick-less mode
@@ -77,12 +77,12 @@ void port_sys_init( void )
  End of configuration
 *******************************************************************************/
 
-#endif//OS_TIMER
+#endif//OS_TICKLESS
 }
 
 /* -------------------------------------------------------------------------- */
 
-#if OS_TIMER == 0
+#if OS_TICKLESS == 0
 
 /******************************************************************************
  Put here the procedure of interrupt handler of system timer for non-tick-less mode
@@ -90,6 +90,7 @@ void port_sys_init( void )
 
 void SysTick_Handler( void )
 {
+	SysTick->CTRL;
 	System.cnt++;
 }
 
@@ -97,6 +98,6 @@ void SysTick_Handler( void )
  End of the procedure of interrupt handler
 *******************************************************************************/
 
-#endif//OS_TIMER
+#endif//OS_TICKLESS
 
 /* -------------------------------------------------------------------------- */
