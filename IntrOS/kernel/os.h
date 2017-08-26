@@ -2,7 +2,7 @@
 
     @file    IntrOS: os.h
     @author  Rajmund Szymanski
-    @date    13.07.2017
+    @date    26.08.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -109,6 +109,22 @@ void sys_init( void ) { port_sys_init(); }
  **********************************************************************************************************************/
 
 uint32_t sys_time( void );
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : stk_assert                                                                                     *
+ *                                                                                                                    *
+ * Description       : check stack integrity of current task                                                          *
+ *                                                                                                                    *
+ * Parameters        : none                                                                                           *
+ *                                                                                                                    *
+ * Return            : none                                                                                           *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+#define                stk_assert()             \
+                       assert((Current==&MAIN)|| \
+                             ((stk_t*)port_get_sp()>(stk_t*)Current->top-ASIZE(OS_STACK_SIZE)+ASIZE(OS_CHECK_SIZE)))
 
 #ifdef __cplusplus
 }
