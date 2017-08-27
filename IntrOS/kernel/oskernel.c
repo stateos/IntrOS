@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    26.08.2017
+    @date    22.07.2017
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -108,8 +108,6 @@ void core_tsk_switch( void )
 	uint32_t cnt;
 	tsk_t  * cur;
 	tmr_t  * tmr;
-
-	stk_assert();
 
 	for (;;)
 	{

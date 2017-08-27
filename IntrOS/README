@@ -27,7 +27,6 @@ Features:
 - updated port files
 - added osdefs.h header file
 - used config OS_TICKLESS instead of OS_TIMER
-- added stack assertion
 ---------
 3.0
 - updated kernel security
