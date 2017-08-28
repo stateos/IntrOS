@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    24.07.2017
+    @date    28.08.2017
     @brief   IntrOS port file for ARM Cotrex-M uC.
 
  ******************************************************************************
@@ -130,6 +130,23 @@ void port_ctx_init( ctx_t *ctx, stk_t *sp, fun_t *pc )
 {
 	ctx->sp = sp;
 	ctx->pc = pc;
+}
+
+/* -------------------------------------------------------------------------- */
+
+// get current stack pointer
+__STATIC_INLINE
+void * port_get_sp( void )
+{
+	uint32_t sp;
+#if   defined(__CC_ARM)
+	sp = __current_sp();
+#elif defined(__CSMC__)
+	sp = __ASM ("mov r0, sp");
+#else
+	__ASM volatile ("mov %0, sp" : "=r" (sp));
+#endif
+	return (void *) sp;
 }
 
 /* -------------------------------------------------------------------------- */
