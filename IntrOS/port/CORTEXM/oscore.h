@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    28.08.2017
+    @date    29.08.2017
     @brief   IntrOS port file for ARM Cotrex-M uC.
 
  ******************************************************************************
@@ -68,9 +68,6 @@ typedef  uint64_t             stk_t;
 
 extern   stk_t              __initial_sp[];
 #define  MAIN_TOP           __initial_sp
-
-#define  ASIZE( size ) \
-  (((unsigned)( size )+(sizeof(stk_t)-1))/sizeof(stk_t))
 
 /* -------------------------------------------------------------------------- */
 
