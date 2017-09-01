@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    28.08.2017
+    @date    01.09.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -565,7 +565,8 @@ unsigned tsk_delay( uint32_t delay ) { return tsk_sleepFor(delay); }
  *                                                                                                                    *
  * Description       : delay indefinitly execution of given task                                                      *
  *                                                                                                                    *
- * Parameters        : none                                                                                           *
+ * Parameters                                                                                                         *
+ *   tsk             : pointer to task object                                                                         *
  *                                                                                                                    *
  * Return                                                                                                             *
  *   E_SUCCESS       : task was successfully suspended                                                                *
