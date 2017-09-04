@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    01.09.2017
+    @date    04.09.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -53,7 +53,7 @@ struct __tsk
 	uint32_t delay; // inherited from timer
 
 	stk_t  * top;   // top of stack
-	stk_t  * stack; // base of stack
+	void   * stack; // base of stack
 
 	union  {
 	ctx_t    reg;   // task context
