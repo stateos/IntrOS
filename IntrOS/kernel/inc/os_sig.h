@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_sig.h
     @author  Rajmund Szymanski
-    @date    30.03.2017
+    @date    11.09.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -153,6 +153,24 @@ struct __sig
 #define                SIG_CREATE( type ) \
              & (sig_t) SIG_INIT( type )
 #endif
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : sig_init                                                                                       *
+ *                                                                                                                    *
+ * Description       : initilize a signal object                                                                      *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   sig             : pointer to signal object                                                                       *
+ *   type            : signal type                                                                                    *
+ *                     sigClear:   auto clearing signal                                                               *
+ *                     sigProtect: protected signal                                                                   *
+ *                                                                                                                    *
+ * Return            : none                                                                                           *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+void sig_init( sig_t *sig, unsigned type );
 
 /**********************************************************************************************************************
  *                                                                                                                    *

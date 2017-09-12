@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_sem.c
     @author  Rajmund Szymanski
-    @date    11.01.2017
+    @date    12.09.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -29,6 +29,21 @@
 #include <os.h>
 
 /* -------------------------------------------------------------------------- */
+void sem_init( sem_t *sem, unsigned init )
+/* -------------------------------------------------------------------------- */
+{
+	assert(sem);
+
+	port_sys_lock();
+
+	memset(sem, 0, sizeof(sem_t));
+
+	sem->count = init;
+
+	port_sys_unlock();
+}
+
+/* -------------------------------------------------------------------------- */
 unsigned sem_take( sem_t *sem )
 /* -------------------------------------------------------------------------- */
 {
@@ -38,7 +53,7 @@ unsigned sem_take( sem_t *sem )
 
 	port_sys_lock();
 
-	if (sem->count > 0)
+	if (sem->count > 0U)
 	{
 		sem->count--;
 

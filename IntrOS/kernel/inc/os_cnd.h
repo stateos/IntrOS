@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_cnd.h
     @author  Rajmund Szymanski
-    @date    30.03.2017
+    @date    11.09.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -131,6 +131,21 @@ struct __cnd
 #define                CND_CREATE() \
              & (cnd_t) CND_INIT()
 #endif
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : cnd_init                                                                                       *
+ *                                                                                                                    *
+ * Description       : initilize a condition variable object                                                          *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   cnd             : pointer to condition variable object                                                           *
+ *                                                                                                                    *
+ * Return            : none                                                                                           *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+void cnd_init( cnd_t *cnd );
 
 /**********************************************************************************************************************
  *                                                                                                                    *

@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    04.09.2017
+    @date    11.09.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -346,6 +346,25 @@ struct __tsk
 #define                TSK_CREATE( state ) \
                        WRK_CREATE( state, OS_STACK_SIZE )
 #endif
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : tsk_init                                                                                       *
+ *                                                                                                                    *
+ * Description       : initilize complete work area for task object and start the task                                *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   tsk             : pointer to task object                                                                         *
+ *   state           : task state (initial task function) doesn't have to be noreturn-type                            *
+ *                     it will be executed into an infinite system-implemented loop                                   *
+ *   stack           : base of task's private stack storage                                                           *
+ *   size            : size of task private stack (in bytes)                                                          *
+ *                                                                                                                    *
+ * Return            : task object                                                                                    *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+void tsk_init( tsk_t *tsk, fun_t *state, void *stack, unsigned size );
 
 /**********************************************************************************************************************
  *                                                                                                                    *

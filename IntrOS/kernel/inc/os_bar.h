@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_bar.h
     @author  Rajmund Szymanski
-    @date    30.03.2017
+    @date    11.09.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -138,6 +138,22 @@ struct __bar
 #define                BAR_CREATE( limit ) \
              & (bar_t) BAR_INIT( limit )
 #endif
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : bar_init                                                                                       *
+ *                                                                                                                    *
+ * Description       : initilize a barrier object                                                                     *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   bar             : pointer to barrier object                                                                      *
+ *   limit           : number of tasks that must call bar_wait function to release the barrier object                 *
+ *                                                                                                                    *
+ * Return            : none                                                                                           *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+void bar_init( bar_t *bar, unsigned limit );
 
 /**********************************************************************************************************************
  *                                                                                                                    *

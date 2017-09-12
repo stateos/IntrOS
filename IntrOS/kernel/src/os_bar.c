@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_bar.c
     @author  Rajmund Szymanski
-    @date    22.03.2017
+    @date    12.09.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -27,6 +27,23 @@
  ******************************************************************************/
 
 #include <os.h>
+
+/* -------------------------------------------------------------------------- */
+void bar_init( bar_t *bar, unsigned limit )
+/* -------------------------------------------------------------------------- */
+{
+	assert(bar);
+	assert(limit);
+
+	port_sys_lock();
+
+	memset(bar, 0, sizeof(bar_t));
+
+	bar->count = limit;
+	bar->limit = limit;
+
+	port_sys_unlock();
+}
 
 /* -------------------------------------------------------------------------- */
 void bar_wait( bar_t *bar )

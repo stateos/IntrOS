@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_sem.h
     @author  Rajmund Szymanski
-    @date    30.03.2017
+    @date    11.09.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -136,6 +136,22 @@ struct __sem
 #define                SEM_CREATE( init ) \
              & (sem_t) SEM_INIT( init )
 #endif
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : sem_init                                                                                       *
+ *                                                                                                                    *
+ * Description       : initilize a semaphore object                                                                   *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   sem             : pointer to semaphore object                                                                    *
+ *   init            : initial value of semaphore counter                                                             *
+ *                                                                                                                    *
+ * Return            : none                                                                                           *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+void sem_init( sem_t *sem, unsigned init );
 
 /**********************************************************************************************************************
  *                                                                                                                    *

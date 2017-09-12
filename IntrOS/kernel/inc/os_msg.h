@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_msg.h
     @author  Rajmund Szymanski
-    @date    30.03.2017
+    @date    11.09.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -163,6 +163,23 @@ struct __msg
 #define                MSG_CREATE( limit ) \
              & (msg_t) MSG_INIT( limit )
 #endif
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : msg_init                                                                                       *
+ *                                                                                                                    *
+ * Description       : initilize a message queue object                                                               *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   msg             : pointer to message queue object                                                                *
+ *   limit           : size of a queue (max number of stored messages)                                                *
+ *   data            : message queue data buffer                                                                      *
+ *                                                                                                                    *
+ * Return            : none                                                                                           *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+void msg_init( msg_t *msg, unsigned limit, void *data );
 
 /**********************************************************************************************************************
  *                                                                                                                    *

@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_box.c
     @author  Rajmund Szymanski
-    @date    11.01.2017
+    @date    12.09.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -27,6 +27,26 @@
  ******************************************************************************/
 
 #include <os.h>
+
+/* -------------------------------------------------------------------------- */
+void box_init( box_t *box, unsigned limit, unsigned size, void *data )
+/* -------------------------------------------------------------------------- */
+{
+	assert(box);
+	assert(limit);
+	assert(size);
+	assert(data);
+
+	port_sys_lock();
+
+	memset(box, 0, sizeof(box_t));
+	
+	box->limit = limit;
+	box->size  = size;
+	box->data  = data;
+
+	port_sys_unlock();
+}
 
 /* -------------------------------------------------------------------------- */
 static

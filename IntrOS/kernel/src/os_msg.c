@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_msg.c
     @author  Rajmund Szymanski
-    @date    11.01.2017
+    @date    12.09.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -27,6 +27,24 @@
  ******************************************************************************/
 
 #include <os.h>
+
+/* -------------------------------------------------------------------------- */
+void msg_init( msg_t *msg, unsigned limit, void *data )
+/* -------------------------------------------------------------------------- */
+{
+	assert(msg);
+	assert(limit);
+	assert(data);
+
+	port_sys_lock();
+
+	memset(msg, 0, sizeof(msg_t));
+
+	msg->limit = limit;
+	msg->data  = data;
+
+	port_sys_unlock();
+}
 
 /* -------------------------------------------------------------------------- */
 static

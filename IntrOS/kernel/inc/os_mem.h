@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_mem.h
     @author  Rajmund Szymanski
-    @date    30.03.2017
+    @date    11.09.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -186,6 +186,24 @@ struct __mem
  **********************************************************************************************************************/
 
 void mem_bind( mem_t *mem );
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : mem_init                                                                                       *
+ *                                                                                                                    *
+ * Description       : initilize a memory pool object                                                                 *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   mem             : pointer to memory pool object                                                                  *
+ *   limit           : size of a buffer (max number of objects)                                                       *
+ *   size            : size of memory object (in bytes)                                                               *
+ *   data            : memory pool data buffer                                                                        *
+ *                                                                                                                    *
+ * Return            : none                                                                                           *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+void mem_init( mem_t *mem, unsigned limit, unsigned size, void *data );
 
 /**********************************************************************************************************************
  *                                                                                                                    *

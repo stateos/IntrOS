@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_sig.c
     @author  Rajmund Szymanski
-    @date    11.01.2017
+    @date    12.09.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -27,6 +27,21 @@
  ******************************************************************************/
 
 #include <os.h>
+
+/* -------------------------------------------------------------------------- */
+void sig_init( sig_t *sig, unsigned type )
+/* -------------------------------------------------------------------------- */
+{
+	assert(sig);
+
+	port_sys_lock();
+
+	memset(sig, 0, sizeof(sig_t));
+
+	sig->type = type & sigMASK;
+
+	port_sys_unlock();
+}
 
 /* -------------------------------------------------------------------------- */
 unsigned sig_take( sig_t *sig )

@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_box.h
     @author  Rajmund Szymanski
-    @date    30.03.2017
+    @date    11.09.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -170,6 +170,24 @@ struct __box
 #define                BOX_CREATE( limit, size ) \
              & (box_t) BOX_INIT( limit, size )
 #endif
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : box_init                                                                                       *
+ *                                                                                                                    *
+ * Description       : initilize a mailbox queue object                                                               *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   box             : pointer to mailbox queue object                                                                *
+ *   limit           : size of a queue (max number of stored mails)                                                   *
+ *   size            : size of a single mail (in bytes)                                                               *
+ *   data            : mailbox queue data buffer                                                                      *
+ *                                                                                                                    *
+ * Return            : none                                                                                           *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+void box_init( box_t *box, unsigned limit, unsigned size, void *data );
 
 /**********************************************************************************************************************
  *                                                                                                                    *

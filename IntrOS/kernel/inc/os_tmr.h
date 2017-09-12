@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.h
     @author  Rajmund Szymanski
-    @date    22.07.2017
+    @date    11.09.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -181,6 +181,23 @@ struct __tmr
 #define                TMR_CREATE( state ) \
              & (tmr_t) TMR_INIT( state )
 #endif
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Name              : tmr_init                                                                                       *
+ *                                                                                                                    *
+ * Description       : initilize a timer object                                                                       *
+ *                                                                                                                    *
+ * Parameters                                                                                                         *
+ *   tmr             : pointer to timer object                                                                        *
+ *   state           : callback procedure                                                                             *
+ *                     0: no callback                                                                                 *
+ *                                                                                                                    *
+ * Return            : none                                                                                           *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+void tmr_init( tmr_t *tmr, fun_t *state );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
