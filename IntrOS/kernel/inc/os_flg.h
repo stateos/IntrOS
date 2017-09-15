@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_flg.h
     @author  Rajmund Szymanski
-    @date    11.09.2017
+    @date    15.09.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -121,6 +121,7 @@ struct __flg
 /**********************************************************************************************************************
  *                                                                                                                    *
  * Name              : FLG_CREATE                                                                                     *
+ * Alias             : FLG_NEW                                                                                        *
  *                                                                                                                    *
  * Description       : create and initilize a flag object                                                             *
  *                                                                                                                    *
@@ -134,7 +135,9 @@ struct __flg
 
 #ifndef __cplusplus
 #define                FLG_CREATE() \
-             & (flg_t) FLG_INIT()
+             & (flg_t) FLG_INIT  ()
+#define                FLG_NEW \
+                       FLG_CREATE
 #endif
 
 /**********************************************************************************************************************

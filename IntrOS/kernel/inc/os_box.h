@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_box.h
     @author  Rajmund Szymanski
-    @date    11.09.2017
+    @date    15.09.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -153,6 +153,7 @@ struct __box
 /**********************************************************************************************************************
  *                                                                                                                    *
  * Name              : BOX_CREATE                                                                                     *
+ * Alias             : BOX_NEW                                                                                        *
  *                                                                                                                    *
  * Description       : create and initilize a mailbox queue object                                                    *
  *                                                                                                                    *
@@ -168,7 +169,9 @@ struct __box
 
 #ifndef __cplusplus
 #define                BOX_CREATE( limit, size ) \
-             & (box_t) BOX_INIT( limit, size )
+             & (box_t) BOX_INIT  ( limit, size )
+#define                BOX_NEW \
+                       BOX_CREATE
 #endif
 
 /**********************************************************************************************************************

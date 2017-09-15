@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_msg.h
     @author  Rajmund Szymanski
-    @date    11.09.2017
+    @date    15.09.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -147,6 +147,7 @@ struct __msg
 /**********************************************************************************************************************
  *                                                                                                                    *
  * Name              : MSG_CREATE                                                                                     *
+ * Alias             : MSG_NEW                                                                                        *
  *                                                                                                                    *
  * Description       : create and initilize a message queue object                                                    *
  *                                                                                                                    *
@@ -161,7 +162,9 @@ struct __msg
 
 #ifndef __cplusplus
 #define                MSG_CREATE( limit ) \
-             & (msg_t) MSG_INIT( limit )
+             & (msg_t) MSG_INIT  ( limit )
+#define                MSG_NEW \
+                       MSG_CREATE
 #endif
 
 /**********************************************************************************************************************

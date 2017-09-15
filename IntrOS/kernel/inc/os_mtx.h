@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_mtx.h
     @author  Rajmund Szymanski
-    @date    11.09.2017
+    @date    15.09.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -116,6 +116,7 @@ struct __mtx
 /**********************************************************************************************************************
  *                                                                                                                    *
  * Name              : MTX_CREATE                                                                                     *
+ * Alias             : MTX_NEW                                                                                        *
  *                                                                                                                    *
  * Description       : create and initilize a mutex object                                                            *
  *                                                                                                                    *
@@ -129,7 +130,9 @@ struct __mtx
 
 #ifndef __cplusplus
 #define                MTX_CREATE() \
-             & (mtx_t) MTX_INIT()
+             & (mtx_t) MTX_INIT  ()
+#define                MTX_NEW \
+                       MTX_CREATE
 #endif
 
 /**********************************************************************************************************************

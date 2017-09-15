@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_cnd.h
     @author  Rajmund Szymanski
-    @date    11.09.2017
+    @date    15.09.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -116,6 +116,7 @@ struct __cnd
 /**********************************************************************************************************************
  *                                                                                                                    *
  * Name              : CND_CREATE                                                                                     *
+ * Alias             : CND_NEW                                                                                        *
  *                                                                                                                    *
  * Description       : create and initilize a condition variable object                                               *
  *                                                                                                                    *
@@ -129,7 +130,9 @@ struct __cnd
 
 #ifndef __cplusplus
 #define                CND_CREATE() \
-             & (cnd_t) CND_INIT()
+             & (cnd_t) CND_INIT  ()
+#define                CND_NEW \
+                       CND_CREATE
 #endif
 
 /**********************************************************************************************************************

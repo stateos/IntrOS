@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.h
     @author  Rajmund Szymanski
-    @date    11.09.2017
+    @date    15.09.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -164,6 +164,7 @@ struct __tmr
 /**********************************************************************************************************************
  *                                                                                                                    *
  * Name              : TMR_CREATE                                                                                     *
+ * Alias             : TMR_NEW                                                                                        *
  *                                                                                                                    *
  * Description       : create and initilize a timer object                                                            *
  *                                                                                                                    *
@@ -179,7 +180,9 @@ struct __tmr
 
 #ifndef __cplusplus
 #define                TMR_CREATE( state ) \
-             & (tmr_t) TMR_INIT( state )
+             & (tmr_t) TMR_INIT  ( state )
+#define                TMR_NEW \
+                       TMR_CREATE
 #endif
 
 /**********************************************************************************************************************

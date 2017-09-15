@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    11.09.2017
+    @date    15.09.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -102,7 +102,7 @@ struct __tsk
 
 #ifndef __cplusplus
 #define               _TSK_CREATE( _state, _stack, _size ) \
-            & (tsk_t) _TSK_INIT( _state, _stack, _size )
+            & (tsk_t) _TSK_INIT  ( _state, _stack, _size )
 #endif
 
 /**********************************************************************************************************************
@@ -286,6 +286,7 @@ struct __tsk
 /**********************************************************************************************************************
  *                                                                                                                    *
  * Name              : WRK_CREATE                                                                                     *
+ * Alias             : WRK_NEW                                                                                        *
  *                                                                                                                    *
  * Description       : create and initilize complete work area for task object                                        *
  *                                                                                                                    *
@@ -302,7 +303,9 @@ struct __tsk
 
 #ifndef __cplusplus
 #define                WRK_CREATE( state, size ) \
-             & (tsk_t) WRK_INIT( state, size )
+             & (tsk_t) WRK_INIT  ( state, size )
+#define                WRK_NEW \
+                       WRK_CREATE
 #endif
 
 /**********************************************************************************************************************
@@ -329,6 +332,7 @@ struct __tsk
 /**********************************************************************************************************************
  *                                                                                                                    *
  * Name              : TSK_CREATE                                                                                     *
+ * Alias             : TSK_NEW                                                                                        *
  *                                                                                                                    *
  * Description       : create and initilize complete work area for task obj. with stack size defined by OS_STACK_SIZE *
  *                                                                                                                    *
@@ -345,6 +349,8 @@ struct __tsk
 #ifndef __cplusplus
 #define                TSK_CREATE( state ) \
                        WRK_CREATE( state, OS_STACK_SIZE )
+#define                TSK_NEW \
+                       TSK_CREATE
 #endif
 
 /**********************************************************************************************************************

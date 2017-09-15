@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_mem.h
     @author  Rajmund Szymanski
-    @date    11.09.2017
+    @date    15.09.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -154,6 +154,7 @@ struct __mem
 /**********************************************************************************************************************
  *                                                                                                                    *
  * Name              : MEM_CREATE                                                                                     *
+ * Alias             : MEM_NEW                                                                                        *
  *                                                                                                                    *
  * Description       : create and initilize a memory pool object                                                      *
  *                                                                                                                    *
@@ -169,7 +170,9 @@ struct __mem
 
 #ifndef __cplusplus
 #define                MEM_CREATE( limit, size ) \
-             & (mem_t) MEM_INIT( limit, size )
+             & (mem_t) MEM_INIT  ( limit, size )
+#define                MEM_NEW \
+                       MEM_CREATE
 #endif
 
 /**********************************************************************************************************************

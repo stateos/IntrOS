@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_sem.h
     @author  Rajmund Szymanski
-    @date    11.09.2017
+    @date    15.09.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -120,6 +120,7 @@ struct __sem
 /**********************************************************************************************************************
  *                                                                                                                    *
  * Name              : SEM_CREATE                                                                                     *
+ * Alias             : SEM_NEW                                                                                        *
  *                                                                                                                    *
  * Description       : create and initilize a semaphore object                                                        *
  *                                                                                                                    *
@@ -134,7 +135,9 @@ struct __sem
 
 #ifndef __cplusplus
 #define                SEM_CREATE( init ) \
-             & (sem_t) SEM_INIT( init )
+             & (sem_t) SEM_INIT  ( init )
+#define                SEM_NEW \
+                       SEM_CREATE
 #endif
 
 /**********************************************************************************************************************

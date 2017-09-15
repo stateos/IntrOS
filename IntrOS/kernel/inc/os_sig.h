@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_sig.h
     @author  Rajmund Szymanski
-    @date    11.09.2017
+    @date    15.09.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -135,6 +135,7 @@ struct __sig
 /**********************************************************************************************************************
  *                                                                                                                    *
  * Name              : SIG_CREATE                                                                                     *
+ * Alias             : SIG_NEW                                                                                        *
  *                                                                                                                    *
  * Description       : create and initilize a signal object                                                           *
  *                                                                                                                    *
@@ -151,7 +152,9 @@ struct __sig
 
 #ifndef __cplusplus
 #define                SIG_CREATE( type ) \
-             & (sig_t) SIG_INIT( type )
+             & (sig_t) SIG_INIT  ( type )
+#define                SIG_NEW \
+                       SIG_CREATE
 #endif
 
 /**********************************************************************************************************************

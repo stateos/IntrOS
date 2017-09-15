@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_evt.h
     @author  Rajmund Szymanski
-    @date    11.09.2017
+    @date    15.09.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -117,6 +117,7 @@ struct __evt
 /**********************************************************************************************************************
  *                                                                                                                    *
  * Name              : EVT_CREATE                                                                                     *
+ * Alias             : EVT_NEW                                                                                        *
  *                                                                                                                    *
  * Description       : create and initilize an event object                                                           *
  *                                                                                                                    *
@@ -130,7 +131,9 @@ struct __evt
 
 #ifndef __cplusplus
 #define                EVT_CREATE() \
-             & (evt_t) EVT_INIT()
+             & (evt_t) EVT_INIT  ()
+#define                EVT_NEW \
+                       EVT_CREATE
 #endif
 
 /**********************************************************************************************************************

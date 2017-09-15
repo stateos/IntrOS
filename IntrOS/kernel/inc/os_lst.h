@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_lst.h
     @author  Rajmund Szymanski
-    @date    11.09.2017
+    @date    15.09.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -116,6 +116,7 @@ struct __lst
 /**********************************************************************************************************************
  *                                                                                                                    *
  * Name              : LST_CREATE                                                                                     *
+ * Alias             : LST_NEW                                                                                        *
  *                                                                                                                    *
  * Description       : create and initilize a list object                                                             *
  *                                                                                                                    *
@@ -129,7 +130,9 @@ struct __lst
 
 #ifndef __cplusplus
 #define                LST_CREATE() \
-             & (lst_t) LST_INIT()
+             & (lst_t) LST_INIT  ()
+#define                LST_NEW \
+                       LST_CREATE
 #endif
 
 /**********************************************************************************************************************
