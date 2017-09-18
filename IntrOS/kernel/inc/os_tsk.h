@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    15.09.2017
+    @date    18.09.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -643,30 +643,32 @@ unsigned tsk_resume( tsk_t *tsk );
 
 struct baseTask : public __tsk
 {
+#if OS_FUNCTIONAL
 	 explicit
-#if OS_FUNCTIONAL
-	 baseTask( FUN_t _state, stk_t *_stack, unsigned _size ): __tsk _TSK_INIT((fun_t *) run, _stack, _size), _start(_state) {}
+	 baseTask( FUN_t _state, stk_t *_stack, unsigned _size ): __tsk _TSK_INIT(_run, _stack, _size), _fun(_state) {}
+	~baseTask( void ) { assert(__tsk::id == ID_STOPPED); _fun = nullptr; }
 #else
+	 explicit
 	 baseTask( FUN_t _state, stk_t *_stack, unsigned _size ): __tsk _TSK_INIT(_state, _stack, _size) {}
-#endif
 	~baseTask( void ) { assert(__tsk::id == ID_STOPPED); }
-
-	void     join     ( void )         {        tsk_join     (this);                }
-	void     start    ( void )         {        tsk_start    (this);                }
-#if OS_FUNCTIONAL
-	void     startFrom( FUN_t _state ) {        _start = _state;
-	                                            tsk_startFrom(this, (fun_t *) run); }
-#else
-	void     startFrom( FUN_t _state ) {        tsk_startFrom(this, _state);        }
 #endif
-	unsigned suspend  ( void )         { return tsk_resume   (this);                }
-	unsigned resume   ( void )         { return tsk_resume   (this);                }
 
-	bool     operator!( void )         { return __tsk::id == ID_STOPPED;            }
+	void     join     ( void )         {        tsk_join     (this);         }
+	void     start    ( void )         {        tsk_start    (this);         }
+#if OS_FUNCTIONAL
+	void     startFrom( FUN_t _state ) {        _fun = _state;
+	                                            tsk_startFrom(this, _run);   }
+#else
+	void     startFrom( FUN_t _state ) {        tsk_startFrom(this, _state); }
+#endif
+	unsigned suspend  ( void )         { return tsk_resume   (this);         }
+	unsigned resume   ( void )         { return tsk_resume   (this);         }
+
+	bool     operator!( void )         { return __tsk::id == ID_STOPPED;     }
 #if OS_FUNCTIONAL
 	static
-	void     run( baseTask &tsk ) { tsk._start(); }
-	FUN_t    _start;
+	void     _run( void ) { ((baseTask *) Current)->_fun(); }
+	FUN_t    _fun;
 #endif
 };
 
@@ -761,20 +763,20 @@ struct startTask : public startTaskT<OS_STACK_SIZE>
 
 namespace ThisTask
 {
-	static inline void     pass      ( void )            {        tsk_pass      ();                        }
-	static inline void     yield     ( void )            {        tsk_yield     ();                        }
+	static inline void     pass      ( void )            {        tsk_pass      ();                      }
+	static inline void     yield     ( void )            {        tsk_yield     ();                      }
 #if OS_FUNCTIONAL
-	static inline void     flip      ( FUN_t    _state ) {        ((baseTask *) Current)->_start = _state;
-	                                                              tsk_flip      ((fun_t *) baseTask::run); }
+	static inline void     flip      ( FUN_t    _state ) {        ((baseTask *) Current)->_fun = _state;
+	                                                              tsk_flip      (baseTask::_run);        }
 #else
-	static inline void     flip      ( FUN_t    _state ) {        tsk_flip      (_state); }
+	static inline void     flip      ( FUN_t    _state ) {        tsk_flip      (_state);                }
 #endif
-	static inline void     stop      ( void )            {        tsk_stop      ();                        }
-	static inline unsigned sleepUntil( uint32_t _time )  { return tsk_sleepUntil(_time);                   }
-	static inline unsigned sleepFor  ( uint32_t _delay ) { return tsk_sleepFor  (_delay);                  }
-	static inline unsigned sleep     ( void )            { return tsk_sleep     ();                        }
-	static inline unsigned delay     ( uint32_t _delay ) { return tsk_delay     (_delay);                  }
-	static inline void     suspend   ( void )            {        tsk_suspend   (Current);                 }
+	static inline void     stop      ( void )            {        tsk_stop      ();                      }
+	static inline unsigned sleepUntil( uint32_t _time )  { return tsk_sleepUntil(_time);                 }
+	static inline unsigned sleepFor  ( uint32_t _delay ) { return tsk_sleepFor  (_delay);                }
+	static inline unsigned sleep     ( void )            { return tsk_sleep     ();                      }
+	static inline unsigned delay     ( uint32_t _delay ) { return tsk_delay     (_delay);                }
+	static inline void     suspend   ( void )            {        tsk_suspend   (Current);               }
 }
 
 #endif//__cplusplus
