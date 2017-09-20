@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    18.09.2017
+    @date    20.09.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -645,7 +645,7 @@ unsigned tsk_sleep( void ) { return tsk_sleepFor(INFINITE); }
  *                                                                                                                    *
  * Return                                                                                                             *
  *   E_SUCCESS       : task object successfully finished countdown                                                    *
- *   'another'       : task was resumed with 'another' event value                                                    *
+ *   E_FAILURE       : task was resumed                                                                               *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
