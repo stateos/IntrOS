@@ -30,6 +30,7 @@ Features:
   only available for compilers supporting the "constructor" function attribute or its equivalent
 - added examples for new feature
 - added OS_TMR_UNTIL macro (with tmr_startUntil function) similar to OS_TMR_START macro (with tmr_start function)
+- internal system timer handler moved to kernel
 ---------
 3.1
 - updated access to the c++ functional library

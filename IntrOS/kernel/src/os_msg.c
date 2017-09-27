@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_msg.c
     @author  Rajmund Szymanski
-    @date    12.09.2017
+    @date    27.09.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -29,7 +29,7 @@
 #include <os.h>
 
 /* -------------------------------------------------------------------------- */
-void msg_init( msg_t *msg, unsigned limit, void *data )
+void msg_init( msg_t *msg, unsigned limit, unsigned *data )
 /* -------------------------------------------------------------------------- */
 {
 	assert(msg);
@@ -54,6 +54,7 @@ void priv_msg_get( msg_t *msg, unsigned *data )
 	*data = msg->data[msg->first];
 
 	msg->first = (msg->first + 1) % msg->limit;
+	msg->count--;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -64,6 +65,7 @@ void priv_msg_put( msg_t *msg, unsigned data )
 	msg->data[msg->next] = data;
 
 	msg->next = (msg->next + 1) % msg->limit;
+	msg->count++;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -80,8 +82,6 @@ unsigned msg_take( msg_t *msg, unsigned *data )
 	if (msg->count > 0)
 	{
 		priv_msg_get(msg, data);
-
-		msg->count--;
 
 		event = E_SUCCESS;
 	}
@@ -112,8 +112,6 @@ unsigned msg_give( msg_t *msg, unsigned data )
 	if (msg->count < msg->limit)
 	{
 		priv_msg_put(msg, data);
-
-		msg->count++;
 
 		event = E_SUCCESS;
 	}

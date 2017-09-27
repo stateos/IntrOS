@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    17.09.2017
+    @date    27.09.2017
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -157,5 +157,16 @@ void core_tsk_switch( void )
 
 	longjmp(cur->ctx.buf, 1);
 }
+
+/* -------------------------------------------------------------------------- */
+
+#if OS_TICKLESS == 0
+
+void core_sys_tick( void )
+{
+	System.cnt++;
+}
+
+#endif
 
 /* -------------------------------------------------------------------------- */
