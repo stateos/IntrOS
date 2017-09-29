@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.h
     @author  Rajmund Szymanski
-    @date    19.09.2017
+    @date    29.09.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -118,6 +118,8 @@ struct __tmr
  *   tmr             : name of a pointer to timer object                                                              *
  *   time            : timepoint value                                                                                *
  *                                                                                                                    *
+ * Note              : only available for compilers supporting the "constructor" function attribute or its equivalent *
+ *                                                                                                                    *
  **********************************************************************************************************************/
 
 #define             OS_TMR_UNTIL( tmr, time )                               \
@@ -142,6 +144,8 @@ struct __tmr
  *   period          : duration of time (maximum number of ticks to countdown) for all next expirations               *
  *                     IMMEDIATE: don't countdown                                                                     *
  *                     INFINITE:  countdown indefinitly                                                               *
+ *                                                                                                                    *
+ * Note              : only available for compilers supporting the "constructor" function attribute or its equivalent *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
@@ -199,6 +203,8 @@ struct __tmr
  *   tmr             : name of a pointer to timer object                                                              *
  *   time            : timepoint value                                                                                *
  *                                                                                                                    *
+ * Note              : only available for compilers supporting the "constructor" function attribute or its equivalent *
+ *                                                                                                                    *
  **********************************************************************************************************************/
 
 #define         static_TMR_UNTIL( tmr, time )                               \
@@ -223,6 +229,8 @@ struct __tmr
  *   period          : duration of time (maximum number of ticks to countdown) for all next expirations               *
  *                     IMMEDIATE: don't countdown                                                                     *
  *                     INFINITE:  countdown indefinitly                                                               *
+ *                                                                                                                    *
+ * Note              : only available for compilers supporting the "constructor" function attribute or its equivalent *
  *                                                                                                                    *
  **********************************************************************************************************************/
 

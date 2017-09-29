@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    20.09.2017
+    @date    29.09.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -204,6 +204,8 @@ struct __tsk
  *   tsk             : name of a pointer to task object                                                               *
  *   size            : size of task private stack (in bytes)                                                          *
  *                                                                                                                    *
+ * Note              : only available for compilers supporting the "constructor" function attribute or its equivalent *
+ *                                                                                                                    *
  **********************************************************************************************************************/
 
 #define             OS_WRK_START( tsk, size )                     \
@@ -221,6 +223,8 @@ struct __tsk
  *                                                                                                                    *
  * Parameters                                                                                                         *
  *   tsk             : name of a pointer to task object                                                               *
+ *                                                                                                                    *
+ * Note              : only available for compilers supporting the "constructor" function attribute or its equivalent *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
@@ -306,6 +310,8 @@ struct __tsk
  *   tsk             : name of a pointer to task object                                                               *
  *   size            : size of task private stack (in bytes)                                                          *
  *                                                                                                                    *
+ * Note              : only available for compilers supporting the "constructor" function attribute or its equivalent *
+ *                                                                                                                    *
  **********************************************************************************************************************/
 
 #define         static_WRK_START( tsk, size )                     \
@@ -323,6 +329,8 @@ struct __tsk
  *                                                                                                                    *
  * Parameters                                                                                                         *
  *   tsk             : name of a pointer to task object                                                               *
+ *                                                                                                                    *
+ * Note              : only available for compilers supporting the "constructor" function attribute or its equivalent *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
