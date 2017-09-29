@@ -23,6 +23,7 @@ Features
 - memory pools
 - message queues
 - mailbox queues
+- job queues
 - timers (one-shot, periodic)
 - c++ wrapper
 - all documentation is contained within the source files
