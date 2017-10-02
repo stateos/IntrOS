@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_job.h
     @author  Rajmund Szymanski
-    @date    29.09.2017
+    @date    02.10.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -29,7 +29,7 @@
 #ifndef __INTROS_JOB_H
 #define __INTROS_JOB_H
 
-#include <oskernel.h>
+#include "os_box.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -41,17 +41,7 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-typedef struct __job job_t, * const job_id;
-
-struct __job
-{
-	unsigned count; // inherited from semaphore
-	unsigned limit; // inherited from semaphore
-
-	unsigned first; // first element to read from queue
-	unsigned next;  // next element to write into queue
-	fun_t ** data;  // job queue data
-};
+typedef struct __box job_t, * const job_id;
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -69,7 +59,8 @@ struct __job
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define               _JOB_INIT( _limit, _data ) { 0, _limit, 0, 0, _data }
+#define               _JOB_INIT( _limit, _data ) \
+                      _BOX_INIT( _limit, sizeof(fun_t *), (char *)_data )
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -102,9 +93,9 @@ struct __job
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define             OS_JOB( job, limit )                                \
-                       fun_t*job##__buf[limit];                          \
-                       job_t job##__job = _JOB_INIT( limit, job##__buf ); \
+#define             OS_JOB( job, limit )                                 \
+                       fun_t *job##__buf[limit];                          \
+                       job_t  job##__job = _JOB_INIT( limit, job##__buf ); \
                        job_id job = & job##__job
 
 /**********************************************************************************************************************
@@ -182,7 +173,8 @@ struct __job
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-void job_init( job_t *job, unsigned limit, fun_t **data );
+__STATIC_INLINE
+void job_init( job_t *job, unsigned limit, fun_t **data ) { box_init(job, limit, sizeof(fun_t *), data); }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -198,7 +190,8 @@ void job_init( job_t *job, unsigned limit, fun_t **data );
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-void job_wait( job_t *job );
+__STATIC_INLINE
+void job_wait( job_t *job ) { fun_t *fun; box_wait(job, &fun); fun(); }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -216,7 +209,8 @@ void job_wait( job_t *job );
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-unsigned job_take( job_t *job );
+__STATIC_INLINE
+unsigned job_take( job_t *job ) { fun_t *fun; unsigned event = box_take(job, &fun); if (event == E_SUCCESS) fun(); return event; }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -227,13 +221,14 @@ unsigned job_take( job_t *job );
  *                                                                                                                    *
  * Parameters                                                                                                         *
  *   job             : pointer to job queue object                                                                    *
- *   proc            : pointer to job procedure                                                                       *
+ *   fun             : pointer to job procedure                                                                       *
  *                                                                                                                    *
  * Return            : none                                                                                           *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-void job_send( job_t *job, fun_t *proc );
+__STATIC_INLINE
+void job_send( job_t *job, fun_t *fun ) { box_send(job, &fun); }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -244,7 +239,7 @@ void job_send( job_t *job, fun_t *proc );
  *                                                                                                                    *
  * Parameters                                                                                                         *
  *   job             : pointer to job queue object                                                                    *
- *   proc            : pointer to job procedure                                                                       *
+ *   fun             : pointer to job procedure                                                                       *
  *                                                                                                                    *
  * Return                                                                                                             *
  *   E_SUCCESS       : job data was successfully transfered to the job queue object                                   *
@@ -252,7 +247,8 @@ void job_send( job_t *job, fun_t *proc );
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-unsigned job_give( job_t *job, fun_t *proc );
+__STATIC_INLINE
+unsigned job_give( job_t *job, fun_t *fun ) { unsigned event = box_give(job, &fun); return event; }
 
 #ifdef __cplusplus
 }
@@ -261,6 +257,31 @@ unsigned job_give( job_t *job, fun_t *proc );
 /* -------------------------------------------------------------------------- */
 
 #ifdef __cplusplus
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Class             : baseJobQueue                                                                                   *
+ *                                                                                                                    *
+ * Description       : create and initilize a job queue object                                                        *
+ *                                                                                                                    *
+ * Constructor parameters                                                                                             *
+ *   limit           : size of a queue (max number of stored job procedures)                                          *
+ *   data            : job queue data buffer                                                                          *
+ *                                                                                                                    *
+ * Note              : for internal use                                                                               *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+struct baseJobQueue : public __box
+{
+	explicit
+	baseJobQueue( const unsigned _limit, FUN_t * const _data ): __box _BOX_INIT( _limit, sizeof(FUN_t), reinterpret_cast<char *>(_data) ) {}
+
+	void     wait( void )       { FUN_t _fun;                  box_wait(this, &_fun);                         _fun();               }
+	unsigned take( void )       { FUN_t _fun; unsigned event = box_take(this, &_fun); if (event == E_SUCCESS) _fun(); return event; }
+	void     send( FUN_t _fun ) {                              box_send(this, &_fun);                                               }
+	unsigned give( FUN_t _fun ) {             unsigned event = box_give(this, &_fun);                                 return event; }
+};
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -274,18 +295,13 @@ unsigned job_give( job_t *job, fun_t *proc );
  **********************************************************************************************************************/
 
 template<unsigned _limit>
-struct JobQueueT : public __job
+struct JobQueueT : public baseJobQueue
 {
 	explicit
-	JobQueueT( void ): __job _JOB_INIT(_limit, _data) {}
-
-	void     wait( void )         {        job_wait(this);        }
-	unsigned take( void )         { return job_take(this);        }
-	void     send( fun_t *_proc ) {        job_send(this, _proc); }
-	unsigned give( fun_t *_proc ) { return job_give(this, _proc); }
+	JobQueueT( void ): baseJobQueue(_limit, _data) {}
 
 	private:
-	fun_t *_data[_limit];
+	FUN_t _data[_limit];
 };
 
 #endif
