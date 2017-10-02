@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_mem.h
     @author  Rajmund Szymanski
-    @date    15.09.2017
+    @date    02.10.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -270,6 +270,31 @@ void mem_give( mem_t *mem, void *data );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
+ * Class             : baseMemoryPool                                                                                 *
+ *                                                                                                                    *
+ * Description       : create and initilize a memory pool object                                                      *
+ *                                                                                                                    *
+ * Constructor parameters                                                                                             *
+ *   limit           : size of a buffer (max number of objects)                                                       *
+ *   size            : size of memory object (in bytes)                                                               *
+ *   data            : memory pool data buffer                                                                        *
+ *                                                                                                                    *
+ * Note              : for internal use                                                                               *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+struct baseMemoryPool : public __mem
+{
+	explicit
+	baseMemoryPool( const unsigned _limit, const unsigned _size, void * const _data ): __mem _MEM_INIT(_limit, _size, _data) { mem_bind(this); }
+
+	void     wait( void **_data ) {        mem_wait(this, (void**)_data); }
+	unsigned take( void **_data ) { return mem_take(this, (void**)_data); }
+	void     give( void  *_data ) {        mem_give(this,         _data); }
+};
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
  * Class             : MemoryPool                                                                                     *
  *                                                                                                                    *
  * Description       : create and initilize a memory pool object                                                      *
@@ -281,14 +306,10 @@ void mem_give( mem_t *mem, void *data );
  **********************************************************************************************************************/
 
 template<unsigned _limit, unsigned _size>
-struct MemoryPoolT : public __mem
+struct MemoryPoolT : public baseMemoryPool
 {
 	explicit
-	MemoryPoolT( void ): __mem _MEM_INIT(_limit, _size, _data) { mem_bind(this); }
-
-	void     wait( void **_data ) {        mem_wait(this, (void**)_data); }
-	unsigned take( void **_data ) { return mem_take(this, (void**)_data); }
-	void     give( void  *_data ) {        mem_give(this,         _data); }
+	MemoryPoolT( void ): baseMemoryPool(_limit, _size, reinterpret_cast<void *>(_data)) {}
 
 	private:
 	void *_data[_limit * (1 + MSIZE(_size))];
@@ -309,9 +330,8 @@ struct MemoryPoolT : public __mem
 template<unsigned _limit, class T>
 struct MemoryPoolTT : public MemoryPoolT<_limit, sizeof(T)>
 {
-	void     wait( T **_data ) {        mem_wait(this, (void**)_data); }
-	unsigned take( T **_data ) { return mem_take(this, (void**)_data); }
-	void     give( T  *_data ) {        mem_give(this,         _data); }
+	explicit
+	MemoryPoolTT( void ): MemoryPoolT<_limit, sizeof(T)>() {}
 };
 
 #endif
