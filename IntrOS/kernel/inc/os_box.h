@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_box.h
     @author  Rajmund Szymanski
-    @date    15.09.2017
+    @date    02.10.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -274,6 +274,32 @@ unsigned box_give( box_t *box, void *data );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
+ * Class             : baseMailBoxQueue                                                                               *
+ *                                                                                                                    *
+ * Description       : create and initilize a mailbox queue object                                                    *
+ *                                                                                                                    *
+ * Constructor parameters                                                                                             *
+ *   limit           : size of a queue (max number of stored mails)                                                   *
+ *   size            : size of a single mail (in bytes)                                                               *
+ *   data            : mailbox queue data buffer                                                                      *
+ *                                                                                                                    *
+ * Note              : for internal use                                                                               *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+struct baseMailBoxQueue : public __box
+{
+	explicit
+	baseMailBoxQueue( const unsigned _limit, const unsigned _size, char * const _data ): __box _BOX_INIT(_limit, _size, _data) {}
+
+	void     wait( void *_data ) {        box_wait(this, _data); }
+	unsigned take( void *_data ) { return box_take(this, _data); }
+	void     send( void *_data ) {        box_send(this, _data); }
+	unsigned give( void *_data ) { return box_give(this, _data); }
+};
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
  * Class             : MailBoxQueue                                                                                   *
  *                                                                                                                    *
  * Description       : create and initilize a mailbox queue object                                                    *
@@ -285,15 +311,10 @@ unsigned box_give( box_t *box, void *data );
  **********************************************************************************************************************/
 
 template<unsigned _limit, unsigned _size>
-struct MailBoxQueueT : public __box
+struct MailBoxQueueT : public baseMailBoxQueue
 {
 	explicit
-	 MailBoxQueueT( void ): __box _BOX_INIT(_limit, _size, _data) {}
-
-	void     wait( void *_data ) {        box_wait(this, _data); }
-	unsigned take( void *_data ) { return box_take(this, _data); }
-	void     send( void *_data ) {        box_send(this, _data); }
-	unsigned give( void *_data ) { return box_give(this, _data); }
+	MailBoxQueueT( void ): baseMailBoxQueue(_limit, _size, _data) {}
 
 	private:
 	char _data[_limit * _size];
@@ -314,10 +335,8 @@ struct MailBoxQueueT : public __box
 template<unsigned _limit, class T>
 struct MailBoxQueueTT : public MailBoxQueueT<_limit, sizeof(T)>
 {
-	void     wait( T *_data ) {        box_wait(this, _data); }
-	unsigned take( T *_data ) { return box_take(this, _data); }
-	void     send( T *_data ) {        box_send(this, _data); }
-	unsigned give( T *_data ) { return box_give(this, _data); }
+	explicit
+	MailBoxQueueTT( void ): MailBoxQueueT<_limit, sizeof(T)>() {}
 };
 
 #endif
