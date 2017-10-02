@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    29.09.2017
+    @date    02.10.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -715,17 +715,19 @@ unsigned tsk_resume( tsk_t *tsk );
  *   stack           : base of task's private stack storage                                                           *
  *   size            : size of task private stack (in bytes)                                                          *
  *                                                                                                                    *
+ * Note              : for internal use                                                                               *
+ *                                                                                                                    *
  **********************************************************************************************************************/
 
 struct baseTask : public __tsk
 {
 #if OS_FUNCTIONAL
 	 explicit
-	 baseTask( FUN_t _state, stk_t *_stack, unsigned _size ): __tsk _TSK_INIT(_run, _stack, _size), _fun(_state) {}
-	~baseTask( void ) { assert(__tsk::id == ID_STOPPED); _fun = nullptr; }
+	 baseTask( FUN_t _state, stk_t * const _stack, const unsigned _size ): __tsk _TSK_INIT(_run, _stack, _size), _fun(_state) {}
+	~baseTask( void ) { assert(__tsk::id == ID_STOPPED); }
 #else
 	 explicit
-	 baseTask( FUN_t _state, stk_t *_stack, unsigned _size ): __tsk _TSK_INIT(_state, _stack, _size) {}
+	 baseTask( FUN_t _state, stk_t * const _stack, const unsigned _size ): __tsk _TSK_INIT(_state, _stack, _size) {}
 	~baseTask( void ) { assert(__tsk::id == ID_STOPPED); }
 #endif
 

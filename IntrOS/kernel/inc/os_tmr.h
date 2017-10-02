@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.h
     @author  Rajmund Szymanski
-    @date    29.09.2017
+    @date    02.10.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -501,7 +501,7 @@ struct Timer : public __tmr
 #if OS_FUNCTIONAL
 	 explicit
 	 Timer( FUN_t _state ): __tmr _TMR_INIT(_run), _fun(_state) {}
-	~Timer( void ) { assert(__tmr::id == ID_STOPPED); _fun = nullptr; }
+	~Timer( void ) { assert(__tmr::id == ID_STOPPED); }
 #else
 	 explicit
 	 Timer( FUN_t _state ): __tmr _TMR_INIT(_state) {}
