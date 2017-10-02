@@ -225,7 +225,7 @@ unsigned mtx_give( mtx_t *mtx );
 
 struct Mutex : public __mtx
 {
-	explicit
+	 explicit
 	 Mutex( void ): __mtx _MTX_INIT() {}
 	~Mutex( void ) { assert(owner == nullptr); }
 
