@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_msg.h
     @author  Rajmund Szymanski
-    @date    27.09.2017
+    @date    02.10.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -267,6 +267,31 @@ unsigned msg_give( msg_t *msg, unsigned data );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
+ * Class             : baseMessageQueue                                                                               *
+ *                                                                                                                    *
+ * Description       : create and initilize a message queue object                                                    *
+ *                                                                                                                    *
+ * Constructor parameters                                                                                             *
+ *   limit           : size of a queue (max number of stored messages)                                                *
+ *   data            : message queue data buffer                                                                      *
+ *                                                                                                                    *
+ * Note              : for internal use                                                                               *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+struct baseMessageQueue : public __msg
+{
+	explicit
+	baseMessageQueue( const unsigned _limit, unsigned * const _data ): __msg _MSG_INIT(_limit, _data) {}
+
+	void     wait( unsigned*_data ) {        msg_wait(this, _data); }
+	unsigned take( unsigned*_data ) { return msg_take(this, _data); }
+	void     send( unsigned _data ) {        msg_send(this, _data); }
+	unsigned give( unsigned _data ) { return msg_give(this, _data); }
+};
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
  * Class             : MessageQueue                                                                                   *
  *                                                                                                                    *
  * Description       : create and initilize a message queue object                                                    *
@@ -277,15 +302,10 @@ unsigned msg_give( msg_t *msg, unsigned data );
  **********************************************************************************************************************/
 
 template<unsigned _limit>
-struct MessageQueueT : public __msg
+struct MessageQueueT : public baseMessageQueue
 {
 	explicit
-	MessageQueueT( void ): __msg _MSG_INIT(_limit, _data) {}
-
-	void     wait( unsigned*_data ) {        msg_wait(this, _data); }
-	unsigned take( unsigned*_data ) { return msg_take(this, _data); }
-	void     send( unsigned _data ) {        msg_send(this, _data); }
-	unsigned give( unsigned _data ) { return msg_give(this, _data); }
+	MessageQueueT( void ): baseMessageQueue(_limit, _data) {}
 
 	private:
 	unsigned _data[_limit];
