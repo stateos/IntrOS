@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_bar.c
     @author  Rajmund Szymanski
-    @date    12.09.2017
+    @date    03.10.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -26,7 +26,7 @@
 
  ******************************************************************************/
 
-#include <os.h>
+#include "inc/os_bar.h"
 
 /* -------------------------------------------------------------------------- */
 void bar_init( bar_t *bar, unsigned limit )
@@ -66,7 +66,7 @@ void bar_wait( bar_t *bar )
 
 	port_sys_unlock();
 
-	while (bar->signal == signal) tsk_yield();
+	while (bar->signal == signal) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */

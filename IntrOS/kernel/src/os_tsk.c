@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.c
     @author  Rajmund Szymanski
-    @date    12.09.2017
+    @date    03.10.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -26,7 +26,7 @@
 
  ******************************************************************************/
 
-#include <os.h>
+#include "inc/os_tsk.h"
 
 /* -------------------------------------------------------------------------- */
 void tsk_init( tsk_t *tsk, fun_t *state, void *stack, unsigned size )
@@ -105,7 +105,7 @@ void tsk_join( tsk_t *tsk )
 {
 	assert(tsk);
 
-	while (tsk->id != ID_STOPPED) tsk_yield();
+	while (tsk->id != ID_STOPPED) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -126,7 +126,7 @@ unsigned priv_tsk_sleep( tsk_t *cur )
 /* -------------------------------------------------------------------------- */
 {
 	cur->id = ID_DELAYED;
-	tsk_yield();
+	core_ctx_switch();
 
 	return cur->event;
 }
@@ -168,7 +168,7 @@ void tsk_wait( unsigned flags )
 /* -------------------------------------------------------------------------- */
 {
 	Current->event = flags;
-	while (Current->event) tsk_yield();
+	while (Current->event) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -198,7 +198,7 @@ unsigned tsk_suspend( tsk_t *tsk )
 		tsk->delay = INFINITE;
 		tsk->id = ID_DELAYED;
 		if (tsk == Current)
-			tsk_yield();
+			core_ctx_switch();
 		event = E_SUCCESS;
 	}
 

@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_box.c
     @author  Rajmund Szymanski
-    @date    27.09.2017
+    @date    03.10.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -26,7 +26,7 @@
 
  ******************************************************************************/
 
-#include <os.h>
+#include "inc/os_box.h"
 
 /* -------------------------------------------------------------------------- */
 void box_init( box_t *box, unsigned limit, unsigned size, void *data )
@@ -103,7 +103,7 @@ unsigned box_take( box_t *box, void *data )
 void box_wait( box_t *box, void *data )
 /* -------------------------------------------------------------------------- */
 {
-	while (box_take(box, data) != E_SUCCESS) tsk_yield();
+	while (box_take(box, data) != E_SUCCESS) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -133,7 +133,7 @@ unsigned box_give( box_t *box, void *data )
 void box_send( box_t *box, void *data )
 /* -------------------------------------------------------------------------- */
 {
-	while (box_give(box, data) != E_SUCCESS) tsk_yield();
+	while (box_give(box, data) != E_SUCCESS) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */

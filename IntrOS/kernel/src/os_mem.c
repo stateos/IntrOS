@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_mem.c
     @author  Rajmund Szymanski
-    @date    12.09.2017
+    @date    03.10.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -26,7 +26,7 @@
 
  ******************************************************************************/
 
-#include <os.h>
+#include "inc/os_mem.h"
 
 /* -------------------------------------------------------------------------- */
 void mem_bind( mem_t *mem )
@@ -106,7 +106,7 @@ unsigned mem_take( mem_t *mem, void **data )
 void mem_wait( mem_t *mem, void **data )
 /* -------------------------------------------------------------------------- */
 {
-	while (mem_take(mem, data) != E_SUCCESS) tsk_yield();
+	while (mem_take(mem, data) != E_SUCCESS) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */

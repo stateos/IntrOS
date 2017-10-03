@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_evt.c
     @author  Rajmund Szymanski
-    @date    12.09.2017
+    @date    03.10.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -26,7 +26,7 @@
 
  ******************************************************************************/
 
-#include <os.h>
+#include "inc/os_evt.h"
 
 /* -------------------------------------------------------------------------- */
 void evt_init( evt_t *evt )
@@ -50,7 +50,7 @@ unsigned evt_wait( evt_t *evt )
 	assert(evt);
 
 	signal = evt->signal;
-	while (evt->signal == signal) tsk_yield();
+	while (evt->signal == signal) core_ctx_switch();
 
 	return evt->event;
 }

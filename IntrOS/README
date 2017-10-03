@@ -33,6 +33,7 @@ Features:
 - internal system timer handler moved to kernel
 - added job queue object
 - changed internal implementation of some objects
+- updated inclusion of header files
 ---------
 3.1
 - updated access to the c++ functional library

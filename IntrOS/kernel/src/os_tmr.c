@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.c
     @author  Rajmund Szymanski
-    @date    12.09.2017
+    @date    03.10.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -26,7 +26,7 @@
 
  ******************************************************************************/
 
-#include <os.h>
+#include "inc/os_tmr.h"
 
 /* -------------------------------------------------------------------------- */
 void tmr_init( tmr_t *tmr, fun_t *state )
@@ -129,7 +129,7 @@ void tmr_wait( tmr_t *tmr )
 	if (tmr->id != ID_STOPPED)
 	{
 		signal = tmr->signal;
-		while (tmr->signal == signal) tsk_yield();
+		while (tmr->signal == signal) core_ctx_switch();
 	}
 }
 

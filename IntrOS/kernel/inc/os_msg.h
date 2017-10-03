@@ -29,7 +29,7 @@
 #ifndef __INTROS_MSG_H
 #define __INTROS_MSG_H
 
-#include <oskernel.h>
+#include "oskernel.h"
 
 #ifdef __cplusplus
 extern "C" {

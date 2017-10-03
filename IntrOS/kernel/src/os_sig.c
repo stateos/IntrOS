@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_sig.c
     @author  Rajmund Szymanski
-    @date    12.09.2017
+    @date    03.10.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -26,7 +26,7 @@
 
  ******************************************************************************/
 
-#include <os.h>
+#include "inc/os_sig.h"
 
 /* -------------------------------------------------------------------------- */
 void sig_init( sig_t *sig, unsigned type )
@@ -69,7 +69,7 @@ unsigned sig_take( sig_t *sig )
 void sig_wait( sig_t *sig )
 /* -------------------------------------------------------------------------- */
 {
-	while (sig_take(sig) != E_SUCCESS) tsk_yield();
+	while (sig_take(sig) != E_SUCCESS) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */

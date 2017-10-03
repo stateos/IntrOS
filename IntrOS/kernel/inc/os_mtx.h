@@ -29,7 +29,7 @@
 #ifndef __INTROS_MTX_H
 #define __INTROS_MTX_H
 
-#include <oskernel.h>
+#include "oskernel.h"
 
 #ifdef __cplusplus
 extern "C" {

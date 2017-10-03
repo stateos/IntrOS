@@ -29,7 +29,8 @@
 #ifndef __INTROS_CND_H
 #define __INTROS_CND_H
 
-#include <oskernel.h>
+#include "oskernel.h"
+#include "os_mtx.h"
 
 #ifdef __cplusplus
 extern "C" {

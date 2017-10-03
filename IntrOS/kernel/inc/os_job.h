@@ -29,6 +29,7 @@
 #ifndef __INTROS_JOB_H
 #define __INTROS_JOB_H
 
+#include "oskernel.h"
 #include "os_box.h"
 
 #ifdef __cplusplus

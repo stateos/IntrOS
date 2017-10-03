@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_flg.c
     @author  Rajmund Szymanski
-    @date    12.09.2017
+    @date    03.10.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -26,7 +26,7 @@
 
  ******************************************************************************/
 
-#include <os.h>
+#include "inc/os_flg.h"
 
 /* -------------------------------------------------------------------------- */
 void flg_init( flg_t *flg )
@@ -67,7 +67,7 @@ unsigned flg_take( flg_t *flg, unsigned flags, bool all )
 void flg_wait( flg_t *flg, unsigned flags, bool all )
 /* -------------------------------------------------------------------------- */
 {
-	while ((flags = flg_take(flg, flags, all)) != 0) tsk_yield();
+	while ((flags = flg_take(flg, flags, all)) != 0) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */

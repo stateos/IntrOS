@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_lst.c
     @author  Rajmund Szymanski
-    @date    12.09.2017
+    @date    03.10.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -26,7 +26,7 @@
 
  ******************************************************************************/
 
-#include <os.h>
+#include "inc/os_lst.h"
 
 /* -------------------------------------------------------------------------- */
 void lst_init( lst_t *lst )
@@ -68,7 +68,7 @@ unsigned lst_take( lst_t *lst, void **data )
 void lst_wait( lst_t *lst, void **data )
 /* -------------------------------------------------------------------------- */
 {
-	while (lst_take(lst, data) != E_SUCCESS) tsk_yield();
+	while (lst_take(lst, data) != E_SUCCESS) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */

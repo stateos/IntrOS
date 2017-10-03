@@ -29,7 +29,7 @@
 #ifndef __INTROS_SIG_H
 #define __INTROS_SIG_H
 
-#include <oskernel.h>
+#include "oskernel.h"
 
 #ifdef __cplusplus
 extern "C" {

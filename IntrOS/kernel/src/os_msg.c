@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_msg.c
     @author  Rajmund Szymanski
-    @date    27.09.2017
+    @date    03.10.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -26,7 +26,7 @@
 
  ******************************************************************************/
 
-#include <os.h>
+#include "inc/os_msg.h"
 
 /* -------------------------------------------------------------------------- */
 void msg_init( msg_t *msg, unsigned limit, unsigned *data )
@@ -95,7 +95,7 @@ unsigned msg_take( msg_t *msg, unsigned *data )
 void msg_wait( msg_t *msg, unsigned *data )
 /* -------------------------------------------------------------------------- */
 {
-	while (msg_take(msg, data) != E_SUCCESS) tsk_yield();
+	while (msg_take(msg, data) != E_SUCCESS) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -125,7 +125,7 @@ unsigned msg_give( msg_t *msg, unsigned data )
 void msg_send( msg_t *msg, unsigned data )
 /* -------------------------------------------------------------------------- */
 {
-	while (msg_give(msg, data) != E_SUCCESS) tsk_yield();
+	while (msg_give(msg, data) != E_SUCCESS) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */
