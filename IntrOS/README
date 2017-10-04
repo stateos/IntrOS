@@ -17,10 +17,14 @@ Features:
 - semaphores
 - mutexes
 - condition variables
+- memory pools
 - message queues
 - mailbox queues
+- job queues
 - timers (one-shot, periodic)
+- c++ wrapper
 - all documentation is contained within the source files
+- examples and templates are in separate repositories (https://github.com/stateos)
 ---------
 3.2
 - added init functions for all objects
