@@ -29,6 +29,7 @@ Features
 - all documentation is contained within the source files
 - examples and templates are in separate repositories on [GitHub](https://github.com/stateos)
 - archival releases on [sourceforge](https://sourceforge.net/projects/intros.stateos.p)
+- [![Build Status](https://travis-ci.org/stateos/IntrOS.svg)](https://travis-ci.org/stateos/IntrOS)
 
 Targets
 -------
