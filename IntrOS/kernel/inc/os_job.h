@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_job.h
     @author  Rajmund Szymanski
-    @date    02.10.2017
+    @date    08.10.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -42,7 +42,17 @@ extern "C" {
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-typedef struct __box job_t, * const job_id;
+typedef struct __job job_t, * const job_id;
+
+struct __job
+{
+	unsigned count; // inherited from semaphore
+	unsigned limit; // inherited from semaphore
+
+	unsigned first; // first element to read from queue
+	unsigned next;  // next element to write into queue
+	fun_t ** data;  // job queue data
+};
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -60,8 +70,7 @@ typedef struct __box job_t, * const job_id;
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define               _JOB_INIT( _limit, _data ) \
-                      _BOX_INIT( _limit, sizeof(fun_t *), (char *)_data )
+#define               _JOB_INIT( _limit, _data ) { 0, _limit, 0, 0, _data }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -174,8 +183,7 @@ typedef struct __box job_t, * const job_id;
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-__STATIC_INLINE
-void job_init( job_t *job, unsigned limit, fun_t **data ) { box_init(job, limit, sizeof(fun_t *), data); }
+void job_init( job_t *job, unsigned limit, fun_t **data );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -191,8 +199,7 @@ void job_init( job_t *job, unsigned limit, fun_t **data ) { box_init(job, limit,
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-__STATIC_INLINE
-void job_wait( job_t *job ) { fun_t *fun; box_wait(job, &fun); fun(); }
+void job_wait( job_t *job );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -210,8 +217,7 @@ void job_wait( job_t *job ) { fun_t *fun; box_wait(job, &fun); fun(); }
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-__STATIC_INLINE
-unsigned job_take( job_t *job ) { fun_t *fun; unsigned event = box_take(job, &fun); if (event == E_SUCCESS) fun(); return event; }
+unsigned job_take( job_t *job );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -228,8 +234,7 @@ unsigned job_take( job_t *job ) { fun_t *fun; unsigned event = box_take(job, &fu
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-__STATIC_INLINE
-void job_send( job_t *job, fun_t *fun ) { box_send(job, &fun); }
+void job_send( job_t *job, fun_t *fun );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -248,8 +253,7 @@ void job_send( job_t *job, fun_t *fun ) { box_send(job, &fun); }
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-__STATIC_INLINE
-unsigned job_give( job_t *job, fun_t *fun ) { unsigned event = box_give(job, &fun); return event; }
+unsigned job_give( job_t *job, fun_t *fun );
 
 #ifdef __cplusplus
 }
