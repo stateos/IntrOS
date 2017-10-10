@@ -9,4 +9,4 @@ install:
   - arm-none-eabi-gcc --version
 
 script:
-  - ./.travis.sh
+  - bash ./.travis.sh
