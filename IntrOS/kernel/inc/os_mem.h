@@ -288,9 +288,9 @@ struct baseMemoryPool : public __mem
 	explicit
 	baseMemoryPool( const unsigned _limit, const unsigned _size, void * const _data ): __mem _MEM_INIT(_limit, _size, _data) { mem_bind(this); }
 
-	void     wait( void **_data ) {        mem_wait(this, (void**)_data); }
-	unsigned take( void **_data ) { return mem_take(this, (void**)_data); }
-	void     give( void  *_data ) {        mem_give(this,         _data); }
+	void     wait( void **_data ) {        mem_wait(this, _data); }
+	unsigned take( void **_data ) { return mem_take(this, _data); }
+	void     give( void  *_data ) {        mem_give(this, _data); }
 };
 
 /**********************************************************************************************************************
@@ -333,8 +333,8 @@ struct MemoryPoolTT : public MemoryPoolT<_limit, sizeof(T)>
 	explicit
 	MemoryPoolTT( void ): MemoryPoolT<_limit, sizeof(T)>() {}
 
-	void     wait( void **_data ) {        mem_wait(this, reinterpret_cast<void **>(_data)); }
-	unsigned take( void **_data ) { return mem_take(this, reinterpret_cast<void **>(_data)); }
+	void     wait( T **_data ) {        mem_wait(this, reinterpret_cast<void **>(_data)); }
+	unsigned take( T **_data ) { return mem_take(this, reinterpret_cast<void **>(_data)); }
 };
 
 #endif
