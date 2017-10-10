@@ -8,4 +8,5 @@ install:
   - sudo apt-get install -y gcc-arm-embedded
   - arm-none-eabi-gcc --version
 
-script: ./.travis.sh
+script:
+  - ./.travis.sh

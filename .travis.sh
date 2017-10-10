@@ -2,21 +2,26 @@
 
 set -e
 
+if [ ! -d examples ]; then
+	make all GNUCC=arm-none-eabi- -f makefile.gnucc
+	exit 0
+fi
+
 rm -f src/main.c
 rm -f src/main.cpp
 
 for file in examples/*.c\ *
 do
-cp "$file" src/main.c
-touch src/main.c
-make all GNUCC=arm-none-eabi- -f makefile.gnucc
-rm -f src/main.c
+	cp "$file" src/main.c
+	touch src/main.c
+	make all GNUCC=arm-none-eabi- -f makefile.gnucc
+	rm -f src/main.c
 done
 
 for file in examples/*.cpp*
 do
-cp "$file" src/main.cpp
-touch src/main.cpp
-make all GNUCC=arm-none-eabi- -f makefile.gnucc
-rm -f src/main.cpp
+	cp "$file" src/main.cpp
+	touch src/main.cpp
+	make all GNUCC=arm-none-eabi- -f makefile.gnucc
+	rm -f src/main.cpp
 done
