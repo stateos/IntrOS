@@ -1,12 +1,10 @@
 #include <stm32f4_discovery.h>
 #include <os.h>
 
-void proc()
+OS_TMR_DEF(tmr)
 {
 	LED_Tick();
 }
-
-OS_TMR(tmr, proc);
 
 int main()
 {

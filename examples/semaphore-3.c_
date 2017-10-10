@@ -1,28 +1,28 @@
 #include <stm32f4_discovery.h>
 #include <os.h>
 
-bar_t bar = BAR_INIT(2);
+sem_id sem = SEM_CREATE(0);
 
 void slave()
 {
-	bar_wait(&bar);
+	sem_wait(sem);
 	LED_Tick();
 }
 
 void master()
 {
 	tsk_delay(SEC);
-	bar_wait(&bar);
+	sem_give(sem);
 }
 
-tsk_t sla = TSK_INIT(slave);
-tsk_t mas = TSK_INIT(master);
+tsk_id sla = TSK_CREATE(slave);
+tsk_id mas = TSK_CREATE(master);
 
 int main()
 {
 	LED_Init();
 
-	tsk_start(&sla);
-	tsk_start(&mas);
+	tsk_start(sla);
+	tsk_start(mas);
 	tsk_stop();
 }

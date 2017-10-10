@@ -1,0 +1,44 @@
+#include <stm32f4_discovery.h>
+#include <os.h>
+
+auto led = Led();
+auto box = MailBoxQueueTT<1, unsigned*>();
+auto mem = MemoryPoolTT<1, unsigned>();
+
+void slave()
+{
+	unsigned*p;
+
+	for (;;)
+	{
+		box.wait(&p);
+		led = *p;
+		mem.give(p);
+	}
+}
+
+void master()
+{
+	unsigned*p;
+	unsigned x = 15;
+
+	for (;;)
+	{
+		ThisTask::delay(SEC);
+
+		mem.wait(&p);
+		*p=x++;
+		box.give(&p);
+	}
+}
+
+auto sla = Task(slave);
+auto mas = Task(master);
+
+int main()
+{
+	sla.start();
+	mas.start();
+
+	ThisTask::stop();
+}

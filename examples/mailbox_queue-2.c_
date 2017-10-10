@@ -1,7 +1,7 @@
 #include <stm32f4_discovery.h>
 #include <os.h>
 
-box_t box = BOX_INIT(1, sizeof(unsigned));
+box_id box = BOX_CREATE(1, sizeof(unsigned));
 
 void slave()
 {
@@ -9,7 +9,7 @@ void slave()
 
 	for (;;)
 	{
-		box_wait(&box, &x);
+		box_wait(box, &x);
 		LEDs = x;
 	}
 }
@@ -22,18 +22,18 @@ void master()
 	{
 		tsk_delay(SEC);
 		x++;
-		box_give(&box, &x);
+		box_give(box, &x);
 	}
 }
 
-tsk_t sla = TSK_INIT(slave);
-tsk_t mas = TSK_INIT(master);
+tsk_id sla = WRK_CREATE(slave,  256);
+tsk_id mas = WRK_CREATE(master, 256);
 
 int main()
 {
 	LED_Init();
 
-	tsk_start(&sla);
-	tsk_start(&mas);
+	tsk_start(sla);
+	tsk_start(mas);
 	tsk_stop();
 }

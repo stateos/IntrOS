@@ -1,22 +1,22 @@
 #include <stm32f4_discovery.h>
 #include <os.h>
 
-sig_id sig = SIG_CREATE(sigClear);
+OS_BAR(bar, 2);
 
 void slave()
 {
-	sig_wait(sig);
+	bar_wait(bar);
 	LED_Tick();
 }
 
 void master()
 {
-	tsk_delay(SEC);
-	sig_give(sig);
+	tsk_delay(1000*MSEC);
+	bar_wait(bar);
 }
 
-tsk_id sla = TSK_CREATE(slave);
-tsk_id mas = TSK_CREATE(master);
+OS_TSK(sla, slave);
+OS_TSK(mas, master);
 
 int main()
 {
@@ -24,5 +24,5 @@ int main()
 
 	tsk_start(sla);
 	tsk_start(mas);
-	tsk_sleep();
+	tsk_stop();
 }

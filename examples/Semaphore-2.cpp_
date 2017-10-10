@@ -1,0 +1,15 @@
+#include <stm32f4_discovery.h>
+#include <os.h>
+
+auto led = Led();
+auto sem = Semaphore(0);
+auto sla = Task([] { sem.wait(); led.tick(); });
+auto mas = Task([] { ThisTask::sleepFor(SEC); sem.give(); });
+
+int main()
+{
+	sla.start();
+	mas.start();
+
+	ThisTask::stop();
+}
