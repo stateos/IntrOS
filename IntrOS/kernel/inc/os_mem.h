@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_mem.h
     @author  Rajmund Szymanski
-    @date    02.10.2017
+    @date    10.10.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -332,6 +332,9 @@ struct MemoryPoolTT : public MemoryPoolT<_limit, sizeof(T)>
 {
 	explicit
 	MemoryPoolTT( void ): MemoryPoolT<_limit, sizeof(T)>() {}
+
+	void     wait( void **_data ) {        mem_wait(this, reinterpret_cast<void **>(_data)); }
+	unsigned take( void **_data ) { return mem_take(this, reinterpret_cast<void **>(_data)); }
 };
 
 #endif
