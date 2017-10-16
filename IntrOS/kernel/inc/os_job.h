@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_job.h
     @author  Rajmund Szymanski
-    @date    08.10.2017
+    @date    16.10.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -277,6 +277,8 @@ unsigned job_give( job_t *job, fun_t *fun );
  *                                                                                                                    *
  **********************************************************************************************************************/
 
+#if OS_FUNCTIONAL
+
 struct baseJobQueue : public __box
 {
 	explicit
@@ -287,6 +289,21 @@ struct baseJobQueue : public __box
 	void     send( FUN_t _fun ) {                              box_send(this, &_fun);                                               }
 	unsigned give( FUN_t _fun ) {             unsigned event = box_give(this, &_fun);                                 return event; }
 };
+
+#else
+
+struct baseJobQueue : public __job
+{
+	explicit
+	baseJobQueue( const unsigned _limit, FUN_t * const _data ): __job _JOB_INIT( _limit, _data ) {}
+
+	void     wait( void )       {        job_wait(this);       }
+	unsigned take( void )       { return job_take(this);       }
+	void     send( FUN_t _fun ) {        job_send(this, _fun); }
+	unsigned give( FUN_t _fun ) { return job_give(this, _fun); }
+};
+
+#endif
 
 /**********************************************************************************************************************
  *                                                                                                                    *
