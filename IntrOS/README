@@ -26,6 +26,12 @@ Features:
 - all documentation is contained within the source files
 - examples and templates are in separate repositories (https://github.com/stateos)
 ---------
+3.3
+- updated inclusion of header files
+- updated job queue object
+- updated memory pool object
+- updated internal MSIZE definition
+---------
 3.2
 - added init functions for all objects
 - added aliases for XXX_CREATE macro definitions (XXX_NEW)
