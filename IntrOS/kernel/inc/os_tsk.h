@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    02.10.2017
+    @date    23.10.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -148,7 +148,7 @@ struct __tsk
  *                                                                                                                    *
  * Name              : OS_TSK                                                                                         *
  *                                                                                                                    *
- * Description       : define and initilize complete work area for task obj. with stack size defined by OS_STACK_SIZE *
+ * Description       : define and initilize complete work area for task object with default stack size                *
  *                                                                                                                    *
  * Parameters                                                                                                         *
  *   tsk             : name of a pointer to task object                                                               *
@@ -182,7 +182,7 @@ struct __tsk
  *                                                                                                                    *
  * Name              : OS_TSK_DEF                                                                                     *
  *                                                                                                                    *
- * Description       : define and initilize complete work area for task obj. with stack size defined by OS_STACK_SIZE *
+ * Description       : define and initilize complete work area for task object with default stack size                *
  *                     task state (function body) must be defined immediately below                                   *
  *                                                                                                                    *
  * Parameters                                                                                                         *
@@ -254,7 +254,7 @@ struct __tsk
  *                                                                                                                    *
  * Name              : static_TSK                                                                                     *
  *                                                                                                                    *
- * Description       : define and initilize static work area for task object with stack size defined by OS_STACK_SIZE *
+ * Description       : define and initilize static work area for task object with default stack size                  *
  *                                                                                                                    *
  * Parameters                                                                                                         *
  *   tsk             : name of a pointer to task object                                                               *
@@ -288,7 +288,7 @@ struct __tsk
  *                                                                                                                    *
  * Name              : static_TSK_DEF                                                                                 *
  *                                                                                                                    *
- * Description       : define and initilize static work area for task object with stack size defined by OS_STACK_SIZE *
+ * Description       : define and initilize static work area for task object with default stack size                  *
  *                     task state (function body) must be defined immediately below                                   *
  *                                                                                                                    *
  * Parameters                                                                                                         *
@@ -388,7 +388,7 @@ struct __tsk
  *                                                                                                                    *
  * Name              : TSK_INIT                                                                                       *
  *                                                                                                                    *
- * Description       : create and initilize complete work area for task obj. with stack size defined by OS_STACK_SIZE *
+ * Description       : create and initilize complete work area for task object with default stack size                *
  *                                                                                                                    *
  * Parameters                                                                                                         *
  *   state           : task state (initial task function) doesn't have to be noreturn-type                            *
@@ -410,7 +410,7 @@ struct __tsk
  * Name              : TSK_CREATE                                                                                     *
  * Alias             : TSK_NEW                                                                                        *
  *                                                                                                                    *
- * Description       : create and initilize complete work area for task obj. with stack size defined by OS_STACK_SIZE *
+ * Description       : create and initilize complete work area for task object with default stack size                *
  *                                                                                                                    *
  * Parameters                                                                                                         *
  *   state           : task state (initial task function) doesn't have to be noreturn-type                            *
