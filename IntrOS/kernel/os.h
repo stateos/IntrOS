@@ -2,7 +2,7 @@
 
     @file    IntrOS: os.h
     @author  Rajmund Szymanski
-    @date    04.10.2017
+    @date    23.10.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -124,7 +124,7 @@ uint32_t sys_time( void );
  **********************************************************************************************************************/
 
 #define                stk_assert() \
-                       assert((Current->id == ID_TIMER) || (Current == &MAIN) || (port_get_sp() >= Current->stack))
+                       core_stk_assert()
 
 #ifdef __cplusplus
 }
