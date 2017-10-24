@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.c
     @author  Rajmund Szymanski
-    @date    27.09.2017
+    @date    24.10.2017
     @brief   IntrOS port file for STM32F4 uC.
 
  ******************************************************************************
@@ -39,15 +39,16 @@ void port_sys_init( void )
  It must generate interrupts with frequency OS_FREQUENCY
 *******************************************************************************/
 
-	#if (CPU_FREQUENCY/OS_FREQUENCY-1 <= SysTick_LOAD_RELOAD_Msk)
+	#if (CPU_FREQUENCY)/(OS_FREQUENCY)-1 <= SysTick_LOAD_RELOAD_Msk
 
-	SysTick_Config(CPU_FREQUENCY/OS_FREQUENCY);
+	SysTick_Config((CPU_FREQUENCY)/(OS_FREQUENCY));
 
-	#elif defined(ST_FREQUENCY) && (ST_FREQUENCY/OS_FREQUENCY-1 <= SysTick_LOAD_RELOAD_Msk)
+	#elif defined(ST_FREQUENCY) && \
+	    (ST_FREQUENCY)/(OS_FREQUENCY)-1 <= SysTick_LOAD_RELOAD_Msk
 
 	NVIC_SetPriority(SysTick_IRQn, 0xFF);
 
-	SysTick->LOAD = ST_FREQUENCY/OS_FREQUENCY-1;
+	SysTick->LOAD = (ST_FREQUENCY)/(OS_FREQUENCY)-1;
 	SysTick->VAL  = 0U;
 	SysTick->CTRL = SysTick_CTRL_ENABLE_Msk|SysTick_CTRL_TICKINT_Msk;
 
@@ -66,12 +67,12 @@ void port_sys_init( void )
  It must be rescaled to frequency OS_FREQUENCY
 *******************************************************************************/
 
-	#if CPU_FREQUENCY/OS_FREQUENCY/2-1 > UINT16_MAX
+	#if (CPU_FREQUENCY)/(OS_FREQUENCY)/2-1 > UINT16_MAX
 	#error Incorrect Timer frequency!
 	#endif
 
 	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
-	TIM2->PSC  = CPU_FREQUENCY/OS_FREQUENCY/2-1;
+	TIM2->PSC  = (CPU_FREQUENCY)/(OS_FREQUENCY)/2-1;
 	TIM2->EGR  = TIM_EGR_UG;
 	TIM2->CR1  = TIM_CR1_CEN;
 

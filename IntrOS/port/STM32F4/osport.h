@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.h
     @author  Rajmund Szymanski
-    @date    01.08.2017
+    @date    24.10.2017
     @brief   IntrOS port definitions for STM32F4 uC.
 
  ******************************************************************************
@@ -39,39 +39,40 @@ extern "C" {
 
 /* -------------------------------------------------------------------------- */
 
-#ifndef  OS_TICKLESS
-#define  OS_TICKLESS          0 /* os does not work in tick-less mode         */
+#ifndef OS_TICKLESS
+#define OS_TICKLESS           0 /* os does not work in tick-less mode         */
 #endif
 
-#if      OS_TICKLESS
-#define  Counter           TIM2->CNT
+#if     OS_TICKLESS
+#define Counter            TIM2->CNT
 #endif
 
 /* -------------------------------------------------------------------------- */
 
 #ifndef CPU_FREQUENCY
-#error   osconfig.h: Undefined CPU_FREQUENCY value!
+#error  osconfig.h: Undefined CPU_FREQUENCY value!
 #endif
 
 /* -------------------------------------------------------------------------- */
 
-#ifndef  OS_FREQUENCY
+#ifndef OS_FREQUENCY
 
-#if      OS_TICKLESS
-#define  OS_FREQUENCY   1000000 /* Hz */
+#if     OS_TICKLESS
+#define OS_FREQUENCY    1000000 /* Hz */
 #else
-#define  OS_FREQUENCY      1000 /* Hz */
+#define OS_FREQUENCY       1000 /* Hz */
 #endif
 
-#endif //OS_FREQUENCY
+#endif//OS_FREQUENCY
 
-#if     (OS_TICKLESS == 0) && (OS_FREQUENCY > 1000)
-#error   osconfig.h: Incorrect OS_FREQUENCY value!
+#if    (OS_TICKLESS == 0) && (OS_FREQUENCY > 1000)
+#error  osconfig.h: Incorrect OS_FREQUENCY value!
 #endif
 
 /* -------------------------------------------------------------------------- */
+// alternate clock source for SysTick
 
-#define  ST_FREQUENCY (CPU_FREQUENCY/8) /* alternate clock source for SysTick */
+#define ST_FREQUENCY        ((CPU_FREQUENCY)/8)
 
 /* -------------------------------------------------------------------------- */
 

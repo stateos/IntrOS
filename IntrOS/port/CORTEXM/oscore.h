@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    18.09.2017
+    @date    24.10.2017
     @brief   IntrOS port file for ARM Cotrex-M uC.
 
  ******************************************************************************
@@ -37,44 +37,43 @@ extern "C" {
 
 /* -------------------------------------------------------------------------- */
 
-#ifndef  OS_STACK_SIZE
-#define  OS_STACK_SIZE      256 /* default task stack size in bytes           */
+#ifndef OS_STACK_SIZE
+#define OS_STACK_SIZE       256 /* default task stack size in bytes           */
 #endif
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef __cplusplus
+#ifdef  __cplusplus
 
-#ifndef  OS_FUNCTIONAL
+#ifndef OS_FUNCTIONAL
 
-#if      defined(__CC_ARM) || defined(__CSMC__)
-#define  OS_FUNCTIONAL        0 /* c++ functional library header not included */
+#if   defined(__CC_ARM) || defined(__CSMC__)
+#define OS_FUNCTIONAL         0 /* c++ functional library header not included */
 #else
-#define  OS_FUNCTIONAL        1 /* include c++ functional library header      */
+#define OS_FUNCTIONAL         1 /* include c++ functional library header      */
 #endif
 
-#elif    OS_FUNCTIONAL
+#elif   OS_FUNCTIONAL
 
-#if      defined(__CC_ARM) || defined(__CSMC__)
-#error   c++ functional library not allowed for this compiler.
+#if   defined(__CC_ARM) || defined(__CSMC__)
+#error  c++ functional library not allowed for this compiler.
 #endif
 
-#endif //OS_FUNCTIONAL
+#endif//OS_FUNCTIONAL
 
 #endif
 
 /* -------------------------------------------------------------------------- */
 
-typedef  uint32_t             lck_t;
-typedef  uint64_t             stk_t;
+typedef uint32_t              lck_t;
+typedef uint64_t              stk_t;
 
 /* -------------------------------------------------------------------------- */
 
-extern   stk_t              __initial_sp[];
-#define  MAIN_TOP           __initial_sp
+extern  stk_t               __initial_sp[];
+#define MAIN_TOP            __initial_sp
 
 /* -------------------------------------------------------------------------- */
-
 // task context
 
 typedef struct __ctx ctx_t;
@@ -125,6 +124,7 @@ struct __ctx
 #endif
 
 /* -------------------------------------------------------------------------- */
+// init task context
 
 __STATIC_INLINE
 void port_ctx_init( ctx_t *ctx, stk_t *sp, fun_t *pc )
@@ -134,8 +134,8 @@ void port_ctx_init( ctx_t *ctx, stk_t *sp, fun_t *pc )
 }
 
 /* -------------------------------------------------------------------------- */
-
 // get current stack pointer
+
 __STATIC_INLINE
 void * port_get_sp( void )
 {
@@ -154,27 +154,29 @@ void * port_get_sp( void )
 
 #if   defined(__CSMC__)
 
-#define  __disable_irq()    __ASM("cpsid i")
-#define  __enable_irq()     __ASM("cpsie i")
+#define __disable_irq()     __ASM("cpsid i")
+#define __enable_irq()      __ASM("cpsie i")
 
 #endif
 
 /* -------------------------------------------------------------------------- */
 
-#define  port_get_lock()    __get_PRIMASK()
-#define  port_put_lock(lck) __set_PRIMASK(lck)
+#define port_get_lock()     __get_PRIMASK()
+#define port_put_lock(lck)  __set_PRIMASK(lck)
 
-#define  port_set_lock()    __disable_irq()
-#define  port_clr_lock()    __enable_irq()
+#define port_set_lock()     __disable_irq()
+#define port_clr_lock()     __enable_irq()
 
-#define  port_sys_lock()      do { lck_t __LOCK = port_get_lock(); port_set_lock()
-#define  port_sys_unlock()         port_put_lock(__LOCK); } while(0)
+#define port_sys_lock()  do { lck_t __LOCK = port_get_lock(); port_set_lock()
+#define port_sys_unlock()     port_put_lock(__LOCK); } while(0)
 
-#define  port_isr_lock()      do { port_set_lock()
-#define  port_isr_unlock()         port_clr_lock(); } while(0)
+#define port_isr_lock()  do { port_set_lock()
+#define port_isr_unlock()     port_clr_lock(); } while(0)
 
-#define  port_cnt_lock()
-#define  port_cnt_unlock()
+#define port_cnt_lock()
+#define port_cnt_unlock()
+
+#define port_set_barrier()  __ISB()
 
 /* -------------------------------------------------------------------------- */
 
