@@ -31,7 +31,6 @@ Features:
 - updated job queue object
 - updated memory pool object
 - updated internal MSIZE definition
-- updated inclusion of header files
 ---------
 3.2
 - added init functions for all objects
