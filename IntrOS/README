@@ -28,6 +28,7 @@ Features:
 ---------
 3.4
 - added startup files for cosmic compiler
+- added support for IAR compiler
 ---------
 3.3
 - updated inclusion of header files
