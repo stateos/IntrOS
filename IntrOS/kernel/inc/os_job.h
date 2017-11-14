@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_job.h
     @author  Rajmund Szymanski
-    @date    16.10.2017
+    @date    14.11.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -320,10 +320,10 @@ template<unsigned _limit>
 struct JobQueueT : public baseJobQueue
 {
 	explicit
-	JobQueueT( void ): baseJobQueue(_limit, _data) {}
+	JobQueueT( void ): baseJobQueue(_limit, data_) {}
 
 	private:
-	FUN_t _data[_limit];
+	FUN_t data_[_limit];
 };
 
 #endif

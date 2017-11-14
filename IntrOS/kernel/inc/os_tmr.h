@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.h
     @author  Rajmund Szymanski
-    @date    02.10.2017
+    @date    14.11.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -500,7 +500,7 @@ struct Timer : public __tmr
 	 Timer( void ):         __tmr _TMR_INIT(0) {}
 #if OS_FUNCTIONAL
 	 explicit
-	 Timer( FUN_t _state ): __tmr _TMR_INIT(_run), _fun(_state) {}
+	 Timer( FUN_t _state ): __tmr _TMR_INIT(run_), fun_(_state) {}
 	~Timer( void ) { assert(__tmr::id == ID_STOPPED); }
 #else
 	 explicit
@@ -512,8 +512,8 @@ struct Timer : public __tmr
 	void startFor     ( uint32_t _delay )                                 {        tmr_startFor     (this, _delay);                  }
 	void startPeriodic( uint32_t _period )                                {        tmr_startPeriodic(this,         _period);         }
 #if OS_FUNCTIONAL
-	void startFrom    ( uint32_t _delay, uint32_t _period, FUN_t _state ) {        _fun = _state;
-	                                                                               tmr_startFrom    (this, _delay, _period, _run);   }
+	void startFrom    ( uint32_t _delay, uint32_t _period, FUN_t _state ) {        fun_ = _state;
+	                                                                               tmr_startFrom    (this, _delay, _period, run_);   }
 #else
 	void startFrom    ( uint32_t _delay, uint32_t _period, FUN_t _state ) {        tmr_startFrom    (this, _delay, _period, _state); }
 #endif
@@ -523,8 +523,8 @@ struct Timer : public __tmr
 	bool     operator!( void )                                            { return __tmr::id == ID_STOPPED;                          }
 #if OS_FUNCTIONAL
 	static
-	void     _run( void ) { ((Timer *) Current)->_fun(); }
-	FUN_t    _fun;
+	void     run_( void ) { ((Timer *) Current)->fun_(); }
+	FUN_t    fun_;
 #endif
 };
 
@@ -634,8 +634,8 @@ struct startTimerPeriodic : public Timer
 namespace ThisTimer
 {
 #if OS_FUNCTIONAL
-	static inline void flip ( FUN_t    _state ) { ((Timer *) Current)->_fun = _state;
-	                                              tmr_flip (Timer::_run);             }
+	static inline void flip ( FUN_t    _state ) { ((Timer *) Current)->fun_ = _state;
+	                                              tmr_flip (Timer::run_);             }
 #else
 	static inline void flip ( FUN_t    _state ) { tmr_flip (_state);                  }
 #endif

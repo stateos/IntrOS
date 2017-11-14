@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    23.10.2017
+    @date    14.11.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -723,7 +723,7 @@ struct baseTask : public __tsk
 {
 #if OS_FUNCTIONAL
 	 explicit
-	 baseTask( FUN_t _state, stk_t * const _stack, const unsigned _size ): __tsk _TSK_INIT(_run, _stack, _size), _fun(_state) {}
+	 baseTask( FUN_t _state, stk_t * const _stack, const unsigned _size ): __tsk _TSK_INIT(run_, _stack, _size), fun_(_state) {}
 	~baseTask( void ) { assert(__tsk::id == ID_STOPPED); }
 #else
 	 explicit
@@ -734,8 +734,8 @@ struct baseTask : public __tsk
 	void     join     ( void )         {        tsk_join     (this);         }
 	void     start    ( void )         {        tsk_start    (this);         }
 #if OS_FUNCTIONAL
-	void     startFrom( FUN_t _state ) {        _fun = _state;
-	                                            tsk_startFrom(this, _run);   }
+	void     startFrom( FUN_t _state ) {        fun_ = _state;
+	                                            tsk_startFrom(this, run_);   }
 #else
 	void     startFrom( FUN_t _state ) {        tsk_startFrom(this, _state); }
 #endif
@@ -745,8 +745,8 @@ struct baseTask : public __tsk
 	bool     operator!( void )         { return __tsk::id == ID_STOPPED;     }
 #if OS_FUNCTIONAL
 	static
-	void     _run( void ) { ((baseTask *) Current)->_fun(); }
-	FUN_t    _fun;
+	void     run_( void ) { ((baseTask *) Current)->fun_(); }
+	FUN_t    fun_;
 #endif
 };
 
@@ -767,10 +767,10 @@ template<unsigned _size>
 struct TaskT : public baseTask
 {
 	explicit
-	TaskT( FUN_t _state ): baseTask(_state, _stack, _size) {}
+	TaskT( FUN_t _state ): baseTask(_state, stack_, _size) {}
 
 	private:
-	stk_t _stack[ASIZE(_size)];
+	stk_t stack_[ASIZE(_size)];
 };
 
 /**********************************************************************************************************************
@@ -844,8 +844,8 @@ namespace ThisTask
 	static inline void     pass      ( void )            {        tsk_pass      ();                      }
 	static inline void     yield     ( void )            {        tsk_yield     ();                      }
 #if OS_FUNCTIONAL
-	static inline void     flip      ( FUN_t    _state ) {        ((baseTask *) Current)->_fun = _state;
-	                                                              tsk_flip      (baseTask::_run);        }
+	static inline void     flip      ( FUN_t    _state ) {        ((baseTask *) Current)->fun_ = _state;
+	                                                              tsk_flip      (baseTask::run_);        }
 #else
 	static inline void     flip      ( FUN_t    _state ) {        tsk_flip      (_state);                }
 #endif
