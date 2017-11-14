@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    24.10.2017
+    @date    14.11.2017
     @brief   IntrOS port file for ARM Cotrex-M uC.
 
  ******************************************************************************
@@ -47,7 +47,7 @@ extern "C" {
 
 #ifndef OS_FUNCTIONAL
 
-#if   defined(__CC_ARM) || defined(__CSMC__)
+#if   defined(__CC_ARM) || defined(__CSMC__) || defined(__ICCARM__)
 #define OS_FUNCTIONAL         0 /* c++ functional library header not included */
 #else
 #define OS_FUNCTIONAL         1 /* include c++ functional library header      */
@@ -55,7 +55,7 @@ extern "C" {
 
 #elif   OS_FUNCTIONAL
 
-#if   defined(__CC_ARM) || defined(__CSMC__)
+#if   defined(__CC_ARM) || defined(__CSMC__) || defined(__ICCARM__)
 #error  c++ functional library not allowed for this compiler.
 #endif
 
@@ -115,6 +115,18 @@ struct __ctx
 #endif
 };
 
+#elif defined(__ICCARM__)
+
+struct __ctx
+{
+	unsigned r4, r5, r6, r7, r8, r9, r10, r11;
+	void   * sp;
+	fun_t  * pc;
+#if __FPU_USED
+	float    s[16]; // s16-s31
+#endif
+};
+
 #endif
 
 #if __FPU_USED
@@ -144,6 +156,8 @@ void * port_get_sp( void )
 	sp = __current_sp();
 #elif defined(__CSMC__)
 	sp = __ASM ("mov r0, sp");
+#elif defined(__ICCARM__)
+	sp = __get_SP();
 #else
 	__ASM volatile ("mov %0, sp" : "=r" (sp));
 #endif
