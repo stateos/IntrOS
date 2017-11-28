@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.c
     @author  Rajmund Szymanski
-    @date    03.10.2017
+    @date    28.11.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -43,7 +43,7 @@ void tsk_init( tsk_t *tsk, fun_t *state, void *stack, unsigned size )
 	
 	tsk->state = state;
 	tsk->stack = stack;
-	tsk->top   = (stk_t *) BELOW((size_t)stack + size);
+	tsk->top   = (stk_t *) LIMITED((char *)stack + size, stk_t);
 
 	core_ctx_init(tsk);
 	core_tsk_insert(tsk);

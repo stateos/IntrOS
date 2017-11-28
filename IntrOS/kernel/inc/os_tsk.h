@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    14.11.2017
+    @date    28.11.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -80,7 +80,7 @@ struct __tsk
  **********************************************************************************************************************/
 
 #define               _TSK_INIT( _state, _stack, _size ) \
-                       { 0, 0, 0, 0, _state, 0, 0, _stack+ASIZE(_size), _stack, { _CTX_INIT() } }
+                       { 0, 0, 0, 0, _state, 0, 0, _stack+SSIZE(_size), _stack, { _CTX_INIT() } }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -122,7 +122,7 @@ struct __tsk
 
 #ifndef __cplusplus
 #define               _TSK_STACK( _size ) \
-                       ( stk_t[ASIZE( _size )] ){ 0 }
+                       ( stk_t[SSIZE( _size )] ){ 0 }
 #endif
 
 /**********************************************************************************************************************
@@ -140,7 +140,7 @@ struct __tsk
  **********************************************************************************************************************/
 
 #define             OS_WRK( tsk, state, size )                                \
-                       stk_t tsk##__stk[ASIZE( size )];                        \
+                       stk_t tsk##__stk[SSIZE( size )];                        \
                        tsk_t tsk##__tsk = _TSK_INIT( state, tsk##__stk, size ); \
                        tsk_id tsk = & tsk##__tsk
 
@@ -246,7 +246,7 @@ struct __tsk
  **********************************************************************************************************************/
 
 #define         static_WRK( tsk, state, size )                                \
-                static stk_t tsk##__stk[ASIZE( size )];                        \
+                static stk_t tsk##__stk[SSIZE( size )];                        \
                 static tsk_t tsk##__tsk = _TSK_INIT( state, tsk##__stk, size ); \
                 static tsk_id tsk = & tsk##__tsk
 
@@ -770,7 +770,7 @@ struct TaskT : public baseTask
 	TaskT( FUN_t _state ): baseTask(_state, stack_, _size) {}
 
 	private:
-	stk_t stack_[ASIZE(_size)];
+	stk_t stack_[SSIZE(_size)];
 };
 
 /**********************************************************************************************************************
