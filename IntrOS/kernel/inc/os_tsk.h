@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    28.11.2017
+    @date    29.11.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -51,6 +51,7 @@ struct __tsk
 	fun_t  * state; // inherited from timer
 	uint32_t start; // inherited from timer
 	uint32_t delay; // inherited from timer
+	uint32_t period;// inherited from timer
 
 	stk_t  * top;   // top of stack
 	void   * stack; // base of stack
@@ -80,7 +81,7 @@ struct __tsk
  **********************************************************************************************************************/
 
 #define               _TSK_INIT( _state, _stack, _size ) \
-                       { 0, 0, 0, 0, _state, 0, 0, _stack+SSIZE(_size), _stack, { _CTX_INIT() } }
+                       { 0, 0, 0, 0, _state, 0, 0, 0, _stack+SSIZE(_size), _stack, { _CTX_INIT() } }
 
 /**********************************************************************************************************************
  *                                                                                                                    *

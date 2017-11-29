@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_sig.h
     @author  Rajmund Szymanski
-    @date    15.09.2017
+    @date    29.11.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -261,7 +261,7 @@ void sig_clear( sig_t *sig );
 struct Signal : public __sig
 {
 	explicit
-	Signal( const unsigned _type = sigClear ): __sig _SIG_INIT(0) { type = _type; }
+	Signal( const unsigned _type = sigClear ): __sig _SIG_INIT(_type) {}
 
 	void     wait ( void ) {        sig_wait (this); }
 	unsigned take ( void ) { return sig_take (this); }

@@ -1,7 +1,7 @@
 #include <stm32f4_discovery.h>
 #include <os.h>
 
-sem_id sem = SEM_CREATE(0);
+sem_id sem = SEM_CREATE(0, semBinary);
 
 void slave()
 {

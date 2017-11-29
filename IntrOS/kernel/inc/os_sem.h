@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_sem.h
     @author  Rajmund Szymanski
-    @date    15.09.2017
+    @date    29.11.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -46,7 +46,20 @@ typedef struct __sem sem_t, * const sem_id;
 struct __sem
 {
 	unsigned count; // semaphore's current value
+	unsigned limit; // semaphore's value limit
 };
+
+/* -------------------------------------------------------------------------- */
+
+#define semBinary    (  1U ) // binary semaphore
+#define semNormal    ( ~0U ) // counting semaphore
+#define semCounting  ( ~0U ) // counting semaphore
+#define semMASK      ( ~0U )
+
+/* -------------------------------------------------------------------------- */
+
+#define UMIN( a, b ) \
+ ((unsigned)( a )<(unsigned)( b )?(unsigned)( a ):(unsigned)( b ))
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -56,6 +69,10 @@ struct __sem
  *                                                                                                                    *
  * Parameters                                                                                                         *
  *   init            : initial value of semaphore counter                                                             *
+ *   limit           : maximum value of semaphore counter                                                             *
+ *                     semBinary: binary semaphore                                                                    *
+ *                     semNormal, semCounting: counting semaphore                                                     *
+ *                     otherwise: limited semaphore                                                                   *
  *                                                                                                                    *
  * Return            : semaphore object                                                                               *
  *                                                                                                                    *
@@ -63,7 +80,7 @@ struct __sem
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define               _SEM_INIT( count ) { count }
+#define               _SEM_INIT( init, limit ) { UMIN(init, limit), limit }
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -74,11 +91,15 @@ struct __sem
  * Parameters                                                                                                         *
  *   sem             : name of a pointer to semaphore object                                                          *
  *   init            : initial value of semaphore counter                                                             *
+ *   limit           : maximum value of semaphore counter                                                             *
+ *                     semBinary: binary semaphore                                                                    *
+ *                     semNormal, semCounting: counting semaphore                                                     *
+ *                     otherwise: limited semaphore                                                                   *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define             OS_SEM( sem, init )                     \
-                       sem_t sem##__sem = _SEM_INIT( init ); \
+#define             OS_SEM( sem, init, limit )                     \
+                       sem_t sem##__sem = _SEM_INIT( init, limit ); \
                        sem_id sem = & sem##__sem
 
 /**********************************************************************************************************************
@@ -90,11 +111,15 @@ struct __sem
  * Parameters                                                                                                         *
  *   sem             : name of a pointer to semaphore object                                                          *
  *   init            : initial value of semaphore counter                                                             *
+ *   limit           : maximum value of semaphore counter                                                             *
+ *                     semBinary: binary semaphore                                                                    *
+ *                     semNormal, semCounting: counting semaphore                                                     *
+ *                     otherwise: limited semaphore                                                                   *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-#define         static_SEM( sem, init )                     \
-                static sem_t sem##__sem = _SEM_INIT( init ); \
+#define         static_SEM( sem, init, limit )                     \
+                static sem_t sem##__sem = _SEM_INIT( init, limit ); \
                 static sem_id sem = & sem##__sem
 
 /**********************************************************************************************************************
@@ -105,6 +130,10 @@ struct __sem
  *                                                                                                                    *
  * Parameters                                                                                                         *
  *   init            : initial value of semaphore counter                                                             *
+ *   limit           : maximum value of semaphore counter                                                             *
+ *                     semBinary: binary semaphore                                                                    *
+ *                     semNormal, semCounting: counting semaphore                                                     *
+ *                     otherwise: limited semaphore                                                                   *
  *                                                                                                                    *
  * Return            : semaphore object                                                                               *
  *                                                                                                                    *
@@ -113,8 +142,8 @@ struct __sem
  **********************************************************************************************************************/
 
 #ifndef __cplusplus
-#define                SEM_INIT( init ) \
-                      _SEM_INIT( init )
+#define                SEM_INIT( init, limit ) \
+                      _SEM_INIT( init, limit )
 #endif
 
 /**********************************************************************************************************************
@@ -126,6 +155,10 @@ struct __sem
  *                                                                                                                    *
  * Parameters                                                                                                         *
  *   init            : initial value of semaphore counter                                                             *
+ *   limit           : maximum value of semaphore counter                                                             *
+ *                     semBinary: binary semaphore                                                                    *
+ *                     semNormal, semCounting: counting semaphore                                                     *
+ *                     otherwise: limited semaphore                                                                   *
  *                                                                                                                    *
  * Return            : pointer to semaphore object                                                                    *
  *                                                                                                                    *
@@ -134,8 +167,8 @@ struct __sem
  **********************************************************************************************************************/
 
 #ifndef __cplusplus
-#define                SEM_CREATE( init ) \
-             & (sem_t) SEM_INIT  ( init )
+#define                SEM_CREATE( init, limit ) \
+             & (sem_t) SEM_INIT  ( init, limit )
 #define                SEM_NEW \
                        SEM_CREATE
 #endif
@@ -149,12 +182,16 @@ struct __sem
  * Parameters                                                                                                         *
  *   sem             : pointer to semaphore object                                                                    *
  *   init            : initial value of semaphore counter                                                             *
+ *   limit           : maximum value of semaphore counter                                                             *
+ *                     semBinary: binary semaphore                                                                    *
+ *                     semNormal, semCounting: counting semaphore                                                     *
+ *                     otherwise: limited semaphore                                                                   *
  *                                                                                                                    *
  * Return            : none                                                                                           *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-void sem_init( sem_t *sem, unsigned init );
+void sem_init( sem_t *sem, unsigned init, unsigned limit );
 
 /**********************************************************************************************************************
  *                                                                                                                    *
@@ -240,18 +277,39 @@ unsigned sem_give( sem_t *sem );
  *                                                                                                                    *
  * Constructor parameters                                                                                             *
  *   init            : initial value of semaphore counter                                                             *
+ *   limit           : maximum value of semaphore counter                                                             *
+ *                     semBinary: binary semaphore                                                                    *
+ *                     semNormal, semCounting: counting semaphore (default)                                           *
+ *                     otherwise: limited semaphore                                                                   *
  *                                                                                                                    *
  **********************************************************************************************************************/
 
 struct Semaphore : public __sem
 {
 	explicit
-	Semaphore( const unsigned _init ): __sem _SEM_INIT() { count = _init; }
+	Semaphore( const unsigned _init, const unsigned _limit = semCounting ): __sem _SEM_INIT(_init, _limit) {}
 
 	void     wait( void ) {        sem_wait(this); }
 	unsigned take( void ) { return sem_take(this); }
 	void     send( void ) {        sem_send(this); }
 	unsigned give( void ) { return sem_give(this); }
+};
+
+/**********************************************************************************************************************
+ *                                                                                                                    *
+ * Class             : BinarySemaphore                                                                                *
+ *                                                                                                                    *
+ * Description       : create and initilize a binary semaphore object                                                 *
+ *                                                                                                                    *
+ * Constructor parameters                                                                                             *
+ *   init            : initial value of semaphore counter                                                             *
+ *                                                                                                                    *
+ **********************************************************************************************************************/
+
+struct BinarySemaphore : public Semaphore
+{
+	explicit
+	BinarySemaphore( const unsigned _init = 0 ): Semaphore(_init, semBinary) {}
 };
 
 #endif

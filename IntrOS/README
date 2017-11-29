@@ -28,6 +28,7 @@ Features:
 ---------
 3.5
 - some preprocessor definitions have been changed
+- updated kernel files
 ---------
 3.4
 - added startup files for cosmic compiler
