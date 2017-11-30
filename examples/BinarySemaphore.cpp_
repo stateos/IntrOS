@@ -1,0 +1,29 @@
+#include <stm32f4_discovery.h>
+#include <os.h>
+
+int main()
+{
+	BinarySemaphore sem();
+
+	startTask sla([&]
+	{
+		Led led;
+
+		for (;;)
+		{
+			sem.wait();
+			led.tick();
+		}
+	});
+
+	startTask mas([&]
+	{
+		for (;;)
+		{
+			ThisTask::sleepFor(SEC);
+			sem.give();
+		}
+	});
+
+	ThisTask::sleep();
+}

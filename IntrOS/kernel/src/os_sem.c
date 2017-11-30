@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_sem.c
     @author  Rajmund Szymanski
-    @date    29.11.2017
+    @date    30.11.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -33,12 +33,14 @@ void sem_init( sem_t *sem, unsigned init, unsigned limit )
 /* -------------------------------------------------------------------------- */
 {
 	assert(sem);
+	assert(limit);
+	assert(init<=limit);
 
 	port_sys_lock();
 
 	memset(sem, 0, sizeof(sem_t));
 
-	sem->count = UMIN(init, limit);
+	sem->count = init;
 	sem->limit = limit;
 
 	port_sys_unlock();
