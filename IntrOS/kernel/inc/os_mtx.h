@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_mtx.h
     @author  Rajmund Szymanski
-    @date    15.09.2017
+    @date    01.12.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -35,11 +35,11 @@
 extern "C" {
 #endif
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : mutex                                                                                          *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : mutex
+ *
+ ******************************************************************************/
 
 typedef struct __mtx mtx_t, * const mtx_id;
 
@@ -48,85 +48,85 @@ struct __mtx
 	tsk_t  * owner; // owner task
 };
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : _MTX_INIT                                                                                      *
- *                                                                                                                    *
- * Description       : create and initilize a mutex object                                                            *
- *                                                                                                                    *
- * Parameters        : none                                                                                           *
- *                                                                                                                    *
- * Return            : mutex object                                                                                   *
- *                                                                                                                    *
- * Note              : for internal use                                                                               *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : _MTX_INIT
+ *
+ * Description       : create and initialize a mutex object
+ *
+ * Parameters        : none
+ *
+ * Return            : mutex object
+ *
+ * Note              : for internal use
+ *
+ ******************************************************************************/
 
 #define               _MTX_INIT() { 0 }
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : OS_MTX                                                                                         *
- *                                                                                                                    *
- * Description       : define and initilize a mutex object                                                            *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   mtx             : name of a pointer to mutex object                                                              *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : OS_MTX
+ *
+ * Description       : define and initialize a mutex object
+ *
+ * Parameters
+ *   mtx             : name of a pointer to mutex object
+ *
+ ******************************************************************************/
 
 #define             OS_MTX( mtx )                     \
                        mtx_t mtx##__mtx = _MTX_INIT(); \
                        mtx_id mtx = & mtx##__mtx
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : static_MTX                                                                                     *
- *                                                                                                                    *
- * Description       : define and initilize a static mutex object                                                     *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   mtx             : name of a pointer to mutex object                                                              *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : static_MTX
+ *
+ * Description       : define and initialize a static mutex object
+ *
+ * Parameters
+ *   mtx             : name of a pointer to mutex object
+ *
+ ******************************************************************************/
 
 #define         static_MTX( mtx )                     \
                 static mtx_t mtx##__mtx = _MTX_INIT(); \
                 static mtx_id mtx = & mtx##__mtx
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : MTX_INIT                                                                                       *
- *                                                                                                                    *
- * Description       : create and initilize a mutex object                                                            *
- *                                                                                                                    *
- * Parameters        : none                                                                                           *
- *                                                                                                                    *
- * Return            : mutex object                                                                                   *
- *                                                                                                                    *
- * Note              : use only in 'C' code                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : MTX_INIT
+ *
+ * Description       : create and initialize a mutex object
+ *
+ * Parameters        : none
+ *
+ * Return            : mutex object
+ *
+ * Note              : use only in 'C' code
+ *
+ ******************************************************************************/
 
 #ifndef __cplusplus
 #define                MTX_INIT() \
                       _MTX_INIT()
 #endif
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : MTX_CREATE                                                                                     *
- * Alias             : MTX_NEW                                                                                        *
- *                                                                                                                    *
- * Description       : create and initilize a mutex object                                                            *
- *                                                                                                                    *
- * Parameters        : none                                                                                           *
- *                                                                                                                    *
- * Return            : pointer to mutex object                                                                        *
- *                                                                                                                    *
- * Note              : use only in 'C' code                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : MTX_CREATE
+ * Alias             : MTX_NEW
+ *
+ * Description       : create and initialize a mutex object
+ *
+ * Parameters        : none
+ *
+ * Return            : pointer to mutex object
+ *
+ * Note              : use only in 'C' code
+ *
+ ******************************************************************************/
 
 #ifndef __cplusplus
 #define                MTX_CREATE() \
@@ -135,72 +135,72 @@ struct __mtx
                        MTX_CREATE
 #endif
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : mtx_init                                                                                       *
- *                                                                                                                    *
- * Description       : initilize a mutex object                                                                       *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   mtx             : pointer to mutex object                                                                        *
- *                                                                                                                    *
- * Return            : none                                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : mtx_init
+ *
+ * Description       : initialize a mutex object
+ *
+ * Parameters
+ *   mtx             : pointer to mutex object
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
 
 void mtx_init( mtx_t *mtx );
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : mtx_wait                                                                                       *
- *                                                                                                                    *
- * Description       : try to lock the mutex object,                                                                  *
- *                     wait indefinitly if the mutex object can't be locked immediately                               *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   mtx             : pointer to mutex object                                                                        *
- *                                                                                                                    *
- * Return            : none                                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : mtx_wait
+ *
+ * Description       : try to lock the mutex object,
+ *                     wait indefinitely if the mutex object can't be locked immediately
+ *
+ * Parameters
+ *   mtx             : pointer to mutex object
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
 
 void mtx_wait( mtx_t *mtx );
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : mtx_take                                                                                       *
- *                                                                                                                    *
- * Description       : try to lock the mutex object,                                                                  *
- *                     don't wait if the mutex object can't be locked immediately                                     *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   mtx             : pointer to mutex object                                                                        *
- *                                                                                                                    *
- * Return                                                                                                             *
- *   E_SUCCESS       : mutex object was successfully locked                                                           *
- *   E_FAILURE       : mutex object can't be locked immediately                                                       *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : mtx_take
+ *
+ * Description       : try to lock the mutex object,
+ *                     don't wait if the mutex object can't be locked immediately
+ *
+ * Parameters
+ *   mtx             : pointer to mutex object
+ *
+ * Return
+ *   E_SUCCESS       : mutex object was successfully locked
+ *   E_FAILURE       : mutex object can't be locked immediately
+ *
+ ******************************************************************************/
 
 unsigned mtx_take( mtx_t *mtx );
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : mtx_give                                                                                       *
- *                                                                                                                    *
- * Description       : try to unlock the mutex object (only owner task can unlock mutex object),                      *
- *                     don't wait if the mutex object can't be unlocked                                               *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   mtx             : pointer to mutex object                                                                        *
- *                                                                                                                    *
- * Return                                                                                                             *
- *   E_SUCCESS       : mutex object was successfully unlocked                                                         *
- *   E_FAILURE       : mutex object can't be unlocked                                                                 *
- *                                                                                                                    *
- * Note              : use only in thread mode                                                                        *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : mtx_give
+ *
+ * Description       : try to unlock the mutex object (only owner task can unlock mutex object),
+ *                     don't wait if the mutex object can't be unlocked
+ *
+ * Parameters
+ *   mtx             : pointer to mutex object
+ *
+ * Return
+ *   E_SUCCESS       : mutex object was successfully unlocked
+ *   E_FAILURE       : mutex object can't be unlocked
+ *
+ * Note              : use only in thread mode
+ *
+ ******************************************************************************/
 
 unsigned mtx_give( mtx_t *mtx );
 
@@ -212,16 +212,16 @@ unsigned mtx_give( mtx_t *mtx );
 
 #ifdef __cplusplus
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Class             : Mutex                                                                                          *
- *                                                                                                                    *
- * Description       : create and initilize a mutex object                                                            *
- *                                                                                                                    *
- * Constructor parameters                                                                                             *
- *                   : none                                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Class             : Mutex
+ *
+ * Description       : create and initialize a mutex object
+ *
+ * Constructor parameters
+ *                   : none
+ *
+ ******************************************************************************/
 
 struct Mutex : public __mtx
 {

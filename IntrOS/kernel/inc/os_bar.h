@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_bar.h
     @author  Rajmund Szymanski
-    @date    29.11.2017
+    @date    01.12.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -35,11 +35,11 @@
 extern "C" {
 #endif
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : barrier                                                                                        *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : barrier
+ *
+ ******************************************************************************/
 
 typedef struct __bar bar_t, * const bar_id;
 
@@ -50,90 +50,90 @@ struct __bar
 	unsigned limit; // barrier's value limit
 };
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : _BAR_INIT                                                                                      *
- *                                                                                                                    *
- * Description       : create and initilize a barrier object                                                          *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   limit           : number of tasks that must call bar_wait[Until|For] function to release the barrier object      *
- *                                                                                                                    *
- * Return            : barrier object                                                                                 *
- *                                                                                                                    *
- * Note              : for internal use                                                                               *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : _BAR_INIT
+ *
+ * Description       : create and initialize a barrier object
+ *
+ * Parameters
+ *   limit           : number of tasks that must call bar_wait[Until|For] function to release the barrier object
+ *
+ * Return            : barrier object
+ *
+ * Note              : for internal use
+ *
+ ******************************************************************************/
 
 #define               _BAR_INIT( limit ) { 0, limit, limit }
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : OS_BAR                                                                                         *
- *                                                                                                                    *
- * Description       : define and initilize a barrier object                                                          *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   bar             : name of a pointer to barrier object                                                            *
- *   limit           : number of tasks that must call bar_wait[Until|For] function to release the barrier object      *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : OS_BAR
+ *
+ * Description       : define and initialize a barrier object
+ *
+ * Parameters
+ *   bar             : name of a pointer to barrier object
+ *   limit           : number of tasks that must call bar_wait[Until|For] function to release the barrier object
+ *
+ ******************************************************************************/
 
 #define             OS_BAR( bar, limit )                     \
                        bar_t bar##__bar = _BAR_INIT( limit ); \
                        bar_id bar = & bar##__bar
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : static_BAR                                                                                     *
- *                                                                                                                    *
- * Description       : define and initilize a static barrier object                                                   *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   bar             : name of a pointer to barrier object                                                            *
- *   limit           : number of tasks that must call bar_wait[Until|For] function to release the barrier object      *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : static_BAR
+ *
+ * Description       : define and initialize a static barrier object
+ *
+ * Parameters
+ *   bar             : name of a pointer to barrier object
+ *   limit           : number of tasks that must call bar_wait[Until|For] function to release the barrier object
+ *
+ ******************************************************************************/
 
 #define         static_BAR( bar, limit )                     \
                 static bar_t bar##__bar = _BAR_INIT( limit ); \
                 static bar_id bar = & bar##__bar
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : BAR_INIT                                                                                       *
- *                                                                                                                    *
- * Description       : create and initilize a barrier object                                                          *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   limit           : number of tasks that must call bar_wait[Until|For] function to release the barrier object      *
- *                                                                                                                    *
- * Return            : barrier object                                                                                 *
- *                                                                                                                    *
- * Note              : use only in 'C' code                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : BAR_INIT
+ *
+ * Description       : create and initialize a barrier object
+ *
+ * Parameters
+ *   limit           : number of tasks that must call bar_wait[Until|For] function to release the barrier object
+ *
+ * Return            : barrier object
+ *
+ * Note              : use only in 'C' code
+ *
+ ******************************************************************************/
 
 #ifndef __cplusplus
 #define                BAR_INIT( limit ) \
                       _BAR_INIT( limit )
 #endif
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : BAR_CREATE                                                                                     *
- * Alias             : BAR_NEW                                                                                        *
- *                                                                                                                    *
- * Description       : create and initilize a barrier object                                                          *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   limit           : number of tasks that must call bar_wait[Until|For] function to release the barrier object      *
- *                                                                                                                    *
- * Return            : pointer to barrier object                                                                      *
- *                                                                                                                    *
- * Note              : use only in 'C' code                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : BAR_CREATE
+ * Alias             : BAR_NEW
+ *
+ * Description       : create and initialize a barrier object
+ *
+ * Parameters
+ *   limit           : number of tasks that must call bar_wait[Until|For] function to release the barrier object
+ *
+ * Return            : pointer to barrier object
+ *
+ * Note              : use only in 'C' code
+ *
+ ******************************************************************************/
 
 #ifndef __cplusplus
 #define                BAR_CREATE( limit ) \
@@ -142,34 +142,34 @@ struct __bar
                        BAR_CREATE
 #endif
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : bar_init                                                                                       *
- *                                                                                                                    *
- * Description       : initilize a barrier object                                                                     *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   bar             : pointer to barrier object                                                                      *
- *   limit           : number of tasks that must call bar_wait function to release the barrier object                 *
- *                                                                                                                    *
- * Return            : none                                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : bar_init
+ *
+ * Description       : initialize a barrier object
+ *
+ * Parameters
+ *   bar             : pointer to barrier object
+ *   limit           : number of tasks that must call bar_wait function to release the barrier object
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
 
 void bar_init( bar_t *bar, unsigned limit );
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : bar_wait                                                                                       *
- *                                                                                                                    *
- * Description       : wait indefinitly until the barrier object has been released                                    *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   bar             : pointer to barrier object                                                                      *
- *                                                                                                                    *
- * Return            : none                                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : bar_wait
+ *
+ * Description       : wait indefinitely until the barrier object has been released
+ *
+ * Parameters
+ *   bar             : pointer to barrier object
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
 
 void bar_wait( bar_t *bar );
 
@@ -181,16 +181,16 @@ void bar_wait( bar_t *bar );
 
 #ifdef __cplusplus
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Class             : Barrier                                                                                        *
- *                                                                                                                    *
- * Description       : create and initilize a barrier object                                                          *
- *                                                                                                                    *
- * Constructor parameters                                                                                             *
- *   limit           : number of tasks that must call wait function to release the barrier object                     *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Class             : Barrier
+ *
+ * Description       : create and initialize a barrier object
+ *
+ * Constructor parameters
+ *   limit           : number of tasks that must call wait function to release the barrier object
+ *
+ ******************************************************************************/
 
 struct Barrier : public __bar
 {

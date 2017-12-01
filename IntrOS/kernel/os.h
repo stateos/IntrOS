@@ -2,7 +2,7 @@
 
     @file    IntrOS: os.h
     @author  Rajmund Szymanski
-    @date    23.10.2017
+    @date    01.12.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -49,79 +49,79 @@
 extern "C" {
 #endif
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : sys_init                                                                                       *
- *                                                                                                                    *
- * Description       : initialize system timer and enabled services                                                   *
- *                                                                                                                    *
- * Parameters        : none                                                                                           *
- *                                                                                                                    *
- * Return            : none                                                                                           *
- *                                                                                                                    *
- * Note              : function port_sys_init should be invoked as a constructor                                      *
- *                   : otherwise, call sys_init as the first instruction in function main                             *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : sys_init
+ *
+ * Description       : initialize system timer and enabled services
+ *
+ * Parameters        : none
+ *
+ * Return            : none
+ *
+ * Note              : function port_sys_init should be invoked as a constructor
+ *                   : otherwise, call sys_init as the first instruction in function main
+ *
+ ******************************************************************************/
 
 __STATIC_INLINE
 void sys_init( void ) { port_sys_init(); }
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : sys_lock                                                                                       *
- *                                                                                                                    *
- * Description       : disable interrupts / enter into critical section                                               *
- *                                                                                                                    *
- * Parameters        : none                                                                                           *
- *                                                                                                                    *
- * Return            : none                                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : sys_lock
+ *
+ * Description       : disable interrupts / enter into critical section
+ *
+ * Parameters        : none
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
 
 #define                sys_lock() \
                        port_sys_lock()
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : sys_unlock                                                                                     *
- *                                                                                                                    *
- * Description       : enable interrupts / exit from critical section                                                 *
- *                                                                                                                    *
- * Parameters        : none                                                                                           *
- *                                                                                                                    *
- * Return            : none                                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : sys_unlock
+ *
+ * Description       : enable interrupts / exit from critical section
+ *
+ * Parameters        : none
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
 
 #define                sys_unlock() \
                        port_sys_unlock()
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : sys_time                                                                                       *
- *                                                                                                                    *
- * Description       : return current value of system counter                                                         *
- *                                                                                                                    *
- * Parameters        : none                                                                                           *
- *                                                                                                                    *
- * Return            : current value of system counter                                                                *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : sys_time
+ *
+ * Description       : return current value of system counter
+ *
+ * Parameters        : none
+ *
+ * Return            : current value of system counter
+ *
+ ******************************************************************************/
 
 uint32_t sys_time( void );
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : stk_assert                                                                                     *
- *                                                                                                                    *
- * Description       : check stack integrity of current task                                                          *
- *                                                                                                                    *
- * Parameters        : none                                                                                           *
- *                                                                                                                    *
- * Return            : none                                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : stk_assert
+ *
+ * Description       : check stack integrity of current task
+ *
+ * Parameters        : none
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
 
 #define                stk_assert() \
                        core_stk_assert()

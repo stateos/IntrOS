@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_flg.h
     @author  Rajmund Szymanski
-    @date    15.09.2017
+    @date    01.12.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -35,11 +35,11 @@
 extern "C" {
 #endif
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : flag                                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : flag
+ *
+ ******************************************************************************/
 
 typedef struct __flg flg_t, * const flg_id;
 
@@ -53,85 +53,85 @@ struct __flg
 #define flgAny        ( false )
 #define flgAll        ( true  )
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : _FLG_INIT                                                                                      *
- *                                                                                                                    *
- * Description       : create and initilize a flag object                                                             *
- *                                                                                                                    *
- * Parameters        : none                                                                                           *
- *                                                                                                                    *
- * Return            : flag object                                                                                    *
- *                                                                                                                    *
- * Note              : for internal use                                                                               *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : _FLG_INIT
+ *
+ * Description       : create and initialize a flag object
+ *
+ * Parameters        : none
+ *
+ * Return            : flag object
+ *
+ * Note              : for internal use
+ *
+ ******************************************************************************/
 
 #define               _FLG_INIT() { 0 }
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : OS_FLG                                                                                         *
- *                                                                                                                    *
- * Description       : define and initilize a flag object                                                             *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   flg             : name of a pointer to flag object                                                               *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : OS_FLG
+ *
+ * Description       : define and initialize a flag object
+ *
+ * Parameters
+ *   flg             : name of a pointer to flag object
+ *
+ ******************************************************************************/
 
 #define             OS_FLG( flg )                     \
                        flg_t flg##__flg = _FLG_INIT(); \
                        flg_id flg = & flg##__flg
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : static_FLG                                                                                     *
- *                                                                                                                    *
- * Description       : define and initilize a static flag object                                                      *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   flg             : name of a pointer to flag object                                                               *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : static_FLG
+ *
+ * Description       : define and initialize a static flag object
+ *
+ * Parameters
+ *   flg             : name of a pointer to flag object
+ *
+ ******************************************************************************/
 
 #define         static_FLG( flg )                     \
                 static flg_t flg##__flg = _FLG_INIT(); \
                 static flg_id flg = & flg##__flg
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : FLG_INIT                                                                                       *
- *                                                                                                                    *
- * Description       : create and initilize a flag object                                                             *
- *                                                                                                                    *
- * Parameters        : none                                                                                           *
- *                                                                                                                    *
- * Return            : flag object                                                                                    *
- *                                                                                                                    *
- * Note              : use only in 'C' code                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : FLG_INIT
+ *
+ * Description       : create and initialize a flag object
+ *
+ * Parameters        : none
+ *
+ * Return            : flag object
+ *
+ * Note              : use only in 'C' code
+ *
+ ******************************************************************************/
 
 #ifndef __cplusplus
 #define                FLG_INIT() \
                       _FLG_INIT()
 #endif
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : FLG_CREATE                                                                                     *
- * Alias             : FLG_NEW                                                                                        *
- *                                                                                                                    *
- * Description       : create and initilize a flag object                                                             *
- *                                                                                                                    *
- * Parameters        : none                                                                                           *
- *                                                                                                                    *
- * Return            : pointer to flag object                                                                         *
- *                                                                                                                    *
- * Note              : use only in 'C' code                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : FLG_CREATE
+ * Alias             : FLG_NEW
+ *
+ * Description       : create and initialize a flag object
+ *
+ * Parameters        : none
+ *
+ * Return            : pointer to flag object
+ *
+ * Note              : use only in 'C' code
+ *
+ ******************************************************************************/
 
 #ifndef __cplusplus
 #define                FLG_CREATE() \
@@ -140,74 +140,74 @@ struct __flg
                        FLG_CREATE
 #endif
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : flg_init                                                                                       *
- *                                                                                                                    *
- * Description       : initilize a flag object                                                                        *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   flg             : pointer to flag object                                                                         *
- *                                                                                                                    *
- * Return            : none                                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : flg_init
+ *
+ * Description       : initialize a flag object
+ *
+ * Parameters
+ *   flg             : pointer to flag object
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
 
 void flg_init( flg_t *flg );
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : flg_wait                                                                                       *
- *                                                                                                                    *
- * Description       : wait indefinitly on flag object until requested flags have been set                            *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   flg             : pointer to flag object                                                                         *
- *   flags           : all flags to wait                                                                              *
- *   all             : waiting mode                                                                                   *
- *                     flgAny:    wait for any flags to be set                                                        *
- *                     flgAll:    wait for all flags to be set                                                        *
- *                                                                                                                    *
- * Return            : none                                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : flg_wait
+ *
+ * Description       : wait indefinitely on flag object until requested flags have been set
+ *
+ * Parameters
+ *   flg             : pointer to flag object
+ *   flags           : all flags to wait
+ *   all             : waiting mode
+ *                     flgAny:    wait for any flags to be set
+ *                     flgAll:    wait for all flags to be set
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
 
 void flg_wait( flg_t *flg, unsigned flags, bool all );
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : flg_take                                                                                       *
- *                                                                                                                    *
- * Description       : don't wait on flag object until requested flags have been set                                  *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   flg             : pointer to flag object                                                                         *
- *   flags           : all flags to wait                                                                              *
- *   all             : waiting mode                                                                                   *
- *                     flgAny:    wait for any flags to be set                                                        *
- *                     flgAll:    wait for all flags to be set                                                        *
- *                                                                                                                    *
- * Return                                                                                                             *
- *   E_SUCCESS       : requested flags have been set                                                                  *
- *   'another'       : requested flags have not been set                                                              *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : flg_take
+ *
+ * Description       : don't wait on flag object until requested flags have been set
+ *
+ * Parameters
+ *   flg             : pointer to flag object
+ *   flags           : all flags to wait
+ *   all             : waiting mode
+ *                     flgAny:    wait for any flags to be set
+ *                     flgAll:    wait for all flags to be set
+ *
+ * Return
+ *   E_SUCCESS       : requested flags have been set
+ *   'another'       : requested flags have not been set
+ *
+ ******************************************************************************/
 
 unsigned flg_take( flg_t *flg, unsigned flags, bool all );
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : flg_give                                                                                       *
- *                                                                                                                    *
- * Description       : set given flags in flag object                                                                 *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   flg             : pointer to flag object                                                                         *
- *   flags           : all flags to set                                                                               *
- *                                                                                                                    *
- * Return            : none                                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : flg_give
+ *
+ * Description       : set given flags in flag object
+ *
+ * Parameters
+ *   flg             : pointer to flag object
+ *   flags           : all flags to set
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
 
 void flg_give( flg_t *flg, unsigned flags );
 
@@ -219,16 +219,16 @@ void flg_give( flg_t *flg, unsigned flags );
 
 #ifdef __cplusplus
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Class             : Flag                                                                                           *
- *                                                                                                                    *
- * Description       : create and initilize a flag object                                                             *
- *                                                                                                                    *
- * Constructor parameters                                                                                             *
- *                   : none                                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Class             : Flag
+ *
+ * Description       : create and initialize a flag object
+ *
+ * Constructor parameters
+ *                   : none
+ *
+ ******************************************************************************/
 
 struct Flag : public __flg
 {

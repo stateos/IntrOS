@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_sem.h
     @author  Rajmund Szymanski
-    @date    30.11.2017
+    @date    01.12.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -35,11 +35,11 @@
 extern "C" {
 #endif
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : semaphore                                                                                      *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : semaphore
+ *
+ ******************************************************************************/
 
 typedef struct __sem sem_t, * const sem_id;
 
@@ -55,110 +55,110 @@ struct __sem
 #define semCounting  ( ~0U ) // counting semaphore
 #define semMASK      ( ~0U )
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : _SEM_INIT                                                                                      *
- *                                                                                                                    *
- * Description       : create and initilize a semaphore object                                                        *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   init            : initial value of semaphore counter                                                             *
- *   limit           : maximum value of semaphore counter                                                             *
- *                     semBinary: binary semaphore                                                                    *
- *                     semNormal, semCounting: counting semaphore                                                     *
- *                     otherwise: limited semaphore                                                                   *
- *                                                                                                                    *
- * Return            : semaphore object                                                                               *
- *                                                                                                                    *
- * Note              : for internal use                                                                               *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : _SEM_INIT
+ *
+ * Description       : create and initialize a semaphore object
+ *
+ * Parameters
+ *   init            : initial value of semaphore counter
+ *   limit           : maximum value of semaphore counter
+ *                     semBinary: binary semaphore
+ *                     semNormal, semCounting: counting semaphore
+ *                     otherwise: limited semaphore
+ *
+ * Return            : semaphore object
+ *
+ * Note              : for internal use
+ *
+ ******************************************************************************/
 
 #define               _SEM_INIT( init, limit ) { init, limit }
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : OS_SEM                                                                                         *
- *                                                                                                                    *
- * Description       : define and initilize a semaphore object                                                        *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   sem             : name of a pointer to semaphore object                                                          *
- *   init            : initial value of semaphore counter                                                             *
- *   limit           : maximum value of semaphore counter                                                             *
- *                     semBinary: binary semaphore                                                                    *
- *                     semNormal, semCounting: counting semaphore                                                     *
- *                     otherwise: limited semaphore                                                                   *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : OS_SEM
+ *
+ * Description       : define and initialize a semaphore object
+ *
+ * Parameters
+ *   sem             : name of a pointer to semaphore object
+ *   init            : initial value of semaphore counter
+ *   limit           : maximum value of semaphore counter
+ *                     semBinary: binary semaphore
+ *                     semNormal, semCounting: counting semaphore
+ *                     otherwise: limited semaphore
+ *
+ ******************************************************************************/
 
 #define             OS_SEM( sem, init, limit )                     \
                        sem_t sem##__sem = _SEM_INIT( init, limit ); \
                        sem_id sem = & sem##__sem
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : static_SEM                                                                                     *
- *                                                                                                                    *
- * Description       : define and initilize a static semaphore object                                                 *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   sem             : name of a pointer to semaphore object                                                          *
- *   init            : initial value of semaphore counter                                                             *
- *   limit           : maximum value of semaphore counter                                                             *
- *                     semBinary: binary semaphore                                                                    *
- *                     semNormal, semCounting: counting semaphore                                                     *
- *                     otherwise: limited semaphore                                                                   *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : static_SEM
+ *
+ * Description       : define and initialize a static semaphore object
+ *
+ * Parameters
+ *   sem             : name of a pointer to semaphore object
+ *   init            : initial value of semaphore counter
+ *   limit           : maximum value of semaphore counter
+ *                     semBinary: binary semaphore
+ *                     semNormal, semCounting: counting semaphore
+ *                     otherwise: limited semaphore
+ *
+ ******************************************************************************/
 
 #define         static_SEM( sem, init, limit )                     \
                 static sem_t sem##__sem = _SEM_INIT( init, limit ); \
                 static sem_id sem = & sem##__sem
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : SEM_INIT                                                                                       *
- *                                                                                                                    *
- * Description       : create and initilize a semaphore object                                                        *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   init            : initial value of semaphore counter                                                             *
- *   limit           : maximum value of semaphore counter                                                             *
- *                     semBinary: binary semaphore                                                                    *
- *                     semNormal, semCounting: counting semaphore                                                     *
- *                     otherwise: limited semaphore                                                                   *
- *                                                                                                                    *
- * Return            : semaphore object                                                                               *
- *                                                                                                                    *
- * Note              : use only in 'C' code                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : SEM_INIT
+ *
+ * Description       : create and initialize a semaphore object
+ *
+ * Parameters
+ *   init            : initial value of semaphore counter
+ *   limit           : maximum value of semaphore counter
+ *                     semBinary: binary semaphore
+ *                     semNormal, semCounting: counting semaphore
+ *                     otherwise: limited semaphore
+ *
+ * Return            : semaphore object
+ *
+ * Note              : use only in 'C' code
+ *
+ ******************************************************************************/
 
 #ifndef __cplusplus
 #define                SEM_INIT( init, limit ) \
                       _SEM_INIT( init, limit )
 #endif
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : SEM_CREATE                                                                                     *
- * Alias             : SEM_NEW                                                                                        *
- *                                                                                                                    *
- * Description       : create and initilize a semaphore object                                                        *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   init            : initial value of semaphore counter                                                             *
- *   limit           : maximum value of semaphore counter                                                             *
- *                     semBinary: binary semaphore                                                                    *
- *                     semNormal, semCounting: counting semaphore                                                     *
- *                     otherwise: limited semaphore                                                                   *
- *                                                                                                                    *
- * Return            : pointer to semaphore object                                                                    *
- *                                                                                                                    *
- * Note              : use only in 'C' code                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : SEM_CREATE
+ * Alias             : SEM_NEW
+ *
+ * Description       : create and initialize a semaphore object
+ *
+ * Parameters
+ *   init            : initial value of semaphore counter
+ *   limit           : maximum value of semaphore counter
+ *                     semBinary: binary semaphore
+ *                     semNormal, semCounting: counting semaphore
+ *                     otherwise: limited semaphore
+ *
+ * Return            : pointer to semaphore object
+ *
+ * Note              : use only in 'C' code
+ *
+ ******************************************************************************/
 
 #ifndef __cplusplus
 #define                SEM_CREATE( init, limit ) \
@@ -167,91 +167,91 @@ struct __sem
                        SEM_CREATE
 #endif
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : sem_init                                                                                       *
- *                                                                                                                    *
- * Description       : initilize a semaphore object                                                                   *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   sem             : pointer to semaphore object                                                                    *
- *   init            : initial value of semaphore counter                                                             *
- *   limit           : maximum value of semaphore counter                                                             *
- *                     semBinary: binary semaphore                                                                    *
- *                     semNormal, semCounting: counting semaphore                                                     *
- *                     otherwise: limited semaphore                                                                   *
- *                                                                                                                    *
- * Return            : none                                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : sem_init
+ *
+ * Description       : initialize a semaphore object
+ *
+ * Parameters
+ *   sem             : pointer to semaphore object
+ *   init            : initial value of semaphore counter
+ *   limit           : maximum value of semaphore counter
+ *                     semBinary: binary semaphore
+ *                     semNormal, semCounting: counting semaphore
+ *                     otherwise: limited semaphore
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
 
 void sem_init( sem_t *sem, unsigned init, unsigned limit );
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : sem_wait                                                                                       *
- *                                                                                                                    *
- * Description       : try to lock the semaphore object,                                                              *
- *                     wait indefinitly if the semaphore object can't be locked immediately                           *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   sem             : pointer to semaphore object                                                                    *
- *                                                                                                                    *
- * Return            : none                                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : sem_wait
+ *
+ * Description       : try to lock the semaphore object,
+ *                     wait indefinitely if the semaphore object can't be locked immediately
+ *
+ * Parameters
+ *   sem             : pointer to semaphore object
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
 
 void sem_wait( sem_t *sem );
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : sem_take                                                                                       *
- *                                                                                                                    *
- * Description       : try to lock the semaphore object,                                                              *
- *                     don't wait if the semaphore object can't be locked immediately                                 *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   sem             : pointer to semaphore object                                                                    *
- *                                                                                                                    *
- * Return                                                                                                             *
- *   E_SUCCESS       : semaphore object was successfully locked                                                       *
- *   E_FAILURE       : semaphore object can't be locked immediately                                                   *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : sem_take
+ *
+ * Description       : try to lock the semaphore object,
+ *                     don't wait if the semaphore object can't be locked immediately
+ *
+ * Parameters
+ *   sem             : pointer to semaphore object
+ *
+ * Return
+ *   E_SUCCESS       : semaphore object was successfully locked
+ *   E_FAILURE       : semaphore object can't be locked immediately
+ *
+ ******************************************************************************/
 
 unsigned sem_take( sem_t *sem );
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : sem_send                                                                                       *
- *                                                                                                                    *
- * Description       : try to unlock the semaphore object,                                                            *
- *                     wait indefinitly if the semaphore object can't be unlocked immediately                         *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   sem             : pointer to semaphore object                                                                    *
- *                                                                                                                    *
- * Return            : none                                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : sem_send
+ *
+ * Description       : try to unlock the semaphore object,
+ *                     wait indefinitely if the semaphore object can't be unlocked immediately
+ *
+ * Parameters
+ *   sem             : pointer to semaphore object
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
 
 void sem_send( sem_t *sem );
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : sem_give                                                                                       *
- *                                                                                                                    *
- * Description       : try to unlock the semaphore object,                                                            *
- *                     don't wait if the semaphore object can't be unlocked immediately                               *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   sem             : pointer to semaphore object                                                                    *
- *                                                                                                                    *
- * Return                                                                                                             *
- *   E_SUCCESS       : semaphore object was successfully unlocked                                                     *
- *   E_FAILURE       : semaphore object can't be unlocked immediately                                                 *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : sem_give
+ *
+ * Description       : try to unlock the semaphore object,
+ *                     don't wait if the semaphore object can't be unlocked immediately
+ *
+ * Parameters
+ *   sem             : pointer to semaphore object
+ *
+ * Return
+ *   E_SUCCESS       : semaphore object was successfully unlocked
+ *   E_FAILURE       : semaphore object can't be unlocked immediately
+ *
+ ******************************************************************************/
 
 unsigned sem_give( sem_t *sem );
 
@@ -263,20 +263,20 @@ unsigned sem_give( sem_t *sem );
 
 #ifdef __cplusplus
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Class             : Semaphore                                                                                      *
- *                                                                                                                    *
- * Description       : create and initilize a semaphore object                                                        *
- *                                                                                                                    *
- * Constructor parameters                                                                                             *
- *   init            : initial value of semaphore counter                                                             *
- *   limit           : maximum value of semaphore counter                                                             *
- *                     semBinary: binary semaphore                                                                    *
- *                     semNormal, semCounting: counting semaphore (default)                                           *
- *                     otherwise: limited semaphore                                                                   *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Class             : Semaphore
+ *
+ * Description       : create and initialize a semaphore object
+ *
+ * Constructor parameters
+ *   init            : initial value of semaphore counter
+ *   limit           : maximum value of semaphore counter
+ *                     semBinary: binary semaphore
+ *                     semNormal, semCounting: counting semaphore (default)
+ *                     otherwise: limited semaphore
+ *
+ ******************************************************************************/
 
 struct Semaphore : public __sem
 {
@@ -289,16 +289,16 @@ struct Semaphore : public __sem
 	unsigned give( void ) { return sem_give(this); }
 };
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Class             : BinarySemaphore                                                                                *
- *                                                                                                                    *
- * Description       : create and initilize a binary semaphore object                                                 *
- *                                                                                                                    *
- * Constructor parameters                                                                                             *
- *   init            : initial value of semaphore counter                                                             *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Class             : BinarySemaphore
+ *
+ * Description       : create and initialize a binary semaphore object
+ *
+ * Constructor parameters
+ *   init            : initial value of semaphore counter
+ *
+ ******************************************************************************/
 
 struct BinarySemaphore : public Semaphore
 {

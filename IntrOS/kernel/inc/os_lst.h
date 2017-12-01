@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_lst.h
     @author  Rajmund Szymanski
-    @date    15.09.2017
+    @date    01.12.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -35,11 +35,11 @@
 extern "C" {
 #endif
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : list                                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : list
+ *
+ ******************************************************************************/
 
 typedef struct __lst lst_t, * const lst_id;
 
@@ -48,85 +48,85 @@ struct __lst
 	que_t  * next;  // next memory object in the queue, previously created in the memory pool
 };
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : _LST_INIT                                                                                      *
- *                                                                                                                    *
- * Description       : create and initilize a list object                                                             *
- *                                                                                                                    *
- * Parameters        : none                                                                                           *
- *                                                                                                                    *
- * Return            : list object                                                                                    *
- *                                                                                                                    *
- * Note              : for internal use                                                                               *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : _LST_INIT
+ *
+ * Description       : create and initialize a list object
+ *
+ * Parameters        : none
+ *
+ * Return            : list object
+ *
+ * Note              : for internal use
+ *
+ ******************************************************************************/
 
 #define               _LST_INIT() { 0 }
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : OS_LST                                                                                         *
- *                                                                                                                    *
- * Description       : define and initilize a list object                                                             *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   lst             : name of a pointer to list object                                                               *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : OS_LST
+ *
+ * Description       : define and initialize a list object
+ *
+ * Parameters
+ *   lst             : name of a pointer to list object
+ *
+ ******************************************************************************/
 
 #define             OS_LST( lst )                     \
                        lst_t lst##__lst = _LST_INIT(); \
                        lst_id lst = & lst##__lst
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : static_LST                                                                                     *
- *                                                                                                                    *
- * Description       : define and initilize a static list object                                                      *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   lst             : name of a pointer to list object                                                               *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : static_LST
+ *
+ * Description       : define and initialize a static list object
+ *
+ * Parameters
+ *   lst             : name of a pointer to list object
+ *
+ ******************************************************************************/
 
 #define         static_LST( lst )                     \
                 static lst_t lst##__lst = _LST_INIT(); \
                 static lst_id lst = & lst##__lst
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : LST_INIT                                                                                       *
- *                                                                                                                    *
- * Description       : create and initilize a list object                                                             *
- *                                                                                                                    *
- * Parameters        : none                                                                                           *
- *                                                                                                                    *
- * Return            : list object                                                                                    *
- *                                                                                                                    *
- * Note              : use only in 'C' code                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : LST_INIT
+ *
+ * Description       : create and initialize a list object
+ *
+ * Parameters        : none
+ *
+ * Return            : list object
+ *
+ * Note              : use only in 'C' code
+ *
+ ******************************************************************************/
 
 #ifndef __cplusplus
 #define                LST_INIT() \
                       _LST_INIT()
 #endif
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : LST_CREATE                                                                                     *
- * Alias             : LST_NEW                                                                                        *
- *                                                                                                                    *
- * Description       : create and initilize a list object                                                             *
- *                                                                                                                    *
- * Parameters        : none                                                                                           *
- *                                                                                                                    *
- * Return            : pointer to list object                                                                         *
- *                                                                                                                    *
- * Note              : use only in 'C' code                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : LST_CREATE
+ * Alias             : LST_NEW
+ *
+ * Description       : create and initialize a list object
+ *
+ * Parameters        : none
+ *
+ * Return            : pointer to list object
+ *
+ * Note              : use only in 'C' code
+ *
+ ******************************************************************************/
 
 #ifndef __cplusplus
 #define                LST_CREATE() \
@@ -135,70 +135,70 @@ struct __lst
                        LST_CREATE
 #endif
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : lst_init                                                                                       *
- *                                                                                                                    *
- * Description       : initilize a list object                                                                        *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   lst             : pointer to list object                                                                         *
- *                                                                                                                    *
- * Return            : none                                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : lst_init
+ *
+ * Description       : initialize a list object
+ *
+ * Parameters
+ *   lst             : pointer to list object
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
 
 void lst_init( lst_t *lst );
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : lst_wait                                                                                       *
- *                                                                                                                    *
- * Description       : try to get memory object from the list object,                                                 *
- *                     wait indefinitly while the list object is empty                                                *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   lst             : pointer to list object                                                                         *
- *   data            : pointer to store the pointer to the memory object                                              *
- *                                                                                                                    *
- * Return            : none                                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : lst_wait
+ *
+ * Description       : try to get memory object from the list object,
+ *                     wait indefinitely while the list object is empty
+ *
+ * Parameters
+ *   lst             : pointer to list object
+ *   data            : pointer to store the pointer to the memory object
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
 
 void lst_wait( lst_t *lst, void **data );
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : lst_take                                                                                       *
- *                                                                                                                    *
- * Description       : try to get memory object from the list object,                                                 *
- *                     don't wait if the list object is empty                                                         *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   lst             : pointer to list object                                                                         *
- *   data            : pointer to store the pointer to the memory object                                              *
- *                                                                                                                    *
- * Return                                                                                                             *
- *   E_SUCCESS       : pointer to memory object was successfully transfered to the data pointer                       *
- *   E_FAILURE       : list object is empty                                                                    *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : lst_take
+ *
+ * Description       : try to get memory object from the list object,
+ *                     don't wait if the list object is empty
+ *
+ * Parameters
+ *   lst             : pointer to list object
+ *   data            : pointer to store the pointer to the memory object
+ *
+ * Return
+ *   E_SUCCESS       : pointer to memory object was successfully transfered to the data pointer
+ *   E_FAILURE       : list object is empty
+ *
+ ******************************************************************************/
 
 unsigned lst_take( lst_t *lst, void **data );
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Name              : lst_give                                                                                       *
- *                                                                                                                    *
- * Description       : transfer memory object to the list object,                                                     *
- *                                                                                                                    *
- * Parameters                                                                                                         *
- *   lst             : pointer to list object                                                                         *
- *   data            : pointer to memory object                                                                       *
- *                                                                                                                    *
- * Return            : none                                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Name              : lst_give
+ *
+ * Description       : transfer memory object to the list object,
+ *
+ * Parameters
+ *   lst             : pointer to list object
+ *   data            : pointer to memory object
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
 
 void lst_give( lst_t *lst, void *data );
 
@@ -210,16 +210,16 @@ void lst_give( lst_t *lst, void *data );
 
 #ifdef __cplusplus
 
-/**********************************************************************************************************************
- *                                                                                                                    *
- * Class             : List                                                                                           *
- *                                                                                                                    *
- * Description       : create and initilize a list object                                                             *
- *                                                                                                                    *
- * Constructor parameters                                                                                             *
- *                   : none                                                                                           *
- *                                                                                                                    *
- **********************************************************************************************************************/
+/******************************************************************************
+ *
+ * Class             : List
+ *
+ * Description       : create and initialize a list object
+ *
+ * Constructor parameters
+ *                   : none
+ *
+ ******************************************************************************/
 
 struct List : public __lst
 {
