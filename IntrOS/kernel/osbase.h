@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    01.08.2017
+    @date    04.12.2017
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -62,10 +62,12 @@ typedef struct __obj obj_t;
 
 struct __obj
 {
-	unsigned id;    // object id: ID_STOPPED, ID_READY, ID_DELAYED, ID_TIMER
-	void   * prev;  // previous object in the READY queue
-	void   * next;  // next object in the READY queue
+	unsigned id;    // object's id: ID_STOPPED, ID_READY, ID_DELAYED, ID_TIMER
+	void   * prev;  // previous object (timer, task) in the READY queue
+	void   * next;  // next object (timer, task) in the READY queue
 };
+
+#define               _OBJ_INIT() { 0, 0, 0, 0, 0 }
 
 /* -------------------------------------------------------------------------- */
 
@@ -99,7 +101,7 @@ struct __sys
 
 /* -------------------------------------------------------------------------- */
 
-#define E_SUCCESS  ( 0U) // process released by taking the supervising object
+#define E_SUCCESS  ( 0U) // process was released by taking the supervising object
 #define E_FAILURE  (~0U)
 
 /* -------------------------------------------------------------------------- */

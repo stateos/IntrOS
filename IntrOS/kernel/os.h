@@ -2,7 +2,7 @@
 
     @file    IntrOS: os.h
     @author  Rajmund Szymanski
-    @date    01.12.2017
+    @date    04.12.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -53,7 +53,7 @@ extern "C" {
  *
  * Name              : sys_init
  *
- * Description       : initialize system timer and enabled services
+ * Description       : initialize system timer and enable services
  *
  * Parameters        : none
  *
@@ -115,7 +115,7 @@ uint32_t sys_time( void );
  *
  * Name              : stk_assert
  *
- * Description       : check stack integrity of current task
+ * Description       : check stack integrity of the current task
  *
  * Parameters        : none
  *
@@ -133,6 +133,17 @@ uint32_t sys_time( void );
 /* -------------------------------------------------------------------------- */
 
 #ifdef __cplusplus
+
+/******************************************************************************
+ *
+ * Class             : CriticalSection
+ *
+ * Description       : create and initialize a critical section guard object
+ *
+ * Constructor parameters
+ *                   : none
+ *
+ ******************************************************************************/
 
 struct CriticalSection
 {

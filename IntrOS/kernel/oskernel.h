@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.h
     @author  Rajmund Szymanski
-    @date    28.11.2017
+    @date    04.12.2017
     @brief   This file defines set of kernel functions for IntrOS.
 
  ******************************************************************************
@@ -108,20 +108,20 @@ extern sys_t System; // system data
 
 /* -------------------------------------------------------------------------- */
 
-// initiating and running the system timer
+// initiate and run the system timer
 // the port_sys_init procedure is normally called as a constructor
 __CONSTRUCTOR
 void port_sys_init( void );
 
 /* -------------------------------------------------------------------------- */
 
-// init task 'tsk' for context switch
+// initiate task 'tsk' for context switch
 void core_ctx_init( tsk_t *tsk );
 
-// save status of current process and force yield system control to the next
+// save status of the current process and force yield system control to the next
 void core_ctx_switch( void );
 
-// system infinite loop for current process
+// system infinite loop procedure for the current process
 __NO_RETURN
 void core_tsk_loop( void );
 
@@ -141,8 +141,7 @@ void core_rdy_remove( void *obj );
 
 /* -------------------------------------------------------------------------- */
 
-// add timer 'tmr' to tasks/timers queue
-// start countdown
+// insert timer 'tmr' into tasks/timers queue and start it
 __STATIC_INLINE
 void core_tmr_insert( tmr_t *tmr ) { core_rdy_insert(tmr, ID_TIMER, Current); }
 
@@ -152,7 +151,7 @@ void core_tmr_remove( tmr_t *tmr ) { core_rdy_remove(tmr); }
 
 /* -------------------------------------------------------------------------- */
 
-// add task 'tsk' to tasks/timers queue with id ID_READY
+// insert task 'tsk' into tasks/timers queue with id ID_READY
 __STATIC_INLINE
 void core_tsk_insert( tsk_t *tsk ) { core_rdy_insert(tsk, ID_READY, Current); }
 
