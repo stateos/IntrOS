@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    01.12.2017
+    @date    06.12.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -515,6 +515,7 @@ void tsk_join( tsk_t *tsk );
 /******************************************************************************
  *
  * Name              : tsk_yield
+ * Alias             : tsk_pass
  *
  * Description       : yield system control to the next task
  *
@@ -526,21 +527,8 @@ void tsk_join( tsk_t *tsk );
 
 __STATIC_INLINE
 void tsk_yield( void ) { core_ctx_switch(); }
-
-/******************************************************************************
- *
- * Name              : tsk_pass
- *
- * Description       : the same as tsk_yield (force context switch)
- *
- * Parameters        : none
- *
- * Return            : none
- *
- ******************************************************************************/
-
 __STATIC_INLINE
-void tsk_pass( void ) { core_ctx_switch(); }
+void tsk_pass ( void ) { core_ctx_switch(); }
 
 /******************************************************************************
  *
