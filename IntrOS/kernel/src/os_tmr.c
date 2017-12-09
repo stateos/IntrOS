@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.c
     @author  Rajmund Szymanski
-    @date    03.10.2017
+    @date    08.12.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -60,7 +60,7 @@ void tmr_startUntil( tmr_t *tmr, uint32_t time )
 
 	port_sys_lock();
 
-	tmr->start  = Counter;
+	tmr->start  = core_sys_time();
 	tmr->delay  = time - tmr->start;
 	tmr->period = 0;
 
@@ -77,7 +77,7 @@ void tmr_start( tmr_t *tmr, uint32_t delay, uint32_t period )
 
 	port_sys_lock();
 
-	tmr->start  = Counter;
+	tmr->start  = core_sys_time();
 	tmr->delay  = delay;
 	tmr->period = period;
 
@@ -95,7 +95,7 @@ void tmr_startFrom( tmr_t *tmr, uint32_t delay, uint32_t period, fun_t *proc )
 	port_sys_lock();
 
 	tmr->state  = proc;
-	tmr->start  = Counter;
+	tmr->start  = core_sys_time();
 	tmr->delay  = delay;
 	tmr->period = period;
 

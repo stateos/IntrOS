@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.h
     @author  Rajmund Szymanski
-    @date    24.10.2017
+    @date    08.12.2017
     @brief   IntrOS port definitions for STM32F4 uC.
 
  ******************************************************************************
@@ -43,10 +43,6 @@ extern "C" {
 #define OS_TICKLESS           0 /* os does not work in tick-less mode         */
 #endif
 
-#if     OS_TICKLESS
-#define Counter            TIM2->CNT
-#endif
-
 /* -------------------------------------------------------------------------- */
 
 #ifndef CPU_FREQUENCY
@@ -73,6 +69,19 @@ extern "C" {
 // alternate clock source for SysTick
 
 #define ST_FREQUENCY        ((CPU_FREQUENCY)/8)
+
+/* -------------------------------------------------------------------------- */
+// return current system time
+
+__STATIC_INLINE
+uint32_t port_sys_time( void )
+{
+#if OS_TICKLESS
+	return TIM2->CNT;
+#else
+	return 0U;
+#endif
+}
 
 /* -------------------------------------------------------------------------- */
 

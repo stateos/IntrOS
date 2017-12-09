@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    28.11.2017
+    @date    08.12.2017
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -117,7 +117,7 @@ void core_tsk_switch( void )
 		port_isr_lock();
 
 		cur = Current = Current->next;
-		cnt = Counter;
+		cnt = core_sys_time();
 
 		port_isr_unlock();
 
