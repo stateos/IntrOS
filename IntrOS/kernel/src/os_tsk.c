@@ -95,7 +95,7 @@ void tsk_stop( void )
 {
 	port_set_lock();
 
-	core_tsk_remove(Current);
+	core_tsk_remove(System.cur);
 	core_tsk_switch();
 }
 
@@ -114,9 +114,9 @@ void tsk_flip( fun_t *state )
 {
 	assert(state);
 
-	Current->state = state;
+	System.cur->state = state;
 
-	core_ctx_init(Current);
+	core_ctx_init(System.cur);
 	core_tsk_switch();
 }
 
@@ -135,7 +135,7 @@ unsigned priv_tsk_sleep( tsk_t *cur )
 unsigned tsk_sleepUntil( uint32_t time )
 /* -------------------------------------------------------------------------- */
 {
-	tsk_t *cur = Current;
+	tsk_t *cur = System.cur;
 
 	port_sys_lock();
 
@@ -151,7 +151,7 @@ unsigned tsk_sleepUntil( uint32_t time )
 unsigned tsk_sleepFor( uint32_t delay )
 /* -------------------------------------------------------------------------- */
 {
-	tsk_t *cur = Current;
+	tsk_t *cur = System.cur;
 
 	port_sys_lock();
 
@@ -167,8 +167,8 @@ unsigned tsk_sleepFor( uint32_t delay )
 void tsk_wait( unsigned flags )
 /* -------------------------------------------------------------------------- */
 {
-	Current->event = flags;
-	while (Current->event) core_ctx_switch();
+	System.cur->event = flags;
+	while (System.cur->event) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -197,7 +197,7 @@ unsigned tsk_suspend( tsk_t *tsk )
 	{
 		tsk->delay = INFINITE;
 		tsk->id = ID_DELAYED;
-		if (tsk == Current)
+		if (tsk == System.cur)
 			core_ctx_switch();
 		event = E_SUCCESS;
 	}

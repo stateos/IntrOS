@@ -96,12 +96,8 @@ extern sys_t System; // system data
 
 /* -------------------------------------------------------------------------- */
 
-#define Current System.cur
-
-/* -------------------------------------------------------------------------- */
-
 #define core_stk_assert() \
-        assert((Current->id == ID_TIMER) || (Current == &MAIN) || (port_get_sp() >= Current->stack))
+        assert((System.cur->id == ID_TIMER) || (System.cur == &MAIN) || (port_get_sp() >= System.cur->stack))
 
 /* -------------------------------------------------------------------------- */
 
@@ -140,7 +136,7 @@ void core_rdy_remove( void *obj );
 
 // insert timer 'tmr' into tasks/timers queue and start it
 __STATIC_INLINE
-void core_tmr_insert( tmr_t *tmr ) { core_rdy_insert(tmr, ID_TIMER, Current); }
+void core_tmr_insert( tmr_t *tmr ) { core_rdy_insert(tmr, ID_TIMER, System.cur); }
 
 // remove timer 'tmr' from tasks/timers queue
 __STATIC_INLINE
@@ -150,7 +146,7 @@ void core_tmr_remove( tmr_t *tmr ) { core_rdy_remove(tmr); }
 
 // insert task 'tsk' into tasks/timers queue with id ID_READY
 __STATIC_INLINE
-void core_tsk_insert( tsk_t *tsk ) { core_rdy_insert(tsk, ID_READY, Current); }
+void core_tsk_insert( tsk_t *tsk ) { core_rdy_insert(tsk, ID_READY, System.cur); }
 
 // remove task 'tsk' from tasks/timers queue
 __STATIC_INLINE

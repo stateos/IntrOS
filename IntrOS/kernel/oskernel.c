@@ -84,7 +84,7 @@ void core_ctx_switch( void )
 {
 	port_sys_lock();
 
-	if (setjmp(Current->ctx.buf) == 0)
+	if (setjmp(System.cur->ctx.buf) == 0)
 		core_tsk_switch();
 
 	port_sys_unlock();
@@ -97,7 +97,7 @@ void core_tsk_loop( void )
 	for (;;)
 	{
 		port_clr_lock();
-		Current->state();
+		System.cur->state();
 		core_ctx_switch();
 	}
 }
@@ -116,7 +116,7 @@ void core_tsk_switch( void )
 	{
 		port_isr_lock();
 
-		cur = Current = Current->next;
+		cur = System.cur = System.cur->next;
 		cnt = core_sys_time();
 
 		port_isr_unlock();

@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_mtx.c
     @author  Rajmund Szymanski
-    @date    03.10.2017
+    @date    08.12.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -48,13 +48,13 @@ unsigned mtx_take( mtx_t *mtx )
 	unsigned event = E_FAILURE;
 
 	assert(mtx);
-	assert(mtx->owner != Current);
+	assert(mtx->owner != System.cur);
 
 	port_sys_lock();
 
 	if (mtx->owner == 0)
 	{
-		mtx->owner = Current;
+		mtx->owner = System.cur;
 
 		event = E_SUCCESS;
 	}
@@ -81,7 +81,7 @@ unsigned mtx_give( mtx_t *mtx )
 
 	port_sys_lock();
 
-	if (mtx->owner == Current)
+	if (mtx->owner == System.cur)
 	{
 	    mtx->owner = 0;
 
