@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_mem.c
     @author  Rajmund Szymanski
-    @date    03.10.2017
+    @date    12.12.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -32,15 +32,16 @@
 void mem_bind( mem_t *mem )
 /* -------------------------------------------------------------------------- */
 {
-	void   **ptr;
+	que_t  * ptr;
 	unsigned cnt;
 
 	assert(mem);
-	assert(mem->data);
 	assert(mem->limit);
+	assert(mem->size);
+	assert(mem->data);
 
 	port_sys_lock();
-
+	
 	ptr = mem->data;
 	cnt = mem->limit;
 
@@ -91,11 +92,7 @@ unsigned mem_take( mem_t *mem, void **data )
 	}
 	
 	if (event == E_SUCCESS)
-	{
-		void   **ptr = *data;
-		unsigned cnt = mem->size;
-		while (cnt--) *ptr++ = 0;
-	}
+		memset(*data, 0, mem->size * sizeof(que_t));
 
 	port_sys_unlock();
 
@@ -114,16 +111,15 @@ void mem_give( mem_t *mem, void *data )
 /* -------------------------------------------------------------------------- */
 {
 	que_t *ptr;
-	
+
 	assert(mem);
 	assert(data);
 
 	port_sys_lock();
 
-	ptr = (que_t *)&(mem->next);
-	while (ptr->next) ptr = ptr->next;
-	ptr->next = (que_t *)data - 1;
-	ptr->next->next = 0;
+	ptr = (que_t *)data - 1;
+	ptr->next = mem->next;
+	mem->next = ptr;
 
 	port_sys_unlock();
 }
