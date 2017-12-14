@@ -2,7 +2,7 @@
 
     @file    IntrOS: osconfig.h
     @author  Rajmund Szymanski
-    @date    01.08.2017
+    @date    14.12.2017
     @brief   IntrOS config file for STM32F4 uC.
 
  ******************************************************************************
@@ -48,8 +48,3 @@
 // default task stack size in bytes
 // default value: 256
 #define  OS_STACK_SIZE      256
-
-// ----------------------------
-// using standard assertions
-// default value: 0
-#define  OS_ASSERT            0
