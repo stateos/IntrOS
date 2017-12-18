@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.c
     @author  Rajmund Szymanski
-    @date    24.10.2017
+    @date    18.12.2017
     @brief   IntrOS port file for STM32F4 uC.
 
  ******************************************************************************
@@ -72,9 +72,13 @@ void port_sys_init( void )
 	#endif
 
 	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+	NVIC_SetPriority(TIM2_IRQn, 0xFF);
+	NVIC_EnableIRQ(TIM2_IRQn);
+
 	TIM2->PSC  = (CPU_FREQUENCY)/(OS_FREQUENCY)/2-1;
 	TIM2->EGR  = TIM_EGR_UG;
 	TIM2->CR1  = TIM_CR1_CEN;
+	TIM2->DIER = TIM_DIER_UIE;
 
 /******************************************************************************
  End of configuration
@@ -95,6 +99,26 @@ void SysTick_Handler( void )
 {
 	SysTick->CTRL;
 	core_sys_tick();
+}
+
+/******************************************************************************
+ End of the handler
+*******************************************************************************/
+
+#else //OS_TICKLESS
+
+/******************************************************************************
+ Tick-less mode: interrupt handler of system timer
+*******************************************************************************/
+
+void TIM2_IRQHandler( void )
+{
+	uint32_t sr = TIM2->SR;
+	TIM2->SR = ~sr;
+
+	if (sizeof(System.cnt) > 4)     // TIM2->CNT is 32-bit (4 bytes)
+		if (sr & TIM_SR_UIF)
+			System.cnt += 1ULL<<32; // TIM2->CNT is 32-bit (4 bytes)
 }
 
 /******************************************************************************

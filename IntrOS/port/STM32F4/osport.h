@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.h
     @author  Rajmund Szymanski
-    @date    08.12.2017
+    @date    18.12.2017
     @brief   IntrOS port definitions for STM32F4 uC.
 
  ******************************************************************************
