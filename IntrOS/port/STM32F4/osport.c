@@ -72,6 +72,7 @@ void port_sys_init( void )
 	#endif
 
 	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+	port_set_barrier();
 
 	TIM2->PSC  = (CPU_FREQUENCY)/(OS_FREQUENCY)/2-1;
 	TIM2->EGR  = TIM_EGR_UG;
