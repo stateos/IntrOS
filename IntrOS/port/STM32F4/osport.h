@@ -79,7 +79,7 @@ uint32_t port_sys_time( void )
 #if OS_TICKLESS
 	return TIM2->CNT;
 #else
-	return 0U;
+	return 0;
 #endif
 }
 
