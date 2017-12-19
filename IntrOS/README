@@ -35,6 +35,7 @@ Features:
 - added tmr_this and tsk_this functions
 - the OS_ASSERT definition has been removed, use DEBUG/NDEBUG instead
 - updated tick-less mode
+- updated waitUntil functions
 ---------
 3.4
 - added startup files for cosmic compiler

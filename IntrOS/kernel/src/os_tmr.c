@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.c
     @author  Rajmund Szymanski
-    @date    08.12.2017
+    @date    19.12.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -49,7 +49,7 @@ void priv_tmr_start( tmr_t *tmr )
 /* -------------------------------------------------------------------------- */
 {
 	if (tmr->id == ID_STOPPED)
-	core_tmr_insert(tmr);
+		core_tmr_insert(tmr);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -62,6 +62,8 @@ void tmr_startUntil( tmr_t *tmr, uint32_t time )
 
 	tmr->start  = core_sys_time();
 	tmr->delay  = time - tmr->start;
+	if ((int32_t)tmr->delay < 0)
+		tmr->delay = 0;
 	tmr->period = 0;
 
 	priv_tmr_start(tmr);
