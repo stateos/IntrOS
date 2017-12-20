@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.h
     @author  Rajmund Szymanski
-    @date    18.12.2017
+    @date    20.12.2017
     @brief   This file defines set of kernel functions for IntrOS.
 
  ******************************************************************************
@@ -99,6 +99,9 @@ extern sys_t System; // system data
 __CONSTRUCTOR
 void port_sys_init( void );
 
+// return current system time in tick-less mode
+uint32_t port_sys_time( void );
+
 /* -------------------------------------------------------------------------- */
 
 // initiate task 'tsk' for context switch
@@ -152,7 +155,7 @@ __STATIC_INLINE
 uint32_t core_sys_time( void )
 {
 #if OS_TICKLESS
-	return System.cnt + port_sys_time();
+	return port_sys_time();
 #else
 	return System.cnt;
 #endif
