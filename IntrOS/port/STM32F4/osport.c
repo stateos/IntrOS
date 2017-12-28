@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.c
     @author  Rajmund Szymanski
-    @date    18.12.2017
+    @date    28.12.2017
     @brief   IntrOS port file for STM32F4 uC.
 
  ******************************************************************************
@@ -32,7 +32,7 @@
 
 void port_sys_init( void )
 {
-#if OS_TICKLESS == 0
+#if HW_TIMER_SIZE == 0
 
 /******************************************************************************
  Non-tick-less mode: configuration of system timer
@@ -60,7 +60,7 @@ void port_sys_init( void )
  End of configuration
 *******************************************************************************/
 
-#else //OS_TICKLESS
+#else //HW_TIMER_SIZE
 
 /******************************************************************************
  Tick-less mode: configuration of system timer
@@ -82,12 +82,12 @@ void port_sys_init( void )
  End of configuration
 *******************************************************************************/
 
-#endif//OS_TICKLESS
+#endif//HW_TIMER_SIZE
 }
 
 /* -------------------------------------------------------------------------- */
 
-#if OS_TICKLESS == 0
+#if HW_TIMER_SIZE == 0
 
 /******************************************************************************
  Non-tick-less mode: interrupt handler of system timer
@@ -103,7 +103,7 @@ void SysTick_Handler( void )
  End of the handler
 *******************************************************************************/
 
-#else //OS_TICKLESS
+#else //HW_TIMER_SIZE
 
 /******************************************************************************
  Tick-less mode: interrupt handler of system timer
@@ -113,6 +113,6 @@ void SysTick_Handler( void )
  End of the handler
 *******************************************************************************/
 
-#endif//OS_TICKLESS
+#endif//HW_TIMER_SIZE
 
 /* -------------------------------------------------------------------------- */

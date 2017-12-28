@@ -2,7 +2,7 @@
 
     @file    IntrOS: osconfig.h
     @author  Rajmund Szymanski
-    @date    14.12.2017
+    @date    28.12.2017
     @brief   IntrOS config file for STM32F4 uC.
 
  ******************************************************************************
@@ -30,21 +30,15 @@
 
 // ----------------------------
 // cpu frequency in Hz
-// default value: none
+// default value: 168000000
 #define CPU_FREQUENCY 168000000
 
 // ----------------------------
 // os frequency in Hz
-// OS_TICKLESS == 0 => dafault value:    1000
-// OS_TICKLESS != 0 => dafault value: 1000000 (tick-less mode)
-#define  OS_FREQUENCY      1000
-
-// ----------------------------
-// using tick-less mode
-// default value: 0
-#define  OS_TICKLESS          0
+// dafault value: 1000
+#define OS_FREQUENCY       1000
 
 // ----------------------------
 // default task stack size in bytes
 // default value: 256
-#define  OS_STACK_SIZE      256
+#define OS_STACK_SIZE       256

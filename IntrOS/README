@@ -36,6 +36,9 @@ Features:
 - the OS_ASSERT definition has been removed, use DEBUG/NDEBUG instead
 - updated tick-less mode
 - updated waitUntil functions
+- added tick-less mode for STM8S-Discovery board port
+- added tick-less mode for ATtiny817-Xplained-Mini board port
+- removed OS_TICKLESS definition, tick-less mode depends on OS_FREQUENCY value
 ---------
 3.4
 - added startup files for cosmic compiler
