@@ -12,6 +12,7 @@ Features
 --------
 
 - kernel works in cooperative (non-preemptive) mode only
+- kernel can operate with 16, 32 or 64-bit timer counter
 - kernel can operate in tick-less mode
 - signals (auto clearing, protected)
 - events
