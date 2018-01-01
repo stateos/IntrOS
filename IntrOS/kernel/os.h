@@ -2,7 +2,7 @@
 
     @file    IntrOS: os.h
     @author  Rajmund Szymanski
-    @date    04.12.2017
+    @date    30.12.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -109,7 +109,7 @@ void sys_init( void ) { port_sys_init(); }
  *
  ******************************************************************************/
 
-uint32_t sys_time( void );
+cnt_t sys_time( void );
 
 /******************************************************************************
  *

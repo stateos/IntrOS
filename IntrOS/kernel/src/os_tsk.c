@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.c
     @author  Rajmund Szymanski
-    @date    19.12.2017
+    @date    30.12.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -132,7 +132,7 @@ unsigned priv_tsk_sleep( tsk_t *cur )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned tsk_sleepUntil( uint32_t time )
+unsigned tsk_sleepUntil( cnt_t time )
 /* -------------------------------------------------------------------------- */
 {
 	tsk_t *cur = System.cur;
@@ -141,7 +141,7 @@ unsigned tsk_sleepUntil( uint32_t time )
 
 	cur->start = core_sys_time();
 	cur->delay = time - cur->start;
-	if ((int32_t)cur->delay < 0)
+	if (cur->delay > ((CNT_MAX)>>1))
 		cur->delay = 0;
 
 	port_sys_unlock();
@@ -150,7 +150,7 @@ unsigned tsk_sleepUntil( uint32_t time )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned tsk_sleepFor( uint32_t delay )
+unsigned tsk_sleepFor( cnt_t delay )
 /* -------------------------------------------------------------------------- */
 {
 	tsk_t *cur = System.cur;

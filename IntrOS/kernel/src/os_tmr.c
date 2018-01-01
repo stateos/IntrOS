@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.c
     @author  Rajmund Szymanski
-    @date    19.12.2017
+    @date    30.12.2017
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -53,7 +53,7 @@ void priv_tmr_start( tmr_t *tmr )
 }
 
 /* -------------------------------------------------------------------------- */
-void tmr_startUntil( tmr_t *tmr, uint32_t time )
+void tmr_startUntil( tmr_t *tmr, cnt_t time )
 /* -------------------------------------------------------------------------- */
 {
 	assert(tmr);
@@ -62,7 +62,7 @@ void tmr_startUntil( tmr_t *tmr, uint32_t time )
 
 	tmr->start  = core_sys_time();
 	tmr->delay  = time - tmr->start;
-	if ((int32_t)tmr->delay < 0)
+	if (tmr->delay > ((CNT_MAX)>>1))
 		tmr->delay = 0;
 	tmr->period = 0;
 
@@ -72,7 +72,7 @@ void tmr_startUntil( tmr_t *tmr, uint32_t time )
 }
 
 /* -------------------------------------------------------------------------- */
-void tmr_start( tmr_t *tmr, uint32_t delay, uint32_t period )
+void tmr_start( tmr_t *tmr, cnt_t delay, cnt_t period )
 /* -------------------------------------------------------------------------- */
 {
 	assert(tmr);
@@ -89,7 +89,7 @@ void tmr_start( tmr_t *tmr, uint32_t delay, uint32_t period )
 }
 
 /* -------------------------------------------------------------------------- */
-void tmr_startFrom( tmr_t *tmr, uint32_t delay, uint32_t period, fun_t *proc )
+void tmr_startFrom( tmr_t *tmr, cnt_t delay, cnt_t period, fun_t *proc )
 /* -------------------------------------------------------------------------- */
 {
 	assert(tmr);

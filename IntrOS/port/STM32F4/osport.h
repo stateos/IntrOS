@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.h
     @author  Rajmund Szymanski
-    @date    28.12.2017
+    @date    01.01.2018
     @brief   IntrOS port definitions for STM32F4 uC.
 
  ******************************************************************************
@@ -53,19 +53,25 @@ extern "C" {
 
 /* -------------------------------------------------------------------------- */
 
+#ifndef OS_TIMER_SIZE
+#define OS_TIMER_SIZE        32 /* bit size of system timer counter */
+#endif
+
+/* -------------------------------------------------------------------------- */
+
 #ifdef  HW_TIMER_SIZE
-#error  HW_TIMER_SIZE is an internal definition!
+#error  HW_TIMER_SIZE is an internal os definition!
 #elif   OS_FREQUENCY > 1000 
-#define HW_TIMER_SIZE        32
+#define HW_TIMER_SIZE        32 /* bit size of hardware timer */
 #else
-#define HW_TIMER_SIZE         0
+#define HW_TIMER_SIZE         0 /* os does not work in tick-less mode */
 #endif
 
 /* -------------------------------------------------------------------------- */
 // alternate clock source for SysTick
 
 #ifdef  ST_FREQUENCY
-#error  ST_FREQUENCY is an internal definition!
+#error  ST_FREQUENCY is an internal port definition!
 #else
 #define ST_FREQUENCY        ((CPU_FREQUENCY)/8)
 #endif
@@ -73,7 +79,7 @@ extern "C" {
 /* -------------------------------------------------------------------------- */
 // return current system time
 
-#if HW_TIMER_SIZE >= 32
+#if HW_TIMER_SIZE >= OS_TIMER_SIZE
 
 __STATIC_INLINE
 uint32_t port_sys_time( void )

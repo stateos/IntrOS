@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    09.12.2017
+    @date    30.12.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -49,9 +49,9 @@ struct __tsk
 	unsigned event; // wakeup event
 
 	fun_t  * state; // inherited from timer
-	uint32_t start; // inherited from timer
-	uint32_t delay; // inherited from timer
-	uint32_t period;// inherited from timer
+	cnt_t    start; // inherited from timer
+	cnt_t    delay; // inherited from timer
+	cnt_t    period;// inherited from timer
 
 	stk_t  * top;   // top of stack
 	void   * stack; // base of stack
@@ -607,7 +607,7 @@ void tsk_give( tsk_t *tsk, unsigned flags );
  *
  ******************************************************************************/
 
-unsigned tsk_sleepUntil( uint32_t time );
+unsigned tsk_sleepUntil( cnt_t time );
 
 /******************************************************************************
  *
@@ -626,7 +626,7 @@ unsigned tsk_sleepUntil( uint32_t time );
  *
  ******************************************************************************/
 
-unsigned tsk_sleepFor( uint32_t delay );
+unsigned tsk_sleepFor( cnt_t delay );
 
 /******************************************************************************
  *
@@ -662,7 +662,7 @@ unsigned tsk_sleep( void ) { return tsk_sleepFor(INFINITE); }
  ******************************************************************************/
 
 __STATIC_INLINE
-unsigned tsk_delay( uint32_t delay ) { return tsk_sleepFor(delay); }
+unsigned tsk_delay( cnt_t delay ) { return tsk_sleepFor(delay); }
 
 /******************************************************************************
  *
@@ -845,20 +845,20 @@ struct startTask : public startTaskT<OS_STACK_SIZE>
 
 namespace ThisTask
 {
-	static inline void     pass      ( void )            {        tsk_pass      ();                         }
-	static inline void     yield     ( void )            {        tsk_yield     ();                         }
+	static inline void     pass      ( void )         {        tsk_pass      ();                         }
+	static inline void     yield     ( void )         {        tsk_yield     ();                         }
 #if OS_FUNCTIONAL
-	static inline void     flip      ( FUN_t    _state ) {        ((baseTask *) System.cur)->fun_ = _state;
-	                                                              tsk_flip      (baseTask::run_);           }
+	static inline void     flip      ( FUN_t _state ) {        ((baseTask *) System.cur)->fun_ = _state;
+	                                                           tsk_flip      (baseTask::run_);           }
 #else
-	static inline void     flip      ( FUN_t    _state ) {        tsk_flip      (_state);                   }
+	static inline void     flip      ( FUN_t _state ) {        tsk_flip      (_state);                   }
 #endif
-	static inline void     stop      ( void )            {        tsk_stop      ();                         }
-	static inline unsigned sleepUntil( uint32_t _time )  { return tsk_sleepUntil(_time);                    }
-	static inline unsigned sleepFor  ( uint32_t _delay ) { return tsk_sleepFor  (_delay);                   }
-	static inline unsigned sleep     ( void )            { return tsk_sleep     ();                         }
-	static inline unsigned delay     ( uint32_t _delay ) { return tsk_delay     (_delay);                   }
-	static inline void     suspend   ( void )            {        tsk_suspend   (System.cur);               }
+	static inline void     stop      ( void )         {        tsk_stop      ();                         }
+	static inline unsigned sleepUntil( cnt_t _time )  { return tsk_sleepUntil(_time);                    }
+	static inline unsigned sleepFor  ( cnt_t _delay ) { return tsk_sleepFor  (_delay);                   }
+	static inline unsigned sleep     ( void )         { return tsk_sleep     ();                         }
+	static inline unsigned delay     ( cnt_t _delay ) { return tsk_delay     (_delay);                   }
+	static inline void     suspend   ( void )         {        tsk_suspend   (System.cur);               }
 }
 
 #endif//__cplusplus

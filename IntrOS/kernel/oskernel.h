@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.h
     @author  Rajmund Szymanski
-    @date    28.12.2017
+    @date    01.01.2018
     @brief   This file defines set of kernel functions for IntrOS.
 
  ******************************************************************************
@@ -99,11 +99,6 @@ extern sys_t System; // system data
 __CONSTRUCTOR
 void port_sys_init( void );
 
-// return current system time in tick-less mode
-#if HW_TIMER_SIZE < 32 // because of CSMCC
-uint32_t port_sys_time( void );
-#endif
-
 /* -------------------------------------------------------------------------- */
 
 // initiate task 'tsk' for context switch
@@ -152,9 +147,14 @@ void core_tsk_remove( tsk_t *tsk ) { core_rdy_remove(tsk); }
 
 /* -------------------------------------------------------------------------- */
 
+// return current system time in tick-less mode
+#if HW_TIMER_SIZE < OS_TIMER_SIZE // because of CSMCC
+cnt_t port_sys_time( void );
+#endif
+
 // return current system time
 __STATIC_INLINE
-uint32_t core_sys_time( void )
+cnt_t core_sys_time( void )
 {
 #if HW_TIMER_SIZE == 0
 	return System.cnt;
@@ -167,8 +167,8 @@ uint32_t core_sys_time( void )
 __STATIC_INLINE
 void core_sys_tick( void )
 {
-#if HW_TIMER_SIZE < 32
-	System.cnt += 1UL << (HW_TIMER_SIZE);
+#if HW_TIMER_SIZE < OS_TIMER_SIZE
+	System.cnt += (cnt_t)(1) << (HW_TIMER_SIZE);
 #endif
 }
 

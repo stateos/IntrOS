@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    28.12.2017
+    @date    01.01.2018
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -106,9 +106,9 @@ void core_tsk_loop( void )
 
 void core_tsk_switch( void )
 {
-	uint32_t cnt;
-	tsk_t  * cur;
-	tmr_t  * tmr;
+	cnt_t  cnt;
+	tsk_t *cur;
+	tmr_t *tmr;
 
 	core_stk_assert();
 
@@ -127,7 +127,7 @@ void core_tsk_switch( void )
 		if (cur->id == ID_READY)
 			break;
 
-		if (cur->delay >= cnt - cur->start + 1)
+		if (cur->delay >= (cnt_t)(cnt - cur->start + 1))
 			continue;
 
 		if (cur->id == ID_DELAYED)
@@ -140,7 +140,7 @@ void core_tsk_switch( void )
 		{
 			port_isr_lock();
 
-			tmr = (tmr_t *) cur;
+			tmr = (tmr_t *)cur;
 			
 			tmr->start += tmr->delay;
 			tmr->delay  = tmr->period;

@@ -39,6 +39,7 @@ Features:
 - added tick-less mode for STM8S-Discovery board port
 - added tick-less mode for ATtiny817-Xplained-Mini board port
 - removed OS_TICKLESS definition, tick-less mode depends on OS_FREQUENCY value
+- os can work with 16, 32 or 64-bit timer counter
 ---------
 3.4
 - added startup files for cosmic compiler

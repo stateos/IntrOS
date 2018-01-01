@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.h
     @author  Rajmund Szymanski
-    @date    09.12.2017
+    @date    30.12.2017
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -49,9 +49,9 @@ struct __tmr
 	unsigned signal;
 
 	fun_t  * state; // callback procedure
-	uint32_t start;
-	uint32_t delay;
-	uint32_t period;
+	cnt_t    start;
+	cnt_t    delay;
+	cnt_t    period;
 };
 
 /******************************************************************************
@@ -332,7 +332,7 @@ void tmr_init( tmr_t *tmr, fun_t *state );
  *
  ******************************************************************************/
 
-void tmr_startUntil( tmr_t *tmr, uint32_t time );
+void tmr_startUntil( tmr_t *tmr, cnt_t time );
 
 /******************************************************************************
  *
@@ -354,7 +354,7 @@ void tmr_startUntil( tmr_t *tmr, uint32_t time );
  *
  ******************************************************************************/
 
-void tmr_start( tmr_t *tmr, uint32_t delay, uint32_t period );
+void tmr_start( tmr_t *tmr, cnt_t delay, cnt_t period );
 
 /******************************************************************************
  *
@@ -373,7 +373,7 @@ void tmr_start( tmr_t *tmr, uint32_t delay, uint32_t period );
  ******************************************************************************/
 
 __STATIC_INLINE
-void tmr_startFor( tmr_t *tmr, uint32_t delay ) { tmr_start(tmr, delay, 0); }
+void tmr_startFor( tmr_t *tmr, cnt_t delay ) { tmr_start(tmr, delay, 0); }
 
 /******************************************************************************
  *
@@ -393,7 +393,7 @@ void tmr_startFor( tmr_t *tmr, uint32_t delay ) { tmr_start(tmr, delay, 0); }
  ******************************************************************************/
 
 __STATIC_INLINE
-void tmr_startPeriodic( tmr_t *tmr, uint32_t period ) { tmr_start(tmr, period, period); }
+void tmr_startPeriodic( tmr_t *tmr, cnt_t period ) { tmr_start(tmr, period, period); }
 
 /******************************************************************************
  *
@@ -417,7 +417,7 @@ void tmr_startPeriodic( tmr_t *tmr, uint32_t period ) { tmr_start(tmr, period, p
  *
  ******************************************************************************/
 
-void tmr_startFrom( tmr_t *tmr, uint32_t delay, uint32_t period, fun_t *proc );
+void tmr_startFrom( tmr_t *tmr, cnt_t delay, cnt_t period, fun_t *proc );
 
 /******************************************************************************
  *
@@ -488,7 +488,7 @@ void tmr_flip( fun_t *proc ) { tmr_this()->state = proc; }
  ******************************************************************************/
 
 __STATIC_INLINE
-void tmr_delay( uint32_t delay ) { tmr_this()->delay = delay; }
+void tmr_delay( cnt_t delay ) { tmr_this()->delay = delay; }
 
 #ifdef __cplusplus
 }
@@ -522,20 +522,20 @@ struct Timer : public __tmr
 	 Timer( FUN_t _state ): __tmr _TMR_INIT(_state) {}
 	~Timer( void ) { assert(__tmr::id == ID_STOPPED); }
 #endif
-	void startUntil   ( uint32_t _time )                                  {        tmr_startUntil   (this, _time);                   }
-	void start        ( uint32_t _delay, uint32_t _period )               {        tmr_start        (this, _delay, _period);         }
-	void startFor     ( uint32_t _delay )                                 {        tmr_startFor     (this, _delay);                  }
-	void startPeriodic( uint32_t _period )                                {        tmr_startPeriodic(this,         _period);         }
+	void startUntil   ( cnt_t _time )                               {        tmr_startUntil   (this, _time);                   }
+	void start        ( cnt_t _delay, cnt_t _period )               {        tmr_start        (this, _delay, _period);         }
+	void startFor     ( cnt_t _delay )                              {        tmr_startFor     (this, _delay);                  }
+	void startPeriodic( cnt_t _period )                             {        tmr_startPeriodic(this,         _period);         }
 #if OS_FUNCTIONAL
-	void startFrom    ( uint32_t _delay, uint32_t _period, FUN_t _state ) {        fun_ = _state;
-	                                                                               tmr_startFrom    (this, _delay, _period, run_);   }
+	void startFrom    ( cnt_t _delay, cnt_t _period, FUN_t _state ) {        fun_ = _state;
+	                                                                         tmr_startFrom    (this, _delay, _period, run_);   }
 #else
-	void startFrom    ( uint32_t _delay, uint32_t _period, FUN_t _state ) {        tmr_startFrom    (this, _delay, _period, _state); }
+	void startFrom    ( cnt_t _delay, cnt_t _period, FUN_t _state ) {        tmr_startFrom    (this, _delay, _period, _state); }
 #endif
-	void     wait     ( void )                                            {        tmr_wait         (this);                          }
-	unsigned take     ( void )                                            { return tmr_take         (this);                          }
+	void     wait     ( void )                                      {        tmr_wait         (this);                          }
+	unsigned take     ( void )                                      { return tmr_take         (this);                          }
 
-	bool     operator!( void )                                            { return __tmr::id == ID_STOPPED;                          }
+	bool     operator!( void )                                      { return __tmr::id == ID_STOPPED;                          }
 #if OS_FUNCTIONAL
 	static
 	void     run_( void ) { ((Timer *) System.cur)->fun_(); }
@@ -559,9 +559,9 @@ struct Timer : public __tmr
 struct startTimerUntil : public Timer
 {
 	explicit
-	startTimerUntil( const uint32_t _time ):               Timer()       { tmr_startUntil(this, _time); }
+	startTimerUntil( const cnt_t _time ):               Timer()       { tmr_startUntil(this, _time); }
 	explicit
-	startTimerUntil( const uint32_t _time, FUN_t _state ): Timer(_state) { tmr_startUntil(this, _time); }
+	startTimerUntil( const cnt_t _time, FUN_t _state ): Timer(_state) { tmr_startUntil(this, _time); }
 };
 
 /******************************************************************************
@@ -586,9 +586,9 @@ struct startTimerUntil : public Timer
 struct startTimer : public Timer
 {
 	explicit
-	startTimer( const uint32_t _delay, const uint32_t _period ):               Timer()       { tmr_start(this, _delay, _period); }
+	startTimer( const cnt_t _delay, const cnt_t _period ):               Timer()       { tmr_start(this, _delay, _period); }
 	explicit
-	startTimer( const uint32_t _delay, const uint32_t _period, FUN_t _state ): Timer(_state) { tmr_start(this, _delay, _period); }
+	startTimer( const cnt_t _delay, const cnt_t _period, FUN_t _state ): Timer(_state) { tmr_start(this, _delay, _period); }
 };
 
 /******************************************************************************
@@ -609,9 +609,9 @@ struct startTimer : public Timer
 struct startTimerFor : public Timer
 {
 	explicit
-	startTimerFor( const uint32_t _delay ):               Timer()       { tmr_startFor(this, _delay); }
+	startTimerFor( const cnt_t _delay ):               Timer()       { tmr_startFor(this, _delay); }
 	explicit
-	startTimerFor( const uint32_t _delay, FUN_t _state ): Timer(_state) { tmr_startFor(this, _delay); }
+	startTimerFor( const cnt_t _delay, FUN_t _state ): Timer(_state) { tmr_startFor(this, _delay); }
 };
 
 /******************************************************************************
@@ -633,9 +633,9 @@ struct startTimerFor : public Timer
 struct startTimerPeriodic : public Timer
 {
 	explicit
-	startTimerPeriodic( const uint32_t _period ):               Timer()       { tmr_startPeriodic(this, _period); }
+	startTimerPeriodic( const cnt_t _period ):               Timer()       { tmr_startPeriodic(this, _period); }
 	explicit
-	startTimerPeriodic( const uint32_t _period, FUN_t _state ): Timer(_state) { tmr_startPeriodic(this, _period); }
+	startTimerPeriodic( const cnt_t _period, FUN_t _state ): Timer(_state) { tmr_startPeriodic(this, _period); }
 };
 
 /******************************************************************************
@@ -649,12 +649,12 @@ struct startTimerPeriodic : public Timer
 namespace ThisTimer
 {
 #if OS_FUNCTIONAL
-	static inline void flip ( FUN_t    _state ) { ((Timer *) System.cur)->fun_ = _state;
-	                                              tmr_flip (Timer::run_);                }
+	static inline void flip ( FUN_t _state ) { ((Timer *) System.cur)->fun_ = _state;
+	                                           tmr_flip (Timer::run_);                }
 #else
-	static inline void flip ( FUN_t    _state ) { tmr_flip (_state);                     }
+	static inline void flip ( FUN_t _state ) { tmr_flip (_state);                     }
 #endif
-	static inline void delay( uint32_t _delay ) { tmr_delay(_delay);                     }
+	static inline void delay( cnt_t _delay ) { tmr_delay(_delay);                     }
 }
 
 #endif//__cplusplus
