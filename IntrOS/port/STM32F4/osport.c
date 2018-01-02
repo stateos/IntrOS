@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.c
     @author  Rajmund Szymanski
-    @date    01.01.2018
+    @date    02.01.2018
     @brief   IntrOS port file for STM32F4 uC.
 
  ******************************************************************************
@@ -77,6 +77,9 @@ void port_sys_init( void )
 	NVIC_EnableIRQ(TIM2_IRQn);
 	#else
 	__ISB();
+	#endif
+	#if HW_TIMER_SIZE > OS_TIMER_SIZE
+	TIM2->ARR  = CNT_MAX;
 	#endif
 	TIM2->PSC  = (CPU_FREQUENCY)/(OS_FREQUENCY)/2-1;
 	TIM2->EGR  = TIM_EGR_UG;

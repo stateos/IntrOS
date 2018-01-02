@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.h
     @author  Rajmund Szymanski
-    @date    01.01.2018
+    @date    02.01.2018
     @brief   IntrOS port definitions for STM32F4 uC.
 
  ******************************************************************************
@@ -52,19 +52,21 @@ extern "C" {
 #endif
 
 /* -------------------------------------------------------------------------- */
+// !! WARNING! OS_TIMER_SIZE < HW_TIMER_SIZE can cause unexpected problems !!
 
 #ifndef OS_TIMER_SIZE
-#define OS_TIMER_SIZE        32 /* bit size of system timer counter */
+#define OS_TIMER_SIZE        32 /* bit size of system timer counter           */
 #endif
 
 /* -------------------------------------------------------------------------- */
+// !! WARNING! OS_TIMER_SIZE < HW_TIMER_SIZE can cause unexpected problems !!
 
 #ifdef  HW_TIMER_SIZE
 #error  HW_TIMER_SIZE is an internal os definition!
 #elif   OS_FREQUENCY > 1000 
-#define HW_TIMER_SIZE        32 /* bit size of hardware timer */
+#define HW_TIMER_SIZE        32 /* bit size of hardware timer                 */
 #else
-#define HW_TIMER_SIZE         0 /* os does not work in tick-less mode */
+#define HW_TIMER_SIZE         0 /* os does not work in tick-less mode         */
 #endif
 
 /* -------------------------------------------------------------------------- */
