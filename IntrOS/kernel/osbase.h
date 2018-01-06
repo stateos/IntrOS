@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    01.01.2018
+    @date    06.01.2018
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -56,6 +56,12 @@ typedef uint64_t     cnt_t;
 #define CNT_MAX  UINT64_MAX
 #else
 #error  Invalid OS_TIMER_SIZE value!
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+#if     HW_TIMER_SIZE > OS_TIMER_SIZE
+#error  HW_TIMER_SIZE > OS_TIMER_SIZE causes unexpected problems!
 #endif
 
 /* -------------------------------------------------------------------------- */
@@ -114,16 +120,16 @@ struct __sys
 #define MSEC       (cnt_t)((OS_FREQUENCY)/1000)
 #endif
 #if (OS_FREQUENCY) < (CNT_MAX)
-#define  SEC       (cnt_t)((OS_FREQUENCY))
+#define  SEC       ((cnt_t)(OS_FREQUENCY))
 #endif
 #if (OS_FREQUENCY) < (CNT_MAX)/60
-#define  MIN       (cnt_t)((OS_FREQUENCY)*60)
+#define  MIN       ((cnt_t)(OS_FREQUENCY)*60)
 #endif
 #if (OS_FREQUENCY) < (CNT_MAX)/3600
-#define HOUR       (cnt_t)((OS_FREQUENCY)*3600)
+#define HOUR       ((cnt_t)(OS_FREQUENCY)*3600)
 #endif
 #if (OS_FREQUENCY) < (CNT_MAX)/86400
-#define  DAY       (cnt_t)((OS_FREQUENCY)*86400)
+#define  DAY       ((cnt_t)(OS_FREQUENCY)*86400)
 #endif
 
 /* -------------------------------------------------------------------------- */
