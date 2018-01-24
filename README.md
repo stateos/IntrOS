@@ -37,4 +37,4 @@ ARM CM0(+), CM3, CM4(F), CM7
 
 ### License
 
-This project is licensed under the terms of [The MIT License (MIT)](https://opensource.org/licenses/MIT).
+This project is licensed under the terms of [the MIT License (MIT)](https://opensource.org/licenses/MIT).
