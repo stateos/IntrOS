@@ -27,6 +27,9 @@ Features:
 - all documentation is contained within the source files
 - examples and templates are in separate repositories (https://github.com/stateos)
 ---------
+3.6
+- changed license to MIT
+---------
 3.5
 - some preprocessor definitions have been changed
 - updated kernel files
