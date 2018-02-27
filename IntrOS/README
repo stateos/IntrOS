@@ -88,7 +88,7 @@ Features:
 2.9
 - changed tsk_suspend / tsk_resume functions
 - added tsk_suspend example
-- rebuilded port / core files
+- rebuilt port / core files
 - added support for ATtiny817-Xplained-Mini board
 ---------
 2.8
@@ -119,12 +119,12 @@ Features:
 - changed OS_DEF macro and added OS_NEW macro in os_tsk.h file
 - added changes in some definitions
 - context switch is realized by functions setjmp / longjmp
-- rebuilded kernel
+- rebuilt kernel
 ---------
 2.4
-- rebuilded internal preprocessor definitions
-- rebuilded data structures
-- rebuilded c++ classes
+- rebuilt internal preprocessor definitions
+- rebuilt data structures
+- rebuilt c++ classes
 - updated examples
 - added support for Small Device C Compiler
 ---------
