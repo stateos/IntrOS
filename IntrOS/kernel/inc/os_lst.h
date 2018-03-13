@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_lst.h
     @author  Rajmund Szymanski
-    @date    24.01.2018
+    @date    13.03.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -232,6 +232,27 @@ struct List : public __lst
 	void     wait( void **_data ) {        lst_wait(this, _data); }
 	unsigned take( void **_data ) { return lst_take(this, _data); }
 	void     give( void  *_data ) {        lst_give(this, _data); }
+};
+
+/******************************************************************************
+ *
+ * Class             : List
+ *
+ * Description       : create and initialize a list object
+ *
+ * Constructor parameters
+ *   T               : class of a list object
+ *
+ ******************************************************************************/
+
+template<class T>
+struct ListT : public List
+{
+	explicit
+	ListT( void ): List() {}
+
+	void     wait( T **_data ) {        lst_wait(this, reinterpret_cast<void **>(_data)); }
+	unsigned take( T **_data ) { return lst_take(this, reinterpret_cast<void **>(_data)); }
 };
 
 #endif
