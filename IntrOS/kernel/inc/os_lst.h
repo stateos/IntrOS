@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_lst.h
     @author  Rajmund Szymanski
-    @date    13.03.2018
+    @date    16.03.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -246,10 +246,10 @@ struct List : public __lst
  ******************************************************************************/
 
 template<class T>
-struct ListT : public List
+struct ListTT : public List
 {
 	explicit
-	ListT( void ): List() {}
+	ListTT( void ): List() {}
 
 	void     wait( T **_data ) {        lst_wait(this, reinterpret_cast<void **>(_data)); }
 	unsigned take( T **_data ) { return lst_take(this, reinterpret_cast<void **>(_data)); }

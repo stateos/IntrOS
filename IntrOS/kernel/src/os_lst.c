@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_lst.c
     @author  Rajmund Szymanski
-    @date    24.01.2018
+    @date    16.03.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -79,7 +79,7 @@ void lst_give( lst_t *lst, void *data )
 /* -------------------------------------------------------------------------- */
 {
 	que_t *ptr;
-	
+
 	assert(lst);
 	assert(data);
 
