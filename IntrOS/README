@@ -27,6 +27,11 @@ Features:
 - all documentation is contained within the source files
 - examples and templates are in separate repositories (https://github.com/stateos)
 ---------
+3.7
+- updated memory pool object
+- updated list object
+- updated examples
+---------
 3.6
 - changed license to MIT
 ---------
