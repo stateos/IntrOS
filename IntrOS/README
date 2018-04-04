@@ -31,6 +31,7 @@ Features:
 - updated memory pool object
 - updated list object
 - updated examples
+- updated kernel
 ---------
 3.6
 - changed license to MIT

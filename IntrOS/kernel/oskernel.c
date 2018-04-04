@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    24.01.2018
+    @date    04.04.2018
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -45,13 +45,13 @@ sys_t System = { .cur=&MAIN };
 
 /* -------------------------------------------------------------------------- */
 
-void core_rdy_insert( void *item, unsigned id, void *next )
+void core_rdy_insert( void *obj_, unsigned id )
 {
-	obj_t *obj = item;
-	obj_t *nxt = next;
-	obj_t *prv = nxt->prev;
+	tsk_t *obj = obj_;
+	tsk_t *nxt = System.cur;
+	tsk_t *prv = nxt->prev;
 
-	obj->id   = id;
+	obj->id = id;
 	obj->prev = prv;
 	obj->next = nxt;
 	nxt->prev = obj;
@@ -60,15 +60,15 @@ void core_rdy_insert( void *item, unsigned id, void *next )
 
 /* -------------------------------------------------------------------------- */
 
-void core_rdy_remove( void *item )
+void core_rdy_remove( void *obj_ )
 {
-	obj_t *obj = item;
-	obj_t *nxt = obj->next;
-	obj_t *prv = obj->prev;
+	tsk_t *obj = obj_;
+	tsk_t *nxt = obj->next;
+	tsk_t *prv = obj->prev;
 
+	obj->id = ID_STOPPED;
 	nxt->prev = prv;
 	prv->next = nxt;
-	obj->id   = ID_STOPPED;
 }
 
 /* -------------------------------------------------------------------------- */

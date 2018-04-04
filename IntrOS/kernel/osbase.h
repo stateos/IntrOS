@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    24.01.2018
+    @date    03.04.2018
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -83,21 +83,6 @@ struct __que
 {
 	que_t  * next; // next object in the queue
 };
-
-/* -------------------------------------------------------------------------- */
-
-// object (timer, task) header
-
-typedef struct __obj obj_t;
-
-struct __obj
-{
-	unsigned id;    // object's id: ID_STOPPED, ID_READY, ID_DELAYED, ID_TIMER
-	void   * prev;  // previous object (timer, task) in the READY queue
-	void   * next;  // next object (timer, task) in the READY queue
-};
-
-#define               _OBJ_INIT() { 0, 0, 0, 0, 0 }
 
 /* -------------------------------------------------------------------------- */
 
