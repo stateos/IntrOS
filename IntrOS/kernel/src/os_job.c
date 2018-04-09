@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_job.c
     @author  Rajmund Szymanski
-    @date    09.04.2018
+    @date    24.01.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -134,26 +134,6 @@ void job_send( job_t *job, fun_t *fun )
 /* -------------------------------------------------------------------------- */
 {
 	while (job_give(job, fun) != E_SUCCESS) core_ctx_switch();
-}
-
-/* -------------------------------------------------------------------------- */
-void job_pass( job_t *job, fun_t *fun )
-/* -------------------------------------------------------------------------- */
-{
-	assert(job);
-	assert(fun);
-
-	port_sys_lock();
-
-	while (job->count >= job->limit)
-	{
-		job->first = (job->first + 1) % job->limit;
-		job->count--;
-	}
-
-	priv_job_put(job, fun);
-
-	port_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */

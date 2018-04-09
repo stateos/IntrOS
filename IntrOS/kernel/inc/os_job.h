@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_job.h
     @author  Rajmund Szymanski
-    @date    09.04.2018
+    @date    24.01.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -258,23 +258,6 @@ void job_send( job_t *job, fun_t *fun );
 
 unsigned job_give( job_t *job, fun_t *fun );
 
-/******************************************************************************
- *
- * Name              : job_pass
- *
- * Description       : transfer job data to the job queue object,
- *                     remove the oldest job data if the job queue object is full
- *
- * Parameters
- *   job             : pointer to job queue object
- *   fun             : pointer to job procedure
- *
- * Return            : none
- *
- ******************************************************************************/
-
-void job_pass( job_t *job, fun_t *fun );
-
 #ifdef __cplusplus
 }
 #endif
@@ -308,7 +291,6 @@ struct baseJobQueue : public __box
 	unsigned take( void )       { FUN_t _fun; unsigned event = box_take(this, &_fun); if (event == E_SUCCESS) _fun(); return event; }
 	void     send( FUN_t _fun ) {                              box_send(this, &_fun);                                               }
 	unsigned give( FUN_t _fun ) {             unsigned event = box_give(this, &_fun);                                 return event; }
-	void     pass( FUN_t _fun ) {                              box_pass(this, &_fun);                                               }
 };
 
 #else
@@ -322,7 +304,6 @@ struct baseJobQueue : public __job
 	unsigned take( void )       { return job_take(this);       }
 	void     send( FUN_t _fun ) {        job_send(this, _fun); }
 	unsigned give( FUN_t _fun ) { return job_give(this, _fun); }
-	void     pass( FUN_t _fun ) {        job_pass(this, _fun); }
 };
 
 #endif
