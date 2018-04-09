@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_box.c
     @author  Rajmund Szymanski
-    @date    24.01.2018
+    @date    09.04.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -67,7 +67,7 @@ void priv_box_get( box_t *box, void *data )
 
 /* -------------------------------------------------------------------------- */
 static
-void priv_box_put( box_t *box, void *data )
+void priv_box_put( box_t *box, const void *data )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned i;
@@ -110,7 +110,7 @@ void box_wait( box_t *box, void *data )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned box_give( box_t *box, void *data )
+unsigned box_give( box_t *box, const void *data )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned event = E_FAILURE;
@@ -133,10 +133,30 @@ unsigned box_give( box_t *box, void *data )
 }
 
 /* -------------------------------------------------------------------------- */
-void box_send( box_t *box, void *data )
+void box_send( box_t *box, const void *data )
 /* -------------------------------------------------------------------------- */
 {
 	while (box_give(box, data) != E_SUCCESS) core_ctx_switch();
+}
+
+/* -------------------------------------------------------------------------- */
+void box_push( box_t *box, const void *data )
+/* -------------------------------------------------------------------------- */
+{
+	assert(box);
+	assert(data);
+
+	port_sys_lock();
+
+	while (box->count >= box->limit)
+	{
+		box->first = (box->first + 1) % box->limit;
+		box->count--;
+	}
+
+	priv_box_put(box, data);
+
+	port_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
