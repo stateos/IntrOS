@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_msg.c
     @author  Rajmund Szymanski
-    @date    24.01.2018
+    @date    09.04.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -129,6 +129,26 @@ void msg_send( msg_t *msg, unsigned data )
 /* -------------------------------------------------------------------------- */
 {
 	while (msg_give(msg, data) != E_SUCCESS) core_ctx_switch();
+}
+
+/* -------------------------------------------------------------------------- */
+void msg_pass( msg_t *msg, unsigned data )
+/* -------------------------------------------------------------------------- */
+{
+	assert(msg);
+	assert(data);
+
+	port_sys_lock();
+
+	while (msg->count >= msg->limit)
+	{
+		msg->first = (msg->first + 1) % msg->limit;
+		msg->count--;
+	}
+
+	priv_msg_put(msg, data);
+
+	port_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */

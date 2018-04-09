@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_msg.h
     @author  Rajmund Szymanski
-    @date    24.01.2018
+    @date    09.04.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -260,6 +260,23 @@ void msg_send( msg_t *msg, unsigned data );
 
 unsigned msg_give( msg_t *msg, unsigned data );
 
+/******************************************************************************
+ *
+ * Name              : msg_pass
+ *
+ * Description       : transfer message data to the message queue object,
+ *                     remove the oldest message data if the message queue object is full
+ *
+ * Parameters
+ *   msg             : pointer to message queue object
+ *   data            : message data
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
+
+void msg_pass( msg_t *msg, unsigned data );
+
 #ifdef __cplusplus
 }
 #endif
@@ -291,6 +308,7 @@ struct baseMessageQueue : public __msg
 	unsigned take( unsigned*_data ) { return msg_take(this, _data); }
 	void     send( unsigned _data ) {        msg_send(this, _data); }
 	unsigned give( unsigned _data ) { return msg_give(this, _data); }
+	void     pass( unsigned _data ) {        msg_pass(this, _data); }
 };
 
 /******************************************************************************
