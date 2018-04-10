@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_box.c
     @author  Rajmund Szymanski
-    @date    09.04.2018
+    @date    10.04.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -148,13 +148,13 @@ void box_push( box_t *box, const void *data )
 
 	port_sys_lock();
 
-	while (box->count >= box->limit)
-	{
-		box->first = (box->first + 1) % box->limit;
-		box->count--;
-	}
-
 	priv_box_put(box, data);
+
+	if (box->count > box->limit)
+	{
+		box->count = box->limit;
+		box->first = box->next;
+	}
 
 	port_sys_unlock();
 }

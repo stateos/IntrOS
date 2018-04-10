@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_msg.c
     @author  Rajmund Szymanski
-    @date    09.04.2018
+    @date    10.04.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -140,13 +140,13 @@ void msg_push( msg_t *msg, unsigned data )
 
 	port_sys_lock();
 
-	while (msg->count >= msg->limit)
-	{
-		msg->first = (msg->first + 1) % msg->limit;
-		msg->count--;
-	}
-
 	priv_msg_put(msg, data);
+
+	if (msg->count > msg->limit)
+	{
+		msg->count = msg->limit;
+		msg->first = msg->next;
+	}
 
 	port_sys_unlock();
 }
