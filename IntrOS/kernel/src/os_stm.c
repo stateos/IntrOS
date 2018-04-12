@@ -1,8 +1,8 @@
 /******************************************************************************
 
-    @file    IntrOS: os_box.c
+    @file    IntrOS: os_stm.c
     @author  Rajmund Szymanski
-    @date    11.04.2018
+    @date    12.04.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -29,134 +29,128 @@
 
  ******************************************************************************/
 
-#include "inc/os_box.h"
+#include "inc/os_stm.h"
 
 /* -------------------------------------------------------------------------- */
-void box_init( box_t *box, unsigned limit, unsigned size, void *data )
+void stm_init( stm_t *stm, unsigned limit, void *data )
 /* -------------------------------------------------------------------------- */
 {
-	assert(box);
+	assert(stm);
 	assert(limit);
-	assert(size);
 	assert(data);
 
 	port_sys_lock();
 
-	memset(box, 0, sizeof(box_t));
-	
-	box->limit = limit;
-	box->size  = size;
-	box->data  = data;
+	memset(stm, 0, sizeof(stm_t));
+
+	stm->limit = limit;
+	stm->data  = data;
 
 	port_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
 static
-void priv_box_get( box_t *box, char *data )
+void priv_stm_get( stm_t *stm, char *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned i;
-	char   * buf = box->data + box->size * box->first;
-
-	for (i = 0; i < box->size; i++) data[i] = buf[i];
-
-	box->first = (box->first + 1) % box->limit;
-	box->count--;
+	while (size)
+	{
+		*data++ = stm->data[stm->first++];
+		if (stm->first >= stm->limit)
+			stm->first = 0;
+		stm->count--;
+		size--;
+	}
 }
 
 /* -------------------------------------------------------------------------- */
 static
-void priv_box_put( box_t *box, char *data )
+void priv_stm_put( stm_t *stm, char *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned i;
-	char   * buf = box->data + box->size * box->next;
-
-	for (i = 0; i < box->size; i++) buf[i] = data[i];
-
-	box->next = (box->next + 1) % box->limit;
-	box->count++;
+	while (size)
+	{
+		stm->data[stm->next++] = *data++;
+		if (stm->next >= stm->limit)
+			stm->next = 0;
+		stm->count++;
+		size--;
+	}
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned box_take( box_t *box, void *data )
+unsigned stm_take( stm_t *stm, void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event = E_FAILURE;
-
-	assert(box);
+	assert(stm);
 	assert(data);
 
 	port_sys_lock();
 
-	if (box->count > 0)
-	{
-		priv_box_get(box, data);
-
-		event = E_SUCCESS;
-	}
+	if (size > stm->count)
+		size = stm->count;
+		
+	priv_stm_get(stm, data, size);
 
 	port_sys_unlock();
 
-	return event;
+	return size;
 }
 
 /* -------------------------------------------------------------------------- */
-void box_wait( box_t *box, void *data )
+void stm_wait( stm_t *stm, void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	while (box_take(box, data) != E_SUCCESS) core_ctx_switch();
+	unsigned len;
+
+	for (;;)
+	{
+		len = stm_take(stm, data, size);
+		data = (char *)data + len;
+		size -= len;
+
+		if (size == 0) break;
+
+		core_ctx_switch();
+	}
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned box_give( box_t *box, void *data )
+unsigned stm_give( stm_t *stm, void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event = E_FAILURE;
-
-	assert(box);
+	assert(stm);
 	assert(data);
 
 	port_sys_lock();
 
-	if (box->count < box->limit)
-	{
-		priv_box_put(box, data);
-
-		event = E_SUCCESS;
-	}
+	if (size > stm->limit - stm->count)
+		size = stm->limit - stm->count;
+		
+	priv_stm_put(stm, data, size);
 
 	port_sys_unlock();
 
-	return event;
+	return size;
 }
 
 /* -------------------------------------------------------------------------- */
-void box_send( box_t *box, void *data )
+void stm_send( stm_t *stm, void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	while (box_give(box, data) != E_SUCCESS) core_ctx_switch();
-}
+	unsigned len;
 
-/* -------------------------------------------------------------------------- */
-void box_push( box_t *box, void *data )
-/* -------------------------------------------------------------------------- */
-{
-	assert(box);
-	assert(data);
-
-	port_sys_lock();
-
-	priv_box_put(box, data);
-
-	if (box->count > box->limit)
+	for (;;)
 	{
-		box->count = box->limit;
-		box->first = box->next;
-	}
+		len = stm_give(stm, data, size);
+		data = (char *)data + len;
+		size -= len;
 
-	port_sys_unlock();
+		if (size == 0) break;
+
+		core_ctx_switch();
+	}
 }
 
 /* -------------------------------------------------------------------------- */
