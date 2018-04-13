@@ -51,51 +51,59 @@ void stm_init( stm_t *stm, unsigned limit, void *data )
 
 /* -------------------------------------------------------------------------- */
 static
-void priv_stm_get( stm_t *stm, char *data, unsigned size )
+unsigned priv_stm_get( stm_t *stm, char *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	while (size)
+	unsigned i = 0;
+	
+	while (size > 0 && stm->count > 0)
 	{
-		*data++ = stm->data[stm->first++];
+		data[i++] = stm->data[stm->first++];
 		if (stm->first >= stm->limit)
 			stm->first = 0;
-		stm->count--;
 		size--;
+		stm->count--;
 	}
+
+	return i;
 }
 
 /* -------------------------------------------------------------------------- */
 static
-void priv_stm_put( stm_t *stm, const char *data, unsigned size )
+unsigned priv_stm_put( stm_t *stm, const char *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	while (size)
+	unsigned i = 0;
+
+	while (size > 0 && stm->count < stm->limit)
 	{
-		stm->data[stm->next++] = *data++;
+		stm->data[stm->next++] = data[i++];
 		if (stm->next >= stm->limit)
 			stm->next = 0;
-		stm->count++;
 		size--;
+		stm->count++;
 	}
+
+	return i;
 }
 
 /* -------------------------------------------------------------------------- */
 unsigned stm_take( stm_t *stm, void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
+	unsigned len = 0;
+
 	assert(stm);
 	assert(data);
 
 	port_sys_lock();
 
-	if (size > stm->count)
-		size = stm->count;
-		
-	priv_stm_get(stm, data, size);
+	if (stm->rdr == 0)
+		len = priv_stm_get(stm, data, size);
 
 	port_sys_unlock();
 
-	return size;
+	return len;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -104,9 +112,17 @@ void stm_wait( stm_t *stm, void *data, unsigned size )
 {
 	unsigned len;
 
+	assert(stm);
+	assert(data);
+
+	port_sys_lock();
+
+	while (stm->rdr) core_ctx_switch();
+	stm->rdr = true;
+	
 	for (;;)
 	{
-		len = stm_take(stm, data, size);
+		len = priv_stm_get(stm, data, size);
 		data = (char *)data + len;
 		size -= len;
 
@@ -114,25 +130,29 @@ void stm_wait( stm_t *stm, void *data, unsigned size )
 
 		core_ctx_switch();
 	}
+
+	stm->rdr = false;
+
+	port_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
 unsigned stm_give( stm_t *stm, const void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
+	unsigned len = 0;
+
 	assert(stm);
 	assert(data);
 
 	port_sys_lock();
 
-	if (size > stm->limit - stm->count)
-		size = stm->limit - stm->count;
-		
-	priv_stm_put(stm, data, size);
+	if (stm->rdr == 0)
+		len = priv_stm_put(stm, data, size);
 
 	port_sys_unlock();
 
-	return size;
+	return len;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -141,16 +161,28 @@ void stm_send( stm_t *stm, const void *data, unsigned size )
 {
 	unsigned len;
 
+	assert(stm);
+	assert(data);
+
+	port_sys_lock();
+
+	while (stm->wtr) core_ctx_switch();
+	stm->wtr = true;
+	
 	for (;;)
 	{
-		len = stm_give(stm, data, size);
-		data = (char *)data + len;
+		len = priv_stm_put(stm, data, size);
+		data = (const char *)data + len;
 		size -= len;
 
 		if (size == 0) break;
 
 		core_ctx_switch();
 	}
+
+	stm->wtr = false;
+
+	port_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */

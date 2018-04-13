@@ -55,7 +55,8 @@ struct __stm
 	unsigned next;  // next element to write into buffer
 	char   * data;  // buffer data
 
-	tsk_t  * owner; // stream buffer owner
+	bool     rdr;   // stream buffer reader
+	bool     wtr;   // stream buffer writer
 };
 
 /******************************************************************************
@@ -74,7 +75,7 @@ struct __stm
  *
  ******************************************************************************/
 
-#define               _STM_INIT( _limit, _data ) { 0, _limit, 0, 0, _data, 0 }
+#define               _STM_INIT( _limit, _data ) { 0, _limit, 0, 0, _data, false, false }
 
 /******************************************************************************
  *
