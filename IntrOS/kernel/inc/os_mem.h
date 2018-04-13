@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_mem.h
     @author  Rajmund Szymanski
-    @date    24.01.2018
+    @date    13.04.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -261,7 +261,7 @@ unsigned mem_take( mem_t *mem, void **data );
  *
  ******************************************************************************/
 
-void mem_give( mem_t *mem, void *data );
+void mem_give( mem_t *mem, const void *data );
 
 #ifdef __cplusplus
 }
@@ -291,9 +291,9 @@ struct baseMemoryPool : public __mem
 	explicit
 	baseMemoryPool( const unsigned _limit, const unsigned _size, void * const _data ): __mem _MEM_INIT(_limit, _size, _data) { mem_bind(this); }
 
-	void     wait( void **_data ) {        mem_wait(this, _data); }
-	unsigned take( void **_data ) { return mem_take(this, _data); }
-	void     give( void  *_data ) {        mem_give(this, _data); }
+	void     wait(       void **_data ) {        mem_wait(this, _data); }
+	unsigned take(       void **_data ) { return mem_take(this, _data); }
+	void     give( const void  *_data ) {        mem_give(this, _data); }
 };
 
 /******************************************************************************

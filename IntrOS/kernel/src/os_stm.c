@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_stm.c
     @author  Rajmund Szymanski
-    @date    12.04.2018
+    @date    13.04.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -66,7 +66,7 @@ void priv_stm_get( stm_t *stm, char *data, unsigned size )
 
 /* -------------------------------------------------------------------------- */
 static
-void priv_stm_put( stm_t *stm, char *data, unsigned size )
+void priv_stm_put( stm_t *stm, const char *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
 	while (size)
@@ -117,7 +117,7 @@ void stm_wait( stm_t *stm, void *data, unsigned size )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned stm_give( stm_t *stm, void *data, unsigned size )
+unsigned stm_give( stm_t *stm, const void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
 	assert(stm);
@@ -136,7 +136,7 @@ unsigned stm_give( stm_t *stm, void *data, unsigned size )
 }
 
 /* -------------------------------------------------------------------------- */
-void stm_send( stm_t *stm, void *data, unsigned size )
+void stm_send( stm_t *stm, const void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned len;

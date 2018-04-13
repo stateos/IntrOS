@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_box.h
     @author  Rajmund Szymanski
-    @date    11.04.2018
+    @date    13.04.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -246,7 +246,7 @@ unsigned box_take( box_t *box, void *data );
  *
  ******************************************************************************/
 
-void box_send( box_t *box, void *data );
+void box_send( box_t *box, const void *data );
 
 /******************************************************************************
  *
@@ -265,7 +265,7 @@ void box_send( box_t *box, void *data );
  *
  ******************************************************************************/
 
-unsigned box_give( box_t *box, void *data );
+unsigned box_give( box_t *box, const void *data );
 
 /******************************************************************************
  *
@@ -282,7 +282,7 @@ unsigned box_give( box_t *box, void *data );
  *
  ******************************************************************************/
 
-void box_push( box_t *box, void *data );
+void box_push( box_t *box, const void *data );
 
 #ifdef __cplusplus
 }
@@ -312,11 +312,11 @@ struct baseMailBoxQueue : public __box
 	explicit
 	baseMailBoxQueue( const unsigned _limit, const unsigned _size, char * const _data ): __box _BOX_INIT(_limit, _size, _data) {}
 
-	void     wait( void *_data ) {        box_wait(this, _data); }
-	unsigned take( void *_data ) { return box_take(this, _data); }
-	void     send( void *_data ) {        box_send(this, _data); }
-	unsigned give( void *_data ) { return box_give(this, _data); }
-	void     push( void *_data ) {        box_push(this, _data); }
+	void     wait(       void *_data ) {        box_wait(this, _data); }
+	unsigned take(       void *_data ) { return box_take(this, _data); }
+	void     send( const void *_data ) {        box_send(this, _data); }
+	unsigned give( const void *_data ) { return box_give(this, _data); }
+	void     push( const void *_data ) {        box_push(this, _data); }
 };
 
 /******************************************************************************

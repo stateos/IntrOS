@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_stm.h
     @author  Rajmund Szymanski
-    @date    12.04.2018
+    @date    13.04.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -54,6 +54,8 @@ struct __stm
 	unsigned first; // first element to read from buffer
 	unsigned next;  // next element to write into buffer
 	char   * data;  // buffer data
+
+	tsk_t  * owner; // stream buffer owner
 };
 
 /******************************************************************************
@@ -72,7 +74,7 @@ struct __stm
  *
  ******************************************************************************/
 
-#define               _STM_INIT( _limit, _data ) { 0, _limit, 0, 0, _data }
+#define               _STM_INIT( _limit, _data ) { 0, _limit, 0, 0, _data, 0 }
 
 /******************************************************************************
  *
@@ -239,7 +241,7 @@ unsigned stm_take( stm_t *stm, void *data, unsigned size );
  *
  ******************************************************************************/
 
-void stm_send( stm_t *stm, void *data, unsigned size );
+void stm_send( stm_t *stm, const void *data, unsigned size );
 
 /******************************************************************************
  *
@@ -257,7 +259,7 @@ void stm_send( stm_t *stm, void *data, unsigned size );
  *
  ******************************************************************************/
 
-unsigned stm_give( stm_t *stm, void *data, unsigned size );
+unsigned stm_give( stm_t *stm, const void *data, unsigned size );
 
 #ifdef __cplusplus
 }
@@ -286,10 +288,10 @@ struct baseStreamBuffer : public __stm
 	explicit
 	baseStreamBuffer( const unsigned _limit, char * const _data ): __stm _STM_INIT(_limit, _data) {}
 
-	void     wait( void *_data, unsigned _size ) {        stm_wait(this, _data, _size); }
-	unsigned take( void *_data, unsigned _size ) { return stm_take(this, _data, _size); }
-	void     send( void *_data, unsigned _size ) {        stm_send(this, _data, _size); }
-	unsigned give( void *_data, unsigned _size ) { return stm_give(this, _data, _size); }
+	void     wait(       void *_data, unsigned _size ) {        stm_wait(this, _data, _size); }
+	unsigned take(       void *_data, unsigned _size ) { return stm_take(this, _data, _size); }
+	void     send( const void *_data, unsigned _size ) {        stm_send(this, _data, _size); }
+	unsigned give( const void *_data, unsigned _size ) { return stm_give(this, _data, _size); }
 };
 
 /******************************************************************************

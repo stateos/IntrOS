@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_lst.h
     @author  Rajmund Szymanski
-    @date    16.03.2018
+    @date    13.04.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -203,7 +203,7 @@ unsigned lst_take( lst_t *lst, void **data );
  *
  ******************************************************************************/
 
-void lst_give( lst_t *lst, void *data );
+void lst_give( lst_t *lst, const void *data );
 
 #ifdef __cplusplus
 }
@@ -229,9 +229,9 @@ struct List : public __lst
 	explicit
 	List( void ): __lst _LST_INIT() {}
 
-	void     wait( void **_data ) {        lst_wait(this, _data); }
-	unsigned take( void **_data ) { return lst_take(this, _data); }
-	void     give( void  *_data ) {        lst_give(this, _data); }
+	void     wait(       void **_data ) {        lst_wait(this, _data); }
+	unsigned take(       void **_data ) { return lst_take(this, _data); }
+	void     give( const void  *_data ) {        lst_give(this, _data); }
 };
 
 /******************************************************************************

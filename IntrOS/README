@@ -30,6 +30,7 @@ Features:
 3.8
 - added stream buffer object
 - updated examples
+- updated const qualifiers
 ---------
 3.7
 - updated memory pool object

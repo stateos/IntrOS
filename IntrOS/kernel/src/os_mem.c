@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_mem.c
     @author  Rajmund Szymanski
-    @date    16.03.2018
+    @date    13.04.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -110,7 +110,7 @@ void mem_wait( mem_t *mem, void **data )
 }
 
 /* -------------------------------------------------------------------------- */
-void mem_give( mem_t *mem, void *data )
+void mem_give( mem_t *mem, const void *data )
 /* -------------------------------------------------------------------------- */
 {
 	que_t *ptr;

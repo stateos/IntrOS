@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_lst.c
     @author  Rajmund Szymanski
-    @date    16.03.2018
+    @date    13.04.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -75,7 +75,7 @@ void lst_wait( lst_t *lst, void **data )
 }
 
 /* -------------------------------------------------------------------------- */
-void lst_give( lst_t *lst, void *data )
+void lst_give( lst_t *lst, const void *data )
 /* -------------------------------------------------------------------------- */
 {
 	que_t *ptr;
