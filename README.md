@@ -23,6 +23,7 @@ There's a dedicated function for immediate change the task state.
 - mutexes
 - condition variables
 - memory pools
+- stream buffers
 - message queues
 - mailbox queues
 - job queues

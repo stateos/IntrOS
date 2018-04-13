@@ -19,6 +19,7 @@ Features:
 - mutexes
 - condition variables
 - memory pools
+- stream buffers
 - message queues
 - mailbox queues
 - job queues
