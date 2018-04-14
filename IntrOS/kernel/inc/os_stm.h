@@ -322,7 +322,7 @@ struct baseStreamBuffer : public __stm
 	baseStreamBuffer( const unsigned _limit, char * const _data ): __stm _STM_INIT(_limit, _data) {}
 
 	unsigned count( void )                              { return stm_count(this);               }
-	unsigned space( void )                              { return stm space(this);               }
+	unsigned space( void )                              { return stm_space(this);               }
 	void     wait (       void *_data, unsigned _size ) {        stm_wait (this, _data, _size); }
 	unsigned take (       void *_data, unsigned _size ) { return stm_take (this, _data, _size); }
 	void     send ( const void *_data, unsigned _size ) {        stm_send (this, _data, _size); }
