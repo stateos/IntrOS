@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_stm.h
     @author  Rajmund Szymanski
-    @date    13.04.2018
+    @date    14.04.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -192,6 +192,38 @@ void stm_init( stm_t *stm, unsigned limit, void *data );
 
 /******************************************************************************
  *
+ * Name              : stm_count
+ *
+ * Description       : return the amount of data contained in the stream buffer
+ *
+ * Parameters
+ *   stm             : pointer to stream buffer object
+ *
+ * Return            : amount of data contained in the stream buffer
+ *
+ ******************************************************************************/
+
+__STATIC_INLINE
+unsigned stm_count( stm_t *stm ) { return stm->count; }
+
+/******************************************************************************
+ *
+ * Name              : stm_space
+ *
+ * Description       : return the amount of free space in the stream buffer
+ *
+ * Parameters
+ *   stm             : pointer to stream buffer object
+ *
+ * Return            : amount of free space in the stream buffer
+ *
+ ******************************************************************************/
+
+__STATIC_INLINE
+unsigned stm_space( stm_t *stm ) { return stm->limit - stm->count; }
+
+/******************************************************************************
+ *
  * Name              : stm_wait
  *
  * Description       : try to transfer data from the stream buffer object,
@@ -289,10 +321,12 @@ struct baseStreamBuffer : public __stm
 	explicit
 	baseStreamBuffer( const unsigned _limit, char * const _data ): __stm _STM_INIT(_limit, _data) {}
 
-	void     wait(       void *_data, unsigned _size ) {        stm_wait(this, _data, _size); }
-	unsigned take(       void *_data, unsigned _size ) { return stm_take(this, _data, _size); }
-	void     send( const void *_data, unsigned _size ) {        stm_send(this, _data, _size); }
-	unsigned give( const void *_data, unsigned _size ) { return stm_give(this, _data, _size); }
+	unsigned count( void )                              { return stm_count(this);               }
+	unsigned space( void )                              { return stm space(this);               }
+	void     wait (       void *_data, unsigned _size ) {        stm_wait (this, _data, _size); }
+	unsigned take (       void *_data, unsigned _size ) { return stm_take (this, _data, _size); }
+	void     send ( const void *_data, unsigned _size ) {        stm_send (this, _data, _size); }
+	unsigned give ( const void *_data, unsigned _size ) { return stm_give (this, _data, _size); }
 };
 
 /******************************************************************************
