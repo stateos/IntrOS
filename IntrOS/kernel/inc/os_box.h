@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_box.h
     @author  Rajmund Szymanski
-    @date    13.04.2018
+    @date    15.04.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -65,8 +65,8 @@ struct __box
  *
  * Parameters
  *   limit           : size of a queue (max number of stored mails)
- *   size            : size of a single mail (in bytes)
  *   data            : mailbox queue data buffer
+ *   size            : size of a single mail (in bytes)
  *
  * Return            : mailbox queue object
  *
@@ -74,7 +74,7 @@ struct __box
  *
  ******************************************************************************/
 
-#define               _BOX_INIT( _limit, _size, _data ) { 0, _limit, 0, 0, _data, _size }
+#define               _BOX_INIT( _limit, _data, _size ) { 0, _limit, 0, 0, _data, _size }
 
 /******************************************************************************
  *
@@ -111,7 +111,7 @@ struct __box
 
 #define             OS_BOX( box, limit, size )                                \
                        char box##__buf[limit*size];                            \
-                       box_t box##__box = _BOX_INIT( limit, size, box##__buf ); \
+                       box_t box##__box = _BOX_INIT( limit, box##__buf, size ); \
                        box_id box = & box##__box
 
 /******************************************************************************
@@ -129,7 +129,7 @@ struct __box
 
 #define         static_BOX( box, limit, size )                                \
                 static char box##__buf[limit*size];                            \
-                static box_t box##__box = _BOX_INIT( limit, size, box##__buf ); \
+                static box_t box##__box = _BOX_INIT( limit, box##__buf, size ); \
                 static box_id box = & box##__box
 
 /******************************************************************************
@@ -150,7 +150,7 @@ struct __box
 
 #ifndef __cplusplus
 #define                BOX_INIT( limit, size ) \
-                      _BOX_INIT( limit, size, _BOX_DATA( limit, size ) )
+                      _BOX_INIT( limit, _BOX_DATA( limit, size ), size )
 #endif
 
 /******************************************************************************
@@ -186,14 +186,14 @@ struct __box
  * Parameters
  *   box             : pointer to mailbox queue object
  *   limit           : size of a queue (max number of stored mails)
- *   size            : size of a single mail (in bytes)
  *   data            : mailbox queue data buffer
+ *   size            : size of a single mail (in bytes)
  *
  * Return            : none
  *
  ******************************************************************************/
 
-void box_init( box_t *box, unsigned limit, unsigned size, void *data );
+void box_init( box_t *box, unsigned limit, void *data, unsigned size );
 
 /******************************************************************************
  *
@@ -300,8 +300,8 @@ void box_push( box_t *box, const void *data );
  *
  * Constructor parameters
  *   limit           : size of a queue (max number of stored mails)
- *   size            : size of a single mail (in bytes)
  *   data            : mailbox queue data buffer
+ *   size            : size of a single mail (in bytes)
  *
  * Note              : for internal use
  *
@@ -310,7 +310,7 @@ void box_push( box_t *box, const void *data );
 struct baseMailBoxQueue : public __box
 {
 	explicit
-	baseMailBoxQueue( const unsigned _limit, const unsigned _size, char * const _data ): __box _BOX_INIT(_limit, _size, _data) {}
+	baseMailBoxQueue( const unsigned _limit, char * const _data, const unsigned _size ): __box _BOX_INIT(_limit, _data, _size) {}
 
 	void     wait(       void *_data ) {        box_wait(this, _data); }
 	unsigned take(       void *_data ) { return box_take(this, _data); }
@@ -335,7 +335,7 @@ template<unsigned _limit, unsigned _size>
 struct MailBoxQueueT : public baseMailBoxQueue
 {
 	explicit
-	MailBoxQueueT( void ): baseMailBoxQueue(_limit, _size, data_) {}
+	MailBoxQueueT( void ): baseMailBoxQueue(_limit, data_, _size) {}
 
 	private:
 	char data_[_limit * _size];
@@ -354,10 +354,13 @@ struct MailBoxQueueT : public baseMailBoxQueue
  ******************************************************************************/
 
 template<unsigned _limit, class T>
-struct MailBoxQueueTT : public MailBoxQueueT<_limit, sizeof(T)>
+struct MailBoxQueueTT : public baseMailBoxQueue
 {
 	explicit
-	MailBoxQueueTT( void ): MailBoxQueueT<_limit, sizeof(T)>() {}
+	MailBoxQueueTT( void ): baseMailBoxQueue(_limit, reinterpret_cast<char *>(data_), sizeof(T)) {}
+
+	private:
+	T data_[_limit];
 };
 
 #endif

@@ -32,6 +32,7 @@ Features:
 - added stream buffer object
 - updated examples
 - updated const qualifiers
+- changed syntax of box_init function
 ---------
 3.7
 - updated memory pool object

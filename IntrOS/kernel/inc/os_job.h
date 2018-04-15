@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_job.h
     @author  Rajmund Szymanski
-    @date    09.04.2018
+    @date    15.04.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -302,7 +302,7 @@ void job_push( job_t *job, fun_t *fun );
 struct baseJobQueue : public __box
 {
 	explicit
-	baseJobQueue( const unsigned _limit, FUN_t * const _data ): __box _BOX_INIT( _limit, sizeof(FUN_t), reinterpret_cast<char *>(_data) ) {}
+	baseJobQueue( const unsigned _limit, FUN_t * const _data ): __box _BOX_INIT( _limit, reinterpret_cast<char *>(_data), sizeof(FUN_t) ) {}
 
 	void     wait( void )       { FUN_t _fun;                  box_wait(this, &_fun);                         _fun();               }
 	unsigned take( void )       { FUN_t _fun; unsigned event = box_take(this, &_fun); if (event == E_SUCCESS) _fun(); return event; }
