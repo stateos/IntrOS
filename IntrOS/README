@@ -33,6 +33,7 @@ Features:
 - updated examples
 - updated const qualifiers
 - changed syntax of box_init function
+- updated kernel
 ---------
 3.7
 - updated memory pool object

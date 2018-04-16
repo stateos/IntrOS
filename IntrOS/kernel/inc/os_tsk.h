@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tsk.h
     @author  Rajmund Szymanski
-    @date    03.04.2018
+    @date    16.04.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -46,9 +46,9 @@ extern "C" {
 
 struct __tsk
 {
-	unsigned id;    // task's id: ID_STOPPED, ID_READY, ID_DELAYED
 	tsk_t  * prev;  // previous task in the READY queue
 	tsk_t  * next;  // next task in the READY queue
+	unsigned id;    // task's id: ID_STOPPED, ID_READY, ID_DELAYED
 	unsigned event; // wakeup event
 
 	fun_t  * state; // inherited from timer

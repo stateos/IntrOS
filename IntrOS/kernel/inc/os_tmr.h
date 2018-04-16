@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.h
     @author  Rajmund Szymanski
-    @date    03.04.2018
+    @date    16.04.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -46,9 +46,9 @@ extern "C" {
 
 struct __tmr
 {
-	unsigned id;    // timers's id: ID_STOPPED, ID_DELAYED, ID_TIMER
 	tmr_t  * prev;  // previous timer in the READY queue
 	tmr_t  * next;  // next timer in the READY queue
+	unsigned id;    // timers's id: ID_STOPPED, ID_DELAYED, ID_TIMER
 	unsigned signal;
 
 	fun_t  * state; // callback procedure
