@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_box.c
     @author  Rajmund Szymanski
-    @date    15.04.2018
+    @date    16.04.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -56,12 +56,12 @@ static
 void priv_box_get( box_t *box, char *data )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned i;
 	char   * buf = box->data + box->size * box->first;
+	unsigned cnt = box->size - 1;
 
-	for (i = 0; i < box->size; i++) data[i] = buf[i];
+	do data[cnt] = buf[cnt]; while (cnt--);
 
-	box->first = (box->first + 1) % box->limit;
+	box->first = (box->first + 1 < box->limit) ? box->first + 1 : 0;
 	box->count--;
 }
 
@@ -70,12 +70,12 @@ static
 void priv_box_put( box_t *box, const char *data )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned i;
 	char   * buf = box->data + box->size * box->next;
+	unsigned cnt = box->size - 1;
 
-	for (i = 0; i < box->size; i++) buf[i] = data[i];
+	do buf[cnt] = data[cnt]; while (cnt--);
 
-	box->next = (box->next + 1) % box->limit;
+	box->next = (box->next + 1 < box->limit) ? box->next + 1 : 0;
 	box->count++;
 }
 
