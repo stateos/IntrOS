@@ -50,7 +50,7 @@ struct __tsk
 	unsigned id;    // task's id: ID_STOPPED, ID_READY, ID_DELAYED
 	unsigned event; // wakeup event
 
-	fun_t  * state; // inherited from timer
+	fun_t  * state; // task state (initial task function, doesn't have to be noreturn-type)
 	cnt_t    start; // inherited from timer
 	cnt_t    delay; // inherited from timer
 	cnt_t    period;// inherited from timer
