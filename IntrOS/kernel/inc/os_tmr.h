@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_tmr.h
     @author  Rajmund Szymanski
-    @date    16.04.2018
+    @date    17.04.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -46,8 +46,7 @@ extern "C" {
 
 struct __tmr
 {
-	tmr_t  * prev;  // previous timer in the READY queue
-	tmr_t  * next;  // next timer in the READY queue
+	obj_t    obj;   // object header
 	unsigned id;    // timers's id: ID_STOPPED, ID_DELAYED, ID_TIMER
 	unsigned signal;
 
@@ -73,7 +72,7 @@ struct __tmr
  *
  ******************************************************************************/
 
-#define               _TMR_INIT( _state ) { 0, 0, 0, 0, _state, 0, 0, 0 }
+#define               _TMR_INIT( _state ) { _OBJ_INIT(), 0, 0, _state, 0, 0, 0 }
 
 /******************************************************************************
  *

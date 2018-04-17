@@ -28,6 +28,9 @@ Features:
 - all documentation is contained within the source files
 - examples and templates are in separate repositories (https://github.com/stateos)
 ---------
+3.9
+- updated kernel
+---------
 3.8
 - added stream buffer object
 - updated examples

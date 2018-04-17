@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    16.04.2018
+    @date    17.04.2018
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -40,18 +40,16 @@ static  stk_t     MAIN_STK[SSIZE(OS_STACK_SIZE)];
 #define MAIN_TOP (MAIN_STK+SSIZE(OS_STACK_SIZE))
 #endif
 
-tsk_t MAIN   = { .prev=&MAIN, .next=&MAIN, .id=ID_READY, .top=MAIN_TOP }; // main task
+tsk_t MAIN   = { .obj={ .prev=&MAIN, .next=&MAIN }, .id=ID_READY, .top=MAIN_TOP }; // main task
 sys_t System = { .cur=&MAIN };
 
 /* -------------------------------------------------------------------------- */
 
-void core_rdy_insert( void *obj_, unsigned id )
+void core_rdy_insert( obj_t *obj )
 {
-	tsk_t *obj = obj_;
-	tsk_t *nxt = System.cur;
-	tsk_t *prv = nxt->prev;
+	obj_t *nxt = &System.cur->obj;
+	obj_t *prv = nxt->prev;
 
-	obj->id = id;
 	obj->prev = prv;
 	obj->next = nxt;
 	nxt->prev = obj;
@@ -60,15 +58,45 @@ void core_rdy_insert( void *obj_, unsigned id )
 
 /* -------------------------------------------------------------------------- */
 
-void core_rdy_remove( void *obj_ )
+void core_rdy_remove( obj_t *obj )
 {
-	tsk_t *obj = obj_;
-	tsk_t *nxt = obj->next;
-	tsk_t *prv = obj->prev;
+	obj_t *nxt = obj->next;
+	obj_t *prv = obj->prev;
 
-	obj->id = ID_STOPPED;
 	nxt->prev = prv;
 	prv->next = nxt;
+}
+
+/* -------------------------------------------------------------------------- */
+
+void core_tmr_insert( tmr_t *tmr )
+{
+	tmr->id = ID_TIMER;
+	core_rdy_insert(&tmr->obj);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void core_tmr_remove( tmr_t *tmr )
+{
+	tmr->id = ID_STOPPED;
+	core_rdy_remove(&tmr->obj);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void core_tsk_insert( tsk_t *tsk )
+{
+	tsk->id = ID_READY;
+	core_rdy_insert(&tsk->obj);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void core_tsk_remove( tsk_t *tsk )
+{
+	tsk->id = ID_STOPPED;
+	core_rdy_remove(&tsk->obj);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -119,7 +147,7 @@ void core_tsk_switch( void )
 	{
 		port_isr_lock();
 
-		cur = System.cur = System.cur->next;
+		cur = System.cur = System.cur->obj.next;
 		cnt = core_sys_time();
 
 		port_isr_unlock();

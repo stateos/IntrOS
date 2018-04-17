@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.h
     @author  Rajmund Szymanski
-    @date    04.04.2018
+    @date    17.04.2018
     @brief   This file defines set of kernel functions for IntrOS.
 
  ******************************************************************************
@@ -121,32 +121,26 @@ void core_tsk_switch( void );
 /* -------------------------------------------------------------------------- */
 
 // insert object 'obj' into tasks/timers queue before the current task
-// set object id to 'id'
-void core_rdy_insert( void *obj, unsigned id );
+void core_rdy_insert( obj_t *obj );
 
 // remove object 'obj' from tasks/timers queue
-// set object id to ID_STOPPED
-void core_rdy_remove( void *obj );
+void core_rdy_remove( obj_t *obj );
 
 /* -------------------------------------------------------------------------- */
 
 // insert timer 'tmr' into tasks/timers queue and start it
-__STATIC_INLINE
-void core_tmr_insert( tmr_t *tmr ) { core_rdy_insert(tmr, ID_TIMER); }
+void core_tmr_insert( tmr_t *tmr );
 
 // remove timer 'tmr' from tasks/timers queue
-__STATIC_INLINE
-void core_tmr_remove( tmr_t *tmr ) { core_rdy_remove(tmr); }
+void core_tmr_remove( tmr_t *tmr );
 
 /* -------------------------------------------------------------------------- */
 
 // insert task 'tsk' into tasks/timers queue with id ID_READY
-__STATIC_INLINE
-void core_tsk_insert( tsk_t *tsk ) { core_rdy_insert(tsk, ID_READY); }
+void core_tsk_insert( tsk_t *tsk );
 
 // remove task 'tsk' from tasks/timers queue
-__STATIC_INLINE
-void core_tsk_remove( tsk_t *tsk ) { core_rdy_remove(tsk); }
+void core_tsk_remove( tsk_t *tsk );
 
 /* -------------------------------------------------------------------------- */
 
