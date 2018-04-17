@@ -120,14 +120,6 @@ void core_tsk_switch( void );
 
 /* -------------------------------------------------------------------------- */
 
-// insert object 'obj' into tasks/timers queue before the current task
-void core_rdy_insert( obj_t *obj );
-
-// remove object 'obj' from tasks/timers queue
-void core_rdy_remove( obj_t *obj );
-
-/* -------------------------------------------------------------------------- */
-
 // insert timer 'tmr' into tasks/timers queue and start it
 void core_tmr_insert( tmr_t *tmr );
 

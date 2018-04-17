@@ -45,7 +45,8 @@ sys_t System = { .cur=&MAIN };
 
 /* -------------------------------------------------------------------------- */
 
-void core_rdy_insert( obj_t *obj )
+static
+void priv_rdy_insert( obj_t *obj )
 {
 	obj_t *nxt = &System.cur->obj;
 	obj_t *prv = nxt->prev;
@@ -58,7 +59,8 @@ void core_rdy_insert( obj_t *obj )
 
 /* -------------------------------------------------------------------------- */
 
-void core_rdy_remove( obj_t *obj )
+static
+void priv_rdy_remove( obj_t *obj )
 {
 	obj_t *nxt = obj->next;
 	obj_t *prv = obj->prev;
@@ -72,7 +74,7 @@ void core_rdy_remove( obj_t *obj )
 void core_tmr_insert( tmr_t *tmr )
 {
 	tmr->id = ID_TIMER;
-	core_rdy_insert(&tmr->obj);
+	priv_rdy_insert(&tmr->obj);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -80,7 +82,7 @@ void core_tmr_insert( tmr_t *tmr )
 void core_tmr_remove( tmr_t *tmr )
 {
 	tmr->id = ID_STOPPED;
-	core_rdy_remove(&tmr->obj);
+	priv_rdy_remove(&tmr->obj);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -88,7 +90,7 @@ void core_tmr_remove( tmr_t *tmr )
 void core_tsk_insert( tsk_t *tsk )
 {
 	tsk->id = ID_READY;
-	core_rdy_insert(&tsk->obj);
+	priv_rdy_insert(&tsk->obj);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -96,7 +98,7 @@ void core_tsk_insert( tsk_t *tsk )
 void core_tsk_remove( tsk_t *tsk )
 {
 	tsk->id = ID_STOPPED;
-	core_rdy_remove(&tsk->obj);
+	priv_rdy_remove(&tsk->obj);
 }
 
 /* -------------------------------------------------------------------------- */
