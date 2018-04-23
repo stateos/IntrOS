@@ -30,6 +30,7 @@ Features:
 ---------
 3.9
 - updated kernel
+- updated mailbox queue object
 ---------
 3.8
 - added stream buffer object

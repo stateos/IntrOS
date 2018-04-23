@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_box.c
     @author  Rajmund Szymanski
-    @date    16.04.2018
+    @date    23.04.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -62,7 +62,7 @@ void priv_box_get( box_t *box, char *data )
 	do data[i++] = box->data[f++]; while (i < box->size);
 
 	box->first = (f < box->limit) ? f : 0;
-	box->count--;
+	box->count -= i;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -76,7 +76,7 @@ void priv_box_put( box_t *box, const char *data )
 	do box->data[n++] = data[i++]; while (i < box->size);
 
 	box->next = (n < box->limit) ? n : 0;
-	box->count++;
+	box->count += i;
 }
 
 /* -------------------------------------------------------------------------- */
