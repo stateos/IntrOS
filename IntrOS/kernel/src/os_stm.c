@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_stm.c
     @author  Rajmund Szymanski
-    @date    16.04.2018
+    @date    24.04.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -51,26 +51,41 @@ void stm_init( stm_t *stm, unsigned limit, void *data )
 
 /* -------------------------------------------------------------------------- */
 static
+char priv_stm_getc( stm_t *stm )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned i = stm->first;
+	char c = stm->data[i++];
+	stm->first = (i < stm->limit) ? i : 0;
+	stm->count--;
+	return c;
+}
+
+/* -------------------------------------------------------------------------- */
+static
+void priv_stm_putc( stm_t *stm, char c )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned i = stm->next;
+	stm->data[i++] = c;
+	stm->next = (i < stm->limit) ? i : 0;
+	stm->count++;
+}
+
+/* -------------------------------------------------------------------------- */
+static
 unsigned priv_stm_get( stm_t *stm, char *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned f = stm->first;
-	unsigned i = 0;
+	unsigned len = 0;
 
 	if (size > stm->count)
 		size = stm->count;
 
 	while (size--)
-	{
-		data[i++] = stm->data[f++];
-		if (f >= stm->limit)
-			f = 0;
-	}
+		data[len++] = priv_stm_getc(stm);
 
-	stm->first = f;
-	stm->count -= i;
-
-	return i;
+	return len;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -78,23 +93,15 @@ static
 unsigned priv_stm_put( stm_t *stm, const char *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned n = stm->next;
-	unsigned i = 0;
+	unsigned len = 0;
 
 	if (size > stm->limit - stm->count)
 		size = stm->limit - stm->count;
 
 	while (size--)
-	{
-		stm->data[n++] = data[i++];
-		if (n >= stm->limit)
-			n = 0;
-	}
+		priv_stm_putc(stm, data[len++]);
 
-	stm->next = n;
-	stm->count += i;
-
-	return i;
+	return len;
 }
 
 /* -------------------------------------------------------------------------- */
