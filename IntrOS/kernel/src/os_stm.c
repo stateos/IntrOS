@@ -134,7 +134,8 @@ void stm_wait( stm_t *stm, void *data, unsigned size )
 
 	port_sys_lock();
 
-	while (stm->rdr) core_ctx_switch();
+	while (stm->rdr || stm->count == 0)
+		core_ctx_switch();
 	stm->rdr = true;
 	
 	for (;;)
@@ -164,7 +165,7 @@ unsigned stm_give( stm_t *stm, const void *data, unsigned size )
 
 	port_sys_lock();
 
-	if (stm->rdr == 0)
+	if (stm->wtr == 0)
 		len = priv_stm_put(stm, data, size);
 
 	port_sys_unlock();
@@ -183,7 +184,8 @@ void stm_send( stm_t *stm, const void *data, unsigned size )
 
 	port_sys_lock();
 
-	while (stm->wtr) core_ctx_switch();
+	while (stm->wtr || stm->count == stm->limit)
+		core_ctx_switch();
 	stm->wtr = true;
 	
 	for (;;)
