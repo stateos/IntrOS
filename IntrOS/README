@@ -20,6 +20,7 @@ Features:
 - condition variables
 - memory pools
 - stream buffers
+- message buffers
 - mailbox queues
 - job queues
 - event queues
@@ -33,6 +34,8 @@ Features:
 - updated mailbox queue object
 - updated stream buffer object
 - renamed message queue to event queue
+- added message buffer object
+- added examples for new feature
 ---------
 3.8
 - added stream buffer object
