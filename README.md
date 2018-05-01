@@ -24,9 +24,10 @@ There's a dedicated function for immediate change the task state.
 - condition variables
 - memory pools
 - stream buffers
-- message queues
+- message buffers
 - mailbox queues
 - job queues
+- event queues
 - timers (one-shot, periodic)
 - c++ wrapper
 - all documentation is contained within the source files
