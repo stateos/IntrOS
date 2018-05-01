@@ -20,9 +20,9 @@ Features:
 - condition variables
 - memory pools
 - stream buffers
-- message queues
 - mailbox queues
 - job queues
+- event queues
 - timers (one-shot, periodic)
 - c++ wrapper
 - all documentation is contained within the source files
@@ -32,6 +32,7 @@ Features:
 - updated kernel
 - updated mailbox queue object
 - updated stream buffer object
+- renamed message queue to event queue
 ---------
 3.8
 - added stream buffer object

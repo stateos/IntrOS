@@ -1,8 +1,8 @@
 /******************************************************************************
 
-    @file    IntrOS: os_msg.c
+    @file    IntrOS: os_evq.c
     @author  Rajmund Szymanski
-    @date    16.04.2018
+    @date    01.05.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -29,66 +29,66 @@
 
  ******************************************************************************/
 
-#include "inc/os_msg.h"
+#include "inc/os_evq.h"
 
 /* -------------------------------------------------------------------------- */
-void msg_init( msg_t *msg, unsigned limit, unsigned *data )
+void evq_init( evq_t *evq, unsigned limit, unsigned *data )
 /* -------------------------------------------------------------------------- */
 {
-	assert(msg);
+	assert(evq);
 	assert(limit);
 	assert(data);
 
 	port_sys_lock();
 
-	memset(msg, 0, sizeof(msg_t));
+	memset(evq, 0, sizeof(evq_t));
 
-	msg->limit = limit;
-	msg->data  = data;
+	evq->limit = limit;
+	evq->data  = data;
 
 	port_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
 static
-void priv_msg_get( msg_t *msg, unsigned *data )
+void priv_evq_get( evq_t *evq, unsigned *data )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned f = msg->first;
+	unsigned f = evq->first;
 	
-	*data = msg->data[f++];
+	*data = evq->data[f++];
 
-	msg->first = (f < msg->limit) ? f : 0;
-	msg->count--;
+	evq->first = (f < evq->limit) ? f : 0;
+	evq->count--;
 }
 
 /* -------------------------------------------------------------------------- */
 static
-void priv_msg_put( msg_t *msg, unsigned data )
+void priv_evq_put( evq_t *evq, unsigned data )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned n = msg->next;
+	unsigned n = evq->next;
 	
-	msg->data[n++] = data;
+	evq->data[n++] = data;
 
-	msg->next = (n < msg->limit) ? n : 0;
-	msg->count++;
+	evq->next = (n < evq->limit) ? n : 0;
+	evq->count++;
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned msg_take( msg_t *msg, unsigned *data )
+unsigned evq_take( evq_t *evq, unsigned *data )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned event = E_FAILURE;
 
-	assert(msg);
+	assert(evq);
 	assert(data);
 
 	port_sys_lock();
 
-	if (msg->count > 0)
+	if (evq->count > 0)
 	{
-		priv_msg_get(msg, data);
+		priv_evq_get(evq, data);
 
 		event = E_SUCCESS;
 	}
@@ -99,26 +99,26 @@ unsigned msg_take( msg_t *msg, unsigned *data )
 }
 
 /* -------------------------------------------------------------------------- */
-void msg_wait( msg_t *msg, unsigned *data )
+void evq_wait( evq_t *evq, unsigned *data )
 /* -------------------------------------------------------------------------- */
 {
-	while (msg_take(msg, data) != E_SUCCESS) core_ctx_switch();
+	while (evq_take(evq, data) != E_SUCCESS) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned msg_give( msg_t *msg, unsigned data )
+unsigned evq_give( evq_t *evq, unsigned data )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned event = E_FAILURE;
 
-	assert(msg);
+	assert(evq);
 	assert(data);
 
 	port_sys_lock();
 
-	if (msg->count < msg->limit)
+	if (evq->count < evq->limit)
 	{
-		priv_msg_put(msg, data);
+		priv_evq_put(evq, data);
 
 		event = E_SUCCESS;
 	}
@@ -129,27 +129,27 @@ unsigned msg_give( msg_t *msg, unsigned data )
 }
 
 /* -------------------------------------------------------------------------- */
-void msg_send( msg_t *msg, unsigned data )
+void evq_send( evq_t *evq, unsigned data )
 /* -------------------------------------------------------------------------- */
 {
-	while (msg_give(msg, data) != E_SUCCESS) core_ctx_switch();
+	while (evq_give(evq, data) != E_SUCCESS) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */
-void msg_push( msg_t *msg, unsigned data )
+void evq_push( evq_t *evq, unsigned data )
 /* -------------------------------------------------------------------------- */
 {
-	assert(msg);
+	assert(evq);
 	assert(data);
 
 	port_sys_lock();
 
-	priv_msg_put(msg, data);
+	priv_evq_put(evq, data);
 
-	if (msg->count > msg->limit)
+	if (evq->count > evq->limit)
 	{
-		msg->count = msg->limit;
-		msg->first = msg->next;
+		evq->count = evq->limit;
+		evq->first = evq->next;
 	}
 
 	port_sys_unlock();
