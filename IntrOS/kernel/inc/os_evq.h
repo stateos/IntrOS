@@ -198,7 +198,7 @@ void evq_init( evq_t *evq, unsigned limit, unsigned *data );
  *   evq             : pointer to event queue object
  *
  * Return
- *   'event'         : task was successfully released with the 'event' value
+ *   'another'       : task was successfully released
  *
  ******************************************************************************/
 
@@ -216,7 +216,7 @@ unsigned evq_wait( evq_t *evq );
  *
  * Return
  *   E_FAILURE       : event queue object is empty
- *   'event'         : task was successfully released with the 'event' value
+ *   'another'       : task was successfully released
  *
  ******************************************************************************/
 
