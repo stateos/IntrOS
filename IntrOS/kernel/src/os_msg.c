@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_msg.c
     @author  Rajmund Szymanski
-    @date    01.05.2018
+    @date    02.05.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -85,8 +85,8 @@ unsigned priv_msg_get( msg_t *msg, char *data, unsigned size )
 	while (size--)
 		data[len++] = priv_msg_getc(msg);
 
-	while (msg->first % sizeof(unsigned))
-		priv_msg_getc(msg);
+	msg->first = ALIGNED(msg->first, unsigned);
+	msg->count = LIMITED(msg->count, unsigned);
 
 	return len;
 }
@@ -104,8 +104,8 @@ unsigned priv_msg_put( msg_t *msg, const char *data, unsigned size )
 	while (size--)
 		priv_msg_putc(msg, data[len++]);
 
-	while (msg->next % sizeof(unsigned))
-		priv_msg_putc(msg, 0);
+	msg->next  = ALIGNED(msg->next,  unsigned);
+	msg->count = ALIGNED(msg->count, unsigned);
 
 	return len;
 }
