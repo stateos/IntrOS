@@ -2,6 +2,7 @@
   [![Build Status](https://travis-ci.org/stateos/IntrOS.svg)](https://travis-ci.org/stateos/IntrOS)
   [![Github Release](https://img.shields.io/github/release/stateos/IntrOS.svg)](https://github.com/stateos/IntrOS/releases)
   [![Software License](https://img.shields.io/github/license/stateos/IntrOS.svg)](https://opensource.org/licenses/MIT)
+  [![Software Download](https://img.shields.io/sourceforge/dt/intros.stateos.p.svg)](https://sourceforge.net/projects/intros.stateos.p/files/latest/download)
 
 Free, simple and tiny cooperative operating system (OS) designed for deeply embedded applications.
 Target: ARM Cortex-M, STM8, AVR8 families.
