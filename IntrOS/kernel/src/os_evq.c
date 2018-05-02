@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_evq.c
     @author  Rajmund Szymanski
-    @date    01.05.2018
+    @date    02.05.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -51,47 +51,45 @@ void evq_init( evq_t *evq, unsigned limit, unsigned *data )
 
 /* -------------------------------------------------------------------------- */
 static
-void priv_evq_get( evq_t *evq, unsigned *data )
+unsigned priv_evq_get( evq_t *evq )
 /* -------------------------------------------------------------------------- */
 {
+	unsigned event;
 	unsigned f = evq->first;
-	
-	*data = evq->data[f++];
+
+	event = evq->data[f++];
 
 	evq->first = (f < evq->limit) ? f : 0;
 	evq->count--;
+
+	return event;
 }
 
 /* -------------------------------------------------------------------------- */
 static
-void priv_evq_put( evq_t *evq, unsigned data )
+void priv_evq_put( evq_t *evq, unsigned event )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned n = evq->next;
 	
-	evq->data[n++] = data;
+	evq->data[n++] = event;
 
 	evq->next = (n < evq->limit) ? n : 0;
 	evq->count++;
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned evq_take( evq_t *evq, unsigned *data )
+unsigned evq_take( evq_t *evq )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned event = E_FAILURE;
 
 	assert(evq);
-	assert(data);
 
 	port_sys_lock();
 
 	if (evq->count > 0)
-	{
-		priv_evq_get(evq, data);
-
-		event = E_SUCCESS;
-	}
+		event = priv_evq_get(evq);
 
 	port_sys_unlock();
 
@@ -99,10 +97,14 @@ unsigned evq_take( evq_t *evq, unsigned *data )
 }
 
 /* -------------------------------------------------------------------------- */
-void evq_wait( evq_t *evq, unsigned *data )
+unsigned evq_wait( evq_t *evq )
 /* -------------------------------------------------------------------------- */
 {
-	while (evq_take(evq, data) != E_SUCCESS) core_ctx_switch();
+	unsigned event;
+
+	while ((event = evq_take(evq)) == E_FAILURE) core_ctx_switch();
+
+	return event;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -112,14 +114,12 @@ unsigned evq_give( evq_t *evq, unsigned data )
 	unsigned event = E_FAILURE;
 
 	assert(evq);
-	assert(data);
 
 	port_sys_lock();
 
 	if (evq->count < evq->limit)
 	{
 		priv_evq_put(evq, data);
-
 		event = E_SUCCESS;
 	}
 
@@ -132,7 +132,7 @@ unsigned evq_give( evq_t *evq, unsigned data )
 void evq_send( evq_t *evq, unsigned data )
 /* -------------------------------------------------------------------------- */
 {
-	while (evq_give(evq, data) != E_SUCCESS) core_ctx_switch();
+	while (evq_give(evq, data) == E_FAILURE) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -140,7 +140,6 @@ void evq_push( evq_t *evq, unsigned data )
 /* -------------------------------------------------------------------------- */
 {
 	assert(evq);
-	assert(data);
 
 	port_sys_lock();
 

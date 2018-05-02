@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_evq.h
     @author  Rajmund Szymanski
-    @date    01.05.2018
+    @date    02.05.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -60,7 +60,7 @@ struct __evq
  *
  * Name              : _EVQ_INIT
  *
- * Description       : create and initialize a event queue object
+ * Description       : create and initialize an event queue object
  *
  * Parameters
  *   limit           : size of a queue (max number of stored events)
@@ -78,7 +78,7 @@ struct __evq
  *
  * Name              : _EVQ_DATA
  *
- * Description       : create a event queue data buffer
+ * Description       : create an event queue data buffer
  *
  * Parameters
  *   limit           : size of a queue (max number of stored events)
@@ -97,7 +97,7 @@ struct __evq
  *
  * Name              : OS_EVQ
  *
- * Description       : define and initialize a event queue object
+ * Description       : define and initialize an event queue object
  *
  * Parameters
  *   evq             : name of a pointer to event queue object
@@ -131,7 +131,7 @@ struct __evq
  *
  * Name              : EVQ_INIT
  *
- * Description       : create and initialize a event queue object
+ * Description       : create and initialize an event queue object
  *
  * Parameters
  *   limit           : size of a queue (max number of stored events)
@@ -152,7 +152,7 @@ struct __evq
  * Name              : EVQ_CREATE
  * Alias             : EVQ_NEW
  *
- * Description       : create and initialize a event queue object
+ * Description       : create and initialize an event queue object
  *
  * Parameters
  *   limit           : size of a queue (max number of stored events)
@@ -174,7 +174,7 @@ struct __evq
  *
  * Name              : evq_init
  *
- * Description       : initialize a event queue object
+ * Description       : initialize an event queue object
  *
  * Parameters
  *   evq             : pointer to event queue object
@@ -196,13 +196,13 @@ void evq_init( evq_t *evq, unsigned limit, unsigned *data );
  *
  * Parameters
  *   evq             : pointer to event queue object
- *   data            : pointer to store event data
  *
- * Return            : none
+ * Return
+ *   'event'         : task was successfully released with the 'event' value
  *
  ******************************************************************************/
 
-void evq_wait( evq_t *evq, unsigned *data );
+unsigned evq_wait( evq_t *evq );
 
 /******************************************************************************
  *
@@ -213,15 +213,14 @@ void evq_wait( evq_t *evq, unsigned *data );
  *
  * Parameters
  *   evq             : pointer to event queue object
- *   data            : pointer to store event data
  *
  * Return
- *   E_SUCCESS       : event data was successfully transfered from the event queue object
  *   E_FAILURE       : event queue object is empty
+ *   'event'         : task was successfully released with the 'event' value
  *
  ******************************************************************************/
 
-unsigned evq_take( evq_t *evq, unsigned *data );
+unsigned evq_take( evq_t *evq );
 
 /******************************************************************************
  *
@@ -232,13 +231,13 @@ unsigned evq_take( evq_t *evq, unsigned *data );
  *
  * Parameters
  *   evq             : pointer to event queue object
- *   data            : event data
+ *   event           : event value
  *
  * Return            : none
  *
  ******************************************************************************/
 
-void evq_send( evq_t *evq, unsigned data );
+void evq_send( evq_t *evq, unsigned event );
 
 /******************************************************************************
  *
@@ -249,7 +248,7 @@ void evq_send( evq_t *evq, unsigned data );
  *
  * Parameters
  *   evq             : pointer to event queue object
- *   data            : event data
+ *   event           : event value
  *
  * Return
  *   E_SUCCESS       : event data was successfully transfered to the event queue object
@@ -257,7 +256,7 @@ void evq_send( evq_t *evq, unsigned data );
  *
  ******************************************************************************/
 
-unsigned evq_give( evq_t *evq, unsigned data );
+unsigned evq_give( evq_t *evq, unsigned event );
 
 /******************************************************************************
  *
@@ -268,13 +267,13 @@ unsigned evq_give( evq_t *evq, unsigned data );
  *
  * Parameters
  *   evq             : pointer to event queue object
- *   data            : event data
+ *   event           : event value
  *
  * Return            : none
  *
  ******************************************************************************/
 
-void evq_push( evq_t *evq, unsigned data );
+void evq_push( evq_t *evq, unsigned event );
 
 #ifdef __cplusplus
 }
@@ -288,7 +287,7 @@ void evq_push( evq_t *evq, unsigned data );
  *
  * Class             : baseEventQueue
  *
- * Description       : create and initialize a event queue object
+ * Description       : create and initialize an event queue object
  *
  * Constructor parameters
  *   limit           : size of a queue (max number of stored events)
@@ -303,18 +302,18 @@ struct baseEventQueue : public __evq
 	explicit
 	baseEventQueue( const unsigned _limit, unsigned * const _data ): __evq _EVQ_INIT(_limit, _data) {}
 
-	void     wait( unsigned*_data ) {        evq_wait(this, _data); }
-	unsigned take( unsigned*_data ) { return evq_take(this, _data); }
-	void     send( unsigned _data ) {        evq_send(this, _data); }
-	unsigned give( unsigned _data ) { return evq_give(this, _data); }
-	void     push( unsigned _data ) {        evq_push(this, _data); }
+	unsigned wait( void )            { return evq_wait(this);         }
+	unsigned take( void )            { return evq_take(this);         }
+	void     send( unsigned _event ) {        evq_send(this, _event); }
+	unsigned give( unsigned _event ) { return evq_give(this, _event); }
+	void     push( unsigned _event ) {        evq_push(this, _event); }
 };
 
 /******************************************************************************
  *
  * Class             : EventQueue
  *
- * Description       : create and initialize a event queue object
+ * Description       : create and initialize an event queue object
  *
  * Constructor parameters
  *   limit           : size of a queue (max number of stored events)
