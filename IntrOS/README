@@ -29,6 +29,9 @@ Features:
 - all documentation is contained within the source files
 - examples and templates are in separate repositories (https://github.com/stateos)
 ---------
+4.0
+- updated message buffer object: size of the message limited to size of the buffer
+---------
 3.9
 - updated kernel
 - updated mailbox queue object

@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_msg.c
     @author  Rajmund Szymanski
-    @date    02.05.2018
+    @date    04.05.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -43,7 +43,7 @@ void msg_init( msg_t *msg, unsigned limit, void *data )
 
 	memset(msg, 0, sizeof(msg_t));
 
-	msg->limit = PSIZE(limit);
+	msg->limit = limit;
 	msg->data  = data;
 
 	port_sys_unlock();
@@ -74,60 +74,43 @@ void priv_msg_putc( msg_t *msg, char c )
 
 /* -------------------------------------------------------------------------- */
 static
-unsigned priv_msg_get( msg_t *msg, char *data, unsigned size )
+void priv_msg_get( msg_t *msg, char *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned len = 0;
-
-	if (size > msg->count)
-		size = msg->count;
-
 	while (size--)
-		data[len++] = priv_msg_getc(msg);
-
-	msg->first = ALIGNED(msg->first, unsigned);
-	msg->count = LIMITED(msg->count, unsigned);
-
-	return len;
+		*data++ = priv_msg_getc(msg);
 }
 
 /* -------------------------------------------------------------------------- */
 static
-unsigned priv_msg_put( msg_t *msg, const char *data, unsigned size )
+void priv_msg_put( msg_t *msg, const char *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned len = 0;
-
-	if (size > msg->limit - msg->count)
-		size = msg->limit - msg->count;
-
 	while (size--)
-		priv_msg_putc(msg, data[len++]);
-
-	msg->next  = ALIGNED(msg->next,  unsigned);
-	msg->count = ALIGNED(msg->count, unsigned);
-
-	return len;
+		priv_msg_putc(msg, *data++);
 }
 
 /* -------------------------------------------------------------------------- */
 static
-void priv_put_size( msg_t *msg, unsigned size )
+void priv_msg_getSize( msg_t *msg )
 /* -------------------------------------------------------------------------- */
 {
-	if (msg->size == 0)
+	if (msg->count == 0)
+		msg->size = 0;
+	else
+		priv_msg_get(msg, (void *)&msg->size, sizeof(unsigned));
+}
+
+/* -------------------------------------------------------------------------- */
+static
+void priv_msg_putSize( msg_t *msg, unsigned size )
+/* -------------------------------------------------------------------------- */
+{
+	if (msg->count == 0)
 		msg->size = size;
 	else
-		priv_msg_put(msg, (void *)&size, sizeof(unsigned));
-}
-
-/* -------------------------------------------------------------------------- */
-static
-void priv_msg_update( msg_t *msg )
-/* -------------------------------------------------------------------------- */
-{
-	while (msg->count > 0 && msg->size == 0)
-		priv_msg_get(msg, (void *)&msg->size, sizeof(unsigned));
+	if (size > 0)
+		priv_msg_put(msg, (const void *)&size, sizeof(unsigned));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -141,13 +124,18 @@ unsigned msg_take( msg_t *msg, void *data, unsigned size )
 
 	port_sys_lock();
 
-	if (msg->rdr == false && msg->size > 0 && msg->size <= size && msg->size <= msg->count)
+	if (size > 0)
 	{
-			size = msg->size; msg->size = 0;
-			len = priv_msg_get(msg, data, size);
-			priv_msg_update(msg);
+		if (msg->size > 0)
+		{
+			if (size >= msg_count(msg))
+			{
+				priv_msg_get(msg, data, len = msg->size);
+				priv_msg_getSize(msg);
+			}
+		}
 	}
-	
+
 	port_sys_unlock();
 
 	return len;
@@ -164,25 +152,9 @@ unsigned msg_wait( msg_t *msg, void *data, unsigned size )
 
 	port_sys_lock();
 
-	while (msg->rdr || msg->count == 0)
-		core_ctx_switch();
-	msg->rdr = true;
-	
-	if (msg->size > 0 && msg->size <= size)
-	{
-		size = msg->size; msg->size = 0;
-
-		for (;;)
-		{
-			len += priv_msg_get(msg, (char *)data + len, size - len);
-			if (len == size) break;
+	if (size > 0)
+		while ((len = msg_take(msg, data, size)) == 0)
 			core_ctx_switch();
-		}
-
-		priv_msg_update(msg);
-	}
-
-	msg->rdr = false;
 
 	port_sys_unlock();
 
@@ -200,11 +172,13 @@ unsigned msg_give( msg_t *msg, const void *data, unsigned size )
 
 	port_sys_lock();
 
-	if (msg->wtr == false &&
-	  ((msg->size == 0 && msg->count + size <= msg->limit) || msg->count + sizeof(unsigned) + size <= msg->limit))
+	if (size > 0 && size <= msg->limit)
 	{
-		priv_put_size(msg, size);
-		len = priv_msg_put(msg, data, size);
+		if (size <= msg_space(msg))
+		{
+			priv_msg_putSize(msg, len = size);
+			priv_msg_put(msg, data, len);
+		}
 	}
 
 	port_sys_unlock();
@@ -223,24 +197,33 @@ unsigned msg_send( msg_t *msg, const void *data, unsigned size )
 
 	port_sys_lock();
 
-	while (msg->wtr || msg->count == msg->limit)
-		core_ctx_switch();
-	msg->wtr = true;
-	
-	priv_put_size(msg, size);
-
-	for (;;)
-	{
-		len += priv_msg_put(msg, (const char *)data + len, size - len);
-		if (len == size) break;
-		core_ctx_switch();
-	}
-
-	msg->wtr = false;
+	if (size > 0 && size <= msg->limit)
+		while ((len = msg_give(msg, data, size)) == 0)
+			core_ctx_switch();
 
 	port_sys_unlock();
 
 	return len;
+}
+
+/* -------------------------------------------------------------------------- */
+unsigned msg_count( msg_t *msg )
+/* -------------------------------------------------------------------------- */
+{
+	return msg->size;
+}
+
+/* -------------------------------------------------------------------------- */
+unsigned msg_space( msg_t *msg )
+/* -------------------------------------------------------------------------- */
+{
+	if (msg->count == 0)
+		return msg->limit;
+	else
+	if (msg->count + sizeof(unsigned) < msg->limit)
+		return msg->limit - msg->count - sizeof(unsigned);
+	else
+		return 0;
 }
 
 /* -------------------------------------------------------------------------- */

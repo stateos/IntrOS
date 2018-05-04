@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_msg.h
     @author  Rajmund Szymanski
-    @date    01.05.2018
+    @date    04.05.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -55,16 +55,8 @@ struct __msg
 	unsigned next;  // next element to write into buffer
 	char   * data;  // buffer data
 
-	bool     rdr;   // stream buffer reader
-	bool     wtr;   // stream buffer writer
-
 	unsigned size;  // size of the first message in the buffer
 };
-
-/* -------------------------------------------------------------------------- */
-
-#define PSIZE( size ) \
-      ALIGNED( size, unsigned )
 
 /******************************************************************************
  *
@@ -82,7 +74,7 @@ struct __msg
  *
  ******************************************************************************/
 
-#define               _MSG_INIT( _limit, _data ) { 0, PSIZE(_limit), 0, 0, _data, false, false, 0 }
+#define               _MSG_INIT( _limit, _data ) { 0, _limit, 0, 0, _data, 0 }
 
 /******************************************************************************
  *
@@ -100,7 +92,7 @@ struct __msg
  ******************************************************************************/
 
 #ifndef __cplusplus
-#define               _MSG_DATA( _limit ) (char[PSIZE(_limit)]){ 0 }
+#define               _MSG_DATA( _limit ) (char[_limit]){ 0 }
 #endif
 
 /******************************************************************************
@@ -116,7 +108,7 @@ struct __msg
  ******************************************************************************/
 
 #define             OS_MSG( msg, limit )                                \
-                       char msg##__buf[PSIZE(limit)];                    \
+                       char msg##__buf[limit];                           \
                        msg_t msg##__msg = _MSG_INIT( limit, msg##__buf ); \
                        msg_id msg = & msg##__msg
 
@@ -133,7 +125,7 @@ struct __msg
  ******************************************************************************/
 
 #define         static_MSG( msg, limit )                                \
-                static char msg##__buf[PSIZE(limit)];                    \
+                static char msg##__buf[limit];                           \
                 static msg_t msg##__msg = _MSG_INIT( limit, msg##__buf ); \
                 static msg_id msg = & msg##__msg
 
@@ -273,7 +265,7 @@ unsigned msg_give( msg_t *msg, const void *data, unsigned size );
  *
  * Name              : msg_count
  *
- * Description       : return the amount of data contained in the message buffer
+ * Description       : return the size of the first message in the buffer
  *
  * Parameters
  *   msg             : pointer to message buffer object
@@ -282,8 +274,7 @@ unsigned msg_give( msg_t *msg, const void *data, unsigned size );
  *
  ******************************************************************************/
 
-__STATIC_INLINE
-unsigned msg_count( msg_t *msg ) { return msg->count; }
+unsigned msg_count( msg_t *msg );
 
 /******************************************************************************
  *
@@ -298,8 +289,7 @@ unsigned msg_count( msg_t *msg ) { return msg->count; }
  *
  ******************************************************************************/
 
-__STATIC_INLINE
-unsigned msg_space( msg_t *msg ) { return msg->limit - msg->count; }
+unsigned msg_space( msg_t *msg );
 
 #ifdef __cplusplus
 }
@@ -354,7 +344,7 @@ struct MessageBufferT : public baseMessageBuffer
 	MessageBufferT( void ): baseMessageBuffer(_limit, data_) {}
 
 	private:
-	char data_[PSIZE(_limit)];
+	char data_[_limit];
 };
 
 /******************************************************************************
@@ -376,7 +366,7 @@ struct MessageBufferTT : public baseMessageBuffer
 	MessageBufferTT( void ): baseMessageBuffer(sizeof(data_), reinterpret_cast<char *>(data_) ) {}
 
 	private:
-	char data_[_limit*(PSIZE(sizeof(T))+sizeof(unsigned))-sizeof(unsigned)];
+	char data_[_limit*(sizeof(T)+sizeof(unsigned))-sizeof(unsigned)];
 };
 
 #endif
