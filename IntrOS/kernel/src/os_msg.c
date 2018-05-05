@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_msg.c
     @author  Rajmund Szymanski
-    @date    04.05.2018
+    @date    05.05.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -77,6 +77,8 @@ static
 void priv_msg_get( msg_t *msg, char *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
+	assert(size <= msg->limit);
+
 	while (size--)
 		*data++ = priv_msg_getc(msg);
 }
@@ -86,6 +88,8 @@ static
 void priv_msg_put( msg_t *msg, const char *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
+	assert(size <= msg->limit);
+
 	while (size--)
 		priv_msg_putc(msg, *data++);
 }
@@ -106,10 +110,11 @@ static
 void priv_msg_putSize( msg_t *msg, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
+	assert(size);
+
 	if (msg->count == 0)
 		msg->size = size;
 	else
-	if (size > 0)
 		priv_msg_put(msg, (const void *)&size, sizeof(unsigned));
 }
 
