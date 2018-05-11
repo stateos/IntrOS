@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_stm.c
     @author  Rajmund Szymanski
-    @date    24.04.2018
+    @date    11.05.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -74,34 +74,24 @@ void priv_stm_putc( stm_t *stm, char c )
 
 /* -------------------------------------------------------------------------- */
 static
-unsigned priv_stm_get( stm_t *stm, char *data, unsigned size )
+void priv_stm_get( stm_t *stm, char *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned len = 0;
-
-	if (size > stm->count)
-		size = stm->count;
+	assert(size <= stm->limit);
 
 	while (size--)
-		data[len++] = priv_stm_getc(stm);
-
-	return len;
+		*data++ = priv_stm_getc(stm);
 }
 
 /* -------------------------------------------------------------------------- */
 static
-unsigned priv_stm_put( stm_t *stm, const char *data, unsigned size )
+void priv_stm_put( stm_t *stm, const char *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned len = 0;
-
-	if (size > stm->limit - stm->count)
-		size = stm->limit - stm->count;
+	assert(size <= stm->limit);
 
 	while (size--)
-		priv_stm_putc(stm, data[len++]);
-
-	return len;
+		priv_stm_putc(stm, *data++);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -115,8 +105,8 @@ unsigned stm_take( stm_t *stm, void *data, unsigned size )
 
 	port_sys_lock();
 
-	if (stm->rdr == 0)
-		len = priv_stm_get(stm, data, size);
+	if (size <= stm_count(stm))
+		priv_stm_get(stm, data, len = size);
 
 	port_sys_unlock();
 
@@ -124,34 +114,23 @@ unsigned stm_take( stm_t *stm, void *data, unsigned size )
 }
 
 /* -------------------------------------------------------------------------- */
-void stm_wait( stm_t *stm, void *data, unsigned size )
+unsigned stm_wait( stm_t *stm, void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned len;
+	unsigned len = 0;
 
 	assert(stm);
 	assert(data);
 
 	port_sys_lock();
 
-	while (stm->rdr || stm->count == 0)
-		core_ctx_switch();
-	stm->rdr = true;
-	
-	for (;;)
-	{
-		len = priv_stm_get(stm, data, size);
-		data = (char *)data + len;
-		size -= len;
-
-		if (size == 0) break;
-
-		core_ctx_switch();
-	}
-
-	stm->rdr = false;
+	if (size > 0 && size <= stm->limit)
+		while ((len = stm_take(stm, data, size)) == 0)
+			core_ctx_switch();
 
 	port_sys_unlock();
+
+	return len;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -165,8 +144,8 @@ unsigned stm_give( stm_t *stm, const void *data, unsigned size )
 
 	port_sys_lock();
 
-	if (stm->wtr == 0)
-		len = priv_stm_put(stm, data, size);
+	if (size <= stm_space(stm))
+		priv_stm_put(stm, data, len = size);
 
 	port_sys_unlock();
 
@@ -174,34 +153,23 @@ unsigned stm_give( stm_t *stm, const void *data, unsigned size )
 }
 
 /* -------------------------------------------------------------------------- */
-void stm_send( stm_t *stm, const void *data, unsigned size )
+unsigned stm_send( stm_t *stm, const void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned len;
+	unsigned len = 0;
 
 	assert(stm);
 	assert(data);
 
 	port_sys_lock();
 
-	while (stm->wtr || stm->count == stm->limit)
-		core_ctx_switch();
-	stm->wtr = true;
-	
-	for (;;)
-	{
-		len = priv_stm_put(stm, data, size);
-		data = (const char *)data + len;
-		size -= len;
-
-		if (size == 0) break;
-
-		core_ctx_switch();
-	}
-
-	stm->wtr = false;
+	if (size > 0 && size <= stm->limit)
+		while ((len = stm_give(stm, data, size)) == 0)
+			core_ctx_switch();
 
 	port_sys_unlock();
+
+	return len;
 }
 
 /* -------------------------------------------------------------------------- */

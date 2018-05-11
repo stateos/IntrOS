@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_stm.h
     @author  Rajmund Szymanski
-    @date    27.04.2018
+    @date    11.05.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -54,9 +54,6 @@ struct __stm
 	unsigned first; // first element to read from buffer
 	unsigned next;  // next element to write into buffer
 	char   * data;  // buffer data
-
-	bool     rdr;   // stream buffer reader
-	bool     wtr;   // stream buffer writer
 };
 
 /******************************************************************************
@@ -75,7 +72,7 @@ struct __stm
  *
  ******************************************************************************/
 
-#define               _STM_INIT( _limit, _data ) { 0, _limit, 0, 0, _data, false, false }
+#define               _STM_INIT( _limit, _data ) { 0, _limit, 0, 0, _data }
 
 /******************************************************************************
  *
@@ -202,11 +199,11 @@ void stm_init( stm_t *stm, unsigned limit, void *data );
  *   data            : pointer to read buffer
  *   size            : size of read buffer
  *
- * Return            : none
+ * Return            : number of bytes read
  *
  ******************************************************************************/
 
-void stm_wait( stm_t *stm, void *data, unsigned size );
+unsigned stm_wait( stm_t *stm, void *data, unsigned size );
 
 /******************************************************************************
  *
@@ -238,11 +235,11 @@ unsigned stm_take( stm_t *stm, void *data, unsigned size );
  *   data            : pointer to write buffer
  *   size            : size of write buffer
  *
- * Return            : none
+ * Return            : number of bytes written
  *
  ******************************************************************************/
 
-void stm_send( stm_t *stm, const void *data, unsigned size );
+unsigned stm_send( stm_t *stm, const void *data, unsigned size );
 
 /******************************************************************************
  *
@@ -321,9 +318,9 @@ struct baseStreamBuffer : public __stm
 	explicit
 	baseStreamBuffer( const unsigned _limit, char * const _data ): __stm _STM_INIT(_limit, _data) {}
 
-	void     wait (       void *_data, unsigned _size ) {        stm_wait (this, _data, _size); }
+	unsigned wait (       void *_data, unsigned _size ) { return stm_wait (this, _data, _size); }
 	unsigned take (       void *_data, unsigned _size ) { return stm_take (this, _data, _size); }
-	void     send ( const void *_data, unsigned _size ) {        stm_send (this, _data, _size); }
+	unsigned send ( const void *_data, unsigned _size ) { return stm_send (this, _data, _size); }
 	unsigned give ( const void *_data, unsigned _size ) { return stm_give (this, _data, _size); }
 	unsigned count( void )                              { return stm_count(this);               }
 	unsigned space( void )                              { return stm_space(this);               }
@@ -366,7 +363,7 @@ template<unsigned _limit, class T>
 struct StreamBufferTT : public baseStreamBuffer
 {
 	explicit
-	StreamBufferTT( void ): baseStreamBuffer(_limit * sizeof(T), reinterpret_cast<char *>(data_) ) {}
+	StreamBufferTT( void ): baseStreamBuffer(sizeof(data_), reinterpret_cast<char *>(data_) ) {}
 
 	private:
 	T data_[_limit];
