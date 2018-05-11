@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_msg.h
     @author  Rajmund Szymanski
-    @date    04.05.2018
+    @date    11.05.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -198,10 +198,10 @@ void msg_init( msg_t *msg, unsigned limit, void *data );
  *
  * Parameters
  *   msg             : pointer to message buffer object
- *   data            : pointer to read buffer
- *   size            : size of read buffer
+ *   data            : pointer to write buffer
+ *   size            : size of write buffer
  *
- * Return            : number of bytes read
+ * Return            : number of bytes read from the message buffer
  *
  ******************************************************************************/
 
@@ -216,10 +216,10 @@ unsigned msg_wait( msg_t *msg, void *data, unsigned size );
  *
  * Parameters
  *   msg             : pointer to message buffer object
- *   data            : pointer to read buffer
- *   size            : size of read buffer
+ *   data            : pointer to write buffer
+ *   size            : size of write buffer
  *
- * Return            : number of bytes read
+ * Return            : number of bytes read from the message buffer
  *
  ******************************************************************************/
 
@@ -229,15 +229,15 @@ unsigned msg_take( msg_t *msg, void *data, unsigned size );
  *
  * Name              : msg_send
  *
- * Description       : try to transfer stream data to the message buffer object,
+ * Description       : try to transfer data to the message buffer object,
  *                     wait indefinitely while the message buffer object is full
  *
  * Parameters
  *   msg             : pointer to message buffer object
- *   data            : pointer to write buffer
- *   size            : size of write buffer
+ *   data            : pointer to read buffer
+ *   size            : size of read buffer
  *
- * Return            : number of bytes written
+ * Return            : number of bytes written to the message buffer
  *
  ******************************************************************************/
 
@@ -247,15 +247,15 @@ unsigned msg_send( msg_t *msg, const void *data, unsigned size );
  *
  * Name              : msg_give
  *
- * Description       : try to transfer stream data to the message buffer object,
+ * Description       : try to transfer data to the message buffer object,
  *                     don't wait if the message buffer object is full
  *
  * Parameters
  *   msg             : pointer to message buffer object
- *   data            : pointer to write buffer
- *   size            : size of write buffer
+ *   data            : pointer to read buffer
+ *   size            : size of read buffer
  *
- * Return            : number of bytes written
+ * Return            : number of bytes written to the message buffer
  *
  ******************************************************************************/
 
