@@ -196,10 +196,12 @@ void stm_init( stm_t *stm, unsigned limit, void *data );
  *
  * Parameters
  *   stm             : pointer to stream buffer object
- *   data            : pointer to read buffer
- *   size            : size of read buffer
+ *   data            : pointer to write buffer
+ *   size            : size of write buffer
  *
- * Return            : number of bytes read
+ * Return
+ *   E_SUCCESS       : data was successfully transfered from the stream buffer object
+ *   E_FAILURE       : write buffer has an incorrect size
  *
  ******************************************************************************/
 
@@ -214,10 +216,12 @@ unsigned stm_wait( stm_t *stm, void *data, unsigned size );
  *
  * Parameters
  *   stm             : pointer to stream buffer object
- *   data            : pointer to read buffer
- *   size            : size of read buffer
+ *   data            : pointer to write buffer
+ *   size            : size of write buffer
  *
- * Return            : number of bytes read
+ * Return
+ *   E_SUCCESS       : data was successfully transfered from the stream buffer object
+ *   E_FAILURE       : stream buffer object does not have enough data
  *
  ******************************************************************************/
 
@@ -232,10 +236,12 @@ unsigned stm_take( stm_t *stm, void *data, unsigned size );
  *
  * Parameters
  *   stm             : pointer to stream buffer object
- *   data            : pointer to write buffer
- *   size            : size of write buffer
+ *   data            : pointer to read buffer
+ *   size            : size of read buffer
  *
- * Return            : number of bytes written
+ * Return
+ *   E_SUCCESS       : data was successfully transfered to the stream buffer object
+ *   E_FAILURE       : read buffer has an incorrect size
  *
  ******************************************************************************/
 
@@ -250,10 +256,12 @@ unsigned stm_send( stm_t *stm, const void *data, unsigned size );
  *
  * Parameters
  *   stm             : pointer to stream buffer object
- *   data            : pointer to write buffer
- *   size            : size of write buffer
+ *   data            : pointer to read buffer
+ *   size            : size of read buffer
  *
- * Return            : number of bytes written
+ * Return
+ *   E_SUCCESS       : data was successfully transfered to the stream buffer object
+ *   E_FAILURE       : stream buffer object does not have enough space
  *
  ******************************************************************************/
 

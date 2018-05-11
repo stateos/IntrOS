@@ -98,7 +98,7 @@ void priv_stm_put( stm_t *stm, const char *data, unsigned size )
 unsigned stm_take( stm_t *stm, void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned len = 0;
+	unsigned event = E_FAILURE;
 
 	assert(stm);
 	assert(data);
@@ -106,38 +106,41 @@ unsigned stm_take( stm_t *stm, void *data, unsigned size )
 	port_sys_lock();
 
 	if (size <= stm_count(stm))
-		priv_stm_get(stm, data, len = size);
+	{
+		priv_stm_get(stm, data, size);
+		event = E_SUCCESS;
+	}
 
 	port_sys_unlock();
 
-	return len;
+	return event;
 }
 
 /* -------------------------------------------------------------------------- */
 unsigned stm_wait( stm_t *stm, void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned len = 0;
+	unsigned event = E_FAILURE;
 
 	assert(stm);
 	assert(data);
 
 	port_sys_lock();
 
-	if (size > 0 && size <= stm->limit)
-		while ((len = stm_take(stm, data, size)) == 0)
+	if (size <= stm->limit)
+		while ((event = stm_take(stm, data, size)) != E_SUCCESS)
 			core_ctx_switch();
 
 	port_sys_unlock();
 
-	return len;
+	return event;
 }
 
 /* -------------------------------------------------------------------------- */
 unsigned stm_give( stm_t *stm, const void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned len = 0;
+	unsigned event = E_FAILURE;
 
 	assert(stm);
 	assert(data);
@@ -145,31 +148,34 @@ unsigned stm_give( stm_t *stm, const void *data, unsigned size )
 	port_sys_lock();
 
 	if (size <= stm_space(stm))
-		priv_stm_put(stm, data, len = size);
+	{
+		priv_stm_put(stm, data, size);
+		event = E_SUCCESS;
+	}
 
 	port_sys_unlock();
 
-	return len;
+	return event;
 }
 
 /* -------------------------------------------------------------------------- */
 unsigned stm_send( stm_t *stm, const void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned len = 0;
+	unsigned event = E_FAILURE;
 
 	assert(stm);
 	assert(data);
 
 	port_sys_lock();
 
-	if (size > 0 && size <= stm->limit)
-		while ((len = stm_give(stm, data, size)) == 0)
+	if (size <= stm->limit)
+		while ((event = stm_give(stm, data, size)) != E_SUCCESS)
 			core_ctx_switch();
 
 	port_sys_unlock();
 
-	return len;
+	return event;
 }
 
 /* -------------------------------------------------------------------------- */
