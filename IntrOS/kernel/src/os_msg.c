@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_msg.c
     @author  Rajmund Szymanski
-    @date    05.05.2018
+    @date    12.05.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -47,6 +47,28 @@ void msg_init( msg_t *msg, unsigned limit, void *data )
 	msg->data  = data;
 
 	port_sys_unlock();
+}
+
+/* -------------------------------------------------------------------------- */
+static
+unsigned priv_msg_count( msg_t *msg )
+/* -------------------------------------------------------------------------- */
+{
+	return msg->size;
+}
+
+/* -------------------------------------------------------------------------- */
+static
+unsigned priv_msg_space( msg_t *msg )
+/* -------------------------------------------------------------------------- */
+{
+	if (msg->count == 0)
+		return msg->limit;
+	else
+	if (msg->count + sizeof(unsigned) < msg->limit)
+		return msg->limit - msg->count - sizeof(unsigned);
+	else
+		return 0;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -133,7 +155,7 @@ unsigned msg_take( msg_t *msg, void *data, unsigned size )
 	{
 		if (msg->size > 0)
 		{
-			if (size >= msg_count(msg))
+			if (size >= priv_msg_count(msg))
 			{
 				priv_msg_get(msg, data, len = msg->size);
 				priv_msg_getSize(msg);
@@ -179,7 +201,7 @@ unsigned msg_give( msg_t *msg, const void *data, unsigned size )
 
 	if (size > 0 && size <= msg->limit)
 	{
-		if (size <= msg_space(msg))
+		if (size <= priv_msg_space(msg))
 		{
 			priv_msg_putSize(msg, len = size);
 			priv_msg_put(msg, data, len);
@@ -215,20 +237,34 @@ unsigned msg_send( msg_t *msg, const void *data, unsigned size )
 unsigned msg_count( msg_t *msg )
 /* -------------------------------------------------------------------------- */
 {
-	return msg->size;
+	unsigned cnt;
+
+	assert(msg);
+
+	port_sys_lock();
+
+	cnt = priv_msg_count(msg);
+
+	port_sys_unlock();
+
+	return cnt;
 }
 
 /* -------------------------------------------------------------------------- */
 unsigned msg_space( msg_t *msg )
 /* -------------------------------------------------------------------------- */
 {
-	if (msg->count == 0)
-		return msg->limit;
-	else
-	if (msg->count + sizeof(unsigned) < msg->limit)
-		return msg->limit - msg->count - sizeof(unsigned);
-	else
-		return 0;
+	unsigned cnt = 0;
+
+	assert(msg);
+
+	port_sys_lock();
+
+	cnt = priv_msg_space(msg);
+
+	port_sys_unlock();
+
+	return cnt;
 }
 
 /* -------------------------------------------------------------------------- */

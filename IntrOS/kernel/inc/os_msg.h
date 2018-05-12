@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_msg.h
     @author  Rajmund Szymanski
-    @date    11.05.2018
+    @date    12.05.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
