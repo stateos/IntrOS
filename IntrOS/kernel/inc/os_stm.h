@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_stm.h
     @author  Rajmund Szymanski
-    @date    11.05.2018
+    @date    12.05.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -231,7 +231,7 @@ unsigned stm_take( stm_t *stm, void *data, unsigned size );
  *
  * Name              : stm_send
  *
- * Description       : try to transfer stream data to the stream buffer object,
+ * Description       : try to transfer data to the stream buffer object,
  *                     wait indefinitely while the stream buffer object is full
  *
  * Parameters
@@ -251,7 +251,7 @@ unsigned stm_send( stm_t *stm, const void *data, unsigned size );
  *
  * Name              : stm_give
  *
- * Description       : try to transfer stream data to the stream buffer object,
+ * Description       : try to transfer data to the stream buffer object,
  *                     don't wait if the stream buffer object is full
  *
  * Parameters
@@ -280,8 +280,7 @@ unsigned stm_give( stm_t *stm, const void *data, unsigned size );
  *
  ******************************************************************************/
 
-__STATIC_INLINE
-unsigned stm_count( stm_t *stm ) { return stm->count; }
+unsigned stm_count( stm_t *stm );
 
 /******************************************************************************
  *
@@ -296,8 +295,7 @@ unsigned stm_count( stm_t *stm ) { return stm->count; }
  *
  ******************************************************************************/
 
-__STATIC_INLINE
-unsigned stm_space( stm_t *stm ) { return stm->limit - stm->count; }
+unsigned stm_space( stm_t *stm );
 
 #ifdef __cplusplus
 }

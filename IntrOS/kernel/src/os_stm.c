@@ -2,7 +2,7 @@
 
     @file    IntrOS: os_stm.c
     @author  Rajmund Szymanski
-    @date    11.05.2018
+    @date    12.05.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -47,6 +47,22 @@ void stm_init( stm_t *stm, unsigned limit, void *data )
 	stm->data  = data;
 
 	port_sys_unlock();
+}
+
+/* -------------------------------------------------------------------------- */
+static
+unsigned priv_stm_count( stm_t *stm )
+/* -------------------------------------------------------------------------- */
+{
+	return stm->count;
+}
+
+/* -------------------------------------------------------------------------- */
+static
+unsigned priv_stm_space( stm_t *stm )
+/* -------------------------------------------------------------------------- */
+{
+	return stm->limit - stm->count;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -105,7 +121,7 @@ unsigned stm_take( stm_t *stm, void *data, unsigned size )
 
 	port_sys_lock();
 
-	if (size <= stm_count(stm))
+	if (size <= priv_stm_count(stm))
 	{
 		priv_stm_get(stm, data, size);
 		event = E_SUCCESS;
@@ -147,7 +163,7 @@ unsigned stm_give( stm_t *stm, const void *data, unsigned size )
 
 	port_sys_lock();
 
-	if (size <= stm_space(stm))
+	if (size <= priv_stm_space(stm))
 	{
 		priv_stm_put(stm, data, size);
 		event = E_SUCCESS;
@@ -176,6 +192,40 @@ unsigned stm_send( stm_t *stm, const void *data, unsigned size )
 	port_sys_unlock();
 
 	return event;
+}
+
+/* -------------------------------------------------------------------------- */
+unsigned stm_count( stm_t *stm )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned cnt;
+
+	assert(stm);
+
+	port_sys_lock();
+
+	cnt = priv_stm_count(stm);
+
+	port_sys_unlock();
+
+	return cnt;
+}
+
+/* -------------------------------------------------------------------------- */
+unsigned stm_space( stm_t *stm )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned cnt;
+
+	assert(stm);
+
+	port_sys_lock();
+
+	cnt = priv_stm_space(stm);
+
+	port_sys_unlock();
+
+	return cnt;
 }
 
 /* -------------------------------------------------------------------------- */
