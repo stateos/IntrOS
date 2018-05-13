@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    17.04.2018
+    @date    13.05.2018
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -30,8 +30,8 @@
  ******************************************************************************/
 
 #include "oskernel.h"
-#include "inc/os_tmr.h"
-#include "inc/os_tsk.h"
+#include "inc/ostimer.h"
+#include "inc/ostask.h"
 
 /* -------------------------------------------------------------------------- */
 

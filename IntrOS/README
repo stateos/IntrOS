@@ -32,6 +32,7 @@ Features:
 4.0
 - updated message buffer object: size of the message data limited to size of the buffer
 - updated stream buffer object: size of the stream data limited to size of the buffer
+- changed kernel filenames
 ---------
 3.9
 - updated kernel
