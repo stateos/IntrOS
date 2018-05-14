@@ -112,16 +112,10 @@ unsigned stm_take( stm_t *stm, void *data, unsigned size )
 
 	port_sys_lock();
 
-	if (size > 0)
+	if (size > 0 && size <= priv_stm_count(stm))
 	{
-		if (stm->count > 0)
-		{
-			if (size <= priv_stm_count(stm))
-			{
-				priv_stm_get(stm, data, size);
-				event = E_SUCCESS;
-			}
-		}
+		priv_stm_get(stm, data, size);
+		event = E_SUCCESS;
 	}
 
 	port_sys_unlock();
@@ -164,13 +158,10 @@ unsigned stm_give( stm_t *stm, const void *data, unsigned size )
 
 	port_sys_lock();
 
-	if (size > 0)
+	if (size > 0 && size <= priv_stm_space(stm))
 	{
-		if (size <= priv_stm_space(stm))
-		{
-			priv_stm_put(stm, data, size);
-			event = E_SUCCESS;
-		}
+		priv_stm_put(stm, data, size);
+		event = E_SUCCESS;
 	}
 
 	port_sys_unlock();
