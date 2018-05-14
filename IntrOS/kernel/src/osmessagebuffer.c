@@ -142,16 +142,10 @@ unsigned msg_take( msg_t *msg, void *data, unsigned size )
 
 	port_sys_lock();
 
-	if (size > 0)
+	if (msg->count > 0 && size >= priv_msg_count(msg))
 	{
-		if (msg->count > 0)
-		{
-			if (size >= priv_msg_count(msg))
-			{
-				priv_msg_get(msg, data, len = msg->size);
-				priv_msg_getSize(msg);
-			}
-		}
+		priv_msg_get(msg, data, len = msg->size);
+		priv_msg_getSize(msg);
 	}
 
 	port_sys_unlock();
@@ -194,13 +188,10 @@ unsigned msg_give( msg_t *msg, const void *data, unsigned size )
 
 	port_sys_lock();
 
-	if (size > 0)
+	if (size > 0 && size <= priv_msg_space(msg))
 	{
-		if (size <= priv_msg_space(msg))
-		{
-			priv_msg_putSize(msg, len = size);
-			priv_msg_put(msg, data, len);
-		}
+		priv_msg_putSize(msg, len = size);
+		priv_msg_put(msg, data, len);
 	}
 
 	port_sys_unlock();
