@@ -65,7 +65,7 @@ unsigned priv_msg_space( msg_t *msg )
 	if (msg->count == 0)
 		return msg->limit;
 	else
-	if (msg->count + sizeof(unsigned) < msg->limit)
+	if (msg->limit - msg->count > sizeof(unsigned))
 		return msg->limit - msg->count - sizeof(unsigned);
 	else
 		return 0;
@@ -190,8 +190,8 @@ unsigned msg_give( msg_t *msg, const void *data, unsigned size )
 
 	if (size > 0 && size <= priv_msg_space(msg))
 	{
-		priv_msg_putSize(msg, len = size);
-		priv_msg_put(msg, data, len);
+		priv_msg_putSize(msg, size);
+		priv_msg_put(msg, data, len = size);
 	}
 
 	port_sys_unlock();
