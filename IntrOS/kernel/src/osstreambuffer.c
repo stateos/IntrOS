@@ -2,7 +2,7 @@
 
     @file    IntrOS: osstreambuffer.c
     @author  Rajmund Szymanski
-    @date    14.05.2018
+    @date    15.05.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -74,13 +74,14 @@ void priv_stm_get( stm_t *stm, char *data, unsigned size )
 
 	assert(size <= priv_stm_count(stm));
 
+	stm->count -= size;;
+	i = stm->first;
 	while (size--)
 	{
-		i = stm->first;
 		*data++ = stm->data[i++];
-		stm->first = (i < stm->limit) ? i : 0;
-		stm->count--;
+		if (i >= stm->limit) i = 0;
 	}
+	stm->first = i;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -92,13 +93,14 @@ void priv_stm_put( stm_t *stm, const char *data, unsigned size )
 
 	assert(size <= priv_stm_space(stm));
 
+	stm->count += size;
+	i = stm->next;
 	while (size--)
 	{
-		i = stm->next;
 		stm->data[i++] = *data++;
-		stm->next = (i < stm->limit) ? i : 0;
-		stm->count++;
+		if (i >= stm->limit) i = 0;
 	}
+	stm->next = i;
 }
 
 /* -------------------------------------------------------------------------- */
