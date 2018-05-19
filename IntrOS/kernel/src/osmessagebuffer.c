@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.c
     @author  Rajmund Szymanski
-    @date    15.05.2018
+    @date    19.05.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -77,13 +77,13 @@ void priv_msg_get( msg_t *msg, char *data, unsigned size )
 	assert(size >= priv_msg_count(msg));
 
 	msg->count -= size;;
-	i = msg->first;
+	i = msg->head;
 	while (size--)
 	{
 		*data++ = msg->data[i++];
 		if (i >= msg->limit) i = 0;
 	}
-	msg->first = i;
+	msg->head = i;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -96,13 +96,13 @@ void priv_msg_put( msg_t *msg, const char *data, unsigned size )
 	assert(size <= priv_msg_space(msg));
 
 	msg->count += size;
-	i = msg->next;
+	i = msg->tail;
 	while (size--)
 	{
 		msg->data[i++] = *data++;
 		if (i >= msg->limit) i = 0;
 	}
-	msg->next = i;
+	msg->tail = i;
 }
 
 /* -------------------------------------------------------------------------- */
