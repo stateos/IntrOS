@@ -2,7 +2,7 @@
 
     @file    IntrOS: oslist.h
     @author  Rajmund Szymanski
-    @date    13.05.2018
+    @date    19.05.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -40,6 +40,35 @@ extern "C" {
 
 /******************************************************************************
  *
+ * Name              : queue
+ *
+ ******************************************************************************/
+
+typedef struct __que que_t;
+
+struct __que
+{
+	que_t  * next; // next object in the queue
+};
+
+/******************************************************************************
+ *
+ * Name              : _QUE_INIT
+ *
+ * Description       : create and initialize a queue object
+ *
+ * Parameters        : none
+ *
+ * Return            : queue object
+ *
+ * Note              : for internal use
+ *
+ ******************************************************************************/
+
+#define               _QUE_INIT() { 0 }
+
+/******************************************************************************
+ *
  * Name              : list
  *
  ******************************************************************************/
@@ -48,7 +77,7 @@ typedef struct __lst lst_t, * const lst_id;
 
 struct __lst
 {
-	que_t  * next;  // next memory object in the queue, previously created in the memory pool
+	que_t    head;  // first object in the queue
 };
 
 /******************************************************************************
@@ -65,7 +94,7 @@ struct __lst
  *
  ******************************************************************************/
 
-#define               _LST_INIT() { 0 }
+#define               _LST_INIT() { _QUE_INIT() }
 
 /******************************************************************************
  *

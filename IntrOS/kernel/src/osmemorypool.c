@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmemorypool.c
     @author  Rajmund Szymanski
-    @date    13.05.2018
+    @date    19.05.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -48,7 +48,7 @@ void mem_bind( mem_t *mem )
 	ptr = mem->data;
 	cnt = mem->limit;
 
-	mem->next = 0;
+	mem->head.next = 0;
 	while (cnt--) { mem_give(mem, ++ptr); ptr += mem->size; }
 
 	port_sys_unlock();
@@ -72,58 +72,6 @@ void mem_init( mem_t *mem, unsigned limit, unsigned size, void *data )
 	mem->data  = data;
 
 	mem_bind(mem);
-
-	port_sys_unlock();
-}
-
-/* -------------------------------------------------------------------------- */
-unsigned mem_take( mem_t *mem, void **data )
-/* -------------------------------------------------------------------------- */
-{
-	unsigned event = E_FAILURE;
-
-	assert(mem);
-	assert(data);
-
-	port_sys_lock();
-
-	if (mem->next)
-	{
-		*data = mem->next + 1;
-		mem->next = mem->next->next;
-		event = E_SUCCESS;
-	}
-	
-	if (event == E_SUCCESS)
-		memset(*data, 0, mem->size * sizeof(que_t));
-
-	port_sys_unlock();
-
-	return event;
-}
-
-/* -------------------------------------------------------------------------- */
-void mem_wait( mem_t *mem, void **data )
-/* -------------------------------------------------------------------------- */
-{
-	while (mem_take(mem, data) != E_SUCCESS) core_ctx_switch();
-}
-
-/* -------------------------------------------------------------------------- */
-void mem_give( mem_t *mem, const void *data )
-/* -------------------------------------------------------------------------- */
-{
-	que_t *ptr;
-
-	assert(mem);
-	assert(data);
-
-	port_sys_lock();
-
-	ptr = (que_t *)&(mem->next);
-	while (ptr->next) ptr = ptr->next;
-	ptr->next = (que_t *)data - 1;
-	ptr->next->next = 0;
 
 	port_sys_unlock();
 }

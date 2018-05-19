@@ -55,10 +55,10 @@ unsigned lst_take( lst_t *lst, void **data )
 
 	port_sys_lock();
 
-	if (lst->next)
+	if (lst->head.next)
 	{
-		*data = lst->next + 1;
-		lst->next = lst->next->next;
+		*data = lst->head.next + 1;
+		lst->head.next = lst->head.next->next;
 		event = E_SUCCESS;
 	}
 	
@@ -85,8 +85,7 @@ void lst_give( lst_t *lst, const void *data )
 
 	port_sys_lock();
 
-	ptr = (que_t *)&(lst->next);
-	while (ptr->next) ptr = ptr->next;
+	for (ptr = &lst->head; ptr->next; ptr = ptr->next);
 	ptr->next = (que_t *)data - 1;
 	ptr->next->next = 0;
 
