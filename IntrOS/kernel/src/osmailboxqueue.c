@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmailboxqueue.c
     @author  Rajmund Szymanski
-    @date    13.05.2018
+    @date    19.05.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -56,13 +56,13 @@ static
 void priv_box_get( box_t *box, char *data )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned f = box->first;
-	unsigned i = 0;
+	unsigned i = box->head;
+	unsigned j = 0;
 
-	do data[i++] = box->data[f++]; while (i < box->size);
+	do data[j++] = box->data[i++]; while (j < box->size);
 
-	box->first = (f < box->limit) ? f : 0;
-	box->count -= i;
+	box->head = (i < box->limit) ? i : 0;
+	box->count -= j;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -70,13 +70,13 @@ static
 void priv_box_put( box_t *box, const char *data )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned n = box->next;
-	unsigned i = 0;
+	unsigned i = box->tail;
+	unsigned j = 0;
 
-	do box->data[n++] = data[i++]; while (i < box->size);
+	do box->data[i++] = data[j++]; while (j < box->size);
 
-	box->next = (n < box->limit) ? n : 0;
-	box->count += i;
+	box->tail = (i < box->limit) ? i : 0;
+	box->count += j;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -153,7 +153,7 @@ void box_push( box_t *box, const void *data )
 	if (box->count > box->limit)
 	{
 		box->count = box->limit;
-		box->first = box->next;
+		box->head = box->tail;
 	}
 
 	port_sys_unlock();
