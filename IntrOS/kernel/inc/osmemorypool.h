@@ -50,6 +50,7 @@ typedef struct __mem mem_t, * const mem_id;
 struct __mem
 {
 	que_t    head;  // inherited from list
+
 	unsigned limit; // size of a memory pool (max number of objects)
 	unsigned size;  // size of memory object (in words)
 	void   * data;  // pointer to memory pool buffer

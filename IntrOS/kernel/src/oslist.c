@@ -2,7 +2,7 @@
 
     @file    IntrOS: oslist.c
     @author  Rajmund Szymanski
-    @date    13.05.2018
+    @date    19.05.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
