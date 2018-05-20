@@ -2,7 +2,7 @@
 
     @file    IntrOS: osstreambuffer.c
     @author  Rajmund Szymanski
-    @date    19.05.2018
+    @date    20.05.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -188,6 +188,33 @@ unsigned stm_send( stm_t *stm, const void *data, unsigned size )
 			core_ctx_switch();
 
 		event = stm_give(stm, data, size);
+	}
+
+	port_sys_unlock();
+
+	return event;
+}
+
+/* -------------------------------------------------------------------------- */
+unsigned stm_push( stm_t *stm, const void *data, unsigned size )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned event = E_FAILURE;
+
+	assert(stm);
+	assert(data);
+
+	port_sys_lock();
+
+	if (size > 0 && size <= stm->limit)
+	{
+		priv_stm_put(stm, data, size);
+		if (stm->count > stm->limit)
+		{
+			stm->count = stm->limit;
+			stm->head = stm->tail;
+		}
+		event = E_SUCCESS;
 	}
 
 	port_sys_unlock();

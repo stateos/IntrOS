@@ -269,6 +269,26 @@ unsigned stm_give( stm_t *stm, const void *data, unsigned size );
 
 /******************************************************************************
  *
+ * Name              : stm_push
+ *
+ * Description       : try to transfer data to the stream buffer object,
+ *                     remove the oldest data if the stream buffer object is full
+ *
+ * Parameters
+ *   stm             : pointer to stream buffer object
+ *   data            : pointer to read buffer
+ *   size            : size of read buffer
+ *
+ * Return
+ *   E_SUCCESS       : data was successfully transfered to the stream buffer object
+ *   E_FAILURE       : read buffer has an incorrect size
+ *
+ ******************************************************************************/
+
+unsigned stm_push( stm_t *stm, const void *data, unsigned size );
+
+/******************************************************************************
+ *
  * Name              : stm_count
  *
  * Description       : return the amount of data contained in the stream buffer
@@ -328,6 +348,7 @@ struct baseStreamBuffer : public __stm
 	unsigned take (       void *_data, unsigned _size ) { return stm_take (this, _data, _size); }
 	unsigned send ( const void *_data, unsigned _size ) { return stm_send (this, _data, _size); }
 	unsigned give ( const void *_data, unsigned _size ) { return stm_give (this, _data, _size); }
+	unsigned push ( const void *_data, unsigned _size ) { return stm_push (this, _data, _size); }
 	unsigned count( void )                              { return stm_count(this);               }
 	unsigned space( void )                              { return stm_space(this);               }
 };
