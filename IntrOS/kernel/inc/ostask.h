@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    13.05.2018
+    @date    25.05.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -544,6 +544,7 @@ void tsk_join( tsk_t *tsk );
 
 __STATIC_INLINE
 void tsk_yield( void ) { core_ctx_switch(); }
+
 __STATIC_INLINE
 void tsk_pass ( void ) { core_ctx_switch(); }
 
@@ -614,6 +615,7 @@ unsigned tsk_sleepUntil( cnt_t time );
 /******************************************************************************
  *
  * Name              : tsk_sleepFor
+ * Alias             : tsk_delay
  *
  * Description       : delay execution of current task for given duration of time
  *
@@ -630,6 +632,9 @@ unsigned tsk_sleepUntil( cnt_t time );
 
 unsigned tsk_sleepFor( cnt_t delay );
 
+__STATIC_INLINE
+unsigned tsk_delay( cnt_t delay ) { return tsk_sleepFor(delay); }
+
 /******************************************************************************
  *
  * Name              : tsk_sleep
@@ -645,26 +650,6 @@ unsigned tsk_sleepFor( cnt_t delay );
 
 __STATIC_INLINE
 unsigned tsk_sleep( void ) { return tsk_sleepFor(INFINITE); }
-
-/******************************************************************************
- *
- * Name              : tsk_delay
- *
- * Description       : the same as tsk_sleepFor, delay execution of current task for given duration of time
- *
- * Parameters
- *   delay           : duration of time (maximum number of ticks to delay execution of current task)
- *                     IMMEDIATE: don't delay execution of current task
- *                     INFINITE:  delay indefinitely execution of current task
- *
- * Return
- *   E_SUCCESS       : task object successfully finished countdown
- *   E_FAILURE       : task was resumed
- *
- ******************************************************************************/
-
-__STATIC_INLINE
-unsigned tsk_delay( cnt_t delay ) { return tsk_sleepFor(delay); }
 
 /******************************************************************************
  *
