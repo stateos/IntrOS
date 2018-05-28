@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmailboxqueue.c
     @author  Rajmund Szymanski
-    @date    19.05.2018
+    @date    28.05.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -53,6 +53,32 @@ void box_init( box_t *box, unsigned limit, void *data, unsigned size )
 
 /* -------------------------------------------------------------------------- */
 static
+unsigned priv_box_count( box_t *box )
+/* -------------------------------------------------------------------------- */
+{
+	return box->count / box->size;
+}
+
+/* -------------------------------------------------------------------------- */
+static
+unsigned priv_box_space( box_t *box )
+/* -------------------------------------------------------------------------- */
+{
+	return (box->limit - box->count) / box->size;
+}
+
+/* -------------------------------------------------------------------------- */
+static
+void priv_box_skip( box_t *box )
+/* -------------------------------------------------------------------------- */
+{
+	box->count -= box->size;
+	box->head  += box->size;
+	if (box->head == box->limit) box->head = 0;
+}
+
+/* -------------------------------------------------------------------------- */
+static
 void priv_box_get( box_t *box, char *data )
 /* -------------------------------------------------------------------------- */
 {
@@ -93,7 +119,6 @@ unsigned box_take( box_t *box, void *data )
 	if (box->count > 0)
 	{
 		priv_box_get(box, data);
-
 		event = E_SUCCESS;
 	}
 
@@ -123,7 +148,6 @@ unsigned box_give( box_t *box, const void *data )
 	if (box->count < box->limit)
 	{
 		priv_box_put(box, data);
-
 		event = E_SUCCESS;
 	}
 
@@ -148,15 +172,45 @@ void box_push( box_t *box, const void *data )
 
 	port_sys_lock();
 
+	if (box->count == box->limit)
+		priv_box_skip(box);
 	priv_box_put(box, data);
 
-	if (box->count > box->limit)
-	{
-		box->count = box->limit;
-		box->head = box->tail;
-	}
+	port_sys_unlock();
+}
+
+/* -------------------------------------------------------------------------- */
+unsigned box_count( box_t *box )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned cnt;
+
+	assert(box);
+
+	port_sys_lock();
+
+	cnt = priv_box_count(box);
 
 	port_sys_unlock();
+
+	return cnt;
+}
+
+/* -------------------------------------------------------------------------- */
+unsigned box_space( box_t *box )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned cnt;
+
+	assert(box);
+
+	port_sys_lock();
+
+	cnt = priv_box_space(box);
+
+	port_sys_unlock();
+
+	return cnt;
 }
 
 /* -------------------------------------------------------------------------- */

@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmailboxqueue.h
     @author  Rajmund Szymanski
-    @date    20.05.2018
+    @date    27.05.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -48,12 +48,12 @@ typedef struct __box box_t, * const box_id;
 
 struct __box
 {
-	unsigned count; // inherited from semaphore
-	unsigned limit; // inherited from semaphore
+	unsigned count; // inherited from stream buffer
+	unsigned limit; // inherited from stream buffer
 
-	unsigned head;  // first element to read from data buffer
-	unsigned tail;  // first element to write into data buffer
-	char   * data;  // data buffer
+	unsigned head;  // inherited from stream buffer
+	unsigned tail;  // inherited from stream buffer
+	char   * data;  // inherited from stream buffer
 
 	unsigned size;  // size of a single mail (in bytes)
 };
@@ -285,6 +285,36 @@ unsigned box_give( box_t *box, const void *data );
 
 void box_push( box_t *box, const void *data );
 
+/******************************************************************************
+ *
+ * Name              : box_count
+ *
+ * Description       : return the amount of data contained in the mailbox queue
+ *
+ * Parameters
+ *   box             : pointer to mailbox queue object
+ *
+ * Return            : amount of data contained in the mailbox queue
+ *
+ ******************************************************************************/
+
+unsigned box_count( box_t *box );
+
+/******************************************************************************
+ *
+ * Name              : box_space
+ *
+ * Description       : return the amount of free space in the mailbox queue
+ *
+ * Parameters
+ *   box             : pointer to mailbox queue object
+ *
+ * Return            : amount of free space in the mailbox queue
+ *
+ ******************************************************************************/
+
+unsigned box_space( box_t *box );
+
 #ifdef __cplusplus
 }
 #endif
@@ -313,11 +343,13 @@ struct baseMailBoxQueue : public __box
 	explicit
 	baseMailBoxQueue( const unsigned _limit, char * const _data, const unsigned _size ): __box _BOX_INIT(_limit, _data, _size) {}
 
-	void     wait(       void *_data ) {        box_wait(this, _data); }
-	unsigned take(       void *_data ) { return box_take(this, _data); }
-	void     send( const void *_data ) {        box_send(this, _data); }
-	unsigned give( const void *_data ) { return box_give(this, _data); }
-	void     push( const void *_data ) {        box_push(this, _data); }
+	void     wait(       void *_data ) {        box_wait (this, _data); }
+	unsigned take(       void *_data ) { return box_take (this, _data); }
+	void     send( const void *_data ) {        box_send (this, _data); }
+	unsigned give( const void *_data ) { return box_give (this, _data); }
+	void     push( const void *_data ) {        box_push (this, _data); }
+	unsigned count( void )             { return box_count(this);        }
+	unsigned space( void )             { return box_space(this);        }
 };
 
 /******************************************************************************
