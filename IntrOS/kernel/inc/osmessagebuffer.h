@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.h
     @author  Rajmund Szymanski
-    @date    20.05.2018
+    @date    28.05.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -48,12 +48,12 @@ typedef struct __msg msg_t, * const msg_id;
 
 struct __msg
 {
-	unsigned count; // inherited from semaphore
-	unsigned limit; // inherited from semaphore
+	unsigned count; // inherited from stream buffer
+	unsigned limit; // inherited from stream buffer
 
-	unsigned head;  // first element to read from data buffer
-	unsigned tail;  // first element to write into data buffer
-	char   * data;  // data buffer
+	unsigned head;  // inherited from stream buffer
+	unsigned tail;  // inherited from stream buffer
+	char   * data;  // inherited from stream buffer
 
 	unsigned size;  // size of the first message in the buffer
 };
@@ -263,6 +263,26 @@ unsigned msg_give( msg_t *msg, const void *data, unsigned size );
 
 /******************************************************************************
  *
+ * Name              : msg_push
+ *
+ * Description       : try to transfer data to the message buffer object,
+ *                     remove the oldest data if the message buffer object is full
+ *
+ * Parameters
+ *   msg             : pointer to message buffer object
+ *   data            : pointer to read buffer
+ *   size            : size of read buffer
+ *
+ * Return
+ *   E_SUCCESS       : data was successfully transfered to the message buffer object
+ *   E_FAILURE       : read buffer has an incorrect size
+ *
+ ******************************************************************************/
+
+unsigned msg_push( msg_t *msg, const void *data, unsigned size );
+
+/******************************************************************************
+ *
  * Name              : msg_count
  *
  * Description       : return the size of the first message in the buffer
@@ -322,6 +342,7 @@ struct baseMessageBuffer : public __msg
 	unsigned take (       void *_data, unsigned _size ) { return msg_take (this, _data, _size); }
 	unsigned send ( const void *_data, unsigned _size ) { return msg_send (this, _data, _size); }
 	unsigned give ( const void *_data, unsigned _size ) { return msg_give (this, _data, _size); }
+	unsigned push ( const void *_data, unsigned _size ) { return msg_push (this, _data, _size); }
 	unsigned count( void )                              { return msg_count(this);               }
 	unsigned space( void )                              { return msg_space(this);               }
 };

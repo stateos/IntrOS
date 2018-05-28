@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.c
     @author  Rajmund Szymanski
-    @date    19.05.2018
+    @date    28.05.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -69,12 +69,20 @@ unsigned priv_msg_space( msg_t *msg )
 
 /* -------------------------------------------------------------------------- */
 static
+void priv_msg_skip( msg_t *msg )
+/* -------------------------------------------------------------------------- */
+{
+	msg->count -= msg->size;
+	msg->head  += msg->size;
+	if (msg->head >= msg->limit) msg->head -= msg->limit;
+}
+
+/* -------------------------------------------------------------------------- */
+static
 void priv_msg_get( msg_t *msg, char *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned i;
-
-	assert(size >= priv_msg_count(msg));
 
 	msg->count -= size;;
 	i = msg->head;
@@ -92,8 +100,6 @@ void priv_msg_put( msg_t *msg, const char *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned i;
-
-	assert(size <= priv_msg_space(msg));
 
 	msg->count += size;
 	i = msg->tail;
@@ -131,9 +137,20 @@ void priv_msg_putSize( msg_t *msg, unsigned size )
 
 /* -------------------------------------------------------------------------- */
 static
+void priv_msg_skipUpdate( msg_t *msg )
+/* -------------------------------------------------------------------------- */
+{
+	priv_msg_skip(msg);
+	priv_msg_getSize(msg);
+}
+
+/* -------------------------------------------------------------------------- */
+static
 void priv_msg_getUpdate( msg_t *msg, char *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
+	assert(size >= priv_msg_count(msg));
+
 	priv_msg_get(msg, data, size);
 	priv_msg_getSize(msg);
 }
@@ -143,6 +160,8 @@ static
 void priv_msg_putUpdate( msg_t *msg, const char *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
+	assert(size <= priv_msg_space(msg));
+
 	priv_msg_putSize(msg, size);
 	priv_msg_put(msg, data, size);
 }
@@ -226,6 +245,29 @@ unsigned msg_send( msg_t *msg, const void *data, unsigned size )
 			core_ctx_switch();
 
 		len = msg_give(msg, data, size);
+	}
+
+	port_sys_unlock();
+
+	return len;
+}
+
+/* -------------------------------------------------------------------------- */
+unsigned msg_push( msg_t *msg, const void *data, unsigned size )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned len = 0;
+
+	assert(msg);
+	assert(data);
+
+	port_sys_lock();
+
+	if (size > 0 && size <= msg->limit)
+	{
+		while (size > priv_msg_space(msg))
+			priv_msg_skipUpdate(msg);
+		priv_msg_putUpdate(msg, data, len = size);
 	}
 
 	port_sys_unlock();

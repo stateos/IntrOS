@@ -31,6 +31,7 @@ Features:
 ---------
 4.1
 - updated mailbox queue object
+- updated message buffer object
 ---------
 4.0
 - updated message buffer object: size of the message data limited to size of the buffer
