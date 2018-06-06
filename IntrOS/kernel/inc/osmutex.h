@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmutex.h
     @author  Rajmund Szymanski
-    @date    13.05.2018
+    @date    05.06.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -200,8 +200,6 @@ unsigned mtx_take( mtx_t *mtx );
  * Return
  *   E_SUCCESS       : mutex object was successfully unlocked
  *   E_FAILURE       : mutex object can't be unlocked
- *
- * Note              : use only in thread mode
  *
  ******************************************************************************/
 
