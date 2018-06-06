@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossignal.h
     @author  Rajmund Szymanski
-    @date    13.05.2018
+    @date    05.06.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -197,14 +197,14 @@ void sig_wait( sig_t *sig );
  *
  * Name              : sig_take
  *
- * Description       : don't wait until the signal object has been released
+ * Description       : check if the signal object has been released
  *
  * Parameters
  *   sig             : pointer to signal object
  *
  * Return
  *   E_SUCCESS       : signal object was successfully released
- *   E_FAILURE       : signal object can't be released immediately
+ *   E_FAILURE       : signal object was not released
  *
  ******************************************************************************/
 
@@ -214,7 +214,8 @@ unsigned sig_take( sig_t *sig );
  *
  * Name              : sig_give
  *
- * Description       : resume one (sigClear) or all (sigProtect) tasks that are waiting on the signal object
+ * Description       : release the signal object
+ *                     resume one (sigClear) or all (sigProtect) tasks that are waiting on the signal object
  *
  * Parameters
  *   sig             : pointer to signal object
