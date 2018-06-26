@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    18.05.2018
+    @date    26.06.2018
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -72,6 +72,8 @@ typedef uint64_t     cnt_t;
 typedef struct __tmr tmr_t, * const tmr_id; // timer
 typedef struct __tsk tsk_t, * const tsk_id; // task
 typedef         void fun_t(); // timer/task procedure
+
+typedef struct __spn spn_t, * const spn_id; // spin lock
 
 /* -------------------------------------------------------------------------- */
 

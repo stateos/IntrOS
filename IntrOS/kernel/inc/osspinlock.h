@@ -2,7 +2,7 @@
 
     @file    IntrOS: osspinlock.h
     @author  Rajmund Szymanski
-    @date    05.06.2018
+    @date    26.06.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -44,11 +44,10 @@ extern "C" {
  *
  ******************************************************************************/
 
-typedef struct __spn spn_t, * const spn_id;
-
 struct __spn
 {
-	unsigned flag;  // spin lock's current value
+	volatile
+	unsigned lock;
 };
 
 /******************************************************************************
@@ -151,13 +150,15 @@ struct __spn
  *
  ******************************************************************************/
 
-void spn_init( spn_t *spn );
+__STATIC_INLINE
+void spn_init( spn_t *spn ) { spn->lock = 0; }
 
 /******************************************************************************
  *
- * Name              : spn_wait
+ * Name              : spn_lock
+ * Alias             : spn_wait
  *
- * Description       : try to lock the spin lock object,
+ * Description       : lock the spin lock object,
  *                     wait indefinitely if the spin lock object can't be locked immediately
  *
  * Parameters
@@ -165,31 +166,37 @@ void spn_init( spn_t *spn );
  *
  * Return            : none
  *
- ******************************************************************************/
-
-void spn_wait( spn_t *spn );
-
-/******************************************************************************
- *
- * Name              : spn_take
- *
- * Description       : try to lock the spin lock object,
- *                     don't wait if the spin lock object can't be locked immediately
- *
- * Parameters
- *   spn             : pointer to spin lock object
- *
- * Return
- *   E_SUCCESS       : spin lock object was successfully locked
- *   E_FAILURE       : spin lock object can't be locked immediately
+ * Note              : do not use on single-core systems
+ *                     be careful using this function, it can block the system
+ *                     do not use blocking functions inside spn_lock / spn_unlock
  *
  ******************************************************************************/
 
-unsigned spn_take( spn_t *spn );
+#ifndef OS_SPN_ARCH
+
+__STATIC_INLINE
+void spn_lock( spn_t *spn )
+{
+	unsigned lock;
+	do
+	{
+		port_sys_lock();
+		lock = spn->lock;
+		spn->lock = 1;
+		port_sys_unlock();
+	}
+	while (lock);
+}
+
+#endif
+
+__STATIC_INLINE
+void spn_wait( spn_t *spn ) { spn_lock(spn); }
 
 /******************************************************************************
  *
- * Name              : spn_give
+ * Name              : spn_unlock
+ * Alias             : spn_give
  *
  * Description       : unlock the spin lock object
  *
@@ -200,7 +207,11 @@ unsigned spn_take( spn_t *spn );
  *
  ******************************************************************************/
 
-void spn_give( spn_t *spn );
+__STATIC_INLINE
+void spn_unlock( spn_t *spn ) { spn->lock = 0; }
+
+__STATIC_INLINE
+void spn_give( spn_t *spn ) { spn_unlock(spn); }
 
 #ifdef __cplusplus
 }
@@ -226,9 +237,10 @@ struct SpinLock : public __spn
 	explicit
 	SpinLock( void ): __spn _SPN_INIT() {}
 
-	void     wait( void ) {        spn_wait(this); }
-	unsigned take( void ) { return spn_take(this); }
-	void     give( void ) {        spn_give(this); }
+	void lock  ( void ) { spn_lock  (this); }
+	void wait  ( void ) { spn_wait  (this); }
+	void unlock( void ) { spn_unlock(this); }
+	void give  ( void ) { spn_give  (this); }
 };
 
 #endif

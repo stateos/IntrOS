@@ -35,7 +35,6 @@ Features:
 - updated message buffer object
 - updated stream buffer object
 - added spin lock object
-- added example for new feature
 ---------
 4.0
 - updated message buffer object: size of the message data limited to size of the buffer
