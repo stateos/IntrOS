@@ -13,7 +13,7 @@ There's a dedicated function for immediate change the task state.
 
 ### Features
 
-- kernel works in cooperative (non-preemptive) mode only
+- kernel can operate in cooperative (non-preemptive) mode only
 - kernel can operate with 16, 32 or 64-bit timer counter
 - kernel can operate in tick-less mode
 - spin locks
