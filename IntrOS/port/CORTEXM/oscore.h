@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    26.06.2018
+    @date    28.06.2018
     @brief   IntrOS port file for ARM Cotrex-M uC.
 
  ******************************************************************************
@@ -194,18 +194,11 @@ void * port_get_sp( void )
 
 /* -------------------------------------------------------------------------- */
 
-#if   ((defined(__ARM_ARCH_7M__     ) && (__ARM_ARCH_7M__      == 1)) || \
-       (defined(__ARM_ARCH_7EM__    ) && (__ARM_ARCH_7EM__     == 1)) || \
-       (defined(__ARM_ARCH_8M_MAIN__) && (__ARM_ARCH_8M_MAIN__ == 1)) || \
-       (defined(__ARM_ARCH_8M_BASE__) && (__ARM_ARCH_8M_BASE__ == 1)))
+#if __CORTEX_M > 0
 
-__STATIC_INLINE
-void spn_lock( spn_t *spn )
-{
-	while (__LDREXW((volatile uint32_t *)spn) || __STREXW(1, (volatile uint32_t *)spn));
-}
+#define port_spn_lock(lck)    while (__LDREXW((volatile uint32_t *)(lck)) || \
+                                  __STREXW(1, (volatile uint32_t *)(lck)))
 
-#define OS_SPN_ARCH
 #endif
 
 /* -------------------------------------------------------------------------- */

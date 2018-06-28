@@ -2,7 +2,7 @@
 
     @file    IntrOS: osspinlock.h
     @author  Rajmund Szymanski
-    @date    27.06.2018
+    @date    28.06.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -43,6 +43,8 @@ extern "C" {
  * Name              : spin lock
  *
  ******************************************************************************/
+
+typedef struct __spn spn_t, * const spn_id;
 
 struct __spn
 {
@@ -171,11 +173,12 @@ void spn_init( spn_t *spn ) { spn->lock = 0; }
  *
  ******************************************************************************/
 
-#ifndef OS_SPN_ARCH
-
 __STATIC_INLINE
 void spn_lock( spn_t *spn )
 {
+#ifdef port_spn_lock
+	port_spn_lock(&spn->lock);
+#else
 	unsigned lock;
 	do
 	{
@@ -185,9 +188,8 @@ void spn_lock( spn_t *spn )
 		port_sys_unlock();
 	}
 	while (lock);
-}
-
 #endif
+}
 
 /******************************************************************************
  *
