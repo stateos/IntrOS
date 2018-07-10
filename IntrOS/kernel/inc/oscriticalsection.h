@@ -1,6 +1,6 @@
 /******************************************************************************
 
-    @file    IntrOS: os.h
+    @file    IntrOS: oscriticalsection.h
     @author  Rajmund Szymanski
     @date    10.07.2018
     @brief   This file contains definitions for IntrOS.
@@ -29,28 +29,10 @@
 
  ******************************************************************************/
 
-#ifndef __INTROS_H
-#define __INTROS_H
+#ifndef __INTROS_CRI_H
+#define __INTROS_CRI_H
 
 #include "oskernel.h"
-#include "inc/oscriticalsection.h"
-#include "inc/osspinlock.h"
-#include "inc/ossignal.h"
-#include "inc/osevent.h"
-#include "inc/osflag.h"
-#include "inc/osbarrier.h"
-#include "inc/ossemaphore.h"
-#include "inc/osmutex.h"
-#include "inc/osconditionvariable.h"
-#include "inc/oslist.h"
-#include "inc/osmemorypool.h"
-#include "inc/osstreambuffer.h"
-#include "inc/osmessagebuffer.h"
-#include "inc/osmailboxqueue.h"
-#include "inc/osjobqueue.h"
-#include "inc/oseventqueue.h"
-#include "inc/ostimer.h"
-#include "inc/ostask.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -58,41 +40,9 @@ extern "C" {
 
 /******************************************************************************
  *
- * Name              : sys_init
+ * Name              : sys_lock
  *
- * Description       : initialize system timer and enable services
- *
- * Parameters        : none
- *
- * Return            : none
- *
- * Note              : function port_sys_init should be invoked as a constructor
- *                   : otherwise, call sys_init as the first instruction in function main
- *
- ******************************************************************************/
-
-__STATIC_INLINE
-void sys_init( void ) { port_sys_init(); }
-
-/******************************************************************************
- *
- * Name              : sys_time
- *
- * Description       : return current value of system counter
- *
- * Parameters        : none
- *
- * Return            : current value of system counter
- *
- ******************************************************************************/
-
-cnt_t sys_time( void );
-
-/******************************************************************************
- *
- * Name              : stk_assert
- *
- * Description       : check stack integrity of the current task
+ * Description       : disable interrupts / enter into critical section
  *
  * Parameters        : none
  *
@@ -100,11 +50,54 @@ cnt_t sys_time( void );
  *
  ******************************************************************************/
 
-#define                stk_assert() \
-                       core_stk_assert()
+#define                sys_lock() \
+                       port_sys_lock()
+
+/******************************************************************************
+ *
+ * Name              : sys_unlock
+ *
+ * Description       : enable interrupts / exit from critical section
+ *
+ * Parameters        : none
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
+
+#define                sys_unlock() \
+                       port_sys_unlock()
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif//__INTROS_H
+/* -------------------------------------------------------------------------- */
+
+#ifdef __cplusplus
+
+/******************************************************************************
+ *
+ * Class             : CriticalSection
+ *
+ * Description       : create and initialize a critical section guard object
+ *
+ * Constructor parameters
+ *                   : none
+ *
+ ******************************************************************************/
+
+struct CriticalSection
+{
+	 CriticalSection( void ) { state = port_get_lock(); port_set_lock(); }
+	~CriticalSection( void ) { port_put_lock(state); }
+
+	private:
+	lck_t state;
+};
+
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+#endif//__INTROS_CRI_H
