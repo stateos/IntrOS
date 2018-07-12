@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.c
     @author  Rajmund Szymanski
-    @date    28.05.2018
+    @date    11.07.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -39,14 +39,14 @@ void msg_init( msg_t *msg, unsigned limit, void *data )
 	assert(limit);
 	assert(data);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	memset(msg, 0, sizeof(msg_t));
 
 	msg->limit = limit;
 	msg->data  = data;
 
-	port_sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -175,12 +175,12 @@ unsigned msg_take( msg_t *msg, void *data, unsigned size )
 	assert(msg);
 	assert(data);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	if (msg->count > 0 && size >= priv_msg_count(msg))
 		priv_msg_getUpdate(msg, data, len = msg->size);
 
-	port_sys_unlock();
+	core_sys_unlock();
 
 	return len;
 }
@@ -194,7 +194,7 @@ unsigned msg_wait( msg_t *msg, void *data, unsigned size )
 	assert(msg);
 	assert(data);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	if (size > 0)
 	{
@@ -204,7 +204,7 @@ unsigned msg_wait( msg_t *msg, void *data, unsigned size )
 		len = msg_take(msg, data, size);
 	}
 
-	port_sys_unlock();
+	core_sys_unlock();
 
 	return len;
 }
@@ -218,12 +218,12 @@ unsigned msg_give( msg_t *msg, const void *data, unsigned size )
 	assert(msg);
 	assert(data);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	if (size > 0 && size <= priv_msg_space(msg))
 		priv_msg_putUpdate(msg, data, len = size);
 
-	port_sys_unlock();
+	core_sys_unlock();
 
 	return len;
 }
@@ -237,7 +237,7 @@ unsigned msg_send( msg_t *msg, const void *data, unsigned size )
 	assert(msg);
 	assert(data);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	if (size > 0 && size <= msg->limit)
 	{
@@ -247,7 +247,7 @@ unsigned msg_send( msg_t *msg, const void *data, unsigned size )
 		len = msg_give(msg, data, size);
 	}
 
-	port_sys_unlock();
+	core_sys_unlock();
 
 	return len;
 }
@@ -261,7 +261,7 @@ unsigned msg_push( msg_t *msg, const void *data, unsigned size )
 	assert(msg);
 	assert(data);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	if (size > 0 && size <= msg->limit)
 	{
@@ -270,7 +270,7 @@ unsigned msg_push( msg_t *msg, const void *data, unsigned size )
 		priv_msg_putUpdate(msg, data, len = size);
 	}
 
-	port_sys_unlock();
+	core_sys_unlock();
 
 	return len;
 }
@@ -283,11 +283,11 @@ unsigned msg_count( msg_t *msg )
 
 	assert(msg);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	cnt = priv_msg_count(msg);
 
-	port_sys_unlock();
+	core_sys_unlock();
 
 	return cnt;
 }
@@ -300,11 +300,11 @@ unsigned msg_space( msg_t *msg )
 
 	assert(msg);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	cnt = priv_msg_space(msg);
 
-	port_sys_unlock();
+	core_sys_unlock();
 
 	return cnt;
 }

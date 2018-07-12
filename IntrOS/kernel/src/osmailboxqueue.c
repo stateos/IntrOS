@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmailboxqueue.c
     @author  Rajmund Szymanski
-    @date    28.05.2018
+    @date    11.07.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -40,7 +40,7 @@ void box_init( box_t *box, unsigned limit, void *data, unsigned size )
 	assert(data);
 	assert(size);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	memset(box, 0, sizeof(box_t));
 	
@@ -48,7 +48,7 @@ void box_init( box_t *box, unsigned limit, void *data, unsigned size )
 	box->data  = data;
 	box->size  = size;
 
-	port_sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -114,7 +114,7 @@ unsigned box_take( box_t *box, void *data )
 	assert(box);
 	assert(data);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	if (box->count > 0)
 	{
@@ -122,7 +122,7 @@ unsigned box_take( box_t *box, void *data )
 		event = E_SUCCESS;
 	}
 
-	port_sys_unlock();
+	core_sys_unlock();
 
 	return event;
 }
@@ -143,7 +143,7 @@ unsigned box_give( box_t *box, const void *data )
 	assert(box);
 	assert(data);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	if (box->count < box->limit)
 	{
@@ -151,7 +151,7 @@ unsigned box_give( box_t *box, const void *data )
 		event = E_SUCCESS;
 	}
 
-	port_sys_unlock();
+	core_sys_unlock();
 
 	return event;
 }
@@ -170,13 +170,13 @@ void box_push( box_t *box, const void *data )
 	assert(box);
 	assert(data);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	if (box->count == box->limit)
 		priv_box_skip(box);
 	priv_box_put(box, data);
 
-	port_sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -187,11 +187,11 @@ unsigned box_count( box_t *box )
 
 	assert(box);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	cnt = priv_box_count(box);
 
-	port_sys_unlock();
+	core_sys_unlock();
 
 	return cnt;
 }
@@ -204,11 +204,11 @@ unsigned box_space( box_t *box )
 
 	assert(box);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	cnt = priv_box_space(box);
 
-	port_sys_unlock();
+	core_sys_unlock();
 
 	return cnt;
 }

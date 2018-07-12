@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.c
     @author  Rajmund Szymanski
-    @date    13.05.2018
+    @date    11.07.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -37,13 +37,13 @@ void tmr_init( tmr_t *tmr, fun_t *state )
 {
 	assert(tmr);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	memset(tmr, 0, sizeof(tmr_t));
 
 	tmr->state = state;
 
-	port_sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -61,7 +61,7 @@ void tmr_startUntil( tmr_t *tmr, cnt_t time )
 {
 	assert(tmr);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	tmr->start  = core_sys_time();
 	tmr->delay  = time - tmr->start;
@@ -71,7 +71,7 @@ void tmr_startUntil( tmr_t *tmr, cnt_t time )
 
 	priv_tmr_start(tmr);
 
-	port_sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -80,7 +80,7 @@ void tmr_start( tmr_t *tmr, cnt_t delay, cnt_t period )
 {
 	assert(tmr);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	tmr->start  = core_sys_time();
 	tmr->delay  = delay;
@@ -88,7 +88,7 @@ void tmr_start( tmr_t *tmr, cnt_t delay, cnt_t period )
 
 	priv_tmr_start(tmr);
 
-	port_sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -97,7 +97,7 @@ void tmr_startFrom( tmr_t *tmr, cnt_t delay, cnt_t period, fun_t *proc )
 {
 	assert(tmr);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	tmr->state  = proc;
 	tmr->start  = core_sys_time();
@@ -106,7 +106,7 @@ void tmr_startFrom( tmr_t *tmr, cnt_t delay, cnt_t period, fun_t *proc )
 
 	priv_tmr_start(tmr);
 
-	port_sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */

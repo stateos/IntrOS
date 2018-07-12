@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscriticalsection.h
     @author  Rajmund Szymanski
-    @date    10.07.2018
+    @date    11.07.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -51,7 +51,7 @@ extern "C" {
  ******************************************************************************/
 
 #define                sys_lock() \
-                       port_sys_lock()
+                       core_sys_lock()
 
 /******************************************************************************
  *
@@ -66,7 +66,7 @@ extern "C" {
  ******************************************************************************/
 
 #define                sys_unlock() \
-                       port_sys_unlock()
+                       core_sys_unlock()
 
 #ifdef __cplusplus
 }

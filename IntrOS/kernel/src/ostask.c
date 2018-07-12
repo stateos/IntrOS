@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.c
     @author  Rajmund Szymanski
-    @date    13.05.2018
+    @date    11.07.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -40,7 +40,7 @@ void tsk_init( tsk_t *tsk, fun_t *state, void *stack, unsigned size )
 	assert(stack);
 	assert(size);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	memset(tsk, 0, sizeof(tsk_t));
 	
@@ -51,7 +51,7 @@ void tsk_init( tsk_t *tsk, fun_t *state, void *stack, unsigned size )
 	core_ctx_init(tsk);
 	core_tsk_insert(tsk);
 
-	port_sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -61,7 +61,7 @@ void tsk_start( tsk_t *tsk )
 	assert(tsk);
 	assert(tsk->state);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	if (tsk->id == ID_STOPPED)
 	{
@@ -69,7 +69,7 @@ void tsk_start( tsk_t *tsk )
 		core_tsk_insert(tsk);
 	}
 
-	port_sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -79,7 +79,7 @@ void tsk_startFrom( tsk_t *tsk, fun_t *state )
 	assert(tsk);
 	assert(state);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	if (tsk->id == ID_STOPPED)
 	{
@@ -89,7 +89,7 @@ void tsk_startFrom( tsk_t *tsk, fun_t *state )
 		core_tsk_insert(tsk);
 	}
 
-	port_sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -140,14 +140,14 @@ unsigned tsk_sleepUntil( cnt_t time )
 {
 	tsk_t *cur = System.cur;
 
-	port_sys_lock();
+	core_sys_lock();
 
 	cur->start = core_sys_time();
 	cur->delay = time - cur->start;
 	if (cur->delay > ((CNT_MAX)>>1))
 		cur->delay = 0;
 
-	port_sys_unlock();
+	core_sys_unlock();
 
 	return priv_tsk_sleep(cur);
 }
@@ -158,12 +158,12 @@ unsigned tsk_sleepFor( cnt_t delay )
 {
 	tsk_t *cur = System.cur;
 
-	port_sys_lock();
+	core_sys_lock();
 
 	cur->start = core_sys_time();
 	cur->delay = delay;
 
-	port_sys_unlock();
+	core_sys_unlock();
 
 	return priv_tsk_sleep(cur);
 }
@@ -184,9 +184,9 @@ void tsk_give( tsk_t *tsk, unsigned flags )
 
 	if (tsk->id == ID_READY)
 	{
-		port_sys_lock();
+		core_sys_lock();
 		tsk->event &= ~flags;
-		port_sys_unlock();
+		core_sys_unlock();
 	}
 }
 

@@ -2,7 +2,7 @@
 
     @file    IntrOS: osconditionvariable.c
     @author  Rajmund Szymanski
-    @date    13.05.2018
+    @date    11.07.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -37,11 +37,11 @@ void cnd_init( cnd_t *cnd )
 {
 	assert(cnd);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	memset(cnd, 0, sizeof(cnd_t));
 
-	port_sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -67,11 +67,11 @@ void cnd_give( cnd_t *cnd )
 {
 	assert(cnd);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	cnd->signal++;
 
-	port_sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */

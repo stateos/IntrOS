@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.c
     @author  Rajmund Szymanski
-    @date    19.05.2018
+    @date    11.07.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -39,14 +39,14 @@ void job_init( job_t *job, unsigned limit, fun_t **data )
 	assert(limit);
 	assert(data);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	memset(job, 0, sizeof(job_t));
 
 	job->limit = limit;
 	job->data  = data;
 
-	port_sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -86,7 +86,7 @@ unsigned job_take( job_t *job )
 
 	assert(job);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	if (job->count > 0)
 	{
@@ -98,7 +98,7 @@ unsigned job_take( job_t *job )
 		event = E_SUCCESS;
 	}
 
-	port_sys_unlock();
+	core_sys_unlock();
 
 	return event;
 }
@@ -119,7 +119,7 @@ unsigned job_give( job_t *job, fun_t *fun )
 	assert(job);
 	assert(fun);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	if (job->count < job->limit)
 	{
@@ -128,7 +128,7 @@ unsigned job_give( job_t *job, fun_t *fun )
 		event = E_SUCCESS;
 	}
 
-	port_sys_unlock();
+	core_sys_unlock();
 
 	return event;
 }
@@ -147,7 +147,7 @@ void job_push( job_t *job, fun_t *fun )
 	assert(job);
 	assert(fun);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	priv_job_put(job, fun);
 
@@ -157,7 +157,7 @@ void job_push( job_t *job, fun_t *fun )
 		job->head = job->tail;
 	}
 
-	port_sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */

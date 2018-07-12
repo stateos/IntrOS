@@ -2,7 +2,7 @@
 
     @file    IntrOS: oseventqueue.c
     @author  Rajmund Szymanski
-    @date    19.05.2018
+    @date    11.07.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -39,14 +39,14 @@ void evq_init( evq_t *evq, unsigned limit, unsigned *data )
 	assert(limit);
 	assert(data);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	memset(evq, 0, sizeof(evq_t));
 
 	evq->limit = limit;
 	evq->data  = data;
 
-	port_sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -86,12 +86,12 @@ unsigned evq_take( evq_t *evq )
 
 	assert(evq);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	if (evq->count > 0)
 		event = priv_evq_get(evq);
 
-	port_sys_unlock();
+	core_sys_unlock();
 
 	return event;
 }
@@ -115,7 +115,7 @@ unsigned evq_give( evq_t *evq, unsigned data )
 
 	assert(evq);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	if (evq->count < evq->limit)
 	{
@@ -123,7 +123,7 @@ unsigned evq_give( evq_t *evq, unsigned data )
 		event = E_SUCCESS;
 	}
 
-	port_sys_unlock();
+	core_sys_unlock();
 
 	return event;
 }
@@ -141,7 +141,7 @@ void evq_push( evq_t *evq, unsigned data )
 {
 	assert(evq);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	priv_evq_put(evq, data);
 
@@ -151,7 +151,7 @@ void evq_push( evq_t *evq, unsigned data )
 		evq->head = evq->tail;
 	}
 
-	port_sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */

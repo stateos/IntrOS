@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbarrier.c
     @author  Rajmund Szymanski
-    @date    13.05.2018
+    @date    11.07.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -38,14 +38,14 @@ void bar_init( bar_t *bar, unsigned limit )
 	assert(bar);
 	assert(limit);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	memset(bar, 0, sizeof(bar_t));
 
 	bar->count = limit;
 	bar->limit = limit;
 
-	port_sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -59,7 +59,7 @@ void bar_wait( bar_t *bar )
 
 	signal = bar->signal;
 
-	port_sys_lock();
+	core_sys_lock();
 
 	if (--bar->count == 0)
 	{
@@ -67,7 +67,7 @@ void bar_wait( bar_t *bar )
 		bar->signal++;
 	}
 
-	port_sys_unlock();
+	core_sys_unlock();
 
 	while (bar->signal == signal) core_ctx_switch();
 }

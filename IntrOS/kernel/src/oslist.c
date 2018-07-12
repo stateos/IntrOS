@@ -2,7 +2,7 @@
 
     @file    IntrOS: oslist.c
     @author  Rajmund Szymanski
-    @date    19.05.2018
+    @date    11.07.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -37,11 +37,11 @@ void lst_init( lst_t *lst )
 {
 	assert(lst);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	memset(lst, 0, sizeof(lst_t));
 
-	port_sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -53,7 +53,7 @@ unsigned lst_take( lst_t *lst, void **data )
 	assert(lst);
 	assert(data);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	if (lst->head.next)
 	{
@@ -62,7 +62,7 @@ unsigned lst_take( lst_t *lst, void **data )
 		event = E_SUCCESS;
 	}
 	
-	port_sys_unlock();
+	core_sys_unlock();
 
 	return event;
 }
@@ -83,13 +83,13 @@ void lst_give( lst_t *lst, const void *data )
 	assert(lst);
 	assert(data);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	for (ptr = &lst->head; ptr->next; ptr = ptr->next);
 	ptr->next = (que_t *)data - 1;
 	ptr->next->next = 0;
 
-	port_sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */

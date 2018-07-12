@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmutex.c
     @author  Rajmund Szymanski
-    @date    13.05.2018
+    @date    11.07.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -37,11 +37,11 @@ void mtx_init( mtx_t *mtx )
 {
 	assert(mtx);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	memset(mtx, 0, sizeof(mtx_t));
 
-	port_sys_unlock();
+	core_sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -53,7 +53,7 @@ unsigned mtx_take( mtx_t *mtx )
 	assert(mtx);
 	assert(mtx->owner != System.cur);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	if (mtx->owner == 0)
 	{
@@ -62,7 +62,7 @@ unsigned mtx_take( mtx_t *mtx )
 		event = E_SUCCESS;
 	}
 
-	port_sys_unlock();
+	core_sys_unlock();
 
 	return event;
 }
@@ -82,7 +82,7 @@ unsigned mtx_give( mtx_t *mtx )
 	
 	assert(mtx);
 
-	port_sys_lock();
+	core_sys_lock();
 
 	if (mtx->owner == System.cur)
 	{
@@ -91,7 +91,7 @@ unsigned mtx_give( mtx_t *mtx )
 		event = E_SUCCESS;
 	}
 
-	port_sys_unlock();
+	core_sys_unlock();
 
 	return event;
 }
