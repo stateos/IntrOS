@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmailboxqueue.h
     @author  Rajmund Szymanski
-    @date    27.05.2018
+    @date    15.07.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -173,7 +173,7 @@ struct __box
 
 #ifndef __cplusplus
 #define                BOX_CREATE( limit, size ) \
-             & (box_t) BOX_INIT  ( limit, size )
+           (box_t[]) { BOX_INIT  ( limit, size ) }
 #define                BOX_NEW \
                        BOX_CREATE
 #endif

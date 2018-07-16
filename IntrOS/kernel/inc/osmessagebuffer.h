@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.h
     @author  Rajmund Szymanski
-    @date    28.05.2018
+    @date    15.07.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -167,7 +167,7 @@ struct __msg
 
 #ifndef __cplusplus
 #define                MSG_CREATE( limit ) \
-             & (msg_t) MSG_INIT  ( limit )
+           (msg_t[]) { MSG_INIT  ( limit ) }
 #define                MSG_NEW \
                        MSG_CREATE
 #endif

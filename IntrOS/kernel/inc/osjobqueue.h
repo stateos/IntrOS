@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.h
     @author  Rajmund Szymanski
-    @date    20.05.2018
+    @date    15.07.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -166,7 +166,7 @@ struct __job
 
 #ifndef __cplusplus
 #define                JOB_CREATE( limit ) \
-             & (job_t) JOB_INIT  ( limit )
+           (job_t[]) { JOB_INIT  ( limit ) }
 #define                JOB_NEW \
                        JOB_CREATE
 #endif

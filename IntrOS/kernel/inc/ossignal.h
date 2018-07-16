@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossignal.h
     @author  Rajmund Szymanski
-    @date    05.06.2018
+    @date    15.07.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -155,7 +155,7 @@ struct __sig
 
 #ifndef __cplusplus
 #define                SIG_CREATE( type ) \
-             & (sig_t) SIG_INIT  ( type )
+           (sig_t[]) { SIG_INIT  ( type ) }
 #define                SIG_NEW \
                        SIG_CREATE
 #endif

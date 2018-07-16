@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossemaphore.h
     @author  Rajmund Szymanski
-    @date    13.05.2018
+    @date    15.07.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -165,7 +165,7 @@ struct __sem
 
 #ifndef __cplusplus
 #define                SEM_CREATE( init, limit ) \
-             & (sem_t) SEM_INIT  ( init, limit )
+           (sem_t[]) { SEM_INIT  ( init, limit ) }
 #define                SEM_NEW \
                        SEM_CREATE
 #endif
