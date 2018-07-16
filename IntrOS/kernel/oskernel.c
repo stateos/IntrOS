@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    13.07.2018
+    @date    16.07.2018
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -32,6 +32,7 @@
 #include "oskernel.h"
 #include "inc/ostimer.h"
 #include "inc/ostask.h"
+#include "inc/oscriticalsection.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -115,12 +116,12 @@ void core_ctx_init( tsk_t *tsk )
 
 void core_ctx_switch( void )
 {
-	core_sys_lock();
-
-	if (setjmp(System.cur->ctx.buf) == 0)
-		core_tsk_switch();
-
-	core_sys_unlock();
+	sys_lock();
+	{
+		if (setjmp(System.cur->ctx.buf) == 0)
+			core_tsk_switch();
+	}
+	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -175,7 +176,7 @@ void core_tsk_switch( void )
 			port_set_lock();
 			{
 				tmr = (tmr_t *)cur;
-			
+
 				tmr->start += tmr->delay;
 				tmr->delay  = tmr->period;
 

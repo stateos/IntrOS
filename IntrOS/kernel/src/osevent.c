@@ -2,7 +2,7 @@
 
     @file    IntrOS: osevent.c
     @author  Rajmund Szymanski
-    @date    11.07.2018
+    @date    16.07.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -30,6 +30,7 @@
  ******************************************************************************/
 
 #include "inc/osevent.h"
+#include "inc/oscriticalsection.h"
 
 /* -------------------------------------------------------------------------- */
 void evt_init( evt_t *evt )
@@ -37,11 +38,11 @@ void evt_init( evt_t *evt )
 {
 	assert(evt);
 
-	core_sys_lock();
-
-	memset(evt, 0, sizeof(evt_t));
-
-	core_sys_unlock();
+	sys_lock();
+	{
+		memset(evt, 0, sizeof(evt_t));
+	}
+	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -64,12 +65,12 @@ void evt_give( evt_t *evt, unsigned event )
 {
 	assert(evt);
 
-	core_sys_lock();
-
-	evt->event = event;
-	evt->signal++;
-
-	core_sys_unlock();
+	sys_lock();
+	{
+		evt->event = event;
+		evt->signal++;
+	}
+	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */

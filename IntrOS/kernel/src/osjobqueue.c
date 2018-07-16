@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.c
     @author  Rajmund Szymanski
-    @date    11.07.2018
+    @date    16.07.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -30,6 +30,7 @@
  ******************************************************************************/
 
 #include "inc/osjobqueue.h"
+#include "inc/oscriticalsection.h"
 
 /* -------------------------------------------------------------------------- */
 void job_init( job_t *job, unsigned limit, fun_t **data )
@@ -39,14 +40,14 @@ void job_init( job_t *job, unsigned limit, fun_t **data )
 	assert(limit);
 	assert(data);
 
-	core_sys_lock();
+	sys_lock();
+	{
+		memset(job, 0, sizeof(job_t));
 
-	memset(job, 0, sizeof(job_t));
-
-	job->limit = limit;
-	job->data  = data;
-
-	core_sys_unlock();
+		job->limit = limit;
+		job->data  = data;
+	}
+	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -86,19 +87,19 @@ unsigned job_take( job_t *job )
 
 	assert(job);
 
-	core_sys_lock();
-
-	if (job->count > 0)
+	sys_lock();
 	{
-		fun = priv_job_get(job);
+		if (job->count > 0)
+		{
+			fun = priv_job_get(job);
 
-		port_clr_lock();
-		fun();
+			port_clr_lock();
+			fun();
 
-		event = E_SUCCESS;
+			event = E_SUCCESS;
+		}
 	}
-
-	core_sys_unlock();
+	sys_unlock();
 
 	return event;
 }
@@ -119,16 +120,16 @@ unsigned job_give( job_t *job, fun_t *fun )
 	assert(job);
 	assert(fun);
 
-	core_sys_lock();
-
-	if (job->count < job->limit)
+	sys_lock();
 	{
-		priv_job_put(job, fun);
+		if (job->count < job->limit)
+		{
+			priv_job_put(job, fun);
 
-		event = E_SUCCESS;
+			event = E_SUCCESS;
+		}
 	}
-
-	core_sys_unlock();
+	sys_unlock();
 
 	return event;
 }
@@ -147,17 +148,17 @@ void job_push( job_t *job, fun_t *fun )
 	assert(job);
 	assert(fun);
 
-	core_sys_lock();
-
-	priv_job_put(job, fun);
-
-	if (job->count > job->limit)
+	sys_lock();
 	{
-		job->count = job->limit;
-		job->head = job->tail;
-	}
+		priv_job_put(job, fun);
 
-	core_sys_unlock();
+		if (job->count > job->limit)
+		{
+			job->count = job->limit;
+			job->head = job->tail;
+		}
+	}
+	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */

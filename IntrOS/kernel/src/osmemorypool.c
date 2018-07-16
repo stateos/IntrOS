@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmemorypool.c
     @author  Rajmund Szymanski
-    @date    11.07.2018
+    @date    16.07.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -30,6 +30,7 @@
  ******************************************************************************/
 
 #include "inc/osmemorypool.h"
+#include "inc/oscriticalsection.h"
 
 /* -------------------------------------------------------------------------- */
 void mem_bind( mem_t *mem )
@@ -43,15 +44,15 @@ void mem_bind( mem_t *mem )
 	assert(mem->size);
 	assert(mem->data);
 
-	core_sys_lock();
-	
-	ptr = mem->data;
-	cnt = mem->limit;
+	sys_lock();
+	{
+		ptr = mem->data;
+		cnt = mem->limit;
 
-	mem->head.next = 0;
-	while (cnt--) { mem_give(mem, ++ptr); ptr += mem->size; }
-
-	core_sys_unlock();
+		mem->head.next = 0;
+		while (cnt--) { mem_give(mem, ++ptr); ptr += mem->size; }
+	}
+	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -63,17 +64,17 @@ void mem_init( mem_t *mem, unsigned limit, unsigned size, void *data )
 	assert(size);
 	assert(data);
 
-	core_sys_lock();
+	sys_lock();
+	{
+		memset(mem, 0, sizeof(mem_t));
 
-	memset(mem, 0, sizeof(mem_t));
+		mem->limit = limit;
+		mem->size  = size;
+		mem->data  = data;
 
-	mem->limit = limit;
-	mem->size  = size;
-	mem->data  = data;
-
-	mem_bind(mem);
-
-	core_sys_unlock();
+		mem_bind(mem);
+	}
+	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */

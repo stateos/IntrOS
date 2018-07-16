@@ -2,7 +2,7 @@
 
     @file    IntrOS: oseventqueue.c
     @author  Rajmund Szymanski
-    @date    11.07.2018
+    @date    16.07.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -30,6 +30,7 @@
  ******************************************************************************/
 
 #include "inc/oseventqueue.h"
+#include "inc/oscriticalsection.h"
 
 /* -------------------------------------------------------------------------- */
 void evq_init( evq_t *evq, unsigned limit, unsigned *data )
@@ -39,14 +40,14 @@ void evq_init( evq_t *evq, unsigned limit, unsigned *data )
 	assert(limit);
 	assert(data);
 
-	core_sys_lock();
+	sys_lock();
+	{
+		memset(evq, 0, sizeof(evq_t));
 
-	memset(evq, 0, sizeof(evq_t));
-
-	evq->limit = limit;
-	evq->data  = data;
-
-	core_sys_unlock();
+		evq->limit = limit;
+		evq->data  = data;
+	}
+	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -71,7 +72,7 @@ void priv_evq_put( evq_t *evq, unsigned event )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned i = evq->tail;
-	
+
 	evq->data[i++] = event;
 
 	evq->tail = (i < evq->limit) ? i : 0;
@@ -86,12 +87,12 @@ unsigned evq_take( evq_t *evq )
 
 	assert(evq);
 
-	core_sys_lock();
-
-	if (evq->count > 0)
-		event = priv_evq_get(evq);
-
-	core_sys_unlock();
+	sys_lock();
+	{
+		if (evq->count > 0)
+			event = priv_evq_get(evq);
+	}
+	sys_unlock();
 
 	return event;
 }
@@ -115,15 +116,15 @@ unsigned evq_give( evq_t *evq, unsigned data )
 
 	assert(evq);
 
-	core_sys_lock();
-
-	if (evq->count < evq->limit)
+	sys_lock();
 	{
-		priv_evq_put(evq, data);
-		event = E_SUCCESS;
+		if (evq->count < evq->limit)
+		{
+			priv_evq_put(evq, data);
+			event = E_SUCCESS;
+		}
 	}
-
-	core_sys_unlock();
+	sys_unlock();
 
 	return event;
 }
@@ -141,17 +142,17 @@ void evq_push( evq_t *evq, unsigned data )
 {
 	assert(evq);
 
-	core_sys_lock();
-
-	priv_evq_put(evq, data);
-
-	if (evq->count > evq->limit)
+	sys_lock();
 	{
-		evq->count = evq->limit;
-		evq->head = evq->tail;
-	}
+		priv_evq_put(evq, data);
 
-	core_sys_unlock();
+		if (evq->count > evq->limit)
+		{
+			evq->count = evq->limit;
+			evq->head = evq->tail;
+		}
+	}
+	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */

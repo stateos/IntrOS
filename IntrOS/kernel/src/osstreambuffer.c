@@ -2,7 +2,7 @@
 
     @file    IntrOS: osstreambuffer.c
     @author  Rajmund Szymanski
-    @date    11.07.2018
+    @date    16.07.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -30,6 +30,7 @@
  ******************************************************************************/
 
 #include "inc/osstreambuffer.h"
+#include "inc/oscriticalsection.h"
 
 /* -------------------------------------------------------------------------- */
 void stm_init( stm_t *stm, unsigned limit, void *data )
@@ -39,14 +40,14 @@ void stm_init( stm_t *stm, unsigned limit, void *data )
 	assert(limit);
 	assert(data);
 
-	core_sys_lock();
+	sys_lock();
+	{
+		memset(stm, 0, sizeof(stm_t));
 
-	memset(stm, 0, sizeof(stm_t));
-
-	stm->limit = limit;
-	stm->data  = data;
-
-	core_sys_unlock();
+		stm->limit = limit;
+		stm->data  = data;
+	}
+	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -116,15 +117,15 @@ unsigned stm_take( stm_t *stm, void *data, unsigned size )
 	assert(stm);
 	assert(data);
 
-	core_sys_lock();
-
-	if (size > 0 && size <= priv_stm_count(stm))
+	sys_lock();
 	{
-		priv_stm_get(stm, data, size);
-		event = E_SUCCESS;
+		if (size > 0 && size <= priv_stm_count(stm))
+		{
+			priv_stm_get(stm, data, size);
+			event = E_SUCCESS;
+		}
 	}
-
-	core_sys_unlock();
+	sys_unlock();
 
 	return event;
 }
@@ -138,17 +139,17 @@ unsigned stm_wait( stm_t *stm, void *data, unsigned size )
 	assert(stm);
 	assert(data);
 
-	core_sys_lock();
-
-	if (size > 0 && size <= stm->limit)
+	sys_lock();
 	{
-		while (stm->count == 0)
-			core_ctx_switch();
+		if (size > 0 && size <= stm->limit)
+		{
+			while (stm->count == 0)
+				core_ctx_switch();
 
-		event = stm_take(stm, data, size);
+			event = stm_take(stm, data, size);
+		}
 	}
-
-	core_sys_unlock();
+	sys_unlock();
 
 	return event;
 }
@@ -162,15 +163,15 @@ unsigned stm_give( stm_t *stm, const void *data, unsigned size )
 	assert(stm);
 	assert(data);
 
-	core_sys_lock();
-
-	if (size > 0 && size <= priv_stm_space(stm))
+	sys_lock();
 	{
-		priv_stm_put(stm, data, size);
-		event = E_SUCCESS;
+		if (size > 0 && size <= priv_stm_space(stm))
+		{
+			priv_stm_put(stm, data, size);
+			event = E_SUCCESS;
+		}
 	}
-
-	core_sys_unlock();
+	sys_unlock();
 
 	return event;
 }
@@ -184,17 +185,17 @@ unsigned stm_send( stm_t *stm, const void *data, unsigned size )
 	assert(stm);
 	assert(data);
 
-	core_sys_lock();
-
-	if (size > 0 && size <= stm->limit)
+	sys_lock();
 	{
-		while (size > priv_stm_space(stm))
-			core_ctx_switch();
+		if (size > 0 && size <= stm->limit)
+		{
+			while (size > priv_stm_space(stm))
+				core_ctx_switch();
 
-		event = stm_give(stm, data, size);
+			event = stm_give(stm, data, size);
+		}
 	}
-
-	core_sys_unlock();
+	sys_unlock();
 
 	return event;
 }
@@ -208,17 +209,17 @@ unsigned stm_push( stm_t *stm, const void *data, unsigned size )
 	assert(stm);
 	assert(data);
 
-	core_sys_lock();
-
-	if (size > 0 && size <= stm->limit)
+	sys_lock();
 	{
-		if (stm->count + size > stm->limit)
-			priv_stm_skip(stm, stm->count + size - stm->limit);
-		priv_stm_put(stm, data, size);
-		event = E_SUCCESS;
+		if (size > 0 && size <= stm->limit)
+		{
+			if (stm->count + size > stm->limit)
+				priv_stm_skip(stm, stm->count + size - stm->limit);
+			priv_stm_put(stm, data, size);
+			event = E_SUCCESS;
+		}
 	}
-
-	core_sys_unlock();
+	sys_unlock();
 
 	return event;
 }
@@ -231,11 +232,11 @@ unsigned stm_count( stm_t *stm )
 
 	assert(stm);
 
-	core_sys_lock();
-
-	cnt = priv_stm_count(stm);
-
-	core_sys_unlock();
+	sys_lock();
+	{
+		cnt = priv_stm_count(stm);
+	}
+	sys_unlock();
 
 	return cnt;
 }
@@ -248,11 +249,11 @@ unsigned stm_space( stm_t *stm )
 
 	assert(stm);
 
-	core_sys_lock();
-
-	cnt = priv_stm_space(stm);
-
-	core_sys_unlock();
+	sys_lock();
+	{
+		cnt = priv_stm_space(stm);
+	}
+	sys_unlock();
 
 	return cnt;
 }

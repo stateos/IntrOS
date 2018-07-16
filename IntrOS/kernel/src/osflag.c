@@ -2,7 +2,7 @@
 
     @file    IntrOS: osflag.c
     @author  Rajmund Szymanski
-    @date    11.07.2018
+    @date    16.07.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -30,6 +30,7 @@
  ******************************************************************************/
 
 #include "inc/osflag.h"
+#include "inc/oscriticalsection.h"
 
 /* -------------------------------------------------------------------------- */
 void flg_init( flg_t *flg )
@@ -37,11 +38,11 @@ void flg_init( flg_t *flg )
 {
 	assert(flg);
 
-	core_sys_lock();
-
-	memset(flg, 0, sizeof(flg_t));
-
-	core_sys_unlock();
+	sys_lock();
+	{
+		memset(flg, 0, sizeof(flg_t));
+	}
+	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -52,16 +53,15 @@ unsigned flg_take( flg_t *flg, unsigned flags, bool all )
 
 	assert(flg);
 
-	core_sys_lock();
-
-	if (flags & flg->flags)
+	sys_lock();
 	{
-		event &= all ? ~flg->flags : 0;
-
-		flg->flags &= ~flags;
+		if (flags & flg->flags)
+		{
+			event &= all ? ~flg->flags : 0;
+			flg->flags &= ~flags;
+		}
 	}
-
-	core_sys_unlock();
+	sys_unlock();
 
 	return event;
 }
@@ -79,11 +79,11 @@ void flg_give( flg_t *flg, unsigned flags )
 {
 	assert(flg);
 
-	core_sys_lock();
-
-	flg->flags |= flags;
-
-	core_sys_unlock();
+	sys_lock();
+	{
+		flg->flags |= flags;
+	}
+	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */

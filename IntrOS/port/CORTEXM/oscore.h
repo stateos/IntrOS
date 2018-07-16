@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    11.07.2018
+    @date    16.07.2018
     @brief   IntrOS port file for ARM Cotrex-M uC.
 
  ******************************************************************************
@@ -32,7 +32,7 @@
 #ifndef __INTROSCORE_H
 #define __INTROSCORE_H
 
-#include <osbase.h>
+#include "osbase.h"
 
 #ifdef __cplusplus
 extern "C" {

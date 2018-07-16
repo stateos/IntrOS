@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmutex.c
     @author  Rajmund Szymanski
-    @date    11.07.2018
+    @date    16.07.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -30,6 +30,7 @@
  ******************************************************************************/
 
 #include "inc/osmutex.h"
+#include "inc/oscriticalsection.h"
 
 /* -------------------------------------------------------------------------- */
 void mtx_init( mtx_t *mtx )
@@ -37,11 +38,11 @@ void mtx_init( mtx_t *mtx )
 {
 	assert(mtx);
 
-	core_sys_lock();
-
-	memset(mtx, 0, sizeof(mtx_t));
-
-	core_sys_unlock();
+	sys_lock();
+	{
+		memset(mtx, 0, sizeof(mtx_t));
+	}
+	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -53,16 +54,16 @@ unsigned mtx_take( mtx_t *mtx )
 	assert(mtx);
 	assert(mtx->owner != System.cur);
 
-	core_sys_lock();
-
-	if (mtx->owner == 0)
+	sys_lock();
 	{
-		mtx->owner = System.cur;
+		if (mtx->owner == 0)
+		{
+			mtx->owner = System.cur;
 
-		event = E_SUCCESS;
+			event = E_SUCCESS;
+		}
 	}
-
-	core_sys_unlock();
+	sys_unlock();
 
 	return event;
 }
@@ -79,19 +80,19 @@ unsigned mtx_give( mtx_t *mtx )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned event = E_FAILURE;
-	
+
 	assert(mtx);
 
-	core_sys_lock();
-
-	if (mtx->owner == System.cur)
+	sys_lock();
 	{
-	    mtx->owner = 0;
+		if (mtx->owner == System.cur)
+		{
+		    mtx->owner = 0;
 
-		event = E_SUCCESS;
+			event = E_SUCCESS;
+		}
 	}
-
-	core_sys_unlock();
+	sys_unlock();
 
 	return event;
 }

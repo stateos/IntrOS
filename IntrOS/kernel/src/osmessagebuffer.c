@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.c
     @author  Rajmund Szymanski
-    @date    11.07.2018
+    @date    16.07.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -30,6 +30,7 @@
  ******************************************************************************/
 
 #include "inc/osmessagebuffer.h"
+#include "inc/oscriticalsection.h"
 
 /* -------------------------------------------------------------------------- */
 void msg_init( msg_t *msg, unsigned limit, void *data )
@@ -39,14 +40,14 @@ void msg_init( msg_t *msg, unsigned limit, void *data )
 	assert(limit);
 	assert(data);
 
-	core_sys_lock();
+	sys_lock();
+	{
+		memset(msg, 0, sizeof(msg_t));
 
-	memset(msg, 0, sizeof(msg_t));
-
-	msg->limit = limit;
-	msg->data  = data;
-
-	core_sys_unlock();
+		msg->limit = limit;
+		msg->data  = data;
+	}
+	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -175,12 +176,12 @@ unsigned msg_take( msg_t *msg, void *data, unsigned size )
 	assert(msg);
 	assert(data);
 
-	core_sys_lock();
-
-	if (msg->count > 0 && size >= priv_msg_count(msg))
-		priv_msg_getUpdate(msg, data, len = msg->size);
-
-	core_sys_unlock();
+	sys_lock();
+	{
+		if (msg->count > 0 && size >= priv_msg_count(msg))
+			priv_msg_getUpdate(msg, data, len = msg->size);
+	}
+	sys_unlock();
 
 	return len;
 }
@@ -194,17 +195,17 @@ unsigned msg_wait( msg_t *msg, void *data, unsigned size )
 	assert(msg);
 	assert(data);
 
-	core_sys_lock();
-
-	if (size > 0)
+	sys_lock();
 	{
-		while (msg->count == 0)
-			core_ctx_switch();
+		if (size > 0)
+		{
+			while (msg->count == 0)
+				core_ctx_switch();
 
-		len = msg_take(msg, data, size);
+			len = msg_take(msg, data, size);
+		}
 	}
-
-	core_sys_unlock();
+	sys_unlock();
 
 	return len;
 }
@@ -218,12 +219,12 @@ unsigned msg_give( msg_t *msg, const void *data, unsigned size )
 	assert(msg);
 	assert(data);
 
-	core_sys_lock();
-
-	if (size > 0 && size <= priv_msg_space(msg))
-		priv_msg_putUpdate(msg, data, len = size);
-
-	core_sys_unlock();
+	sys_lock();
+	{
+		if (size > 0 && size <= priv_msg_space(msg))
+			priv_msg_putUpdate(msg, data, len = size);
+	}
+	sys_unlock();
 
 	return len;
 }
@@ -237,17 +238,17 @@ unsigned msg_send( msg_t *msg, const void *data, unsigned size )
 	assert(msg);
 	assert(data);
 
-	core_sys_lock();
-
-	if (size > 0 && size <= msg->limit)
+	sys_lock();
 	{
-		while (size > priv_msg_space(msg))
-			core_ctx_switch();
+		if (size > 0 && size <= msg->limit)
+		{
+			while (size > priv_msg_space(msg))
+				core_ctx_switch();
 
-		len = msg_give(msg, data, size);
+			len = msg_give(msg, data, size);
+		}
 	}
-
-	core_sys_unlock();
+	sys_unlock();
 
 	return len;
 }
@@ -261,16 +262,16 @@ unsigned msg_push( msg_t *msg, const void *data, unsigned size )
 	assert(msg);
 	assert(data);
 
-	core_sys_lock();
-
-	if (size > 0 && size <= msg->limit)
+	sys_lock();
 	{
-		while (size > priv_msg_space(msg))
-			priv_msg_skipUpdate(msg);
-		priv_msg_putUpdate(msg, data, len = size);
+		if (size > 0 && size <= msg->limit)
+		{
+			while (size > priv_msg_space(msg))
+				priv_msg_skipUpdate(msg);
+			priv_msg_putUpdate(msg, data, len = size);
+		}
 	}
-
-	core_sys_unlock();
+	sys_unlock();
 
 	return len;
 }
@@ -283,11 +284,11 @@ unsigned msg_count( msg_t *msg )
 
 	assert(msg);
 
-	core_sys_lock();
-
-	cnt = priv_msg_count(msg);
-
-	core_sys_unlock();
+	sys_lock();
+	{
+		cnt = priv_msg_count(msg);
+	}
+	sys_unlock();
 
 	return cnt;
 }
@@ -300,11 +301,11 @@ unsigned msg_space( msg_t *msg )
 
 	assert(msg);
 
-	core_sys_lock();
-
-	cnt = priv_msg_space(msg);
-
-	core_sys_unlock();
+	sys_lock();
+	{
+		cnt = priv_msg_space(msg);
+	}
+	sys_unlock();
 
 	return cnt;
 }

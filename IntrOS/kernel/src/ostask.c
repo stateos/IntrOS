@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.c
     @author  Rajmund Szymanski
-    @date    11.07.2018
+    @date    16.07.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -30,6 +30,7 @@
  ******************************************************************************/
 
 #include "inc/ostask.h"
+#include "inc/oscriticalsection.h"
 
 /* -------------------------------------------------------------------------- */
 void tsk_init( tsk_t *tsk, fun_t *state, void *stack, unsigned size )
@@ -40,18 +41,18 @@ void tsk_init( tsk_t *tsk, fun_t *state, void *stack, unsigned size )
 	assert(stack);
 	assert(size);
 
-	core_sys_lock();
+	sys_lock();
+	{
+		memset(tsk, 0, sizeof(tsk_t));
 
-	memset(tsk, 0, sizeof(tsk_t));
-	
-	tsk->state = state;
-	tsk->stack = stack;
-	tsk->top   = (stk_t *) LIMITED((char *)stack + size, stk_t);
+		tsk->state = state;
+		tsk->stack = stack;
+		tsk->top   = (stk_t *) LIMITED((char *)stack + size, stk_t);
 
-	core_ctx_init(tsk);
-	core_tsk_insert(tsk);
-
-	core_sys_unlock();
+		core_ctx_init(tsk);
+		core_tsk_insert(tsk);
+	}
+	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -61,15 +62,15 @@ void tsk_start( tsk_t *tsk )
 	assert(tsk);
 	assert(tsk->state);
 
-	core_sys_lock();
-
-	if (tsk->id == ID_STOPPED)
+	sys_lock();
 	{
-		core_ctx_init(tsk);
-		core_tsk_insert(tsk);
+		if (tsk->id == ID_STOPPED)
+		{
+			core_ctx_init(tsk);
+			core_tsk_insert(tsk);
+		}
 	}
-
-	core_sys_unlock();
+	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -79,17 +80,17 @@ void tsk_startFrom( tsk_t *tsk, fun_t *state )
 	assert(tsk);
 	assert(state);
 
-	core_sys_lock();
-
-	if (tsk->id == ID_STOPPED)
+	sys_lock();
 	{
-		tsk->state = state;
+		if (tsk->id == ID_STOPPED)
+		{
+			tsk->state = state;
 
-		core_ctx_init(tsk);
-		core_tsk_insert(tsk);
+			core_ctx_init(tsk);
+			core_tsk_insert(tsk);
+		}
 	}
-
-	core_sys_unlock();
+	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -140,14 +141,14 @@ unsigned tsk_sleepUntil( cnt_t time )
 {
 	tsk_t *cur = System.cur;
 
-	core_sys_lock();
-
-	cur->start = core_sys_time();
-	cur->delay = time - cur->start;
-	if (cur->delay > ((CNT_MAX)>>1))
-		cur->delay = 0;
-
-	core_sys_unlock();
+	sys_lock();
+	{
+		cur->start = core_sys_time();
+		cur->delay = time - cur->start;
+		if (cur->delay > ((CNT_MAX)>>1))
+			cur->delay = 0;
+	}
+	sys_unlock();
 
 	return priv_tsk_sleep(cur);
 }
@@ -158,12 +159,12 @@ unsigned tsk_sleepFor( cnt_t delay )
 {
 	tsk_t *cur = System.cur;
 
-	core_sys_lock();
-
-	cur->start = core_sys_time();
-	cur->delay = delay;
-
-	core_sys_unlock();
+	sys_lock();
+	{
+		cur->start = core_sys_time();
+		cur->delay = delay;
+	}
+	sys_unlock();
 
 	return priv_tsk_sleep(cur);
 }
@@ -182,12 +183,14 @@ void tsk_give( tsk_t *tsk, unsigned flags )
 {
 	assert(tsk);
 
-	if (tsk->id == ID_READY)
+	sys_lock();
 	{
-		core_sys_lock();
-		tsk->event &= ~flags;
-		core_sys_unlock();
+		if (tsk->id == ID_READY)
+		{
+			tsk->event &= ~flags;
+		}
 	}
+	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */

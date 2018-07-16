@@ -2,7 +2,7 @@
 
     @file    IntrOS: oslibc.c
     @author  Rajmund Szymanski
-    @date    24.01.2018
+    @date    16.07.2018
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -32,7 +32,7 @@
 #if  defined(__CC_ARM)
 #if !defined(__MICROLIB)
 
-#include <oskernel.h>
+#include "oskernel.h"
 
 /* -------------------------------------------------------------------------- */
 

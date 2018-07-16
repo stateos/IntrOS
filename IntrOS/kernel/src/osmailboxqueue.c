@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmailboxqueue.c
     @author  Rajmund Szymanski
-    @date    11.07.2018
+    @date    16.07.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -30,6 +30,7 @@
  ******************************************************************************/
 
 #include "inc/osmailboxqueue.h"
+#include "inc/oscriticalsection.h"
 
 /* -------------------------------------------------------------------------- */
 void box_init( box_t *box, unsigned limit, void *data, unsigned size )
@@ -40,15 +41,15 @@ void box_init( box_t *box, unsigned limit, void *data, unsigned size )
 	assert(data);
 	assert(size);
 
-	core_sys_lock();
+	sys_lock();
+	{
+		memset(box, 0, sizeof(box_t));
 
-	memset(box, 0, sizeof(box_t));
-	
-	box->limit = limit * size;
-	box->data  = data;
-	box->size  = size;
-
-	core_sys_unlock();
+		box->limit = limit * size;
+		box->data  = data;
+		box->size  = size;
+	}
+	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -114,15 +115,15 @@ unsigned box_take( box_t *box, void *data )
 	assert(box);
 	assert(data);
 
-	core_sys_lock();
-
-	if (box->count > 0)
+	sys_lock();
 	{
-		priv_box_get(box, data);
-		event = E_SUCCESS;
+		if (box->count > 0)
+		{
+			priv_box_get(box, data);
+			event = E_SUCCESS;
+		}
 	}
-
-	core_sys_unlock();
+	sys_unlock();
 
 	return event;
 }
@@ -143,15 +144,15 @@ unsigned box_give( box_t *box, const void *data )
 	assert(box);
 	assert(data);
 
-	core_sys_lock();
-
-	if (box->count < box->limit)
+	sys_lock();
 	{
-		priv_box_put(box, data);
-		event = E_SUCCESS;
+		if (box->count < box->limit)
+		{
+			priv_box_put(box, data);
+			event = E_SUCCESS;
+		}
 	}
-
-	core_sys_unlock();
+	sys_unlock();
 
 	return event;
 }
@@ -170,13 +171,13 @@ void box_push( box_t *box, const void *data )
 	assert(box);
 	assert(data);
 
-	core_sys_lock();
-
-	if (box->count == box->limit)
-		priv_box_skip(box);
-	priv_box_put(box, data);
-
-	core_sys_unlock();
+	sys_lock();
+	{
+		if (box->count == box->limit)
+			priv_box_skip(box);
+		priv_box_put(box, data);
+	}
+	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -187,11 +188,11 @@ unsigned box_count( box_t *box )
 
 	assert(box);
 
-	core_sys_lock();
-
-	cnt = priv_box_count(box);
-
-	core_sys_unlock();
+	sys_lock();
+	{
+		cnt = priv_box_count(box);
+	}
+	sys_unlock();
 
 	return cnt;
 }
@@ -204,11 +205,11 @@ unsigned box_space( box_t *box )
 
 	assert(box);
 
-	core_sys_lock();
-
-	cnt = priv_box_space(box);
-
-	core_sys_unlock();
+	sys_lock();
+	{
+		cnt = priv_box_space(box);
+	}
+	sys_unlock();
 
 	return cnt;
 }
