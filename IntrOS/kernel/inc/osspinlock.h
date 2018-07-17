@@ -2,7 +2,7 @@
 
     @file    IntrOS: osspinlock.h
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    17.07.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -259,11 +259,9 @@ void spn_init( spn_t *spn ) { *spn = 0; }
 
 struct SpinLock : private CriticalSection
 {
-	explicit
-	SpinLock( spn_id _spn ): spn(_spn) {}
-
-	void lock  ( void ) { core_spn_lock  (spn); }
-	void unlock( void ) { core_spn_unlock(spn); }
+	 explicit
+	 SpinLock( spn_id _spn ): spn(_spn) { core_spn_lock  (spn); }
+	~SpinLock( void )                   { core_spn_unlock(spn); }
 
 	private:
 	spn_id spn;
