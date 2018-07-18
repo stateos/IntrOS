@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscriticalsection.h
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    18.07.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -55,9 +55,9 @@ extern "C" {
 __STATIC_INLINE
 lck_t core_sys_lock( void )
 {
-	lck_t state = port_get_lock();
+	lck_t lck = port_get_lock();
 	port_set_lock();
-	return state;
+	return lck;
 }
 
 /******************************************************************************
@@ -67,7 +67,7 @@ lck_t core_sys_lock( void )
  * Description       : restore previous interrupts state
  *
  * Parameters
- *   state           : previous interrupts state
+ *   lck             : previous interrupts state
  *
  * Return            : none
  *
@@ -76,16 +76,17 @@ lck_t core_sys_lock( void )
  ******************************************************************************/
 
 __STATIC_INLINE
-void core_sys_unlock( lck_t state )
+void core_sys_unlock( lck_t lck )
 {
-	port_put_lock(state);
+	port_put_lock(lck);
 }
 
 /******************************************************************************
  *
  * Name              : sys_lock
  *
- * Description       : disable interrupts / enter into critical section
+ * Description       : save interrupts state then disable interrupts
+ *                   / enter into critical section
  *
  * Parameters        : none
  *
@@ -100,7 +101,8 @@ void core_sys_unlock( lck_t state )
  *
  * Name              : sys_unlock
  *
- * Description       : enable interrupts / exit from critical section
+ * Description       : restore saved interrupts state
+ *                   / exit from critical section
  *
  * Parameters        : none
  *
@@ -132,11 +134,11 @@ void core_sys_unlock( lck_t state )
 
 struct CriticalSection
 {
-	 CriticalSection( void ) { state = core_sys_lock(); }
-	~CriticalSection( void ) { core_sys_unlock(state);  }
+	 CriticalSection( void ) { lck = core_sys_lock(); }
+	~CriticalSection( void ) { core_sys_unlock(lck);  }
 
 	private:
-	lck_t state;
+	lck_t lck;
 };
 
 #endif
