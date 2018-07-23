@@ -2,7 +2,7 @@
 
     @file    IntrOS: os.h
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    23.07.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -29,8 +29,20 @@
 
  ******************************************************************************/
 
-#ifndef __INTROS_H
-#define __INTROS_H
+#ifndef __INTROS
+
+#define __INTROS_MAJOR        4
+#define __INTROS_MINOR        1
+#define __INTROS_BUILD        0
+
+#define __INTROS        ((((__INTROS_MAJOR)&0xFFUL)<<24)|(((__INTROS_MINOR)&0xFFUL)<<16)|((__INTROS_BUILD)&0xFFFFUL))
+
+#define __INTROS__           "IntrOS v" STRINGIZE(__INTROS_MAJOR) "." STRINGIZE(__INTROS_MINOR) "." STRINGIZE(__INTROS_BUILD)
+
+#define STRINGIZE(n) STRINGIZE_HELPER(n)
+#define STRINGIZE_HELPER(n) #n
+
+/* -------------------------------------------------------------------------- */
 
 #include "oskernel.h"
 #include "inc/oscriticalsection.h"
@@ -107,4 +119,4 @@ cnt_t sys_time( void );
 }
 #endif
 
-#endif//__INTROS_H
+#endif//__INTROS
