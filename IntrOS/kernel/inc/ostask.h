@@ -47,7 +47,7 @@ extern "C" {
 struct __tsk
 {
 	obj_t    obj;   // object header
-	unsigned id;    // task's id: ID_STOPPED, ID_READY, ID_DELAYED
+	tid_t    id;    // task's id: ID_STOPPED, ID_READY, ID_DELAYED
 	unsigned event; // wakeup event
 
 	fun_t  * state; // task state (initial task function, doesn't have to be noreturn-type)

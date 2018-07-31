@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    31.07.2018
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -77,13 +77,12 @@ typedef         void fun_t(); // timer/task procedure
 
 // object (timer, task) header
 
-typedef struct __obj obj_t;
-
-struct __obj
+typedef struct __obj
 {
 	void   * prev;  // previous object (timer, task) in the READY queue
 	void   * next;  // next object (timer, task) in the READY queue
-};
+
+}	obj_t;
 
 #define               _OBJ_INIT() { 0, 0 }
 
@@ -91,16 +90,14 @@ struct __obj
 
 // system data
 
-typedef struct __sys sys_t;
-
-struct __sys
+typedef struct __sys
 {
 	tsk_t  * cur;   // pointer to the current task control block
 #if HW_TIMER_SIZE < OS_TIMER_SIZE
 	volatile
 	cnt_t    cnt;   // system timer counter
 #endif
-};
+}	sys_t;
 
 /* -------------------------------------------------------------------------- */
 
@@ -125,10 +122,14 @@ struct __sys
 
 /* -------------------------------------------------------------------------- */
 
-#define ID_STOPPED ( 0U) // task or timer stopped
-#define ID_READY   ( 1U) // task ready to run
-#define ID_DELAYED ( 2U) // task in the delayed state
-#define ID_TIMER   ( 3U) // timer in the countdown state
+typedef enum __tid
+{
+	ID_STOPPED = 0, // task or timer stopped
+	ID_READY,       // task ready to run
+	ID_DELAYED,     // task in the delayed state
+	ID_TIMER         // timer in the countdown state
+
+}	tid_t;
 
 /* -------------------------------------------------------------------------- */
 

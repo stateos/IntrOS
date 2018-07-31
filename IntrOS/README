@@ -41,6 +41,7 @@ Features:
 - updated version identification
 - added tmr_startNext and tsk_sleepNext functions
 - reorganized the order of functions
+- the task/timer identifier is an enumeration constant
 ---------
 4.0
 - updated message buffer object: size of the message data limited to size of the buffer
