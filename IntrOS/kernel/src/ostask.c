@@ -99,7 +99,7 @@ void tsk_stop( void )
 {
 	port_set_lock();
 
-	core_tsk_remove(System.cur);
+	System.cur->id = ID_STOPPED;
 	core_tsk_switch();
 }
 
@@ -109,7 +109,8 @@ void tsk_join( tsk_t *tsk )
 {
 	assert(tsk);
 
-	while (tsk->id != ID_STOPPED) core_ctx_switch();
+	while (tsk->id != ID_STOPPED)
+		core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */

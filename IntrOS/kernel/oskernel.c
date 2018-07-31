@@ -41,7 +41,7 @@ static  stk_t     MAIN_STK[SSIZE(OS_STACK_SIZE)];
 #define MAIN_TOP (MAIN_STK+SSIZE(OS_STACK_SIZE))
 #endif
 
-tsk_t MAIN   = { .obj={ .prev=&MAIN, .next=&MAIN }, .id=ID_READY, .top=MAIN_TOP }; // main task
+tsk_t MAIN   = { .obj={ .next=&MAIN }, .id=ID_READY, .top=MAIN_TOP }; // main task
 sys_t System = { .cur=&MAIN };
 
 /* -------------------------------------------------------------------------- */
@@ -49,25 +49,14 @@ sys_t System = { .cur=&MAIN };
 static
 void priv_rdy_insert( obj_t *obj )
 {
-	obj_t *nxt = &System.cur->obj;
-	obj_t *prv = nxt->prev;
+	obj_t *prv;
 
-	obj->prev = prv;
-	obj->next = nxt;
-	nxt->prev = obj;
-	prv->next = obj;
-}
-
-/* -------------------------------------------------------------------------- */
-
-static
-void priv_rdy_remove( obj_t *obj )
-{
-	obj_t *nxt = obj->next;
-	obj_t *prv = obj->prev;
-
-	nxt->prev = prv;
-	prv->next = nxt;
+	if (obj->next == 0)
+	{
+		prv = obj->next = &MAIN;
+		while (prv->next != &MAIN) prv = prv->next;
+		prv->next = obj;
+	}
 }
 
 /* -------------------------------------------------------------------------- */
@@ -80,26 +69,10 @@ void core_tmr_insert( tmr_t *tmr )
 
 /* -------------------------------------------------------------------------- */
 
-void core_tmr_remove( tmr_t *tmr )
-{
-	tmr->id = ID_STOPPED;
-	priv_rdy_remove(&tmr->obj);
-}
-
-/* -------------------------------------------------------------------------- */
-
 void core_tsk_insert( tsk_t *tsk )
 {
 	tsk->id = ID_READY;
 	priv_rdy_insert(&tsk->obj);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void core_tsk_remove( tsk_t *tsk )
-{
-	tsk->id = ID_STOPPED;
-	priv_rdy_remove(&tsk->obj);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -200,7 +173,7 @@ void core_tsk_switch( void )
 					tmr->state();
 
 				if (tmr->delay == 0)
-					core_tmr_remove(tmr);
+					tmr->id = ID_STOPPED;
 
 				tmr->signal++;
 			}
