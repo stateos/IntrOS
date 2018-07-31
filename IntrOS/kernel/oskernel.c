@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    31.07.2018
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -138,9 +138,29 @@ void core_tsk_loop( void )
 
 /* -------------------------------------------------------------------------- */
 
+static
+bool priv_tmr_countdown( tmr_t *tmr )
+{
+	bool countdown = true;
+
+	port_set_lock();
+	{
+		if ((cnt_t)(core_sys_time() - tmr->start + 1) > tmr->delay)
+		{
+			tmr->start += tmr->delay;
+			tmr->delay  = tmr->period;
+			countdown = false;
+		}
+	}
+	port_clr_lock();
+
+	return countdown;
+}
+
+/* -------------------------------------------------------------------------- */
+
 void core_tsk_switch( void )
 {
-	cnt_t  cnt;
 	tsk_t *cur;
 	tmr_t *tmr;
 
@@ -151,7 +171,6 @@ void core_tsk_switch( void )
 		port_set_lock();
 		{
 			cur = System.cur = System.cur->obj.next;
-			cnt = core_sys_time();
 		}
 		port_clr_lock();
 
@@ -161,12 +180,12 @@ void core_tsk_switch( void )
 		if (cur->id == ID_READY)
 			break;
 
-		if (cur->delay >= (cnt_t)(cnt - cur->start + 1))
+		if (priv_tmr_countdown((tmr_t *)cur))
 			continue;
 
 		if (cur->id == ID_DELAYED)
 		{
-			cur->id =  ID_READY;
+			cur->id  = ID_READY;
 			cur->event = E_SUCCESS;
 			break;
 		}
@@ -177,11 +196,8 @@ void core_tsk_switch( void )
 			{
 				tmr = (tmr_t *)cur;
 
-				tmr->start += tmr->delay;
-				tmr->delay  = tmr->period;
-
 				if (tmr->state)
-				tmr->state();
+					tmr->state();
 
 				if (tmr->delay == 0)
 					core_tmr_remove(tmr);
