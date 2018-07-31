@@ -597,23 +597,6 @@ void tsk_give( tsk_t *tsk, unsigned flags );
 
 /******************************************************************************
  *
- * Name              : tsk_sleepUntil
- *
- * Description       : delay execution of current task until given timepoint
- *
- * Parameters
- *   time            : timepoint value
- *
- * Return
- *   E_SUCCESS       : task object successfully finished countdown
- *   E_FAILURE       : task was resumed
- *
- ******************************************************************************/
-
-unsigned tsk_sleepUntil( cnt_t time );
-
-/******************************************************************************
- *
  * Name              : tsk_sleepFor
  * Alias             : tsk_delay
  *
@@ -654,6 +637,23 @@ unsigned tsk_delay( cnt_t delay ) { return tsk_sleepFor(delay); }
  ******************************************************************************/
 
 unsigned tsk_sleepNext( cnt_t delay );
+
+/******************************************************************************
+ *
+ * Name              : tsk_sleepUntil
+ *
+ * Description       : delay execution of current task until given timepoint
+ *
+ * Parameters
+ *   time            : timepoint value
+ *
+ * Return
+ *   E_SUCCESS       : task object successfully finished countdown
+ *   E_FAILURE       : task was resumed
+ *
+ ******************************************************************************/
+
+unsigned tsk_sleepUntil( cnt_t time );
 
 /******************************************************************************
  *
@@ -861,9 +861,9 @@ namespace ThisTask
 	static inline void     flip      ( FUN_t _state ) {        tsk_flip      (_state);                   }
 #endif
 	static inline void     stop      ( void )         {        tsk_stop      ();                         }
-	static inline unsigned sleepUntil( cnt_t _time )  { return tsk_sleepUntil(_time);                    }
 	static inline unsigned sleepFor  ( cnt_t _delay ) { return tsk_sleepFor  (_delay);                   }
 	static inline unsigned sleepNext ( cnt_t _delay ) { return tsk_sleepNext (_delay);                   }
+	static inline unsigned sleepUntil( cnt_t _time )  { return tsk_sleepUntil(_time);                    }
 	static inline unsigned sleep     ( void )         { return tsk_sleep     ();                         }
 	static inline unsigned delay     ( cnt_t _delay ) { return tsk_delay     (_delay);                   }
 	static inline void     suspend   ( void )         {        tsk_suspend   (System.cur);               }

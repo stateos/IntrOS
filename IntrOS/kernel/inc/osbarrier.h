@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbarrier.h
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    31.07.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -60,7 +60,7 @@ struct __bar
  * Description       : create and initialize a barrier object
  *
  * Parameters
- *   limit           : number of tasks that must call bar_wait[Until|For] function to release the barrier object
+ *   limit           : number of tasks that must call bar_wait function to release the barrier object
  *
  * Return            : barrier object
  *
@@ -78,7 +78,7 @@ struct __bar
  *
  * Parameters
  *   bar             : name of a pointer to barrier object
- *   limit           : number of tasks that must call bar_wait[Until|For] function to release the barrier object
+ *   limit           : number of tasks that must call bar_wait function to release the barrier object
  *
  ******************************************************************************/
 
@@ -94,7 +94,7 @@ struct __bar
  *
  * Parameters
  *   bar             : name of a pointer to barrier object
- *   limit           : number of tasks that must call bar_wait[Until|For] function to release the barrier object
+ *   limit           : number of tasks that must call bar_wait function to release the barrier object
  *
  ******************************************************************************/
 
@@ -109,7 +109,7 @@ struct __bar
  * Description       : create and initialize a barrier object
  *
  * Parameters
- *   limit           : number of tasks that must call bar_wait[Until|For] function to release the barrier object
+ *   limit           : number of tasks that must call bar_wait function to release the barrier object
  *
  * Return            : barrier object
  *
@@ -130,7 +130,7 @@ struct __bar
  * Description       : create and initialize a barrier object
  *
  * Parameters
- *   limit           : number of tasks that must call bar_wait[Until|For] function to release the barrier object
+ *   limit           : number of tasks that must call bar_wait function to release the barrier object
  *
  * Return            : pointer to barrier object
  *

@@ -136,24 +136,6 @@ unsigned priv_tsk_sleep( tsk_t *cur )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned tsk_sleepUntil( cnt_t time )
-/* -------------------------------------------------------------------------- */
-{
-	tsk_t *cur = System.cur;
-
-	sys_lock();
-	{
-		cur->start = core_sys_time();
-		cur->delay = time - cur->start;
-		if (cur->delay > ((CNT_MAX)>>1))
-			cur->delay = 0;
-	}
-	sys_unlock();
-
-	return priv_tsk_sleep(cur);
-}
-
-/* -------------------------------------------------------------------------- */
 unsigned tsk_sleepFor( cnt_t delay )
 /* -------------------------------------------------------------------------- */
 {
@@ -176,6 +158,24 @@ unsigned tsk_sleepNext( cnt_t delay )
 	tsk_t *cur = System.cur;
 
 	cur->delay = delay;
+
+	return priv_tsk_sleep(cur);
+}
+
+/* -------------------------------------------------------------------------- */
+unsigned tsk_sleepUntil( cnt_t time )
+/* -------------------------------------------------------------------------- */
+{
+	tsk_t *cur = System.cur;
+
+	sys_lock();
+	{
+		cur->start = core_sys_time();
+		cur->delay = time - cur->start;
+		if (cur->delay > ((CNT_MAX)>>1))
+			cur->delay = 0;
+	}
+	sys_unlock();
 
 	return priv_tsk_sleep(cur);
 }

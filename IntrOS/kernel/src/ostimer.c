@@ -57,25 +57,6 @@ void priv_tmr_start( tmr_t *tmr )
 }
 
 /* -------------------------------------------------------------------------- */
-void tmr_startUntil( tmr_t *tmr, cnt_t time )
-/* -------------------------------------------------------------------------- */
-{
-	assert(tmr);
-
-	sys_lock();
-	{
-		tmr->start  = core_sys_time();
-		tmr->delay  = time - tmr->start;
-		if (tmr->delay > ((CNT_MAX)>>1))
-			tmr->delay = 0;
-		tmr->period = 0;
-
-		priv_tmr_start(tmr);
-	}
-	sys_unlock();
-}
-
-/* -------------------------------------------------------------------------- */
 void tmr_start( tmr_t *tmr, cnt_t delay, cnt_t period )
 /* -------------------------------------------------------------------------- */
 {
@@ -119,6 +100,25 @@ void tmr_startNext( tmr_t *tmr, cnt_t delay )
 	sys_lock();
 	{
 		tmr->delay = delay;
+
+		priv_tmr_start(tmr);
+	}
+	sys_unlock();
+}
+
+/* -------------------------------------------------------------------------- */
+void tmr_startUntil( tmr_t *tmr, cnt_t time )
+/* -------------------------------------------------------------------------- */
+{
+	assert(tmr);
+
+	sys_lock();
+	{
+		tmr->start  = core_sys_time();
+		tmr->delay  = time - tmr->start;
+		if (tmr->delay > ((CNT_MAX)>>1))
+			tmr->delay = 0;
+		tmr->period = 0;
 
 		priv_tmr_start(tmr);
 	}
