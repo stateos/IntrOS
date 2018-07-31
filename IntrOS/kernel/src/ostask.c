@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.c
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    31.07.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -165,6 +165,17 @@ unsigned tsk_sleepFor( cnt_t delay )
 		cur->delay = delay;
 	}
 	sys_unlock();
+
+	return priv_tsk_sleep(cur);
+}
+
+/* -------------------------------------------------------------------------- */
+unsigned tsk_sleepNext( cnt_t delay )
+/* -------------------------------------------------------------------------- */
+{
+	tsk_t *cur = System.cur;
+
+	cur->delay = delay;
 
 	return priv_tsk_sleep(cur);
 }

@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.h
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    31.07.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -423,6 +423,25 @@ void tmr_startFrom( tmr_t *tmr, cnt_t delay, cnt_t period, fun_t *proc );
 
 /******************************************************************************
  *
+ * Name              : tmr_startNext
+ *
+ * Description       : restart the timer for given duration of time
+ *                     from the end of the previous countdown and then launch the callback procedure
+ *
+ * Parameters
+ *   tmr             : pointer to timer object
+ *   delay           : duration of time (maximum number of ticks to countdown)
+ *                     IMMEDIATE: don't countdown
+ *                     INFINITE:  countdown indefinitely
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
+
+void tmr_startNext( tmr_t *tmr, cnt_t delay );
+
+/******************************************************************************
+ *
  * Name              : tmr_wait
  *
  * Description       : wait indefinitely until the timer finishes countdown
@@ -534,6 +553,7 @@ struct Timer : public __tmr
 #else
 	void startFrom    ( cnt_t _delay, cnt_t _period, FUN_t _state ) {        tmr_startFrom    (this, _delay, _period, _state); }
 #endif
+	void startNext    ( cnt_t _delay )                              {        tmr_startNext    (this, _delay);                  }
 	void     wait     ( void )                                      {        tmr_wait         (this);                          }
 	unsigned take     ( void )                                      { return tmr_take         (this);                          }
 

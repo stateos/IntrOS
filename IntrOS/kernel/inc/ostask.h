@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    31.07.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -637,6 +637,26 @@ unsigned tsk_delay( cnt_t delay ) { return tsk_sleepFor(delay); }
 
 /******************************************************************************
  *
+ * Name              : tsk_sleepNext
+ *
+ * Description       : delay execution of current task for given duration of time
+ *                     from the end of the previous countdown
+ *
+ * Parameters
+ *   delay           : duration of time (maximum number of ticks to delay execution of current task)
+ *                     IMMEDIATE: don't delay execution of current task
+ *                     INFINITE:  delay indefinitely execution of current task
+ *
+ * Return
+ *   E_SUCCESS       : task object successfully finished countdown
+ *   E_FAILURE       : task was resumed
+ *
+ ******************************************************************************/
+
+unsigned tsk_sleepNext( cnt_t delay );
+
+/******************************************************************************
+ *
  * Name              : tsk_sleep
  *
  * Description       : delay indefinitely execution of current task
@@ -843,6 +863,7 @@ namespace ThisTask
 	static inline void     stop      ( void )         {        tsk_stop      ();                         }
 	static inline unsigned sleepUntil( cnt_t _time )  { return tsk_sleepUntil(_time);                    }
 	static inline unsigned sleepFor  ( cnt_t _delay ) { return tsk_sleepFor  (_delay);                   }
+	static inline unsigned sleepNext ( cnt_t _delay ) { return tsk_sleepNext (_delay);                   }
 	static inline unsigned sleep     ( void )         { return tsk_sleep     ();                         }
 	static inline unsigned delay     ( cnt_t _delay ) { return tsk_delay     (_delay);                   }
 	static inline void     suspend   ( void )         {        tsk_suspend   (System.cur);               }

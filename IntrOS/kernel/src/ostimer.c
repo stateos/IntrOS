@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.c
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    31.07.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -104,6 +104,21 @@ void tmr_startFrom( tmr_t *tmr, cnt_t delay, cnt_t period, fun_t *proc )
 		tmr->start  = core_sys_time();
 		tmr->delay  = delay;
 		tmr->period = period;
+
+		priv_tmr_start(tmr);
+	}
+	sys_unlock();
+}
+
+/* -------------------------------------------------------------------------- */
+void tmr_startNext( tmr_t *tmr, cnt_t delay )
+/* -------------------------------------------------------------------------- */
+{
+	assert(tmr);
+
+	sys_lock();
+	{
+		tmr->delay = delay;
 
 		priv_tmr_start(tmr);
 	}
