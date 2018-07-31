@@ -324,7 +324,8 @@ void tmr_init( tmr_t *tmr, fun_t *state );
  *
  * Name              : tmr_startUntil
  *
- * Description       : start/restart one-shot timer until given timepoint and then launch the callback procedure
+ * Description       : start/restart one-shot timer until given timepoint
+ *                     when the timer has finished the countdown, the callback procedure is launched
  *
  * Parameters
  *   tmr             : pointer to timer object
@@ -340,7 +341,8 @@ void tmr_startUntil( tmr_t *tmr, cnt_t time );
  *
  * Name              : tmr_start
  *
- * Description       : start/restart periodic timer for given duration of time and then launch the callback procedure
+ * Description       : start/restart periodic timer for given duration of time
+ *                     when the timer has finished the countdown, the callback procedure is launched
  *                     do this periodically if period > 0
  *
  * Parameters
@@ -362,7 +364,8 @@ void tmr_start( tmr_t *tmr, cnt_t delay, cnt_t period );
  *
  * Name              : tmr_startFor
  *
- * Description       : start/restart one-shot timer for given duration of time and then launch the callback procedure
+ * Description       : start/restart one-shot timer for given duration of time
+ *                     when the timer has finished the countdown, the callback procedure is launched
  *
  * Parameters
  *   tmr             : pointer to timer object
@@ -381,7 +384,8 @@ void tmr_startFor( tmr_t *tmr, cnt_t delay ) { tmr_start(tmr, delay, 0); }
  *
  * Name              : tmr_startPeriodic
  *
- * Description       : start/restart periodic timer for given duration of time and then launch the callback procedure
+ * Description       : start/restart periodic timer for given duration of time
+ *                     when the timer has finished the countdown, the callback procedure is launched
  *                     do this periodically
  *
  * Parameters
@@ -401,7 +405,8 @@ void tmr_startPeriodic( tmr_t *tmr, cnt_t period ) { tmr_start(tmr, period, peri
  *
  * Name              : tmr_startFrom
  *
- * Description       : start/restart periodic timer for given duration of time and then launch the callback procedure
+ * Description       : start/restart periodic timer for given duration of time
+ *                     when the timer has finished the countdown, the callback procedure is launched
  *                     do this periodically if period > 0
  *
  * Parameters
@@ -425,8 +430,8 @@ void tmr_startFrom( tmr_t *tmr, cnt_t delay, cnt_t period, fun_t *proc );
  *
  * Name              : tmr_startNext
  *
- * Description       : restart the timer for given duration of time
- *                     from the end of the previous countdown and then launch the callback procedure
+ * Description       : restart the timer for given duration of time from the end of the previous countdown
+ *                     when the timer has finished the countdown, the callback procedure is launched
  *
  * Parameters
  *   tmr             : pointer to timer object
@@ -570,7 +575,8 @@ struct Timer : public __tmr
  * Class             : startTimerUntil
  *
  * Description       : create and initialize a timer object
- *                     and start one-shot timer until given timepoint and then launch the callback procedure
+ *                     and start one-shot timer until given timepoint
+ *                     when the timer has finished the countdown, the callback procedure is launched
  *
  * Constructor parameters
  *   time            : timepoint value
@@ -591,7 +597,8 @@ struct startTimerUntil : public Timer
  * Class             : startTimer
  *
  * Description       : create and initialize a timer object
- *                     and start periodic timer for given duration of time and then launch the callback procedure
+ *                     and start periodic timer for given duration of time
+ *                     when the timer has finished the countdown, the callback procedure is launched
  *                     do this periodically
  *
  * Constructor parameters
@@ -618,7 +625,8 @@ struct startTimer : public Timer
  * Class             : startTimerFor
  *
  * Description       : create and initialize a timer object
- *                     and start one-shot timer for given duration of time and then launch the callback procedure
+ *                     and start one-shot timer for given duration of time
+ *                     when the timer has finished the countdown, the callback procedure is launched
  *
  * Constructor parameters
  *   delay           : duration of time (maximum number of ticks to countdown)
@@ -641,7 +649,8 @@ struct startTimerFor : public Timer
  * Class             : startTimerPeriodic
  *
  * Description       : create and initialize a timer object
- *                     and start periodic timer for given duration of time and then launch the callback procedure
+ *                     and start periodic timer for given duration of time
+ *                     when the timer has finished the countdown, the callback procedure is launched
  *                     do this periodically
  *
  * Constructor parameters
