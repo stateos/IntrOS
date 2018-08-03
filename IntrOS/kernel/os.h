@@ -2,7 +2,7 @@
 
     @file    IntrOS: os.h
     @author  Rajmund Szymanski
-    @date    23.07.2018
+    @date    03.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
