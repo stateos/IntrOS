@@ -2,7 +2,7 @@
 
     @file    IntrOS: osflag.h
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    03.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -62,7 +62,8 @@ struct __flg
  *
  * Description       : create and initialize a flag object
  *
- * Parameters        : none
+ * Parameters
+ *   init            : initial value of flag
  *
  * Return            : flag object
  *
@@ -70,7 +71,7 @@ struct __flg
  *
  ******************************************************************************/
 
-#define               _FLG_INIT() { 0 }
+#define               _FLG_INIT(init) { init }
 
 /******************************************************************************
  *
@@ -80,11 +81,12 @@ struct __flg
  *
  * Parameters
  *   flg             : name of a pointer to flag object
+ *   init            : initial value of flag
  *
  ******************************************************************************/
 
-#define             OS_FLG( flg )                     \
-                       flg_t flg##__flg = _FLG_INIT(); \
+#define             OS_FLG( flg, init )                   \
+                       flg_t flg##__flg = _FLG_INIT(init); \
                        flg_id flg = & flg##__flg
 
 /******************************************************************************
@@ -95,11 +97,12 @@ struct __flg
  *
  * Parameters
  *   flg             : name of a pointer to flag object
+ *   init            : initial value of flag
  *
  ******************************************************************************/
 
-#define         static_FLG( flg )                     \
-                static flg_t flg##__flg = _FLG_INIT(); \
+#define         static_FLG( flg, init )                   \
+                static flg_t flg##__flg = _FLG_INIT(init); \
                 static flg_id flg = & flg##__flg
 
 /******************************************************************************
@@ -108,7 +111,8 @@ struct __flg
  *
  * Description       : create and initialize a flag object
  *
- * Parameters        : none
+ * Parameters
+ *   init            : initial value of flag
  *
  * Return            : flag object
  *
@@ -117,8 +121,8 @@ struct __flg
  ******************************************************************************/
 
 #ifndef __cplusplus
-#define                FLG_INIT() \
-                      _FLG_INIT()
+#define                FLG_INIT(init) \
+                      _FLG_INIT(init)
 #endif
 
 /******************************************************************************
@@ -128,7 +132,8 @@ struct __flg
  *
  * Description       : create and initialize a flag object
  *
- * Parameters        : none
+ * Parameters
+ *   init            : initial value of flag
  *
  * Return            : pointer to flag object
  *
@@ -137,8 +142,8 @@ struct __flg
  ******************************************************************************/
 
 #ifndef __cplusplus
-#define                FLG_CREATE() \
-           (flg_t[]) { FLG_INIT  () }
+#define                FLG_CREATE(init) \
+           (flg_t[]) { FLG_INIT  (init) }
 #define                FLG_NEW \
                        FLG_CREATE
 #endif
@@ -151,12 +156,13 @@ struct __flg
  *
  * Parameters
  *   flg             : pointer to flag object
+ *   init            : initial value of flag
  *
  * Return            : none
  *
  ******************************************************************************/
 
-void flg_init( flg_t *flg );
+void flg_init( flg_t *flg, unsigned init );
 
 /******************************************************************************
  *
@@ -236,7 +242,7 @@ void flg_give( flg_t *flg, unsigned flags );
 struct Flag : public __flg
 {
 	explicit
-	Flag( void ): __flg _FLG_INIT() {}
+	Flag( const unsigned _init = 0 ): __flg _FLG_INIT(_init) {}
 
 	void     wait( unsigned _flags, bool _all = true ) {        flg_wait(this, _flags, _all); }
 	unsigned take( unsigned _flags, bool _all = true ) { return flg_take(this, _flags, _all); }

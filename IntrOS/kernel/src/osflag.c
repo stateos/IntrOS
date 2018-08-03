@@ -2,7 +2,7 @@
 
     @file    IntrOS: osflag.c
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    03.08.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -33,7 +33,7 @@
 #include "inc/oscriticalsection.h"
 
 /* -------------------------------------------------------------------------- */
-void flg_init( flg_t *flg )
+void flg_init( flg_t *flg, unsigned init )
 /* -------------------------------------------------------------------------- */
 {
 	assert(flg);
@@ -41,6 +41,8 @@ void flg_init( flg_t *flg )
 	sys_lock();
 	{
 		memset(flg, 0, sizeof(flg_t));
+
+		flg->flags = init;
 	}
 	sys_unlock();
 }
