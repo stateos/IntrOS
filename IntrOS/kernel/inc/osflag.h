@@ -71,7 +71,7 @@ struct __flg
  *
  ******************************************************************************/
 
-#define               _FLG_INIT(init) { init }
+#define               _FLG_INIT( init ) { init }
 
 /******************************************************************************
  *
@@ -121,8 +121,8 @@ struct __flg
  ******************************************************************************/
 
 #ifndef __cplusplus
-#define                FLG_INIT(init) \
-                      _FLG_INIT(init)
+#define                FLG_INIT( init ) \
+                      _FLG_INIT( init )
 #endif
 
 /******************************************************************************
@@ -142,8 +142,8 @@ struct __flg
  ******************************************************************************/
 
 #ifndef __cplusplus
-#define                FLG_CREATE(init) \
-           (flg_t[]) { FLG_INIT  (init) }
+#define                FLG_CREATE( init ) \
+           (flg_t[]) { FLG_INIT  ( init ) }
 #define                FLG_NEW \
                        FLG_CREATE
 #endif
@@ -235,7 +235,7 @@ void flg_give( flg_t *flg, unsigned flags );
  * Description       : create and initialize a flag object
  *
  * Constructor parameters
- *                   : none
+ *   init            : initial value of flag
  *
  ******************************************************************************/
 
