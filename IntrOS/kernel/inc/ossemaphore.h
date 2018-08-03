@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossemaphore.h
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    03.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -68,7 +68,7 @@ struct __sem
  *   init            : initial value of semaphore counter
  *   limit           : maximum value of semaphore counter
  *                     semBinary: binary semaphore
- *                     semNormal, semCounting: counting semaphore
+ *                     semCounting: counting semaphore
  *                     otherwise: limited semaphore
  *
  * Return            : semaphore object
@@ -90,7 +90,7 @@ struct __sem
  *   init            : initial value of semaphore counter
  *   limit           : maximum value of semaphore counter
  *                     semBinary: binary semaphore
- *                     semNormal, semCounting: counting semaphore
+ *                     semCounting: counting semaphore
  *                     otherwise: limited semaphore
  *
  ******************************************************************************/
@@ -110,7 +110,7 @@ struct __sem
  *   init            : initial value of semaphore counter
  *   limit           : maximum value of semaphore counter
  *                     semBinary: binary semaphore
- *                     semNormal, semCounting: counting semaphore
+ *                     semCounting: counting semaphore
  *                     otherwise: limited semaphore
  *
  ******************************************************************************/
@@ -129,7 +129,7 @@ struct __sem
  *   init            : initial value of semaphore counter
  *   limit           : maximum value of semaphore counter
  *                     semBinary: binary semaphore
- *                     semNormal, semCounting: counting semaphore
+ *                     semCounting: counting semaphore
  *                     otherwise: limited semaphore
  *
  * Return            : semaphore object
@@ -154,7 +154,7 @@ struct __sem
  *   init            : initial value of semaphore counter
  *   limit           : maximum value of semaphore counter
  *                     semBinary: binary semaphore
- *                     semNormal, semCounting: counting semaphore
+ *                     semCounting: counting semaphore
  *                     otherwise: limited semaphore
  *
  * Return            : pointer to semaphore object
@@ -181,7 +181,7 @@ struct __sem
  *   init            : initial value of semaphore counter
  *   limit           : maximum value of semaphore counter
  *                     semBinary: binary semaphore
- *                     semNormal, semCounting: counting semaphore
+ *                     semCounting: counting semaphore
  *                     otherwise: limited semaphore
  *
  * Return            : none
@@ -276,7 +276,7 @@ unsigned sem_give( sem_t *sem );
  *   init            : initial value of semaphore counter
  *   limit           : maximum value of semaphore counter
  *                     semBinary: binary semaphore
- *                     semNormal, semCounting: counting semaphore (default)
+ *                     semCounting: counting semaphore (default)
  *                     otherwise: limited semaphore
  *
  ******************************************************************************/
