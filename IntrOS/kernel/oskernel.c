@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    31.07.2018
+    @date    03.08.2018
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -41,7 +41,7 @@ static  stk_t     MAIN_STK[SSIZE(OS_STACK_SIZE)];
 #define MAIN_TOP (MAIN_STK+SSIZE(OS_STACK_SIZE))
 #endif
 
-tsk_t MAIN   = { .obj={ .next=&MAIN }, .id=ID_READY, .top=MAIN_TOP }; // main task
+tsk_t MAIN   = { .obj={ .next=&MAIN.obj }, .id=ID_READY, .top=MAIN_TOP }; // main task
 sys_t System = { .cur=&MAIN };
 
 /* -------------------------------------------------------------------------- */
@@ -49,13 +49,14 @@ sys_t System = { .cur=&MAIN };
 static
 void priv_rdy_insert( obj_t *obj )
 {
-	obj_t *prv;
+	static
+	obj_t *prv = &MAIN.obj;
 
 	if (obj->next == 0)
 	{
-		prv = obj->next = &MAIN;
-		while (prv->next != &MAIN) prv = prv->next;
+		obj->next = &MAIN.obj;
 		prv->next = obj;
+		prv = obj;
 	}
 }
 
