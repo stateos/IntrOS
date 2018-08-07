@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    31.07.2018
+    @date    07.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -55,8 +55,8 @@ struct __tsk
 	cnt_t    delay; // inherited from timer
 	cnt_t    period;// inherited from timer
 
-	stk_t  * top;   // top of stack
 	void   * stack; // base of stack
+	stk_t  * top;   // top of stack
 
 	union  {
 	ctx_t    reg;   // task context
@@ -83,7 +83,7 @@ struct __tsk
  ******************************************************************************/
 
 #define               _TSK_INIT( _state, _stack, _size ) \
-                       { _OBJ_INIT(), ID_STOPPED, 0, _state, 0, 0, 0, _stack+SSIZE(_size), _stack, { _CTX_INIT() } }
+                       { _OBJ_INIT(), ID_STOPPED, 0, _state, 0, 0, 0, _stack, _stack+SSIZE(_size), { _CTX_INIT() } }
 
 /******************************************************************************
  *
