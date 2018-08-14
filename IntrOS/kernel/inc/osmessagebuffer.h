@@ -97,19 +97,33 @@ struct __msg
 
 /******************************************************************************
  *
+ * Name              : _VA_MSG
+ *
+ * Description       : calculate buffer size from optional parameter
+ *
+ * Note              : for internal use
+ *
+ ******************************************************************************/
+
+#define               _VA_MSG( _limit, _size ) \
+                       ( (_size + 0) ? ((_limit) * (sizeof(unsigned) + (_size + 0))) : (_limit) )
+
+/******************************************************************************
+ *
  * Name              : OS_MSG
  *
  * Description       : define and initialize a message buffer object
  *
  * Parameters
  *   msg             : name of a pointer to message buffer object
- *   limit           : size of a buffer (max number of stored bytes)
+ *   limit           : size of a buffer (max number of stored bytes / objects)
+ *   type            : (optional) size of the object (in bytes); default: 0
  *
  ******************************************************************************/
 
-#define             OS_MSG( msg, limit )                                \
-                       char msg##__buf[limit];                           \
-                       msg_t msg##__msg = _MSG_INIT( limit, msg##__buf ); \
+#define             OS_MSG( msg, limit, ... )                                                 \
+                       char msg##__buf[_VA_MSG(limit, __VA_ARGS__)];                           \
+                       msg_t msg##__msg = _MSG_INIT( _VA_MSG(limit, __VA_ARGS__), msg##__buf ); \
                        msg_id msg = & msg##__msg
 
 /******************************************************************************
@@ -121,12 +135,13 @@ struct __msg
  * Parameters
  *   msg             : name of a pointer to message buffer object
  *   limit           : size of a buffer (max number of stored bytes)
+ *   type            : (optional) size of the object (in bytes); default: 0
  *
  ******************************************************************************/
 
-#define         static_MSG( msg, limit )                                \
-                static char msg##__buf[limit];                           \
-                static msg_t msg##__msg = _MSG_INIT( limit, msg##__buf ); \
+#define         static_MSG( msg, limit, ... )                                                 \
+                static char msg##__buf[_VA_MSG(limit, __VA_ARGS__)];                           \
+                static msg_t msg##__msg = _MSG_INIT( _VA_MSG(limit, __VA_ARGS__), msg##__buf ); \
                 static msg_id msg = & msg##__msg
 
 /******************************************************************************
@@ -137,6 +152,7 @@ struct __msg
  *
  * Parameters
  *   limit           : size of a buffer (max number of stored bytes)
+ *   type            : (optional) size of the object (in bytes); default: 0
  *
  * Return            : message buffer object
  *
@@ -145,8 +161,8 @@ struct __msg
  ******************************************************************************/
 
 #ifndef __cplusplus
-#define                MSG_INIT( limit ) \
-                      _MSG_INIT( limit, _MSG_DATA( limit ) )
+#define                MSG_INIT( limit, ... ) \
+                      _MSG_INIT( _VA_MSG(limit, __VA_ARGS__), _MSG_DATA( _VA_MSG(limit, __VA_ARGS__) ) )
 #endif
 
 /******************************************************************************
@@ -158,6 +174,7 @@ struct __msg
  *
  * Parameters
  *   limit           : size of a buffer (max number of stored bytes)
+ *   type            : (optional) size of the object (in bytes); default: 0
  *
  * Return            : pointer to message buffer object
  *
@@ -166,8 +183,8 @@ struct __msg
  ******************************************************************************/
 
 #ifndef __cplusplus
-#define                MSG_CREATE( limit ) \
-           (msg_t[]) { MSG_INIT  ( limit ) }
+#define                MSG_CREATE( limit, ... ) \
+           (msg_t[]) { MSG_INIT  ( _VA_MSG(limit, __VA_ARGS__) ) }
 #define                MSG_NEW \
                        MSG_CREATE
 #endif

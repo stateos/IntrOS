@@ -130,6 +130,19 @@ struct __tsk
 
 /******************************************************************************
  *
+ * Name              : _VA_STK
+ *
+ * Description       : calculate stack size from optional parameter
+ *
+ * Note              : for internal use
+ *
+ ******************************************************************************/
+
+#define               _VA_STK( _size ) \
+                       ( (_size + 0) ? (_size + 0) : (OS_STACK_SIZE) )
+
+/******************************************************************************
+ *
  * Name              : OS_WRK
  *
  * Description       : define and initialize complete work area for task object
@@ -157,11 +170,12 @@ struct __tsk
  *   tsk             : name of a pointer to task object
  *   state           : task state (initial task function) doesn't have to be noreturn-type
  *                     it will be executed into an infinite system-implemented loop
+ *   size            : (optional) size of task private stack (in bytes); default: OS_STACK_SIZE
  *
  ******************************************************************************/
 
-#define             OS_TSK( tsk, state ) \
-                    OS_WRK( tsk, state, OS_STACK_SIZE )
+#define             OS_TSK( tsk, state, ... ) \
+                    OS_WRK( tsk, state, _VA_STK(__VA_ARGS__) )
 
 /******************************************************************************
  *
@@ -190,11 +204,12 @@ struct __tsk
  *
  * Parameters
  *   tsk             : name of a pointer to task object
+ *   size            : (optional) size of task private stack (in bytes); default: OS_STACK_SIZE
  *
  ******************************************************************************/
 
-#define             OS_TSK_DEF( tsk ) \
-                    OS_WRK_DEF( tsk, OS_STACK_SIZE )
+#define             OS_TSK_DEF( tsk, ... ) \
+                    OS_WRK_DEF( tsk, _VA_STK(__VA_ARGS__) )
 
 /******************************************************************************
  *
@@ -226,13 +241,14 @@ struct __tsk
  *
  * Parameters
  *   tsk             : name of a pointer to task object
+ *   size            : (optional) size of task private stack (in bytes); default: OS_STACK_SIZE
  *
  * Note              : only available for compilers supporting the "constructor" function attribute or its equivalent
  *
  ******************************************************************************/
 
-#define             OS_TSK_START( tsk ) \
-                    OS_WRK_START( tsk, OS_STACK_SIZE )
+#define             OS_TSK_START( tsk, ... ) \
+                    OS_WRK_START( tsk, _VA_STK(__VA_ARGS__) )
 
 /******************************************************************************
  *
@@ -263,11 +279,12 @@ struct __tsk
  *   tsk             : name of a pointer to task object
  *   state           : task state (initial task function) doesn't have to be noreturn-type
  *                     it will be executed into an infinite system-implemented loop
+ *   size            : (optional) size of task private stack (in bytes); default: OS_STACK_SIZE
  *
  ******************************************************************************/
 
-#define         static_TSK( tsk, state ) \
-                static_WRK( tsk, state, OS_STACK_SIZE )
+#define         static_TSK( tsk, state, ... ) \
+                static_WRK( tsk, state, _VA_STK(__VA_ARGS__) )
 
 /******************************************************************************
  *
@@ -296,11 +313,12 @@ struct __tsk
  *
  * Parameters
  *   tsk             : name of a pointer to task object
+ *   size            : (optional) size of task private stack (in bytes); default: OS_STACK_SIZE
  *
  ******************************************************************************/
 
-#define         static_TSK_DEF( tsk ) \
-                static_WRK_DEF( tsk, OS_STACK_SIZE )
+#define         static_TSK_DEF( tsk, ... ) \
+                static_WRK_DEF( tsk, _VA_STK(__VA_ARGS__) )
 
 /******************************************************************************
  *
@@ -332,13 +350,14 @@ struct __tsk
  *
  * Parameters
  *   tsk             : name of a pointer to task object
+ *   size            : (optional) size of task private stack (in bytes); default: OS_STACK_SIZE
  *
  * Note              : only available for compilers supporting the "constructor" function attribute or its equivalent
  *
  ******************************************************************************/
 
-#define         static_TSK_START( tsk ) \
-                static_WRK_START( tsk, OS_STACK_SIZE )
+#define         static_TSK_START( tsk, ... ) \
+                static_WRK_START( tsk, _VA_STK(__VA_ARGS__) )
 
 /******************************************************************************
  *
@@ -396,6 +415,7 @@ struct __tsk
  * Parameters
  *   state           : task state (initial task function) doesn't have to be noreturn-type
  *                     it will be executed into an infinite system-implemented loop
+ *   size            : (optional) size of task private stack (in bytes); default: OS_STACK_SIZE
  *
  * Return            : task object
  *
@@ -404,8 +424,8 @@ struct __tsk
  ******************************************************************************/
 
 #ifndef __cplusplus
-#define                TSK_INIT( state ) \
-                       WRK_INIT( state, OS_STACK_SIZE )
+#define                TSK_INIT( state, ... ) \
+                       WRK_INIT( state, _VA_STK(__VA_ARGS__) )
 #endif
 
 /******************************************************************************
@@ -418,6 +438,7 @@ struct __tsk
  * Parameters
  *   state           : task state (initial task function) doesn't have to be noreturn-type
  *                     it will be executed into an infinite system-implemented loop
+ *   size            : (optional) size of task private stack (in bytes); default: OS_STACK_SIZE
  *
  * Return            : pointer to task object
  *
@@ -426,8 +447,8 @@ struct __tsk
  ******************************************************************************/
 
 #ifndef __cplusplus
-#define                TSK_CREATE( state ) \
-                       WRK_CREATE( state, OS_STACK_SIZE )
+#define                TSK_CREATE( state, ... ) \
+                       WRK_CREATE( state, _VA_STK(__VA_ARGS__) )
 #define                TSK_NEW \
                        TSK_CREATE
 #endif
