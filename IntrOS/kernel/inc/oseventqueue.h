@@ -2,7 +2,7 @@
 
     @file    IntrOS: oseventqueue.h
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    14.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -285,52 +285,31 @@ void evq_push( evq_t *evq, unsigned event );
 
 /******************************************************************************
  *
- * Class             : baseEventQueue
+ * Class             : EventQueueT<>
  *
  * Description       : create and initialize an event queue object
  *
  * Constructor parameters
  *   limit           : size of a queue (max number of stored events)
- *   data            : event queue data buffer
- *
- * Note              : for internal use
  *
  ******************************************************************************/
 
-struct baseEventQueue : public __evq
+template<unsigned limit_>
+struct EventQueueT : public __evq
 {
-	explicit
-	baseEventQueue( const unsigned _limit, unsigned * const _data ): __evq _EVQ_INIT(_limit, _data) {}
+	EventQueueT( void ): __evq _EVQ_INIT(limit_, data_) {}
 
 	unsigned wait( void )            { return evq_wait(this);         }
 	unsigned take( void )            { return evq_take(this);         }
 	void     send( unsigned _event ) {        evq_send(this, _event); }
 	unsigned give( unsigned _event ) { return evq_give(this, _event); }
 	void     push( unsigned _event ) {        evq_push(this, _event); }
-};
-
-/******************************************************************************
- *
- * Class             : EventQueue
- *
- * Description       : create and initialize an event queue object
- *
- * Constructor parameters
- *   limit           : size of a queue (max number of stored events)
- *
- ******************************************************************************/
-
-template<unsigned _limit>
-struct EventQueueT : public baseEventQueue
-{
-	explicit
-	EventQueueT( void ): baseEventQueue(_limit, data_) {}
 
 	private:
-	unsigned data_[_limit];
+	unsigned data_[limit_];
 };
 
-#endif
+#endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */
 

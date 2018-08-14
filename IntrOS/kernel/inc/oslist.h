@@ -2,7 +2,7 @@
 
     @file    IntrOS: oslist.h
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    14.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -244,28 +244,7 @@ void lst_give( lst_t *lst, const void *data );
 
 /******************************************************************************
  *
- * Class             : List
- *
- * Description       : create and initialize a list object
- *
- * Constructor parameters
- *                   : none
- *
- ******************************************************************************/
-
-struct List : public __lst
-{
-	explicit
-	List( void ): __lst _LST_INIT() {}
-
-	void     wait(       void **_data ) {        lst_wait(this, _data); }
-	unsigned take(       void **_data ) { return lst_take(this, _data); }
-	void     give( const void  *_data ) {        lst_give(this, _data); }
-};
-
-/******************************************************************************
- *
- * Class             : List
+ * Class             : ListTT<>
  *
  * Description       : create and initialize a list object
  *
@@ -275,16 +254,20 @@ struct List : public __lst
  ******************************************************************************/
 
 template<class T>
-struct ListTT : public List
+struct ListTT : public __lst
 {
-	explicit
-	ListTT( void ): List() {}
+	ListTT( void ): __lst _LST_INIT() {}
 
-	void     wait( T **_data ) {        lst_wait(this, reinterpret_cast<void **>(_data)); }
-	unsigned take( T **_data ) { return lst_take(this, reinterpret_cast<void **>(_data)); }
+	void     wait(       T   **_data ) {        lst_wait(this, reinterpret_cast<void **>(_data)); }
+	unsigned take(       T   **_data ) { return lst_take(this, reinterpret_cast<void **>(_data)); }
+	void     give( const void *_data ) {        lst_give(this,                           _data);  }
 };
 
-#endif
+/* -------------------------------------------------------------------------- */
+
+typedef ListTT<void> List;
+
+#endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */
 

@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.h
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    14.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -333,10 +333,10 @@ unsigned msg_space( msg_t *msg );
  *
  ******************************************************************************/
 
-struct baseMessageBuffer : public __msg
+template<unsigned limit_>
+struct MessageBufferT : public __msg
 {
-	explicit
-	baseMessageBuffer( const unsigned _limit, char * const _data ): __msg _MSG_INIT(_limit, _data) {}
+	MessageBufferT( void ): __msg _MSG_INIT(limit_, data_) {}
 
 	unsigned wait (       void *_data, unsigned _size ) { return msg_wait (this, _data, _size); }
 	unsigned take (       void *_data, unsigned _size ) { return msg_take (this, _data, _size); }
@@ -345,32 +345,14 @@ struct baseMessageBuffer : public __msg
 	unsigned push ( const void *_data, unsigned _size ) { return msg_push (this, _data, _size); }
 	unsigned count( void )                              { return msg_count(this);               }
 	unsigned space( void )                              { return msg_space(this);               }
-};
-
-/******************************************************************************
- *
- * Class             : MessageBuffer
- *
- * Description       : create and initialize a message buffer object
- *
- * Constructor parameters
- *   limit           : size of a buffer (max number of stored bytes)
- *
- ******************************************************************************/
-
-template<unsigned _limit>
-struct MessageBufferT : public baseMessageBuffer
-{
-	explicit
-	MessageBufferT( void ): baseMessageBuffer(sizeof(data_), data_) {}
 
 	private:
-	char data_[_limit];
+	char data_[limit_];
 };
 
 /******************************************************************************
  *
- * Class             : MessageBuffer
+ * Class             : MessageBufferTT<>
  *
  * Description       : create and initialize a message buffer object
  *
@@ -380,17 +362,19 @@ struct MessageBufferT : public baseMessageBuffer
  *
  ******************************************************************************/
 
-template<unsigned _limit, class T>
-struct MessageBufferTT : public baseMessageBuffer
+template<unsigned limit_, class T>
+struct MessageBufferTT : public MessageBufferT<limit_*(sizeof(unsigned)+sizeof(T))>
 {
-	explicit
-	MessageBufferTT( void ): baseMessageBuffer(sizeof(data_), data_) {}
+	MessageBufferTT( void ): MessageBufferT<limit_*(sizeof(unsigned)+sizeof(T))>() {}
 
-	private:
-	char data_[_limit*(sizeof(unsigned)+sizeof(T))-sizeof(unsigned)];
+	unsigned wait (       T *_data ) { return msg_wait (this, _data, sizeof(T)); }
+	unsigned take (       T *_data ) { return msg_take (this, _data, sizeof(T)); }
+	unsigned send ( const T *_data ) { return msg_send (this, _data, sizeof(T)); }
+	unsigned give ( const T *_data ) { return msg_give (this, _data, sizeof(T)); }
+	unsigned push ( const T *_data ) { return msg_push (this, _data, sizeof(T)); }
 };
 
-#endif
+#endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */
 

@@ -2,7 +2,7 @@
 
     @file    IntrOS: osconditionvariable.h
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    14.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -207,14 +207,13 @@ void cnd_give( cnd_t *cnd );
 
 struct ConditionVariable : public __cnd
 {
-	explicit
 	ConditionVariable( void ): __cnd _CND_INIT() {}
 
 	void wait( mtx_t *_mtx ) { cnd_wait(this, _mtx); }
 	void give( void )        { cnd_give(this);       }
 };
 
-#endif
+#endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */
 

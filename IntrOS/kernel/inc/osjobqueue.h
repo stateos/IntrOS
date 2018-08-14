@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.h
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    14.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -285,9 +285,9 @@ void job_push( job_t *job, fun_t *fun );
 
 /******************************************************************************
  *
- * Class             : baseJobQueue
+ * Class             : staticJobQueueT<>
  *
- * Description       : create and initialize a job queue object
+ * Description       : create and initialize a static job queue object
  *
  * Constructor parameters
  *   limit           : size of a queue (max number of stored job procedures)
@@ -297,39 +297,24 @@ void job_push( job_t *job, fun_t *fun );
  *
  ******************************************************************************/
 
-#if OS_FUNCTIONAL
-
-struct baseJobQueue : public __box
+template<unsigned limit_>
+struct staticJobQueueT : public __job
 {
-	explicit
-	baseJobQueue( const unsigned _limit, FUN_t * const _data ): __box _BOX_INIT( _limit, reinterpret_cast<char *>(_data), sizeof(FUN_t) ) {}
+	staticJobQueueT( void ): __job _JOB_INIT(limit_, data_) {}
 
-	void     wait( void )       { FUN_t _fun;                  box_wait(this, &_fun);                         _fun();               }
-	unsigned take( void )       { FUN_t _fun; unsigned event = box_take(this, &_fun); if (event == E_SUCCESS) _fun(); return event; }
-	void     send( FUN_t _fun ) {                              box_send(this, &_fun);                                               }
-	unsigned give( FUN_t _fun ) {             unsigned event = box_give(this, &_fun);                                 return event; }
-	void     push( FUN_t _fun ) {                              box_push(this, &_fun);                                               }
+	void     wait( void )        {        job_wait(this);       }
+	unsigned take( void )        { return job_take(this);       }
+	void     send( fun_t *_fun ) {        job_send(this, _fun); }
+	unsigned give( fun_t *_fun ) { return job_give(this, _fun); }
+	void     push( fun_t *_fun ) {        job_push(this, _fun); }
+
+	private:
+	fun_t *data_[limit_];
 };
-
-#else
-
-struct baseJobQueue : public __job
-{
-	explicit
-	baseJobQueue( const unsigned _limit, FUN_t * const _data ): __job _JOB_INIT( _limit, _data ) {}
-
-	void     wait( void )       {        job_wait(this);       }
-	unsigned take( void )       { return job_take(this);       }
-	void     send( FUN_t _fun ) {        job_send(this, _fun); }
-	unsigned give( FUN_t _fun ) { return job_give(this, _fun); }
-	void     push( FUN_t _fun ) {        job_push(this, _fun); }
-};
-
-#endif
 
 /******************************************************************************
  *
- * Class             : JobQueue
+ * Class             : JobQueueT<>
  *
  * Description       : create and initialize a job queue object
  *
@@ -338,17 +323,34 @@ struct baseJobQueue : public __job
  *
  ******************************************************************************/
 
-template<unsigned _limit>
-struct JobQueueT : public baseJobQueue
+#if OS_FUNCTIONAL
+
+template<unsigned limit_>
+struct JobQueueT : public __box
 {
-	explicit
-	JobQueueT( void ): baseJobQueue(_limit, data_) {}
+	JobQueueT( void ): __box _BOX_INIT(limit_, reinterpret_cast<char *>(data_), sizeof(FUN_t)) {}
+
+	void     wait( void )       { FUN_t _fun;                  box_wait(this, &_fun);                         _fun();               }
+	unsigned take( void )       { FUN_t _fun; unsigned event = box_take(this, &_fun); if (event == E_SUCCESS) _fun(); return event; }
+	void     send( FUN_t _fun ) {                              box_send(this, &_fun);                                               }
+	unsigned give( FUN_t _fun ) {             unsigned event = box_give(this, &_fun);                                 return event; }
+	void     push( FUN_t _fun ) {                              box_push(this, &_fun);                                               }
 
 	private:
-	FUN_t data_[_limit];
+	FUN_t data_[limit_];
+};
+
+#else
+
+template<unsigned limit_>
+struct JobQueueT : public staticJobQueueT<limit_>
+{
+	JobQueueT( void ): staticJobQueueT<limit_>() {}
 };
 
 #endif
+
+#endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */
 

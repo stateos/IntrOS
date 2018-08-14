@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.h
     @author  Rajmund Szymanski
-    @date    31.07.2018
+    @date    14.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -526,6 +526,36 @@ void tmr_delay( cnt_t delay ) { tmr_this()->delay = delay; }
 
 /******************************************************************************
  *
+ * Class             : staticTimer
+ *
+ * Description       : create and initialize a static timer object
+ *
+ * Constructor parameters
+ *   state           : callback procedure
+ *
+ ******************************************************************************/
+
+struct staticTimer : public __tmr
+{
+	 staticTimer( void ):          __tmr _TMR_INIT(0) {}
+	 staticTimer( fun_t *_state ): __tmr _TMR_INIT(_state) {}
+	~staticTimer( void ) { assert(__tmr::id == ID_STOPPED); }
+
+	void start        ( cnt_t _delay, cnt_t _period )                {        tmr_start        (this, _delay, _period);         }
+	void startFor     ( cnt_t _delay )                               {        tmr_startFor     (this, _delay);                  }
+	void startPeriodic( cnt_t _period )                              {        tmr_startPeriodic(this,         _period);         }
+	void startFrom    ( cnt_t _delay, cnt_t _period, fun_t *_state ) {        tmr_startFrom    (this, _delay, _period, _state); }
+	void startNext    ( cnt_t _delay )                               {        tmr_startNext    (this, _delay);                  }
+	void startUntil   ( cnt_t _time )                                {        tmr_startUntil   (this, _time);                   }
+
+	void     wait     ( void )                                       { return tmr_wait         (this);                          }
+	unsigned take     ( void )                                       { return tmr_take         (this);                          }
+
+	bool     operator!( void )                                       { return __tmr::id == ID_STOPPED;                          }
+};
+
+/******************************************************************************
+ *
  * Class             : Timer
  *
  * Description       : create and initialize a timer object
@@ -535,38 +565,19 @@ void tmr_delay( cnt_t delay ) { tmr_this()->delay = delay; }
  *
  ******************************************************************************/
 
-struct Timer : public __tmr
+struct Timer : public staticTimer
 {
-	 explicit
-	 Timer( void ):         __tmr _TMR_INIT(0) {}
+	Timer( void ): staticTimer() {}
 #if OS_FUNCTIONAL
-	 explicit
-	 Timer( FUN_t _state ): __tmr _TMR_INIT(run_), fun_(_state) {}
-	~Timer( void ) { assert(__tmr::id == ID_STOPPED); }
-#else
-	 explicit
-	 Timer( FUN_t _state ): __tmr _TMR_INIT(_state) {}
-	~Timer( void ) { assert(__tmr::id == ID_STOPPED); }
-#endif
-	void start        ( cnt_t _delay, cnt_t _period )               {        tmr_start        (this, _delay, _period);         }
-	void startFor     ( cnt_t _delay )                              {        tmr_startFor     (this, _delay);                  }
-	void startPeriodic( cnt_t _period )                             {        tmr_startPeriodic(this,         _period);         }
-#if OS_FUNCTIONAL
-	void startFrom    ( cnt_t _delay, cnt_t _period, FUN_t _state ) {        fun_ = _state;
-	                                                                         tmr_startFrom    (this, _delay, _period, run_);   }
-#else
-	void startFrom    ( cnt_t _delay, cnt_t _period, FUN_t _state ) {        tmr_startFrom    (this, _delay, _period, _state); }
-#endif
-	void startNext    ( cnt_t _delay )                              {        tmr_startNext    (this, _delay);                  }
-	void startUntil   ( cnt_t _time )                               {        tmr_startUntil   (this, _time);                   }
-	void     wait     ( void )                                      {        tmr_wait         (this);                          }
-	unsigned take     ( void )                                      { return tmr_take         (this);                          }
+	Timer( FUN_t _state ): staticTimer(run_), fun_(_state) {}
 
-	bool     operator!( void )                                      { return __tmr::id == ID_STOPPED;                          }
-#if OS_FUNCTIONAL
+	void  startFrom( cnt_t _delay, cnt_t _period, FUN_t _state ) { fun_ = _state; tmr_startFrom(this, _delay, _period, run_); }
+
 	static
-	void     run_( void ) { ((Timer *) System.cur)->fun_(); }
-	FUN_t    fun_;
+	void  run_( void ) { ((Timer *)System.cur)->fun_(); }
+	FUN_t fun_;
+#else
+	Timer( FUN_t _state ): staticTimer(_state) {}
 #endif
 };
 
@@ -592,9 +603,7 @@ struct Timer : public __tmr
 
 struct startTimer : public Timer
 {
-	explicit
 	startTimer( const cnt_t _delay, const cnt_t _period ):               Timer()       { tmr_start(this, _delay, _period); }
-	explicit
 	startTimer( const cnt_t _delay, const cnt_t _period, FUN_t _state ): Timer(_state) { tmr_start(this, _delay, _period); }
 };
 
@@ -614,12 +623,10 @@ struct startTimer : public Timer
  *
  ******************************************************************************/
 
-struct startTimerFor : public Timer
+struct startTimerFor : public startTimer
 {
-	explicit
-	startTimerFor( const cnt_t _delay ):               Timer()       { tmr_startFor(this, _delay); }
-	explicit
-	startTimerFor( const cnt_t _delay, FUN_t _state ): Timer(_state) { tmr_startFor(this, _delay); }
+	startTimerFor( const cnt_t _delay ):               startTimer(_delay, 0)         {}
+	startTimerFor( const cnt_t _delay, FUN_t _state ): startTimer(_delay, 0, _state) {}
 };
 
 /******************************************************************************
@@ -639,12 +646,10 @@ struct startTimerFor : public Timer
  *
  ******************************************************************************/
 
-struct startTimerPeriodic : public Timer
+struct startTimerPeriodic : public startTimer
 {
-	explicit
-	startTimerPeriodic( const cnt_t _period ):               Timer()       { tmr_startPeriodic(this, _period); }
-	explicit
-	startTimerPeriodic( const cnt_t _period, FUN_t _state ): Timer(_state) { tmr_startPeriodic(this, _period); }
+	startTimerPeriodic( const cnt_t _period ):               startTimer(_period, _period)         {}
+	startTimerPeriodic( const cnt_t _period, FUN_t _state ): startTimer(_period, _period, _state) {}
 };
 
 /******************************************************************************
@@ -663,9 +668,7 @@ struct startTimerPeriodic : public Timer
 
 struct startTimerUntil : public Timer
 {
-	explicit
 	startTimerUntil( const cnt_t _time ):               Timer()       { tmr_startUntil(this, _time); }
-	explicit
 	startTimerUntil( const cnt_t _time, FUN_t _state ): Timer(_state) { tmr_startUntil(this, _time); }
 };
 
@@ -673,19 +676,19 @@ struct startTimerUntil : public Timer
  *
  * Namespace         : ThisTimer
  *
- * Description       : provide set of functions for Current Timer
+ * Description       : provide set of functions for current timer
  *
  ******************************************************************************/
 
 namespace ThisTimer
 {
 #if OS_FUNCTIONAL
-	static inline void flip ( FUN_t _state ) { ((Timer *) System.cur)->fun_ = _state;
-	                                           tmr_flip (Timer::run_);                }
+	static inline void flip ( FUN_t _state ) { ((Timer *)System.cur)->fun_ = _state;
+	                                           tmr_flip (Timer::run_);               }
 #else
-	static inline void flip ( FUN_t _state ) { tmr_flip (_state);                     }
+	static inline void flip ( FUN_t _state ) { tmr_flip (_state);                    }
 #endif
-	static inline void delay( cnt_t _delay ) { tmr_delay(_delay);                     }
+	static inline void delay( cnt_t _delay ) { tmr_delay(_delay);                    }
 }
 
 #endif//__cplusplus

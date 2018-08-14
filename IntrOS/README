@@ -33,6 +33,8 @@ Features:
 4.2
 - updated priv_rdy_insert internal procedure
 - added initial value for flag object
+- updated tsk/tmr init functions
+- added static c++ classes
 ---------
 4.1
 - updated mailbox queue object

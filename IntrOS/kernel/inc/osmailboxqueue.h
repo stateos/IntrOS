@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmailboxqueue.h
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    14.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -325,23 +325,20 @@ unsigned box_space( box_t *box );
 
 /******************************************************************************
  *
- * Class             : baseMailBoxQueue
+ * Class             : MailBoxQueueT<>
  *
  * Description       : create and initialize a mailbox queue object
  *
  * Constructor parameters
  *   limit           : size of a queue (max number of stored mails)
- *   data            : mailbox queue data buffer
  *   size            : size of a single mail (in bytes)
- *
- * Note              : for internal use
  *
  ******************************************************************************/
 
-struct baseMailBoxQueue : public __box
+template<unsigned limit_, unsigned size_>
+struct MailBoxQueueT : public __box
 {
-	explicit
-	baseMailBoxQueue( const unsigned _limit, char * const _data, const unsigned _size ): __box _BOX_INIT(_limit, _data, _size) {}
+	MailBoxQueueT( void ): __box _BOX_INIT(limit_, data_, size_) {}
 
 	void     wait(       void *_data ) {        box_wait (this, _data); }
 	unsigned take(       void *_data ) { return box_take (this, _data); }
@@ -350,33 +347,14 @@ struct baseMailBoxQueue : public __box
 	void     push( const void *_data ) {        box_push (this, _data); }
 	unsigned count( void )             { return box_count(this);        }
 	unsigned space( void )             { return box_space(this);        }
-};
-
-/******************************************************************************
- *
- * Class             : MailBoxQueue
- *
- * Description       : create and initialize a mailbox queue object
- *
- * Constructor parameters
- *   limit           : size of a queue (max number of stored mails)
- *   size            : size of a single mail (in bytes)
- *
- ******************************************************************************/
-
-template<unsigned _limit, unsigned _size>
-struct MailBoxQueueT : public baseMailBoxQueue
-{
-	explicit
-	MailBoxQueueT( void ): baseMailBoxQueue(_limit, data_, _size) {}
 
 	private:
-	char data_[_limit * _size];
+	char data_[limit_ * size_];
 };
 
 /******************************************************************************
  *
- * Class             : MailBoxQueue
+ * Class             : MailBoxQueueTT<>
  *
  * Description       : create and initialize a mailbox queue object
  *
@@ -386,17 +364,13 @@ struct MailBoxQueueT : public baseMailBoxQueue
  *
  ******************************************************************************/
 
-template<unsigned _limit, class T>
-struct MailBoxQueueTT : public baseMailBoxQueue
+template<unsigned limit_, class T>
+struct MailBoxQueueTT : public MailBoxQueueT<limit_, sizeof(T)>
 {
-	explicit
-	MailBoxQueueTT( void ): baseMailBoxQueue(_limit, reinterpret_cast<char *>(data_), sizeof(T)) {}
-
-	private:
-	T data_[_limit];
+	MailBoxQueueTT( void ): MailBoxQueueT<limit_, sizeof(T)>() {}
 };
 
-#endif
+#endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */
 

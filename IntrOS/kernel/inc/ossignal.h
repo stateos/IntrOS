@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossignal.h
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    14.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -38,6 +38,12 @@
 extern "C" {
 #endif
 
+/* -------------------------------------------------------------------------- */
+
+#define sigClear     ( 0U << 0 ) // auto clearing signal
+#define sigProtect   ( 1U << 0 ) // protected signal
+#define sigMASK      ( 1U )
+
 /******************************************************************************
  *
  * Name              : signal
@@ -51,12 +57,6 @@ struct __sig
 	unsigned flag;  // signal's current value
 	unsigned type;  // signal type: sigClear, sigProtect
 };
-
-/* -------------------------------------------------------------------------- */
-
-#define sigClear     ( 0U << 0 ) // auto clearing signal
-#define sigProtect   ( 1U << 0 ) // protected signal
-#define sigMASK      ( 1U )
 
 /******************************************************************************
  *
@@ -264,7 +264,6 @@ void sig_clear( sig_t *sig );
 
 struct Signal : public __sig
 {
-	explicit
 	Signal( const unsigned _type = sigClear ): __sig _SIG_INIT(_type) {}
 
 	void     wait ( void ) {        sig_wait (this); }
@@ -273,7 +272,7 @@ struct Signal : public __sig
 	void     clear( void ) {        sig_clear(this); }
 };
 
-#endif
+#endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */
 

@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossemaphore.h
     @author  Rajmund Szymanski
-    @date    03.08.2018
+    @date    14.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -38,6 +38,11 @@
 extern "C" {
 #endif
 
+/* -------------------------------------------------------------------------- */
+
+#define semBinary    (  1U ) // binary semaphore
+#define semCounting  ( ~0U ) // counting semaphore
+
 /******************************************************************************
  *
  * Name              : semaphore
@@ -51,12 +56,6 @@ struct __sem
 	unsigned count; // semaphore's current value
 	unsigned limit; // semaphore's value limit
 };
-
-/* -------------------------------------------------------------------------- */
-
-#define semBinary    (  1U ) // binary semaphore
-#define semCounting  ( ~0U ) // counting semaphore
-#define semMASK      ( ~0U )
 
 /******************************************************************************
  *
@@ -283,7 +282,6 @@ unsigned sem_give( sem_t *sem );
 
 struct Semaphore : public __sem
 {
-	explicit
 	Semaphore( const unsigned _init, const unsigned _limit = semCounting ): __sem _SEM_INIT(_init, _limit) {}
 
 	void     wait( void ) {        sem_wait(this); }
@@ -305,11 +303,26 @@ struct Semaphore : public __sem
 
 struct BinarySemaphore : public Semaphore
 {
-	explicit
 	BinarySemaphore( const unsigned _init = 0 ): Semaphore(_init, semBinary) {}
 };
 
-#endif
+/******************************************************************************
+ *
+ * Class             : CountingSemaphore
+ *
+ * Description       : create and initialize a counting semaphore object
+ *
+ * Constructor parameters
+ *   init            : initial value of semaphore counter
+ *
+ ******************************************************************************/
+
+struct CountingSemaphore : public Semaphore
+{
+	CountingSemaphore( const unsigned _init = 0 ): Semaphore(_init, semCounting) {}
+};
+
+#endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */
 

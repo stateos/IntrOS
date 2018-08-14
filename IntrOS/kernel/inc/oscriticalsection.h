@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscriticalsection.h
     @author  Rajmund Szymanski
-    @date    18.07.2018
+    @date    14.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -141,7 +141,7 @@ struct CriticalSection
 	lck_t lck;
 };
 
-#endif
+#endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */
 

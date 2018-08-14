@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.c
     @author  Rajmund Szymanski
-    @date    31.07.2018
+    @date    14.08.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -42,6 +42,7 @@ void tmr_init( tmr_t *tmr, fun_t *state )
 	{
 		memset(tmr, 0, sizeof(tmr_t));
 
+		tmr->id    = ID_STOPPED;
 		tmr->state = state;
 	}
 	sys_unlock();

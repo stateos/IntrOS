@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmemorypool.h
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    14.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -39,6 +39,11 @@
 extern "C" {
 #endif
 
+/* -------------------------------------------------------------------------- */
+
+#define MSIZE( size ) \
+ ALIGNED_SIZE( size, que_t )
+
 /******************************************************************************
  *
  * Name              : memory pool
@@ -55,11 +60,6 @@ struct __mem
 	unsigned size;  // size of memory object (in words)
 	void   * data;  // pointer to memory pool buffer
 };
-
-/* -------------------------------------------------------------------------- */
-
-#define MSIZE( size ) \
- ALIGNED_SIZE( size, que_t )
 
 /******************************************************************************
  *
@@ -278,54 +278,32 @@ void mem_give( mem_t *mem, const void *data ) { lst_give((lst_t *)mem, data); }
 
 /******************************************************************************
  *
- * Class             : baseMemoryPool
+ * Class             : MemoryPoolT<>
  *
  * Description       : create and initialize a memory pool object
  *
  * Constructor parameters
  *   limit           : size of a buffer (max number of objects)
  *   size            : size of memory object (in bytes)
- *   data            : memory pool data buffer
- *
- * Note              : for internal use
  *
  ******************************************************************************/
 
-struct baseMemoryPool : public __mem
+template<unsigned limit_, unsigned size_>
+struct MemoryPoolT : public __mem
 {
-	explicit
-	baseMemoryPool( const unsigned _limit, const unsigned _size, void * const _data ): __mem _MEM_INIT(_limit, _size, _data) { mem_bind(this); }
+	MemoryPoolT( void ): __mem _MEM_INIT(limit_, size_, data_) { mem_bind(this); }
 
 	void     wait(       void **_data ) {        mem_wait(this, _data); }
 	unsigned take(       void **_data ) { return mem_take(this, _data); }
 	void     give( const void  *_data ) {        mem_give(this, _data); }
-};
-
-/******************************************************************************
- *
- * Class             : MemoryPool
- *
- * Description       : create and initialize a memory pool object
- *
- * Constructor parameters
- *   limit           : size of a buffer (max number of objects)
- *   size            : size of memory object (in bytes)
- *
- ******************************************************************************/
-
-template<unsigned _limit, unsigned _size>
-struct MemoryPoolT : public baseMemoryPool
-{
-	explicit
-	MemoryPoolT( void ): baseMemoryPool(_limit, _size, reinterpret_cast<void *>(data_)) {}
 
 	private:
-	void *data_[_limit * (1 + MSIZE(_size))];
+	void *data_[limit_ * (1 + MSIZE(size_))];
 };
 
 /******************************************************************************
  *
- * Class             : MemoryPool
+ * Class             : MemoryPoolTT<>
  *
  * Description       : create and initialize a memory pool object
  *
@@ -335,17 +313,16 @@ struct MemoryPoolT : public baseMemoryPool
  *
  ******************************************************************************/
 
-template<unsigned _limit, class T>
-struct MemoryPoolTT : public MemoryPoolT<_limit, sizeof(T)>
+template<unsigned limit_, class T>
+struct MemoryPoolTT : public MemoryPoolT<limit_, sizeof(T)>
 {
-	explicit
-	MemoryPoolTT( void ): MemoryPoolT<_limit, sizeof(T)>() {}
+	MemoryPoolTT( void ): MemoryPoolT<limit_, sizeof(T)>() {}
 
 	void     wait( T **_data ) {        mem_wait(this, reinterpret_cast<void **>(_data)); }
 	unsigned take( T **_data ) { return mem_take(this, reinterpret_cast<void **>(_data)); }
 };
 
-#endif
+#endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */
 

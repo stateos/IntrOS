@@ -2,7 +2,7 @@
 
     @file    IntrOS: osevent.h
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    14.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -207,14 +207,13 @@ void evt_give( evt_t *evt, unsigned event );
 
 struct Event : public __evt
 {
-	explicit
 	Event( void ): __evt _EVT_INIT() {}
 
 	unsigned wait( void )            { return evt_wait(this);         }
 	void     give( unsigned _event ) {        evt_give(this, _event); }
 };
 
-#endif
+#endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */
 

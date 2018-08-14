@@ -2,7 +2,7 @@
 
     @file    IntrOS: osflag.h
     @author  Rajmund Szymanski
-    @date    03.08.2018
+    @date    14.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -38,6 +38,11 @@
 extern "C" {
 #endif
 
+/* -------------------------------------------------------------------------- */
+
+#define flgAny        ( false )
+#define flgAll        ( true  )
+
 /******************************************************************************
  *
  * Name              : flag
@@ -50,11 +55,6 @@ struct __flg
 {
 	unsigned flags; // flag's current value
 };
-
-/* -------------------------------------------------------------------------- */
-
-#define flgAny        ( false )
-#define flgAll        ( true  )
 
 /******************************************************************************
  *
@@ -241,7 +241,6 @@ void flg_give( flg_t *flg, unsigned flags );
 
 struct Flag : public __flg
 {
-	explicit
 	Flag( const unsigned _init = 0 ): __flg _FLG_INIT(_init) {}
 
 	void     wait( unsigned _flags, bool _all = true ) {        flg_wait(this, _flags, _all); }
@@ -249,7 +248,7 @@ struct Flag : public __flg
 	void     give( unsigned _flags )                   {        flg_give(this, _flags);       }
 };
 
-#endif
+#endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */
 
