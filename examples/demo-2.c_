@@ -1,10 +1,9 @@
 #include <stm32f4_discovery.h>
 #include <os.h>
 
-void proc(volatile unsigned *led, uint32_t timePoint)
+void proc(volatile unsigned *led, cnt_t timePoint)
 {
 	tsk_sleepUntil(timePoint);
-
 	for (;;)
 	{
 		tsk_sleepNext(SEC/2);
