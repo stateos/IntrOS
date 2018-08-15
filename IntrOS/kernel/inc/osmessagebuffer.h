@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.h
     @author  Rajmund Szymanski
-    @date    14.08.2018
+    @date    15.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -117,7 +117,7 @@ struct __msg
  * Parameters
  *   msg             : name of a pointer to message buffer object
  *   limit           : size of a buffer (max number of stored bytes / objects)
- *   type            : (optional) size of the object (in bytes); default: 0
+ *   type            : (optional) size of the object (in bytes)
  *
  ******************************************************************************/
 
@@ -134,8 +134,8 @@ struct __msg
  *
  * Parameters
  *   msg             : name of a pointer to message buffer object
- *   limit           : size of a buffer (max number of stored bytes)
- *   type            : (optional) size of the object (in bytes); default: 0
+ *   limit           : size of a buffer (max number of stored bytes / objects)
+ *   type            : (optional) size of the object (in bytes)
  *
  ******************************************************************************/
 
@@ -151,8 +151,8 @@ struct __msg
  * Description       : create and initialize a message buffer object
  *
  * Parameters
- *   limit           : size of a buffer (max number of stored bytes)
- *   type            : (optional) size of the object (in bytes); default: 0
+ *   limit           : size of a buffer (max number of stored bytes / objects)
+ *   type            : (optional) size of the object (in bytes)
  *
  * Return            : message buffer object
  *
@@ -173,8 +173,8 @@ struct __msg
  * Description       : create and initialize a message buffer object
  *
  * Parameters
- *   limit           : size of a buffer (max number of stored bytes)
- *   type            : (optional) size of the object (in bytes); default: 0
+ *   limit           : size of a buffer (max number of stored bytes / objects)
+ *   type            : (optional) size of the object (in bytes)
  *
  * Return            : pointer to message buffer object
  *
