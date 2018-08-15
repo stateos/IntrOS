@@ -26,8 +26,8 @@ void master()
 	}
 }
 
-tsk_t sla = WRK_INIT(slave,  256);
-tsk_t mas = WRK_INIT(master, 256);
+tsk_t sla = TSK_INIT(slave,  256);
+tsk_t mas = TSK_INIT(master, 256);
 
 int main()
 {

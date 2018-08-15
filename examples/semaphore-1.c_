@@ -15,8 +15,8 @@ void master()
 	sem_give(sem);
 }
 
-OS_WRK(sla, slave,  256);
-OS_WRK(mas, master, 256);
+OS_TSK(sla, slave,  256);
+OS_TSK(mas, master, 256);
 
 int main()
 {
