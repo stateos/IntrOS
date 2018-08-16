@@ -2,7 +2,7 @@
 
     @file    IntrOS: osstreambuffer.h
     @author  Rajmund Szymanski
-    @date    15.08.2018
+    @date    16.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -216,9 +216,7 @@ void stm_init( stm_t *stm, unsigned limit, void *data );
  *   data            : pointer to write buffer
  *   size            : size of write buffer
  *
- * Return
- *   E_SUCCESS       : data was successfully transfered from the stream buffer object
- *   E_FAILURE       : write buffer has an incorrect size
+ * Return            : number of bytes read from the stream buffer
  *
  ******************************************************************************/
 
@@ -236,9 +234,7 @@ unsigned stm_wait( stm_t *stm, void *data, unsigned size );
  *   data            : pointer to write buffer
  *   size            : size of write buffer
  *
- * Return
- *   E_SUCCESS       : data was successfully transfered from the stream buffer object
- *   E_FAILURE       : stream buffer object does not have enough data
+ * Return            : number of bytes read from the stream buffer
  *
  ******************************************************************************/
 
@@ -256,9 +252,7 @@ unsigned stm_take( stm_t *stm, void *data, unsigned size );
  *   data            : pointer to read buffer
  *   size            : size of read buffer
  *
- * Return
- *   E_SUCCESS       : data was successfully transfered to the stream buffer object
- *   E_FAILURE       : read buffer has an incorrect size
+ * Return            : number of bytes written to the stream buffer
  *
  ******************************************************************************/
 
@@ -276,9 +270,7 @@ unsigned stm_send( stm_t *stm, const void *data, unsigned size );
  *   data            : pointer to read buffer
  *   size            : size of read buffer
  *
- * Return
- *   E_SUCCESS       : data was successfully transfered to the stream buffer object
- *   E_FAILURE       : stream buffer object does not have enough space
+ * Return            : number of bytes written to the stream buffer
  *
  ******************************************************************************/
 
@@ -296,9 +288,7 @@ unsigned stm_give( stm_t *stm, const void *data, unsigned size );
  *   data            : pointer to read buffer
  *   size            : size of read buffer
  *
- * Return
- *   E_SUCCESS       : data was successfully transfered to the stream buffer object
- *   E_FAILURE       : read buffer has an incorrect size
+ * Return            : number of bytes written to the stream buffer
  *
  ******************************************************************************/
 
@@ -334,6 +324,22 @@ unsigned stm_count( stm_t *stm );
 
 unsigned stm_space( stm_t *stm );
 
+
+/******************************************************************************
+ *
+ * Name              : stm_limit
+ *
+ * Description       : return the size of the stream buffer
+ *
+ * Parameters
+ *   stm             : pointer to stream buffer object
+ *
+ * Return            : size of the stream buffer
+ *
+ ******************************************************************************/
+
+unsigned stm_limit( stm_t *stm );
+
 #ifdef __cplusplus
 }
 #endif
@@ -365,6 +371,7 @@ struct StreamBufferT : public __stm
 	unsigned push ( const void *_data, unsigned _size ) { return stm_push (this, _data, _size); }
 	unsigned count( void )                              { return stm_count(this);               }
 	unsigned space( void )                              { return stm_space(this);               }
+	unsigned limit( void )                              { return stm_limit(this);               }
 
 	private:
 	char data_[limit_];
