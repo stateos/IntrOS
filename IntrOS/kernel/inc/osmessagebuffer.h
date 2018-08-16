@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.h
     @author  Rajmund Szymanski
-    @date    15.08.2018
+    @date    16.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -54,8 +54,6 @@ struct __msg
 	unsigned head;  // inherited from stream buffer
 	unsigned tail;  // inherited from stream buffer
 	char   * data;  // inherited from stream buffer
-
-	unsigned size;  // size of the first message in the buffer
 };
 
 /******************************************************************************
@@ -74,7 +72,7 @@ struct __msg
  *
  ******************************************************************************/
 
-#define               _MSG_INIT( _limit, _data ) { 0, _limit, 0, 0, _data, 0 }
+#define               _MSG_INIT( _limit, _data ) { 0, _limit, 0, 0, _data }
 
 /******************************************************************************
  *
@@ -290,9 +288,7 @@ unsigned msg_give( msg_t *msg, const void *data, unsigned size );
  *   data            : pointer to read buffer
  *   size            : size of read buffer
  *
- * Return
- *   E_SUCCESS       : data was successfully transfered to the message buffer object
- *   E_FAILURE       : read buffer has an incorrect size
+ * Return            : number of bytes written to the message buffer
  *
  ******************************************************************************/
 
@@ -307,7 +303,7 @@ unsigned msg_push( msg_t *msg, const void *data, unsigned size );
  * Parameters
  *   msg             : pointer to message buffer object
  *
- * Return            : amount of data contained in the message buffer
+ * Return            : amount of data contained in the first message
  *
  ******************************************************************************/
 
@@ -328,6 +324,21 @@ unsigned msg_count( msg_t *msg );
 
 unsigned msg_space( msg_t *msg );
 
+/******************************************************************************
+ *
+ * Name              : msg_limit
+ *
+ * Description       : return the size of the message buffer
+ *
+ * Parameters
+ *   msg             : pointer to message buffer object
+ *
+ * Return            : size of the message buffer
+ *
+ ******************************************************************************/
+
+unsigned msg_limit( msg_t *msg );
+
 #ifdef __cplusplus
 }
 #endif
@@ -338,15 +349,12 @@ unsigned msg_space( msg_t *msg );
 
 /******************************************************************************
  *
- * Class             : baseMessageBuffer
+ * Class             : MessageBufferT<>
  *
  * Description       : create and initialize a message buffer object
  *
  * Constructor parameters
  *   limit           : size of a buffer (max number of stored bytes)
- *   data            : message buffer data
- *
- * Note              : for internal use
  *
  ******************************************************************************/
 
@@ -362,6 +370,7 @@ struct MessageBufferT : public __msg
 	unsigned push ( const void *_data, unsigned _size ) { return msg_push (this, _data, _size); }
 	unsigned count( void )                              { return msg_count(this);               }
 	unsigned space( void )                              { return msg_space(this);               }
+	unsigned limit( void )                              { return msg_limit(this);               }
 
 	private:
 	char data_[limit_];
