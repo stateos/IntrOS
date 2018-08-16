@@ -2,7 +2,7 @@
 
     @file    IntrOS: osflag.h
     @author  Rajmund Szymanski
-    @date    14.08.2018
+    @date    16.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -75,18 +75,31 @@ struct __flg
 
 /******************************************************************************
  *
+ * Name              : _VA_FLG
+ *
+ * Description       : calculate initial value of flag from optional parameter
+ *
+ * Note              : for internal use
+ *
+ ******************************************************************************/
+
+#define               _VA_FLG( _init ) \
+                       ( _init + 0 )
+
+/******************************************************************************
+ *
  * Name              : OS_FLG
  *
  * Description       : define and initialize a flag object
  *
  * Parameters
  *   flg             : name of a pointer to flag object
- *   init            : initial value of flag
+ *   init            : (optional) initial value of flag; default: 0
  *
  ******************************************************************************/
 
-#define             OS_FLG( flg, init )                   \
-                       flg_t flg##__flg = _FLG_INIT(init); \
+#define             OS_FLG( flg, ... )                                      \
+                       flg_t flg##__flg = _FLG_INIT( _VA_FLG(__VA_ARGS__) ); \
                        flg_id flg = & flg##__flg
 
 /******************************************************************************
@@ -97,12 +110,12 @@ struct __flg
  *
  * Parameters
  *   flg             : name of a pointer to flag object
- *   init            : initial value of flag
+ *   init            : (optional) initial value of flag; default: 0
  *
  ******************************************************************************/
 
-#define         static_FLG( flg, init )                   \
-                static flg_t flg##__flg = _FLG_INIT(init); \
+#define         static_FLG( flg, ... )                                      \
+                static flg_t flg##__flg = _FLG_INIT( _VA_FLG(__VA_ARGS__) ); \
                 static flg_id flg = & flg##__flg
 
 /******************************************************************************
@@ -112,7 +125,7 @@ struct __flg
  * Description       : create and initialize a flag object
  *
  * Parameters
- *   init            : initial value of flag
+ *   init            : (optional) initial value of flag; default: 0
  *
  * Return            : flag object
  *
@@ -121,8 +134,8 @@ struct __flg
  ******************************************************************************/
 
 #ifndef __cplusplus
-#define                FLG_INIT( init ) \
-                      _FLG_INIT( init )
+#define                FLG_INIT( ... ) \
+                      _FLG_INIT( _VA_FLG(__VA_ARGS__) )
 #endif
 
 /******************************************************************************
@@ -133,7 +146,7 @@ struct __flg
  * Description       : create and initialize a flag object
  *
  * Parameters
- *   init            : initial value of flag
+ *   init            : (optional) initial value of flag; default: 0
  *
  * Return            : pointer to flag object
  *
@@ -142,8 +155,8 @@ struct __flg
  ******************************************************************************/
 
 #ifndef __cplusplus
-#define                FLG_CREATE( init ) \
-           (flg_t[]) { FLG_INIT  ( init ) }
+#define                FLG_CREATE( ... ) \
+           (flg_t[]) { FLG_INIT  ( _VA_FLG(__VA_ARGS__) ) }
 #define                FLG_NEW \
                        FLG_CREATE
 #endif
