@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmailboxqueue.c
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    20.08.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -70,16 +70,6 @@ unsigned priv_box_space( box_t *box )
 
 /* -------------------------------------------------------------------------- */
 static
-void priv_box_skip( box_t *box )
-/* -------------------------------------------------------------------------- */
-{
-	box->count -= box->size;
-	box->head  += box->size;
-	if (box->head == box->limit) box->head = 0;
-}
-
-/* -------------------------------------------------------------------------- */
-static
 void priv_box_get( box_t *box, char *data )
 /* -------------------------------------------------------------------------- */
 {
@@ -104,6 +94,16 @@ void priv_box_put( box_t *box, const char *data )
 
 	box->tail = (i < box->limit) ? i : 0;
 	box->count += j;
+}
+
+/* -------------------------------------------------------------------------- */
+static
+void priv_box_skip( box_t *box )
+/* -------------------------------------------------------------------------- */
+{
+	box->count -= box->size;
+	box->head  += box->size;
+	if (box->head == box->limit) box->head = 0;
 }
 
 /* -------------------------------------------------------------------------- */
