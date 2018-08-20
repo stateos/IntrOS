@@ -2,7 +2,7 @@
 
     @file    IntrOS: oseventqueue.c
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    20.08.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -80,6 +80,16 @@ void priv_evq_put( evq_t *evq, unsigned event )
 }
 
 /* -------------------------------------------------------------------------- */
+static
+void priv_evq_skip( evq_t *evq )
+/* -------------------------------------------------------------------------- */
+{
+	evq->count--;
+	evq->head++;
+	if (evq->head == evq->limit) evq->head = 0;
+}
+
+/* -------------------------------------------------------------------------- */
 unsigned evq_take( evq_t *evq )
 /* -------------------------------------------------------------------------- */
 {
@@ -144,13 +154,9 @@ void evq_push( evq_t *evq, unsigned data )
 
 	sys_lock();
 	{
+		if (evq->count == evq->limit)
+			priv_evq_skip(evq);
 		priv_evq_put(evq, data);
-
-		if (evq->count > evq->limit)
-		{
-			evq->count = evq->limit;
-			evq->head = evq->tail;
-		}
 	}
 	sys_unlock();
 }
