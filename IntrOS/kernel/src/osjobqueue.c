@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.c
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    20.08.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -79,6 +79,16 @@ void priv_job_put( job_t *job, fun_t *fun )
 }
 
 /* -------------------------------------------------------------------------- */
+static
+void priv_job_skip( job_t *job )
+/* -------------------------------------------------------------------------- */
+{
+	job->count--;
+	job->head++;
+	if (job->head == job->limit) job->head = 0;
+}
+
+/* -------------------------------------------------------------------------- */
 unsigned job_take( job_t *job )
 /* -------------------------------------------------------------------------- */
 {
@@ -125,7 +135,6 @@ unsigned job_give( job_t *job, fun_t *fun )
 		if (job->count < job->limit)
 		{
 			priv_job_put(job, fun);
-
 			event = E_SUCCESS;
 		}
 	}
@@ -150,13 +159,9 @@ void job_push( job_t *job, fun_t *fun )
 
 	sys_lock();
 	{
+		if (job->count == job->limit)
+			priv_job_skip(job);
 		priv_job_put(job, fun);
-
-		if (job->count > job->limit)
-		{
-			job->count = job->limit;
-			job->head = job->tail;
-		}
 	}
 	sys_unlock();
 }
