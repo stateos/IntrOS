@@ -2,7 +2,7 @@
 
     @file    IntrOS: osstreambuffer.c
     @author  Rajmund Szymanski
-    @date    16.08.2018
+    @date    23.08.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -152,7 +152,8 @@ unsigned stm_take( stm_t *stm, void *data, unsigned size )
 		if (stm->count > 0)
 		{
 			if (size > 0)
-				len = priv_stm_getUpdate(stm, data, size);
+				size = priv_stm_getUpdate(stm, data, size);
+			len = size;
 		}
 	}
 	sys_unlock();
@@ -172,10 +173,8 @@ unsigned stm_wait( stm_t *stm, void *data, unsigned size )
 	sys_lock();
 	{
 		if (size > 0)
-			while (stm->count == 0)
+			while ((len = stm_take(stm, data, size)) == 0)
 				core_ctx_switch();
-
-		len = stm_take(stm, data, size);
 	}
 	sys_unlock();
 
@@ -193,10 +192,11 @@ unsigned stm_give( stm_t *stm, const void *data, unsigned size )
 
 	sys_lock();
 	{
-		if (size > 0)
+		if (size <= priv_stm_space(stm))
 		{
-			if (size <= priv_stm_space(stm))
-				priv_stm_putUpdate(stm, data, len = size);
+			if (size > 0)
+				priv_stm_putUpdate(stm, data, size);
+			len = size;
 		}
 	}
 	sys_unlock();
@@ -216,10 +216,8 @@ unsigned stm_send( stm_t *stm, const void *data, unsigned size )
 	sys_lock();
 	{
 		if (size > 0 && size <= priv_stm_limit(stm))
-			while (size > priv_stm_space(stm))
+			while ((len = stm_give(stm, data, size)) == 0)
 				core_ctx_switch();
-
-		len = stm_give(stm, data, size);
 	}
 	sys_unlock();
 
@@ -237,11 +235,13 @@ unsigned stm_push( stm_t *stm, const void *data, unsigned size )
 
 	sys_lock();
 	{
-		if (size > 0 && size <= priv_stm_limit(stm))
+		if (size <= priv_stm_limit(stm))
 		{
 			if (size > priv_stm_space(stm))
 				priv_stm_skip(stm, size - priv_stm_space(stm));
-			priv_stm_putUpdate(stm, data, len = size);
+			if (size > 0)
+				priv_stm_putUpdate(stm, data, size);
+			len = size;
 		}
 	}
 	sys_unlock();
