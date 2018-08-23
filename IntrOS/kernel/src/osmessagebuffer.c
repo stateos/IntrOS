@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.c
     @author  Rajmund Szymanski
-    @date    16.08.2018
+    @date    23.08.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -215,10 +215,8 @@ unsigned msg_wait( msg_t *msg, void *data, unsigned size )
 	sys_lock();
 	{
 		if (size > 0)
-			while (msg->count == 0)
+			while ((len = msg_take(msg, data, size)) == 0)
 				core_ctx_switch();
-
-		len = msg_take(msg, data, size);
 	}
 	sys_unlock();
 
@@ -236,10 +234,11 @@ unsigned msg_give( msg_t *msg, const void *data, unsigned size )
 
 	sys_lock();
 	{
-		if (size > 0)
+		if (size <= priv_msg_space(msg))
 		{
-			if (size <= priv_msg_space(msg))
-				priv_msg_putUpdate(msg, data, len = size);
+			if (size > 0)
+				priv_msg_putUpdate(msg, data, size);
+			len = size;
 		}
 	}
 	sys_unlock();
@@ -259,10 +258,8 @@ unsigned msg_send( msg_t *msg, const void *data, unsigned size )
 	sys_lock();
 	{
 		if (size > 0 && size <= priv_msg_limit(msg))
-			while (size > priv_msg_space(msg))
+			while ((len = msg_give(msg, data, size)) == 0)
 				core_ctx_switch();
-
-		len = msg_give(msg, data, size);
 	}
 	sys_unlock();
 
@@ -280,11 +277,13 @@ unsigned msg_push( msg_t *msg, const void *data, unsigned size )
 
 	sys_lock();
 	{
-		if (size > 0 && size <= priv_msg_limit(msg))
+		if (size <= priv_msg_limit(msg))
 		{
 			while (size > priv_msg_space(msg))
 				priv_msg_skip(msg, priv_msg_getSize(msg));
-			priv_msg_putUpdate(msg, data, len = size);
+			if (size > 0)
+				priv_msg_putUpdate(msg, data, size);
+			len = size;
 		}
 	}
 	sys_unlock();
