@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.c
     @author  Rajmund Szymanski
-    @date    23.08.2018
+    @date    24.08.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -102,13 +102,11 @@ unsigned job_take( job_t *job )
 		if (job->count > 0)
 		{
 			fun = priv_job_get(job);
-			event = E_SUCCESS;
-		}
 
-		if (event == E_SUCCESS)
-		{
 			port_clr_lock();
 			fun();
+
+			event = E_SUCCESS;
 		}
 	}
 	sys_unlock();
