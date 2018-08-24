@@ -2,7 +2,7 @@
 
     @file    IntrOS: oseventqueue.h
     @author  Rajmund Szymanski
-    @date    14.08.2018
+    @date    24.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -29,8 +29,8 @@
 
  ******************************************************************************/
 
-#ifndef __INTROS_EVQ_H
-#define __INTROS_EVQ_H
+#ifndef __INTROS_EVT_H
+#define __INTROS_EVT_H
 
 #include "oskernel.h"
 
@@ -44,9 +44,9 @@ extern "C" {
  *
  ******************************************************************************/
 
-typedef struct __evq evq_t, * const evq_id;
+typedef struct __evt evt_t, * const evt_id;
 
-struct __evq
+struct __evt
 {
 	unsigned count; // inherited from semaphore
 	unsigned limit; // inherited from semaphore
@@ -58,7 +58,7 @@ struct __evq
 
 /******************************************************************************
  *
- * Name              : _EVQ_INIT
+ * Name              : _EVT_INIT
  *
  * Description       : create and initialize an event queue object
  *
@@ -72,11 +72,11 @@ struct __evq
  *
  ******************************************************************************/
 
-#define               _EVQ_INIT( _limit, _data ) { 0, _limit, 0, 0, _data }
+#define               _EVT_INIT( _limit, _data ) { 0, _limit, 0, 0, _data }
 
 /******************************************************************************
  *
- * Name              : _EVQ_DATA
+ * Name              : _EVT_DATA
  *
  * Description       : create an event queue data buffer
  *
@@ -90,46 +90,46 @@ struct __evq
  ******************************************************************************/
 
 #ifndef __cplusplus
-#define               _EVQ_DATA( _limit ) (unsigned[_limit]){ 0 }
+#define               _EVT_DATA( _limit ) (unsigned[_limit]){ 0 }
 #endif
 
 /******************************************************************************
  *
- * Name              : OS_EVQ
+ * Name              : OS_EVT
  *
  * Description       : define and initialize an event queue object
  *
  * Parameters
- *   evq             : name of a pointer to event queue object
+ *   evt             : name of a pointer to event queue object
  *   limit           : size of a queue (max number of stored events)
  *
  ******************************************************************************/
 
-#define             OS_EVQ( evq, limit )                                \
-                       unsigned evq##__buf[limit];                       \
-                       evq_t evq##__evq = _EVQ_INIT( limit, evq##__buf ); \
-                       evq_id evq = & evq##__evq
+#define             OS_EVT( evt, limit )                                \
+                       unsigned evt##__buf[limit];                       \
+                       evt_t evt##__evt = _EVT_INIT( limit, evt##__buf ); \
+                       evt_id evt = & evt##__evt
 
 /******************************************************************************
  *
- * Name              : static_EVQ
+ * Name              : static_EVT
  *
  * Description       : define and initialize a static event queue object
  *
  * Parameters
- *   evq             : name of a pointer to event queue object
+ *   evt             : name of a pointer to event queue object
  *   limit           : size of a queue (max number of stored events)
  *
  ******************************************************************************/
 
-#define         static_EVQ( evq, limit )                                \
-                static unsigned evq##__buf[limit];                       \
-                static evq_t evq##__evq = _EVQ_INIT( limit, evq##__buf ); \
-                static evq_id evq = & evq##__evq
+#define         static_EVT( evt, limit )                                \
+                static unsigned evt##__buf[limit];                       \
+                static evt_t evt##__evt = _EVT_INIT( limit, evt##__buf ); \
+                static evt_id evt = & evt##__evt
 
 /******************************************************************************
  *
- * Name              : EVQ_INIT
+ * Name              : EVT_INIT
  *
  * Description       : create and initialize an event queue object
  *
@@ -143,14 +143,14 @@ struct __evq
  ******************************************************************************/
 
 #ifndef __cplusplus
-#define                EVQ_INIT( limit ) \
-                      _EVQ_INIT( limit, _EVQ_DATA( limit ) )
+#define                EVT_INIT( limit ) \
+                      _EVT_INIT( limit, _EVT_DATA( limit ) )
 #endif
 
 /******************************************************************************
  *
- * Name              : EVQ_CREATE
- * Alias             : EVQ_NEW
+ * Name              : EVT_CREATE
+ * Alias             : EVT_NEW
  *
  * Description       : create and initialize an event queue object
  *
@@ -164,20 +164,20 @@ struct __evq
  ******************************************************************************/
 
 #ifndef __cplusplus
-#define                EVQ_CREATE( limit ) \
-           (evq_t[]) { EVQ_INIT  ( limit ) }
-#define                EVQ_NEW \
-                       EVQ_CREATE
+#define                EVT_CREATE( limit ) \
+           (evt_t[]) { EVT_INIT  ( limit ) }
+#define                EVT_NEW \
+                       EVT_CREATE
 #endif
 
 /******************************************************************************
  *
- * Name              : evq_init
+ * Name              : evt_init
  *
  * Description       : initialize an event queue object
  *
  * Parameters
- *   evq             : pointer to event queue object
+ *   evt             : pointer to event queue object
  *   limit           : size of a queue (max number of stored events)
  *   data            : event queue data buffer
  *
@@ -185,70 +185,71 @@ struct __evq
  *
  ******************************************************************************/
 
-void evq_init( evq_t *evq, unsigned limit, unsigned *data );
+void evt_init( evt_t *evt, unsigned limit, unsigned *data );
 
 /******************************************************************************
  *
- * Name              : evq_wait
+ * Name              : evt_wait
  *
  * Description       : try to transfer event data from the event queue object,
  *                     wait indefinitely while the event queue object is empty
  *
  * Parameters
- *   evq             : pointer to event queue object
- *
- * Return
- *   'another'       : task was successfully released
- *
- ******************************************************************************/
-
-unsigned evq_wait( evq_t *evq );
-
-/******************************************************************************
- *
- * Name              : evq_take
- *
- * Description       : try to transfer event data from the event queue object,
- *                     don't wait if the event queue object is empty
- *
- * Parameters
- *   evq             : pointer to event queue object
- *
- * Return
- *   E_FAILURE       : event queue object is empty
- *   'another'       : task was successfully released
- *
- ******************************************************************************/
-
-unsigned evq_take( evq_t *evq );
-
-/******************************************************************************
- *
- * Name              : evq_send
- *
- * Description       : try to transfer event data to the event queue object,
- *                     wait indefinitely while the event queue object is full
- *
- * Parameters
- *   evq             : pointer to event queue object
- *   event           : event value
+ *   evt             : pointer to event queue object
+ *   data            : pointer to store event data
  *
  * Return            : none
  *
  ******************************************************************************/
 
-void evq_send( evq_t *evq, unsigned event );
+void evt_wait( evt_t *evt, unsigned *data );
 
 /******************************************************************************
  *
- * Name              : evq_give
+ * Name              : evt_take
+ *
+ * Description       : try to transfer event data from the event queue object,
+ *                     don't wait if the event queue object is empty
+ *
+ * Parameters
+ *   evt             : pointer to event queue object
+ *   data            : pointer to store event data
+ *
+ * Return
+ *   E_SUCCESS       : event data was successfully transfered from the event queue object
+ *   E_FAILURE       : event queue object is empty
+ *
+ ******************************************************************************/
+
+unsigned evt_take( evt_t *evt, unsigned *data );
+
+/******************************************************************************
+ *
+ * Name              : evt_send
+ *
+ * Description       : try to transfer event data to the event queue object,
+ *                     wait indefinitely while the event queue object is full
+ *
+ * Parameters
+ *   evt             : pointer to event queue object
+ *   data            : event value
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
+
+void evt_send( evt_t *evt, unsigned data );
+
+/******************************************************************************
+ *
+ * Name              : evt_give
  *
  * Description       : try to transfer event data to the event queue object,
  *                     don't wait if the event queue object is full
  *
  * Parameters
- *   evq             : pointer to event queue object
- *   event           : event value
+ *   evt             : pointer to event queue object
+ *   data            : event value
  *
  * Return
  *   E_SUCCESS       : event data was successfully transfered to the event queue object
@@ -256,24 +257,24 @@ void evq_send( evq_t *evq, unsigned event );
  *
  ******************************************************************************/
 
-unsigned evq_give( evq_t *evq, unsigned event );
+unsigned evt_give( evt_t *evt, unsigned data );
 
 /******************************************************************************
  *
- * Name              : evq_push
+ * Name              : evt_push
  *
  * Description       : transfer event data to the event queue object,
  *                     remove the oldest event data if the event queue object is full
  *
  * Parameters
- *   evq             : pointer to event queue object
- *   event           : event value
+ *   evt             : pointer to event queue object
+ *   data            : event value
  *
  * Return            : none
  *
  ******************************************************************************/
 
-void evq_push( evq_t *evq, unsigned event );
+void evt_push( evt_t *evt, unsigned data );
 
 #ifdef __cplusplus
 }
@@ -295,15 +296,15 @@ void evq_push( evq_t *evq, unsigned event );
  ******************************************************************************/
 
 template<unsigned limit_>
-struct EventQueueT : public __evq
+struct EventQueueT : public __evt
 {
-	EventQueueT( void ): __evq _EVQ_INIT(limit_, data_) {}
+	EventQueueT( void ): __evt _EVT_INIT(limit_, data_) {}
 
-	unsigned wait( void )            { return evq_wait(this);         }
-	unsigned take( void )            { return evq_take(this);         }
-	void     send( unsigned _event ) {        evq_send(this, _event); }
-	unsigned give( unsigned _event ) { return evq_give(this, _event); }
-	void     push( unsigned _event ) {        evq_push(this, _event); }
+	void     wait( unsigned *_data ) {        evt_wait(this, _data); }
+	unsigned take( unsigned *_data ) { return evt_take(this, _data); }
+	void     send( unsigned  _data ) {        evt_send(this, _data); }
+	unsigned give( unsigned  _data ) { return evt_give(this, _data); }
+	void     push( unsigned  _data ) {        evt_push(this, _data); }
 
 	private:
 	unsigned data_[limit_];
@@ -313,4 +314,4 @@ struct EventQueueT : public __evq
 
 /* -------------------------------------------------------------------------- */
 
-#endif//__INTROS_EVQ_H
+#endif//__INTROS_EVT_H

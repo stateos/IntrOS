@@ -2,7 +2,7 @@
 
     @file    IntrOS: os.h
     @author  Rajmund Szymanski
-    @date    03.08.2018
+    @date    24.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -48,7 +48,6 @@
 #include "inc/oscriticalsection.h"
 #include "inc/osspinlock.h"
 #include "inc/ossignal.h"
-#include "inc/osevent.h"
 #include "inc/osflag.h"
 #include "inc/osbarrier.h"
 #include "inc/ossemaphore.h"
@@ -59,8 +58,8 @@
 #include "inc/osstreambuffer.h"
 #include "inc/osmessagebuffer.h"
 #include "inc/osmailboxqueue.h"
-#include "inc/osjobqueue.h"
 #include "inc/oseventqueue.h"
+#include "inc/osjobqueue.h"
 #include "inc/ostimer.h"
 #include "inc/ostask.h"
 

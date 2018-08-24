@@ -43,6 +43,7 @@ Features:
 - updated message buffer object
 - added optional init parameter for flag create definitions
 - added optional signal type parameter for signal create definitions
+- removed event object; event queue object renamed to 'evt'
 ---------
 4.1
 - updated mailbox queue object
