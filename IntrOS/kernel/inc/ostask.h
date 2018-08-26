@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    26.08.2018
+    @date    27.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -55,7 +55,7 @@ struct __tsk
 	cnt_t    delay; // inherited from timer
 	cnt_t    period;// inherited from timer
 
-	void   * stack; // base of stack
+	stk_t  * stack; // base of stack
 	unsigned size;  // size of stack (in bytes)
 
 	union  {
@@ -481,7 +481,7 @@ tsk_t *tsk_this( void ) { return System.cur; }
  *
  ******************************************************************************/
 
-void tsk_init( tsk_t *tsk, fun_t *state, void *stack, unsigned size );
+void tsk_init( tsk_t *tsk, fun_t *state, stk_t *stack, unsigned size );
 
 /******************************************************************************
  *
