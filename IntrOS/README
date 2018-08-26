@@ -13,7 +13,6 @@ Features:
 - kernel can operate in tick-less mode
 - spin locks
 - signals (auto clearing, protected)
-- events
 - flags (any, all)
 - barriers
 - semaphores
@@ -23,8 +22,8 @@ Features:
 - stream buffers
 - message buffers
 - mailbox queues
-- job queues
 - event queues
+- job queues
 - timers (one-shot, periodic)
 - c++ wrapper
 - all documentation is contained within the source files
@@ -44,6 +43,7 @@ Features:
 - added optional init parameter for flag create definitions
 - added optional signal type parameter for signal create definitions
 - removed event object; event queue object renamed to 'evt'
+- fixed stack initialization
 ---------
 4.1
 - updated mailbox queue object

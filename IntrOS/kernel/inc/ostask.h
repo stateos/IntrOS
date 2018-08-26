@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    14.08.2018
+    @date    26.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -56,7 +56,7 @@ struct __tsk
 	cnt_t    period;// inherited from timer
 
 	void   * stack; // base of stack
-	stk_t  * top;   // top of stack
+	unsigned size;  // size of stack (in bytes)
 
 	union  {
 	ctx_t    reg;   // task context
@@ -82,8 +82,7 @@ struct __tsk
  *
  ******************************************************************************/
 
-#define               _TSK_INIT( _state, _stack, _size ) \
-                       { _OBJ_INIT(), ID_STOPPED, 0, _state, 0, 0, 0, _stack, _stack+SSIZE(_size), { _CTX_INIT() } }
+#define               _TSK_INIT( _state, _stack, _size ) { _OBJ_INIT(), ID_STOPPED, 0, _state, 0, 0, 0, _stack, _size, { _CTX_INIT() } }
 
 /******************************************************************************
  *
@@ -104,8 +103,7 @@ struct __tsk
  ******************************************************************************/
 
 #ifndef __cplusplus
-#define               _TSK_CREATE( _state, _stack, _size ) \
-          (tsk_t[]) { _TSK_INIT  ( _state, _stack, _size ) }
+#define               _TSK_CREATE( _state, _stack, _size ) (tsk_t[]){ _TSK_INIT(_state, _stack, _size) }
 #endif
 
 /******************************************************************************
@@ -124,8 +122,7 @@ struct __tsk
  ******************************************************************************/
 
 #ifndef __cplusplus
-#define               _TSK_STACK( _size ) \
-                       ( stk_t[SSIZE( _size )] ){ 0 }
+#define               _TSK_STACK( _size ) (stk_t[SSIZE(_size)]){ 0 }
 #endif
 
 /******************************************************************************
@@ -138,8 +135,7 @@ struct __tsk
  *
  ******************************************************************************/
 
-#define               _VA_STK( _size ) \
-                       ( (_size + 0) ? (_size + 0) : (OS_STACK_SIZE) )
+#define               _VA_STK( _size ) ((_size + 0) ? (_size + 0) : (OS_STACK_SIZE))
 
 /******************************************************************************
  *
