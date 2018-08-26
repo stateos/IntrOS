@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmemorypool.c
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    26.08.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -56,7 +56,7 @@ void mem_bind( mem_t *mem )
 }
 
 /* -------------------------------------------------------------------------- */
-void mem_init( mem_t *mem, unsigned limit, unsigned size, void *data )
+void mem_init( mem_t *mem, unsigned limit, unsigned size, que_t *data )
 /* -------------------------------------------------------------------------- */
 {
 	assert(mem);
