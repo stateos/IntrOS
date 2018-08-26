@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmemorypool.h
     @author  Rajmund Szymanski
-    @date    26.08.2018
+    @date    27.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -205,7 +205,7 @@ void mem_bind( mem_t *mem );
  * Parameters
  *   mem             : pointer to memory pool object
  *   limit           : size of a buffer (max number of objects)
- *   size            : size of memory object (in sizeof(que_t) units)
+ *   size            : size of memory object (in bytes)
  *   data            : memory pool data buffer
  *
  * Return            : none
