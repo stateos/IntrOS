@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossignal.c
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    26.08.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -33,7 +33,7 @@
 #include "inc/oscriticalsection.h"
 
 /* -------------------------------------------------------------------------- */
-void sig_init( sig_t *sig, unsigned type )
+void sig_init( sig_t *sig, bool type )
 /* -------------------------------------------------------------------------- */
 {
 	assert(sig);
@@ -42,7 +42,7 @@ void sig_init( sig_t *sig, unsigned type )
 	{
 		memset(sig, 0, sizeof(sig_t));
 
-		sig->type = type & sigMASK;
+		sig->type = type;
 	}
 	sys_unlock();
 }
@@ -60,7 +60,6 @@ unsigned sig_take( sig_t *sig )
 		if (sig->flag)
 		{
 			sig->flag = sig->type;
-
 			event = E_SUCCESS;
 		}
 	}
@@ -82,7 +81,7 @@ void sig_give( sig_t *sig )
 {
 	assert(sig);
 
-	sig->flag = 1;
+	sig->flag = true;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -91,7 +90,7 @@ void sig_clear( sig_t *sig )
 {
 	assert(sig);
 
-	sig->flag = 0;
+	sig->flag = false;
 }
 
 /* -------------------------------------------------------------------------- */

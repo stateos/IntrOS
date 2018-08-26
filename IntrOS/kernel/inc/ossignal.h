@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossignal.h
     @author  Rajmund Szymanski
-    @date    16.08.2018
+    @date    26.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -40,9 +40,8 @@ extern "C" {
 
 /* -------------------------------------------------------------------------- */
 
-#define sigClear     ( 0U << 0 ) // auto clearing signal
-#define sigProtect   ( 1U << 0 ) // protected signal
-#define sigMASK      ( 1U )
+#define sigClear     ( false ) // auto clearing signal
+#define sigProtect   ( true  ) // protected signal
 
 /******************************************************************************
  *
@@ -54,8 +53,8 @@ typedef struct __sig sig_t, * const sig_id;
 
 struct __sig
 {
-	unsigned flag;  // signal's current value
-	unsigned type;  // signal type: sigClear, sigProtect
+	bool     flag;  // signal's current value
+	bool     type;  // signal type: sigClear, sigProtect
 };
 
 /******************************************************************************
@@ -75,7 +74,7 @@ struct __sig
  *
  ******************************************************************************/
 
-#define               _SIG_INIT( type ) { 0, (type)&sigMASK }
+#define               _SIG_INIT( _type ) { 0, _type }
 
 /******************************************************************************
  *
@@ -88,7 +87,7 @@ struct __sig
  ******************************************************************************/
 
 #define               _VA_SIG( _type ) \
-                       ( ( _type + 0 ) & sigMASK )
+                       ( ( _type + 0 ) ? sigProtect : sigClear )
 
 /******************************************************************************
  *
@@ -189,7 +188,7 @@ struct __sig
  *
  ******************************************************************************/
 
-void sig_init( sig_t *sig, unsigned type );
+void sig_init( sig_t *sig, bool type );
 
 /******************************************************************************
  *
@@ -277,7 +276,7 @@ void sig_clear( sig_t *sig );
 
 struct Signal : public __sig
 {
-	Signal( const unsigned _type = sigClear ): __sig _SIG_INIT(_type) {}
+	Signal( const bool _type = sigClear ): __sig _SIG_INIT(_type) {}
 
 	void     wait ( void ) {        sig_wait (this); }
 	unsigned take ( void ) { return sig_take (this); }
