@@ -83,7 +83,7 @@ void core_ctx_init( tsk_t *tsk )
 #ifdef DEBUG
 	memset(tsk->stack, 0xFF, tsk->size);
 #endif
-	port_ctx_init(&tsk->ctx.reg, tsk->stack + LIMITED_SIZE(tsk->size, stk_t), core_tsk_loop);
+	port_ctx_init(&tsk->ctx.reg, (stk_t *)LIMITED((size_t)tsk->stack + tsk->size, stk_t), core_tsk_loop);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -48,12 +48,13 @@ struct __tsk
 {
 	obj_t    obj;   // object header
 	tid_t    id;    // task's id: ID_STOPPED, ID_READY, ID_DELAYED
-	unsigned event; // wakeup event
 
 	fun_t  * state; // task state (initial task function, doesn't have to be noreturn-type)
 	cnt_t    start; // inherited from timer
 	cnt_t    delay; // inherited from timer
 	cnt_t    period;// inherited from timer
+
+	unsigned event; // wakeup event
 
 	stk_t  * stack; // base of stack
 	unsigned size;  // size of stack (in bytes)
@@ -82,7 +83,8 @@ struct __tsk
  *
  ******************************************************************************/
 
-#define               _TSK_INIT( _state, _stack, _size ) { _OBJ_INIT(), ID_STOPPED, 0, _state, 0, 0, 0, _stack, _size, { _CTX_INIT() } }
+#define               _TSK_INIT( _state, _stack, _size ) \
+                    { _OBJ_INIT(), ID_STOPPED, _state, 0, 0, 0, 0, _stack, _size, { _CTX_INIT() } }
 
 /******************************************************************************
  *
@@ -103,7 +105,8 @@ struct __tsk
  ******************************************************************************/
 
 #ifndef __cplusplus
-#define               _TSK_CREATE( _state, _stack, _size ) (tsk_t[]){ _TSK_INIT(_state, _stack, _size) }
+#define               _TSK_CREATE( _state, _stack, _size ) \
+          (tsk_t[]) { _TSK_INIT  ( _state, _stack, _size ) }
 #endif
 
 /******************************************************************************

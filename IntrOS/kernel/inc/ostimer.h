@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.h
     @author  Rajmund Szymanski
-    @date    14.08.2018
+    @date    27.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -48,12 +48,13 @@ struct __tmr
 {
 	obj_t    obj;   // object header
 	tid_t    id;    // timers's id: ID_STOPPED, ID_DELAYED, ID_TIMER
-	unsigned signal;
 
 	fun_t  * state; // callback procedure
 	cnt_t    start;
 	cnt_t    delay;
 	cnt_t    period;
+
+	unsigned signal;
 };
 
 /******************************************************************************
@@ -72,7 +73,7 @@ struct __tmr
  *
  ******************************************************************************/
 
-#define               _TMR_INIT( _state ) { _OBJ_INIT(), ID_STOPPED, 0, _state, 0, 0, 0 }
+#define               _TMR_INIT( _state ) { _OBJ_INIT(), ID_STOPPED, _state, 0, 0, 0, 0 }
 
 /******************************************************************************
  *
