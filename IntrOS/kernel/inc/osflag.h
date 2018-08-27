@@ -2,7 +2,7 @@
 
     @file    IntrOS: osflag.h
     @author  Rajmund Szymanski
-    @date    16.08.2018
+    @date    27.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -210,8 +210,8 @@ void flg_wait( flg_t *flg, unsigned flags, bool all );
  *                     flgAll:    wait for all flags to be set
  *
  * Return
- *   E_SUCCESS       : requested flags have been set
- *   'another'       : requested flags have not been set
+ *   0               : requested flags have been set
+ *   'another'       : flags that remain to be set
  *
  ******************************************************************************/
 

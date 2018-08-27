@@ -2,7 +2,7 @@
 
     @file    IntrOS: osflag.c
     @author  Rajmund Szymanski
-    @date    03.08.2018
+    @date    27.08.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -51,7 +51,7 @@ void flg_init( flg_t *flg, unsigned init )
 unsigned flg_take( flg_t *flg, unsigned flags, bool all )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event = flags;
+	unsigned value = flags;
 
 	assert(flg);
 
@@ -59,13 +59,15 @@ unsigned flg_take( flg_t *flg, unsigned flags, bool all )
 	{
 		if (flags & flg->flags)
 		{
-			event &= all ? ~flg->flags : 0;
-			flg->flags &= ~flags;
+			if (!all)
+				flags = 0;
+			flags &= ~flg->flags;
+			flg->flags &= ~value;
 		}
 	}
 	sys_unlock();
 
-	return event;
+	return flags;
 }
 
 /* -------------------------------------------------------------------------- */
