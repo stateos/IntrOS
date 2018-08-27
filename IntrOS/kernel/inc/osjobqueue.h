@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.h
     @author  Rajmund Szymanski
-    @date    14.08.2018
+    @date    27.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -123,9 +123,9 @@ struct __job
  *
  ******************************************************************************/
 
-#define         static_JOB( job, limit )                                \
-                static fun_t*job##__buf[limit];                          \
-                static job_t job##__job = _JOB_INIT( limit, job##__buf ); \
+#define         static_JOB( job, limit )                                 \
+                static fun_t *job##__buf[limit];                          \
+                static job_t  job##__job = _JOB_INIT( limit, job##__buf ); \
                 static job_id job = & job##__job
 
 /******************************************************************************
@@ -179,14 +179,14 @@ struct __job
  *
  * Parameters
  *   job             : pointer to job queue object
- *   limit           : size of a queue (max number of stored job procedures)
  *   data            : job queue data buffer
+ *   bufsize         : size of the data buffer (in bytes)
  *
  * Return            : none
  *
  ******************************************************************************/
 
-void job_init( job_t *job, unsigned limit, fun_t **data );
+void job_init( job_t *job, fun_t **data, unsigned bufsize );
 
 /******************************************************************************
  *

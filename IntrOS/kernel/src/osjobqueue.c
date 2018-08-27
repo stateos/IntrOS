@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.c
     @author  Rajmund Szymanski
-    @date    24.08.2018
+    @date    27.08.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -33,7 +33,7 @@
 #include "inc/oscriticalsection.h"
 
 /* -------------------------------------------------------------------------- */
-void job_init( job_t *job, unsigned limit, fun_t **data )
+void job_init( job_t *job, fun_t **data, unsigned bufsize )
 /* -------------------------------------------------------------------------- */
 {
 	assert(job);
@@ -44,7 +44,7 @@ void job_init( job_t *job, unsigned limit, fun_t **data )
 	{
 		memset(job, 0, sizeof(job_t));
 
-		job->limit = limit;
+		job->limit = bufsize / sizeof(fun_t *);
 		job->data  = data;
 	}
 	sys_unlock();
