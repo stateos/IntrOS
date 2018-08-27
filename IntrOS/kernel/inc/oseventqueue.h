@@ -2,7 +2,7 @@
 
     @file    IntrOS: oseventqueue.h
     @author  Rajmund Szymanski
-    @date    24.08.2018
+    @date    27.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -178,14 +178,14 @@ struct __evt
  *
  * Parameters
  *   evt             : pointer to event queue object
- *   limit           : size of a queue (max number of stored events)
  *   data            : event queue data buffer
+ *   bufsize         : size of the data buffer (in bytes)
  *
  * Return            : none
  *
  ******************************************************************************/
 
-void evt_init( evt_t *evt, unsigned limit, unsigned *data );
+void evt_init( evt_t *evt, unsigned *data, unsigned bufsize );
 
 /******************************************************************************
  *

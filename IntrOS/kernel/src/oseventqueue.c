@@ -2,7 +2,7 @@
 
     @file    IntrOS: oseventqueue.c
     @author  Rajmund Szymanski
-    @date    24.08.2018
+    @date    27.08.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -33,18 +33,18 @@
 #include "inc/oscriticalsection.h"
 
 /* -------------------------------------------------------------------------- */
-void evt_init( evt_t *evt, unsigned limit, unsigned *data )
+void evt_init( evt_t *evt, unsigned *data, unsigned bufsize )
 /* -------------------------------------------------------------------------- */
 {
 	assert(evt);
-	assert(limit);
 	assert(data);
+	assert(bufsize);
 
 	sys_lock();
 	{
 		memset(evt, 0, sizeof(evt_t));
 
-		evt->limit = limit;
+		evt->limit = bufsize / sizeof(unsigned);
 		evt->data  = data;
 	}
 	sys_unlock();
