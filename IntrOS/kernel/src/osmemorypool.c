@@ -56,19 +56,19 @@ void mem_bind( mem_t *mem )
 }
 
 /* -------------------------------------------------------------------------- */
-void mem_init( mem_t *mem, unsigned limit, unsigned size, que_t *data )
+void mem_init( mem_t *mem, unsigned size, que_t *data, unsigned bufsize )
 /* -------------------------------------------------------------------------- */
 {
 	assert(mem);
-	assert(limit);
 	assert(size);
 	assert(data);
+	assert(bufsize);
 
 	sys_lock();
 	{
 		memset(mem, 0, sizeof(mem_t));
 
-		mem->limit = limit;
+		mem->limit = bufsize / (1 + MSIZE(size)) / sizeof(que_t);
 		mem->size  = MSIZE(size);
 		mem->data  = data;
 

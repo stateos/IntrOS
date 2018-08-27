@@ -204,15 +204,15 @@ void mem_bind( mem_t *mem );
  *
  * Parameters
  *   mem             : pointer to memory pool object
- *   limit           : size of a buffer (max number of objects)
  *   size            : size of memory object (in bytes)
  *   data            : memory pool data buffer
+ *   bufsize         : size of a buffer (in bytes)
  *
  * Return            : none
  *
  ******************************************************************************/
 
-void mem_init( mem_t *mem, unsigned limit, unsigned size, que_t *data );
+void mem_init( mem_t *mem, unsigned size, que_t *data, unsigned bufsize );
 
 /******************************************************************************
  *
