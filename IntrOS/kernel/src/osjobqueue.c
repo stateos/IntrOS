@@ -37,8 +37,8 @@ void job_init( job_t *job, fun_t **data, unsigned bufsize )
 /* -------------------------------------------------------------------------- */
 {
 	assert(job);
-	assert(limit);
 	assert(data);
+	assert(bufsize);
 
 	sys_lock();
 	{

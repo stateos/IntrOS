@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.c
     @author  Rajmund Szymanski
-    @date    23.08.2018
+    @date    27.08.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -33,18 +33,18 @@
 #include "inc/oscriticalsection.h"
 
 /* -------------------------------------------------------------------------- */
-void msg_init( msg_t *msg, unsigned limit, void *data )
+void msg_init( msg_t *msg, void *data, unsigned bufsize )
 /* -------------------------------------------------------------------------- */
 {
 	assert(msg);
-	assert(limit);
 	assert(data);
+	assert(bufsize);
 
 	sys_lock();
 	{
 		memset(msg, 0, sizeof(msg_t));
 
-		msg->limit = limit;
+		msg->limit = bufsize;
 		msg->data  = data;
 	}
 	sys_unlock();

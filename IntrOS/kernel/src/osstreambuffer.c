@@ -2,7 +2,7 @@
 
     @file    IntrOS: osstreambuffer.c
     @author  Rajmund Szymanski
-    @date    23.08.2018
+    @date    27.08.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -33,18 +33,18 @@
 #include "inc/oscriticalsection.h"
 
 /* -------------------------------------------------------------------------- */
-void stm_init( stm_t *stm, unsigned limit, void *data )
+void stm_init( stm_t *stm, void *data, unsigned bufsize )
 /* -------------------------------------------------------------------------- */
 {
 	assert(stm);
-	assert(limit);
 	assert(data);
+	assert(bufsize);
 
 	sys_lock();
 	{
 		memset(stm, 0, sizeof(stm_t));
 
-		stm->limit = limit;
+		stm->limit = bufsize;
 		stm->data  = data;
 	}
 	sys_unlock();
