@@ -2,7 +2,7 @@
 
     @file    IntrOS: oseventqueue.c
     @author  Rajmund Szymanski
-    @date    27.08.2018
+    @date    28.08.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -111,7 +111,7 @@ unsigned evt_take( evt_t *evt, unsigned *data )
 void evt_wait( evt_t *evt, unsigned *data )
 /* -------------------------------------------------------------------------- */
 {
-	while (evt_take(evt, data) == E_FAILURE) core_ctx_switch();
+	while (evt_take(evt, data) != E_SUCCESS) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -139,7 +139,7 @@ unsigned evt_give( evt_t *evt, unsigned data )
 void evt_send( evt_t *evt, unsigned data )
 /* -------------------------------------------------------------------------- */
 {
-	while (evt_give(evt, data) == E_FAILURE) core_ctx_switch();
+	while (evt_give(evt, data) != E_SUCCESS) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */

@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    08.08.2018
+    @date    28.08.2018
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -127,7 +127,7 @@ typedef enum __tid
 	ID_STOPPED = 0, // task or timer stopped
 	ID_READY,       // task ready to run
 	ID_DELAYED,     // task in the delayed state
-	ID_TIMER         // timer in the countdown state
+	ID_TIMER        // timer in the countdown state
 
 }	tid_t;
 
