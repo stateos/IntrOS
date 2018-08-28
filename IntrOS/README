@@ -50,6 +50,7 @@ Features:
 - changed box_init function
 - changed msg_init function
 - changed stm_init function
+- added tsk_kill function
 ---------
 4.1
 - updated mailbox queue object

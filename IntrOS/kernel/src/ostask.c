@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.c
     @author  Rajmund Szymanski
-    @date    27.08.2018
+    @date    28.08.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -102,6 +102,21 @@ void tsk_stop( void )
 
 	System.cur->id = ID_STOPPED;
 	core_tsk_switch();
+}
+
+/* -------------------------------------------------------------------------- */
+void tsk_kill( tsk_t *tsk )
+/* -------------------------------------------------------------------------- */
+{
+	assert(tsk);
+
+	sys_lock();
+	{
+		tsk->id = ID_STOPPED;
+		if (tsk == System.cur)
+			core_ctx_switch();
+	}
+	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */

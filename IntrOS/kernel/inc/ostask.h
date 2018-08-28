@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    27.08.2018
+    @date    28.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -522,10 +522,9 @@ void tsk_startFrom( tsk_t *tsk, fun_t *state );
  *
  * Name              : tsk_stop
  *
- * Description       : stop current task and remove it from READY queue
+ * Description       : stop execution of current task
  *
- * Parameters
- *   tsk             : pointer to current task object
+ * Parameters        : none
  *
  * Return            : none
  *
@@ -533,6 +532,21 @@ void tsk_startFrom( tsk_t *tsk, fun_t *state );
 
 __NO_RETURN
 void tsk_stop( void );
+
+/******************************************************************************
+ *
+ * Name              : tsk_kill
+ *
+ * Description       : stop execution of given task
+ *
+ * Parameters
+ *   tsk             : pointer to task object
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
+
+void tsk_kill( tsk_t *tsk );
 
 /******************************************************************************
  *
