@@ -767,6 +767,7 @@ struct staticTaskT : public __tsk
 	 staticTaskT( fun_t *_state ): __tsk _TSK_INIT(_state, stack_, size_) {}
 	~staticTaskT( void ) { assert(__tsk::id == ID_STOPPED); }
 
+	void     kill     ( void )          {        tsk_kill     (this);         }
 	void     join     ( void )          {        tsk_join     (this);         }
 	void     start    ( void )          {        tsk_start    (this);         }
 	void     startFrom( fun_t *_state ) {        tsk_startFrom(this, _state); }
