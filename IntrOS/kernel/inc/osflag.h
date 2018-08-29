@@ -2,7 +2,7 @@
 
     @file    IntrOS: osflag.h
     @author  Rajmund Szymanski
-    @date    27.08.2018
+    @date    29.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -226,11 +226,27 @@ unsigned flg_take( flg_t *flg, unsigned flags, bool all );
  *   flg             : pointer to flag object
  *   flags           : all flags to set
  *
- * Return            : none
+ * Return            : flags in flag object before setting
  *
  ******************************************************************************/
 
-void flg_give( flg_t *flg, unsigned flags );
+unsigned flg_give( flg_t *flg, unsigned flags );
+
+/******************************************************************************
+ *
+ * Name              : flg_clear
+ *
+ * Description       : clear given flags in flag object
+ *
+ * Parameters
+ *   flg             : pointer to flag object
+ *   flags           : all flags to clear
+ *
+ * Return            : flags in flag object before clearing
+ *
+ ******************************************************************************/
+
+unsigned flg_clear( flg_t *flg, unsigned flags );
 
 #ifdef __cplusplus
 }
@@ -255,9 +271,10 @@ struct Flag : public __flg
 {
 	Flag( const unsigned _init = 0 ): __flg _FLG_INIT(_init) {}
 
-	void     wait( unsigned _flags, bool _all = true ) {        flg_wait(this, _flags, _all); }
-	unsigned take( unsigned _flags, bool _all = true ) { return flg_take(this, _flags, _all); }
-	void     give( unsigned _flags )                   {        flg_give(this, _flags);       }
+	void     wait ( unsigned _flags, bool _all = true ) {        flg_wait (this, _flags, _all); }
+	unsigned take ( unsigned _flags, bool _all = true ) { return flg_take (this, _flags, _all); }
+	unsigned give ( unsigned _flags )                   { return flg_give (this, _flags);       }
+	unsigned clear( unsigned _flags )                   { return flg_clear(this, _flags);       }
 };
 
 #endif//__cplusplus
