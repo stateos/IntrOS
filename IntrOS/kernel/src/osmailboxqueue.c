@@ -143,7 +143,7 @@ void box_wait( box_t *box, void *data )
 unsigned box_give( box_t *box, const void *data )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event = E_FAILURE;
+	unsigned event;
 
 	assert(box);
 	assert(data);
@@ -154,6 +154,10 @@ unsigned box_give( box_t *box, const void *data )
 		{
 			priv_box_put(box, data);
 			event = E_SUCCESS;
+		}
+		else
+		{
+			event = E_FAILURE;
 		}
 	}
 	sys_unlock();
