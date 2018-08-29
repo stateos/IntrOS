@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    28.08.2018
+    @date    29.08.2018
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -80,11 +80,12 @@ typedef         void fun_t(); // timer/task procedure
 
 typedef struct __obj
 {
+	void   * prev;  // previous object (timer, task) in the READY queue
 	void   * next;  // next object (timer, task) in the READY queue
 
 }	obj_t;
 
-#define               _OBJ_INIT() { 0 }
+#define               _OBJ_INIT() { 0, 0 }
 
 /* -------------------------------------------------------------------------- */
 

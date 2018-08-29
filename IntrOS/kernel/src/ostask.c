@@ -100,7 +100,7 @@ void tsk_stop( void )
 {
 	port_set_lock();
 
-	System.cur->id = ID_STOPPED;
+	core_tsk_remove(System.cur);
 	core_tsk_switch();
 }
 
@@ -112,7 +112,7 @@ void tsk_kill( tsk_t *tsk )
 
 	sys_lock();
 	{
-		tsk->id = ID_STOPPED;
+		core_tsk_remove(tsk);
 		if (tsk == System.cur)
 			core_ctx_switch();
 	}

@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.h
     @author  Rajmund Szymanski
-    @date    31.07.2018
+    @date    29.08.2018
     @brief   This file defines set of kernel functions for IntrOS.
 
  ******************************************************************************
@@ -123,10 +123,16 @@ void core_tsk_switch( void );
 // insert timer 'tmr' into tasks/timers queue and start it
 void core_tmr_insert( tmr_t *tmr );
 
+// remove timer 'tmr' from tasks/timers queue
+void core_tmr_remove( tmr_t *tmr );
+
 /* -------------------------------------------------------------------------- */
 
 // insert task 'tsk' into tasks/timers queue with id ID_READY
 void core_tsk_insert( tsk_t *tsk );
+
+// remove task 'tsk' from tasks/timers queue
+void core_tsk_remove( tsk_t *tsk );
 
 /* -------------------------------------------------------------------------- */
 

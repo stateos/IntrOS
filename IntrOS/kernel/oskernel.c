@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    27.08.2018
+    @date    29.08.2018
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -41,7 +41,7 @@ static  stk_t     MAIN_STK[SSIZE(OS_STACK_SIZE)];
 #define MAIN_TOP (MAIN_STK+SSIZE(OS_STACK_SIZE))
 #endif
 
-tsk_t MAIN   = { .obj={ .next=&MAIN.obj }, .id=ID_READY, .stack=MAIN_TOP }; // main task
+tsk_t MAIN   = { .obj={ .prev=&MAIN, .next=&MAIN }, .id=ID_READY, .stack=MAIN_TOP }; // main task
 sys_t System = { .cur=&MAIN };
 
 /* -------------------------------------------------------------------------- */
@@ -49,15 +49,25 @@ sys_t System = { .cur=&MAIN };
 static
 void priv_rdy_insert( obj_t *obj )
 {
-	static
-	obj_t *prv = &MAIN.obj;
+	obj_t *nxt = &System.cur->obj;
+	obj_t *prv = nxt->prev;
 
-	if (obj->next == 0)
-	{
-		obj->next = &MAIN.obj;
-		prv->next = obj;
-		prv = obj;
-	}
+	obj->prev = prv;
+	obj->next = nxt;
+	nxt->prev = obj;
+	prv->next = obj;
+}
+
+/* -------------------------------------------------------------------------- */
+
+static
+void priv_rdy_remove( obj_t *obj )
+{
+	obj_t *nxt = obj->next;
+	obj_t *prv = obj->prev;
+
+	nxt->prev = prv;
+	prv->next = nxt;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -70,10 +80,26 @@ void core_tmr_insert( tmr_t *tmr )
 
 /* -------------------------------------------------------------------------- */
 
+void core_tmr_remove( tmr_t *tmr )
+{
+	tmr->id = ID_STOPPED;
+	priv_rdy_remove(&tmr->obj);
+}
+
+/* -------------------------------------------------------------------------- */
+
 void core_tsk_insert( tsk_t *tsk )
 {
 	tsk->id = ID_READY;
 	priv_rdy_insert(&tsk->obj);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void core_tsk_remove( tsk_t *tsk )
+{
+	tsk->id = ID_STOPPED;
+	priv_rdy_remove(&tsk->obj);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -174,7 +200,7 @@ void core_tsk_switch( void )
 					tmr->state();
 
 				if (tmr->delay == 0)
-					tmr->id = ID_STOPPED;
+					core_tmr_remove(tmr);
 
 				tmr->signal++;
 			}
