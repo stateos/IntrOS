@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.c
     @author  Rajmund Szymanski
-    @date    27.08.2018
+    @date    29.08.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -93,7 +93,7 @@ unsigned job_take( job_t *job )
 /* -------------------------------------------------------------------------- */
 {
 	fun_t  * fun;
-	unsigned event = E_FAILURE;
+	unsigned event;
 
 	assert(job);
 
@@ -107,6 +107,10 @@ unsigned job_take( job_t *job )
 			fun();
 
 			event = E_SUCCESS;
+		}
+		else
+		{
+			event = E_FAILURE;
 		}
 	}
 	sys_unlock();
@@ -125,7 +129,7 @@ void job_wait( job_t *job )
 unsigned job_give( job_t *job, fun_t *fun )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event = E_FAILURE;
+	unsigned event;
 
 	assert(job);
 	assert(fun);
@@ -136,6 +140,10 @@ unsigned job_give( job_t *job, fun_t *fun )
 		{
 			priv_job_put(job, fun);
 			event = E_SUCCESS;
+		}
+		else
+		{
+			event = E_FAILURE;
 		}
 	}
 	sys_unlock();

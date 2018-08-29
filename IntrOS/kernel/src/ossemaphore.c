@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossemaphore.c
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    29.08.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -54,7 +54,7 @@ void sem_init( sem_t *sem, unsigned init, unsigned limit )
 unsigned sem_take( sem_t *sem )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event = E_FAILURE;
+	unsigned event;
 
 	assert(sem);
 
@@ -63,8 +63,11 @@ unsigned sem_take( sem_t *sem )
 		if (sem->count > 0U)
 		{
 			sem->count--;
-
 			event = E_SUCCESS;
+		}
+		else
+		{
+			event = E_FAILURE;
 		}
 	}
 	sys_unlock();
@@ -83,7 +86,7 @@ void sem_wait( sem_t *sem )
 unsigned sem_give( sem_t *sem )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event = E_FAILURE;
+	unsigned event;
 
 	assert(sem);
 
@@ -92,8 +95,11 @@ unsigned sem_give( sem_t *sem )
 		if (sem->count < sem->limit)
 		{
 			sem->count++;
-
 			event = E_SUCCESS;
+		}
+		else
+		{
+			event = E_FAILURE;
 		}
 	}
 	sys_unlock();

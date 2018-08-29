@@ -2,7 +2,7 @@
 
     @file    IntrOS: oslist.c
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    29.08.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -49,7 +49,7 @@ void lst_init( lst_t *lst )
 unsigned lst_take( lst_t *lst, void **data )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event = E_FAILURE;
+	unsigned event;
 
 	assert(lst);
 	assert(data);
@@ -61,6 +61,10 @@ unsigned lst_take( lst_t *lst, void **data )
 			*data = lst->head.next + 1;
 			lst->head.next = lst->head.next->next;
 			event = E_SUCCESS;
+		}
+		else
+		{
+			event = E_FAILURE;
 		}
 	}
 	sys_unlock();

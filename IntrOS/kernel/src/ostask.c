@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.c
     @author  Rajmund Szymanski
-    @date    28.08.2018
+    @date    29.08.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -225,38 +225,30 @@ void tsk_give( tsk_t *tsk, unsigned flags )
 unsigned tsk_suspend( tsk_t *tsk )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event = E_FAILURE;
-
 	assert(tsk);
 
-	if (tsk->id == ID_READY)
-	{
-		tsk->delay = INFINITE;
-		tsk->id = ID_DELAYED;
-		if (tsk == System.cur)
-			core_ctx_switch();
-		event = E_SUCCESS;
-	}
+	if (tsk->id != ID_READY)
+		return E_FAILURE;
 
-	return event;
+	tsk->delay = INFINITE;
+	tsk->id = ID_DELAYED;
+	if (tsk == System.cur)
+		core_ctx_switch();
+	return E_SUCCESS;
 }
 
 /* -------------------------------------------------------------------------- */
 unsigned tsk_resume( tsk_t *tsk )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event = E_FAILURE;
-
 	assert(tsk);
 
-	if (tsk->id == ID_DELAYED)
-	{
-		tsk->event = E_FAILURE;
-		tsk->id = ID_READY;
-		event = E_SUCCESS;
-	}
+	if (tsk->id != ID_DELAYED)
+		return E_FAILURE;
 
-	return event;
+	tsk->event = E_FAILURE;
+	tsk->id = ID_READY;
+	return E_SUCCESS;
 }
 
 /* -------------------------------------------------------------------------- */

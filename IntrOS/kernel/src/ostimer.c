@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.c
     @author  Rajmund Szymanski
-    @date    14.08.2018
+    @date    29.08.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -130,14 +130,12 @@ void tmr_startUntil( tmr_t *tmr, cnt_t time )
 unsigned tmr_take( tmr_t *tmr )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event = E_FAILURE;
-
 	assert(tmr);
 
 	if (tmr->id == ID_STOPPED)
-		event = E_SUCCESS;
+		return E_SUCCESS;
 
-	return event;
+	return E_FAILURE;
 }
 
 /* -------------------------------------------------------------------------- */

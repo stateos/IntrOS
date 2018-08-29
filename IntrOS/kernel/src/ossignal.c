@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossignal.c
     @author  Rajmund Szymanski
-    @date    26.08.2018
+    @date    29.08.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -51,7 +51,7 @@ void sig_init( sig_t *sig, bool type )
 unsigned sig_take( sig_t *sig )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event = E_FAILURE;
+	unsigned event;
 
 	assert(sig);
 
@@ -61,6 +61,10 @@ unsigned sig_take( sig_t *sig )
 		{
 			sig->flag = sig->type;
 			event = E_SUCCESS;
+		}
+		else
+		{
+			event = E_FAILURE;
 		}
 	}
 	sys_unlock();
