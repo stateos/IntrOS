@@ -18,7 +18,6 @@ There's a dedicated function for immediate change the task state.
 - kernel can operate in tick-less mode
 - spin locks
 - signals (auto clearing, protected)
-- events
 - flags (any, all)
 - barriers
 - semaphores
@@ -28,8 +27,8 @@ There's a dedicated function for immediate change the task state.
 - stream buffers
 - message buffers
 - mailbox queues
-- job queues
 - event queues
+- job queues
 - timers (one-shot, periodic)
 - c++ wrapper
 - all documentation is contained within the source files
