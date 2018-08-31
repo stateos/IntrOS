@@ -53,6 +53,7 @@ Features:
 - added tsk_kill function
 - added flg_clear function
 - reorganized kernel functions
+- changed timer / task header
 ---------
 4.1
 - updated mailbox queue object

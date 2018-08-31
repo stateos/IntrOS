@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.c
     @author  Rajmund Szymanski
-    @date    29.08.2018
+    @date    30.08.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -42,8 +42,8 @@ void tmr_init( tmr_t *tmr, fun_t *state )
 	{
 		memset(tmr, 0, sizeof(tmr_t));
 
-		tmr->id    = ID_STOPPED;
-		tmr->state = state;
+		tmr->sub.id = ID_STOPPED;
+		tmr->state  = state;
 	}
 	sys_unlock();
 }
@@ -53,7 +53,7 @@ static
 void priv_tmr_start( tmr_t *tmr )
 /* -------------------------------------------------------------------------- */
 {
-	if (tmr->id == ID_STOPPED)
+	if (tmr->sub.id == ID_STOPPED)
 		core_tmr_insert(tmr);
 }
 
@@ -132,7 +132,7 @@ unsigned tmr_take( tmr_t *tmr )
 {
 	assert(tmr);
 
-	if (tmr->id == ID_STOPPED)
+	if (tmr->sub.id == ID_STOPPED)
 		return E_SUCCESS;
 
 	return E_FAILURE;
@@ -146,7 +146,7 @@ void tmr_wait( tmr_t *tmr )
 
 	assert(tmr);
 
-	if (tmr->id != ID_STOPPED)
+	if (tmr->sub.id != ID_STOPPED)
 	{
 		signal = tmr->signal;
 		while (tmr->signal == signal) core_ctx_switch();

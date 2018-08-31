@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    28.08.2018
+    @date    30.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -46,8 +46,7 @@ extern "C" {
 
 struct __tsk
 {
-	obj_t    obj;   // object header
-	tid_t    id;    // task's id: ID_STOPPED, ID_READY, ID_DELAYED
+	sub_t    sub;   // timer / task header
 
 	fun_t  * state; // task state (initial task function, doesn't have to be noreturn-type)
 	cnt_t    start; // inherited from timer
@@ -84,7 +83,7 @@ struct __tsk
  ******************************************************************************/
 
 #define               _TSK_INIT( _state, _stack, _size ) \
-                    { _OBJ_INIT(), ID_STOPPED, _state, 0, 0, 0, 0, _stack, _size, { _CTX_INIT() } }
+                    { _SUB_INIT(), _state, 0, 0, 0, 0, _stack, _size, { _CTX_INIT() } }
 
 /******************************************************************************
  *
@@ -765,7 +764,7 @@ template<unsigned size_ = OS_STACK_SIZE>
 struct staticTaskT : public __tsk
 {
 	 staticTaskT( fun_t *_state ): __tsk _TSK_INIT(_state, stack_, size_) {}
-	~staticTaskT( void ) { assert(__tsk::id == ID_STOPPED); }
+	~staticTaskT( void ) { assert(__tsk::sub.id == ID_STOPPED); }
 
 	void     kill     ( void )          {        tsk_kill     (this);         }
 	void     join     ( void )          {        tsk_join     (this);         }
@@ -774,7 +773,7 @@ struct staticTaskT : public __tsk
 	unsigned suspend  ( void )          { return tsk_resume   (this);         }
 	unsigned resume   ( void )          { return tsk_resume   (this);         }
 
-	bool     operator!( void )          { return __tsk::id == ID_STOPPED;     }
+	bool     operator!( void )          { return __tsk::sub.id == ID_STOPPED; }
 
 	private:
 	stk_t stack_[SSIZE(size_)];

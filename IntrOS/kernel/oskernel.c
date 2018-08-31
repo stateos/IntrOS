@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    29.08.2018
+    @date    31.08.2018
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -41,30 +41,30 @@ static  stk_t     MAIN_STK[SSIZE(OS_STACK_SIZE)];
 #define MAIN_TOP (MAIN_STK+SSIZE(OS_STACK_SIZE))
 #endif
 
-tsk_t MAIN   = { .obj={ .prev=&MAIN, .next=&MAIN }, .id=ID_READY, .stack=MAIN_TOP }; // main task
+tsk_t MAIN   = { .sub={ .prev=&MAIN, .next=&MAIN, .id=ID_READY }, .stack=MAIN_TOP }; // main task
 sys_t System = { .cur=&MAIN };
 
 /* -------------------------------------------------------------------------- */
 
 static
-void priv_rdy_insert( obj_t *obj )
+void priv_rdy_insert( sub_t *sub )
 {
-	obj_t *nxt = &System.cur->obj;
-	obj_t *prv = nxt->prev;
+	sub_t *nxt = &System.cur->sub;
+	sub_t *prv = nxt->prev;
 
-	obj->prev = prv;
-	obj->next = nxt;
-	nxt->prev = obj;
-	prv->next = obj;
+	sub->prev = prv;
+	sub->next = nxt;
+	nxt->prev = sub;
+	prv->next = sub;
 }
 
 /* -------------------------------------------------------------------------- */
 
 static
-void priv_rdy_remove( obj_t *obj )
+void priv_rdy_remove( sub_t *sub )
 {
-	obj_t *nxt = obj->next;
-	obj_t *prv = obj->prev;
+	sub_t *nxt = sub->next;
+	sub_t *prv = sub->prev;
 
 	nxt->prev = prv;
 	prv->next = nxt;
@@ -74,32 +74,32 @@ void priv_rdy_remove( obj_t *obj )
 
 void core_tmr_insert( tmr_t *tmr )
 {
-	tmr->id = ID_TIMER;
-	priv_rdy_insert(&tmr->obj);
+	tmr->sub.id = ID_TIMER;
+	priv_rdy_insert(&tmr->sub);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void core_tmr_remove( tmr_t *tmr )
 {
-	tmr->id = ID_STOPPED;
-	priv_rdy_remove(&tmr->obj);
+	tmr->sub.id = ID_STOPPED;
+	priv_rdy_remove(&tmr->sub);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void core_tsk_insert( tsk_t *tsk )
 {
-	tsk->id = ID_READY;
-	priv_rdy_insert(&tsk->obj);
+	tsk->sub.id = ID_READY;
+	priv_rdy_insert(&tsk->sub);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void core_tsk_remove( tsk_t *tsk )
 {
-	tsk->id = ID_STOPPED;
-	priv_rdy_remove(&tsk->obj);
+	tsk->sub.id = ID_STOPPED;
+	priv_rdy_remove(&tsk->sub);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -170,27 +170,27 @@ void core_tsk_switch( void )
 	{
 		port_set_lock();
 		{
-			cur = System.cur = System.cur->obj.next;
+			cur = System.cur = System.cur->sub.next;
 		}
 		port_clr_lock();
 
-		if (cur->id == ID_STOPPED)
+		if (cur->sub.id == ID_STOPPED)
 			continue;
 
-		if (cur->id == ID_READY)
+		if (cur->sub.id == ID_READY)
 			break;
 
 		if (priv_tmr_countdown((tmr_t *)cur))
 			continue;
 
-		if (cur->id == ID_DELAYED)
+		if (cur->sub.id == ID_DELAYED)
 		{
-			cur->id  = ID_READY;
+			cur->sub.id = ID_READY;
 			cur->event = E_SUCCESS;
 			break;
 		}
 
-//		if (cur->id == ID_TIMER)
+//		if (cur->sub.id == ID_TIMER)
 		{
 			port_set_lock();
 			{

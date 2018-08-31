@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    29.08.2018
+    @date    30.08.2018
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -76,16 +76,35 @@ typedef         void fun_t(); // timer/task procedure
 
 /* -------------------------------------------------------------------------- */
 
-// object (timer, task) header
+#define E_SUCCESS  ( 0U) // process was released as a result of taking the supervising object
+#define E_FAILURE  (~0U) // process was released as a result of a failure
 
-typedef struct __obj
+/* -------------------------------------------------------------------------- */
+
+// timer / task id
+
+typedef enum __tid
 {
-	void   * prev;  // previous object (timer, task) in the READY queue
-	void   * next;  // next object (timer, task) in the READY queue
+	ID_STOPPED = 0, // task or timer stopped
+	ID_READY,       // task running or ready to run
+	ID_DELAYED,     // task in the delayed state
+	ID_TIMER,       // timer in the countdown state
 
-}	obj_t;
+}	tid_t;
 
-#define               _OBJ_INIT() { 0, 0 }
+/* -------------------------------------------------------------------------- */
+
+// timer / task header
+
+typedef struct __sub
+{
+	void   * prev;  // previous object (timer / task) in the READY queue
+	void   * next;  // next object (timer / task) in the READY queue
+	tid_t    id;    // timer / task id
+
+}	sub_t;
+
+#define               _SUB_INIT() { 0, 0, ID_STOPPED }
 
 /* -------------------------------------------------------------------------- */
 
@@ -120,22 +139,6 @@ typedef struct __sys
 #if (OS_FREQUENCY) < (CNT_MAX)/86400
 #define  DAY       ((cnt_t)(OS_FREQUENCY)*86400)
 #endif
-
-/* -------------------------------------------------------------------------- */
-
-typedef enum __tid
-{
-	ID_STOPPED = 0, // task or timer stopped
-	ID_READY,       // task ready to run
-	ID_DELAYED,     // task in the delayed state
-	ID_TIMER        // timer in the countdown state
-
-}	tid_t;
-
-/* -------------------------------------------------------------------------- */
-
-#define E_SUCCESS  ( 0U) // process was released by taking the supervising object
-#define E_FAILURE  (~0U)
 
 /* -------------------------------------------------------------------------- */
 
