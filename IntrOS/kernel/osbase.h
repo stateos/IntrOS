@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    30.08.2018
+    @date    31.08.2018
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -105,6 +105,14 @@ typedef struct __sub
 }	sub_t;
 
 #define               _SUB_INIT() { 0, 0, ID_STOPPED }
+
+/* -------------------------------------------------------------------------- */
+
+__STATIC_INLINE
+void core_sub_init( sub_t *sub )
+{
+	sub->id = ID_STOPPED;
+}
 
 /* -------------------------------------------------------------------------- */
 

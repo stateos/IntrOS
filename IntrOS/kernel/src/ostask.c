@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.c
     @author  Rajmund Szymanski
-    @date    30.08.2018
+    @date    31.08.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -45,10 +45,11 @@ void tsk_init( tsk_t *tsk, fun_t *state, stk_t *stack, unsigned size )
 	{
 		memset(tsk, 0, sizeof(tsk_t));
 
-		tsk->sub.id = ID_STOPPED;
-		tsk->state  = state;
-		tsk->stack  = stack;
-		tsk->size   = size;
+		core_sub_init(&tsk->sub);
+
+		tsk->state = state;
+		tsk->stack = stack;
+		tsk->size  = size;
 
 		core_ctx_init(tsk);
 		core_tsk_insert(tsk);

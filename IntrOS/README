@@ -54,6 +54,7 @@ Features:
 - added flg_clear function
 - reorganized kernel functions
 - changed timer / task header
+- added header init function
 ---------
 4.1
 - updated mailbox queue object
