@@ -93,7 +93,7 @@ extern sys_t System; // system data
 /* -------------------------------------------------------------------------- */
 
 #define core_stk_assert() \
-        assert((System.cur == &MAIN) || (System.cur->id == ID_TIMER) || (System.cur->stack <= port_get_sp()))
+        assert((System.cur == &MAIN) || (System.cur->sub.id == ID_TIMER) || ((uintptr_t)System.cur->stack <= (uintptr_t)port_get_sp()))
 
 /* -------------------------------------------------------------------------- */
 
