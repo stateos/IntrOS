@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmemorypool.c
     @author  Rajmund Szymanski
-    @date    27.08.2018
+    @date    31.08.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -49,7 +49,7 @@ void mem_bind( mem_t *mem )
 		ptr = mem->data;
 		cnt = mem->limit;
 
-		mem->head.next = 0;
+		mem->lst.head.next = 0;
 		while (cnt--) { mem_give(mem, ++ptr); ptr += mem->size; }
 	}
 	sys_unlock();

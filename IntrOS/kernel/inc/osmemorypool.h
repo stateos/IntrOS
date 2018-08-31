@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmemorypool.h
     @author  Rajmund Szymanski
-    @date    27.08.2018
+    @date    31.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -54,7 +54,7 @@ typedef struct __mem mem_t, * const mem_id;
 
 struct __mem
 {
-	que_t    head;  // inherited from list
+	lst_t    lst;   // memory pool list
 
 	unsigned limit; // size of a memory pool (max number of objects)
 	unsigned size;  // size of memory object (in sizeof(que_t) units)
@@ -78,7 +78,7 @@ struct __mem
  *
  ******************************************************************************/
 
-#define               _MEM_INIT( _limit, _size, _data ) { _QUE_INIT(), _limit, _size, _data }
+#define               _MEM_INIT( _limit, _size, _data ) { _LST_INIT(), _limit, _size, _data }
 
 /******************************************************************************
  *
@@ -230,7 +230,7 @@ void mem_init( mem_t *mem, unsigned size, que_t *data, unsigned bufsize );
  ******************************************************************************/
 
 __STATIC_INLINE
-void mem_wait( mem_t *mem, void **data ) { lst_wait((lst_t *)mem, data); }
+void mem_wait( mem_t *mem, void **data ) { lst_wait(&mem->lst, data); }
 
 /******************************************************************************
  *
@@ -250,7 +250,7 @@ void mem_wait( mem_t *mem, void **data ) { lst_wait((lst_t *)mem, data); }
  ******************************************************************************/
 
 __STATIC_INLINE
-unsigned mem_take( mem_t *mem, void **data ) { return lst_take((lst_t *)mem, data); }
+unsigned mem_take( mem_t *mem, void **data ) { return lst_take(&mem->lst, data); }
 
 /******************************************************************************
  *
@@ -267,7 +267,7 @@ unsigned mem_take( mem_t *mem, void **data ) { return lst_take((lst_t *)mem, dat
  ******************************************************************************/
 
 __STATIC_INLINE
-void mem_give( mem_t *mem, const void *data ) { lst_give((lst_t *)mem, data); }
+void mem_give( mem_t *mem, const void *data ) { lst_give(&mem->lst, data); }
 
 #ifdef __cplusplus
 }

@@ -2,7 +2,7 @@
 
     @file    IntrOS: oslist.h
     @author  Rajmund Szymanski
-    @date    14.08.2018
+    @date    31.08.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -77,7 +77,7 @@ typedef struct __lst lst_t, * const lst_id;
 
 struct __lst
 {
-	que_t    head;  // first object in the queue
+	que_t    head;  // list head
 };
 
 /******************************************************************************
