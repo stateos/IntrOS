@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.h
     @author  Rajmund Szymanski
-    @date    30.08.2018
+    @date    01.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -46,7 +46,7 @@ extern "C" {
 
 struct __tmr
 {
-	sub_t    sub;   // timer / task header
+	hdr_t    hdr;   // timer / task header
 
 	fun_t  * state; // callback procedure
 	cnt_t    start;
@@ -72,7 +72,7 @@ struct __tmr
  *
  ******************************************************************************/
 
-#define               _TMR_INIT( _state ) { _SUB_INIT(), _state, 0, 0, 0, 0 }
+#define               _TMR_INIT( _state ) { _HDR_INIT(), _state, 0, 0, 0, 0 }
 
 /******************************************************************************
  *
@@ -539,7 +539,7 @@ struct staticTimer : public __tmr
 {
 	 staticTimer( void ):          __tmr _TMR_INIT(0) {}
 	 staticTimer( fun_t *_state ): __tmr _TMR_INIT(_state) {}
-	~staticTimer( void ) { assert(__tmr::sub.id == ID_STOPPED); }
+	~staticTimer( void ) { assert(__tmr::hdr.id == ID_STOPPED); }
 
 	void start        ( cnt_t _delay, cnt_t _period )                {        tmr_start        (this, _delay, _period);         }
 	void startFor     ( cnt_t _delay )                               {        tmr_startFor     (this, _delay);                  }
@@ -551,7 +551,7 @@ struct staticTimer : public __tmr
 	void     wait     ( void )                                       { return tmr_wait         (this);                          }
 	unsigned take     ( void )                                       { return tmr_take         (this);                          }
 
-	bool     operator!( void )                                       { return __tmr::sub.id == ID_STOPPED;                      }
+	bool     operator!( void )                                       { return __tmr::hdr.id == ID_STOPPED;                      }
 };
 
 /******************************************************************************

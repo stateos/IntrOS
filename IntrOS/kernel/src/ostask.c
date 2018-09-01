@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.c
     @author  Rajmund Szymanski
-    @date    31.08.2018
+    @date    01.09.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -45,7 +45,7 @@ void tsk_init( tsk_t *tsk, fun_t *state, stk_t *stack, unsigned size )
 	{
 		memset(tsk, 0, sizeof(tsk_t));
 
-		core_sub_init(&tsk->sub);
+		core_hdr_init(&tsk->hdr);
 
 		tsk->state = state;
 		tsk->stack = stack;
@@ -66,7 +66,7 @@ void tsk_start( tsk_t *tsk )
 
 	sys_lock();
 	{
-		if (tsk->sub.id == ID_STOPPED)
+		if (tsk->hdr.id == ID_STOPPED)
 		{
 			core_ctx_init(tsk);
 			core_tsk_insert(tsk);
@@ -84,7 +84,7 @@ void tsk_startFrom( tsk_t *tsk, fun_t *state )
 
 	sys_lock();
 	{
-		if (tsk->sub.id == ID_STOPPED)
+		if (tsk->hdr.id == ID_STOPPED)
 		{
 			tsk->state = state;
 
@@ -126,7 +126,7 @@ void tsk_join( tsk_t *tsk )
 {
 	assert(tsk);
 
-	while (tsk->sub.id != ID_STOPPED)
+	while (tsk->hdr.id != ID_STOPPED)
 		core_ctx_switch();
 }
 
@@ -147,7 +147,7 @@ static
 unsigned priv_tsk_sleep( tsk_t *cur )
 /* -------------------------------------------------------------------------- */
 {
-	cur->sub.id = ID_DELAYED;
+	cur->hdr.id = ID_DELAYED;
 	core_ctx_switch();
 
 	return cur->event;
@@ -214,7 +214,7 @@ void tsk_give( tsk_t *tsk, unsigned flags )
 
 	sys_lock();
 	{
-		if (tsk->sub.id == ID_READY)
+		if (tsk->hdr.id == ID_READY)
 			tsk->event &= ~flags;
 	}
 	sys_unlock();
@@ -226,10 +226,10 @@ unsigned tsk_suspend( tsk_t *tsk )
 {
 	assert(tsk);
 
-	if (tsk->sub.id != ID_READY)
+	if (tsk->hdr.id != ID_READY)
 		return E_FAILURE;
 
-	tsk->sub.id = ID_DELAYED;
+	tsk->hdr.id = ID_DELAYED;
 	tsk->delay = INFINITE;
 	if (tsk == System.cur)
 		core_ctx_switch();
@@ -242,10 +242,10 @@ unsigned tsk_resume( tsk_t *tsk )
 {
 	assert(tsk);
 
-	if (tsk->sub.id != ID_DELAYED)
+	if (tsk->hdr.id != ID_DELAYED)
 		return E_FAILURE;
 
-	tsk->sub.id = ID_READY;
+	tsk->hdr.id = ID_READY;
 	tsk->event = E_FAILURE;
 	return E_SUCCESS;
 }

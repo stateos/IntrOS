@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    31.08.2018
+    @date    01.09.2018
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -96,22 +96,22 @@ typedef enum __tid
 
 // timer / task header
 
-typedef struct __sub
+typedef struct __hdr
 {
 	void   * prev;  // previous object (timer / task) in the READY queue
 	void   * next;  // next object (timer / task) in the READY queue
 	tid_t    id;    // timer / task id
 
-}	sub_t;
+}	hdr_t;
 
-#define               _SUB_INIT() { 0, 0, ID_STOPPED }
+#define               _HDR_INIT() { 0, 0, ID_STOPPED }
 
 /* -------------------------------------------------------------------------- */
 
 __STATIC_INLINE
-void core_sub_init( sub_t *sub )
+void core_hdr_init( hdr_t *hdr )
 {
-	sub->id = ID_STOPPED;
+	hdr->id = ID_STOPPED;
 }
 
 /* -------------------------------------------------------------------------- */
