@@ -640,16 +640,14 @@ void tsk_give( tsk_t *tsk, unsigned flags );
  *                     IMMEDIATE: don't delay execution of current task
  *                     INFINITE:  delay indefinitely execution of current task
  *
- * Return
- *   E_SUCCESS       : task object successfully finished countdown
- *   E_FAILURE       : task was resumed
+ * Return            : none
  *
  ******************************************************************************/
 
-unsigned tsk_sleepFor( cnt_t delay );
+void tsk_sleepFor( cnt_t delay );
 
 __STATIC_INLINE
-unsigned tsk_delay( cnt_t delay ) { return tsk_sleepFor(delay); }
+void tsk_delay( cnt_t delay ) { tsk_sleepFor(delay); }
 
 /******************************************************************************
  *
@@ -663,13 +661,11 @@ unsigned tsk_delay( cnt_t delay ) { return tsk_sleepFor(delay); }
  *                     IMMEDIATE: don't delay execution of current task
  *                     INFINITE:  delay indefinitely execution of current task
  *
- * Return
- *   E_SUCCESS       : task object successfully finished countdown
- *   E_FAILURE       : task was resumed
+ * Return            : none
  *
  ******************************************************************************/
 
-unsigned tsk_sleepNext( cnt_t delay );
+void tsk_sleepNext( cnt_t delay );
 
 /******************************************************************************
  *
@@ -680,35 +676,34 @@ unsigned tsk_sleepNext( cnt_t delay );
  * Parameters
  *   time            : timepoint value
  *
- * Return
- *   E_SUCCESS       : task object successfully finished countdown
- *   E_FAILURE       : task was resumed
+ * Return            : none
  *
  ******************************************************************************/
 
-unsigned tsk_sleepUntil( cnt_t time );
+void tsk_sleepUntil( cnt_t time );
 
 /******************************************************************************
  *
  * Name              : tsk_sleep
  *
  * Description       : delay indefinitely execution of current task
+ *                     execution of the task can be resumed
  *
  * Parameters        : none
  *
- * Return
- *   E_FAILURE       : task was resumed
+ * Return            : none
  *
  ******************************************************************************/
 
 __STATIC_INLINE
-unsigned tsk_sleep( void ) { return tsk_sleepFor(INFINITE); }
+void tsk_sleep( void ) { tsk_sleepFor(INFINITE); }
 
 /******************************************************************************
  *
  * Name              : tsk_suspend
  *
  * Description       : delay indefinitely execution of given task
+ *                     execution of the task can be resumed
  *
  * Parameters
  *   tsk             : pointer to task object
@@ -725,11 +720,11 @@ unsigned tsk_suspend( tsk_t *tsk );
  *
  * Name              : tsk_resume
  *
- * Description       : resume execution of given delayed task
+ * Description       : resume execution of given suspended task
+ *                     only suspended or indefinitely delayed tasks can be resumed
  *
  * Parameters
  *   tsk             : pointer to delayed task object
- *   event           : the value at which the given task is woken up
  *
  * Return
  *   E_SUCCESS       : task was successfully resumed
@@ -766,14 +761,15 @@ struct staticTaskT : public __tsk
 	 staticTaskT( fun_t *_state ): __tsk _TSK_INIT(_state, stack_, size_) {}
 	~staticTaskT( void ) { assert(__tsk::hdr.id == ID_STOPPED); }
 
-	void     kill     ( void )          {        tsk_kill     (this);         }
-	void     join     ( void )          {        tsk_join     (this);         }
-	void     start    ( void )          {        tsk_start    (this);         }
-	void     startFrom( fun_t *_state ) {        tsk_startFrom(this, _state); }
-	unsigned suspend  ( void )          { return tsk_resume   (this);         }
-	unsigned resume   ( void )          { return tsk_resume   (this);         }
+	void     kill     ( void )            {        tsk_kill     (this);         }
+	void     join     ( void )            {        tsk_join     (this);         }
+	void     start    ( void )            {        tsk_start    (this);         }
+	void     startFrom( fun_t  * _state ) {        tsk_startFrom(this, _state); }
+	void     give     ( unsigned _flags ) {        tsk_give     (this, _flags); }
+	unsigned suspend  ( void )            { return tsk_suspend  (this);         }
+	unsigned resume   ( void )            { return tsk_resume   (this);         }
 
-	bool     operator!( void )          { return __tsk::hdr.id == ID_STOPPED; }
+	bool     operator!( void )            { return __tsk::hdr.id == ID_STOPPED; }
 
 	private:
 	stk_t stack_[SSIZE(size_)];
@@ -849,21 +845,22 @@ typedef startTaskT<OS_STACK_SIZE> startTask;
 
 namespace ThisTask
 {
-	static inline void     pass      ( void )         {        tsk_pass      ();                      }
-	static inline void     yield     ( void )         {        tsk_yield     ();                      }
+	static inline void pass      ( void )            { tsk_pass      ();                      }
+	static inline void yield     ( void )            { tsk_yield     ();                      }
 #if OS_FUNCTIONAL
-	static inline void     flip      ( FUN_t _state ) {        ((TaskT<>*)System.cur)->fun_ = _state;
-	                                                           tsk_flip      (TaskT<>::run_);         }
+	static inline void flip      ( FUN_t    _state ) { ((TaskT<>*)System.cur)->fun_ = _state;
+	                                                   tsk_flip      (TaskT<>::run_);         }
 #else
-	static inline void     flip      ( FUN_t _state ) {        tsk_flip      (_state);                }
+	static inline void flip      ( FUN_t    _state ) { tsk_flip      (_state);                }
 #endif
-	static inline void     stop      ( void )         {        tsk_stop      ();                      }
-	static inline unsigned sleepFor  ( cnt_t _delay ) { return tsk_sleepFor  (_delay);                }
-	static inline unsigned sleepNext ( cnt_t _delay ) { return tsk_sleepNext (_delay);                }
-	static inline unsigned sleepUntil( cnt_t _time )  { return tsk_sleepUntil(_time);                 }
-	static inline unsigned sleep     ( void )         { return tsk_sleep     ();                      }
-	static inline unsigned delay     ( cnt_t _delay ) { return tsk_delay     (_delay);                }
-	static inline void     suspend   ( void )         {        tsk_suspend   (System.cur);            }
+	static inline void stop      ( void )            { tsk_stop      ();                      }
+	static inline void suspend   ( void )            { tsk_suspend   (System.cur);            }
+	static inline void wait      ( unsigned _flags ) { tsk_wait      (_flags);                }
+	static inline void sleepFor  ( cnt_t    _delay ) { tsk_sleepFor  (_delay);                }
+	static inline void sleepNext ( cnt_t    _delay ) { tsk_sleepNext (_delay);                }
+	static inline void sleepUntil( cnt_t    _time )  { tsk_sleepUntil(_time);                 }
+	static inline void sleep     ( void )            { tsk_sleep     ();                      }
+	static inline void delay     ( cnt_t    _delay ) { tsk_delay     (_delay);                }
 }
 
 #endif//__cplusplus

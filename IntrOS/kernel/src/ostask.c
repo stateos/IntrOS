@@ -144,17 +144,15 @@ void tsk_flip( fun_t *state )
 
 /* -------------------------------------------------------------------------- */
 static
-unsigned priv_tsk_sleep( tsk_t *cur )
+void priv_tsk_sleep( tsk_t *cur )
 /* -------------------------------------------------------------------------- */
 {
 	cur->hdr.id = ID_DELAYED;
 	core_ctx_switch();
-
-	return cur->event;
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned tsk_sleepFor( cnt_t delay )
+void tsk_sleepFor( cnt_t delay )
 /* -------------------------------------------------------------------------- */
 {
 	tsk_t *cur = System.cur;
@@ -163,25 +161,29 @@ unsigned tsk_sleepFor( cnt_t delay )
 	{
 		cur->start = core_sys_time();
 		cur->delay = delay;
+
+		priv_tsk_sleep(cur);
 	}
 	sys_unlock();
-
-	return priv_tsk_sleep(cur);
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned tsk_sleepNext( cnt_t delay )
+void tsk_sleepNext( cnt_t delay )
 /* -------------------------------------------------------------------------- */
 {
 	tsk_t *cur = System.cur;
 
-	cur->delay = delay;
+	sys_lock();
+	{
+		cur->delay = delay;
 
-	return priv_tsk_sleep(cur);
+		priv_tsk_sleep(cur);
+	}
+	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned tsk_sleepUntil( cnt_t time )
+void tsk_sleepUntil( cnt_t time )
 /* -------------------------------------------------------------------------- */
 {
 	tsk_t *cur = System.cur;
@@ -192,10 +194,10 @@ unsigned tsk_sleepUntil( cnt_t time )
 		cur->delay = time - cur->start;
 		if (cur->delay > ((CNT_MAX)>>1))
 			cur->delay = 0;
+
+		priv_tsk_sleep(cur);
 	}
 	sys_unlock();
-
-	return priv_tsk_sleep(cur);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -242,11 +244,10 @@ unsigned tsk_resume( tsk_t *tsk )
 {
 	assert(tsk);
 
-	if (tsk->hdr.id != ID_DELAYED)
+	if (tsk->hdr.id != ID_DELAYED || tsk->delay != INFINITE)
 		return E_FAILURE;
 
 	tsk->hdr.id = ID_READY;
-	tsk->event = E_FAILURE;
 	return E_SUCCESS;
 }
 

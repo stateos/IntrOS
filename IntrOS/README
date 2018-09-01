@@ -55,6 +55,7 @@ Features:
 - reorganized kernel functions
 - changed timer / task header
 - added header init function
+- rebuilded sleep and suspend / resume functions
 ---------
 4.1
 - updated mailbox queue object
