@@ -29,6 +29,9 @@ Features:
 - all documentation is contained within the source files
 - examples and templates are in separate repositories (https://github.com/stateos)
 ---------
+4.3
+- merged test branch
+---------
 4.2
 - updated priv_rdy_insert internal procedure
 - added initial value for flag object
