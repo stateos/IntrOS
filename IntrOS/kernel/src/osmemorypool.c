@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmemorypool.c
     @author  Rajmund Szymanski
-    @date    31.08.2018
+    @date    04.09.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -68,8 +68,8 @@ void mem_init( mem_t *mem, unsigned size, que_t *data, unsigned bufsize )
 	{
 		memset(mem, 0, sizeof(mem_t));
 
-		mem->limit = bufsize / (1 + MSIZE(size)) / sizeof(que_t);
-		mem->size  = MSIZE(size);
+		mem->limit = bufsize / (1 + MEM_SIZE(size)) / sizeof(que_t);
+		mem->size  = MEM_SIZE(size);
 		mem->data  = data;
 
 		mem_bind(mem);

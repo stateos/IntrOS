@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    01.09.2018
+    @date    04.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -37,6 +37,14 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/* -------------------------------------------------------------------------- */
+
+#define STK_SIZE( size ) \
+    ALIGNED_SIZE( size, stk_t )
+
+#define STK_CROP( base, size ) \
+         LIMITED( (size_t)base + size, stk_t )
 
 /******************************************************************************
  *
@@ -124,7 +132,7 @@ struct __tsk
  ******************************************************************************/
 
 #ifndef __cplusplus
-#define               _TSK_STACK( _size ) (stk_t[SSIZE(_size)]){ 0 }
+#define               _TSK_STACK( _size ) (stk_t[STK_SIZE(_size)]){ 0 }
 #endif
 
 /******************************************************************************
@@ -154,7 +162,7 @@ struct __tsk
  ******************************************************************************/
 
 #define             OS_WRK( tsk, state, size )                                \
-                       stk_t tsk##__stk[SSIZE( size )];                        \
+                       stk_t tsk##__stk[STK_SIZE( size )];                     \
                        tsk_t tsk##__tsk = _TSK_INIT( state, tsk##__stk, size ); \
                        tsk_id tsk = & tsk##__tsk
 
@@ -263,7 +271,7 @@ struct __tsk
  ******************************************************************************/
 
 #define         static_WRK( tsk, state, size )                                \
-                static stk_t tsk##__stk[SSIZE( size )];                        \
+                static stk_t tsk##__stk[STK_SIZE( size )];                     \
                 static tsk_t tsk##__tsk = _TSK_INIT( state, tsk##__stk, size ); \
                 static tsk_id tsk = & tsk##__tsk
 
@@ -772,7 +780,7 @@ struct staticTaskT : public __tsk
 	bool     operator!( void )            { return __tsk::hdr.id == ID_STOPPED; }
 
 	private:
-	stk_t stack_[SSIZE(size_)];
+	stk_t stack_[STK_SIZE(size_)];
 };
 
 /* -------------------------------------------------------------------------- */

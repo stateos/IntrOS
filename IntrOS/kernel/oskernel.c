@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    01.09.2018
+    @date    04.09.2018
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -37,8 +37,8 @@
 /* -------------------------------------------------------------------------- */
 
 #ifndef MAIN_TOP
-static  stk_t     MAIN_STK[SSIZE(OS_STACK_SIZE)];
-#define MAIN_TOP (MAIN_STK+SSIZE(OS_STACK_SIZE))
+static  stk_t     MAIN_STK[STK_SIZE(OS_STACK_SIZE)];
+#define MAIN_TOP (MAIN_STK+STK_SIZE(OS_STACK_SIZE))
 #endif
 
 tsk_t MAIN   = { .hdr={ .prev=&MAIN, .next=&MAIN, .id=ID_READY }, .stack=MAIN_TOP }; // main task
@@ -109,7 +109,7 @@ void core_ctx_init( tsk_t *tsk )
 #ifdef DEBUG
 	memset(tsk->stack, 0xFF, tsk->size);
 #endif
-	port_ctx_init(&tsk->ctx.reg, (stk_t *)LIMITED((size_t)tsk->stack + tsk->size, stk_t), core_tsk_loop);
+	port_ctx_init(&tsk->ctx.reg, (stk_t *)STK_CROP(tsk->stack, tsk->size), core_tsk_loop);
 }
 
 /* -------------------------------------------------------------------------- */

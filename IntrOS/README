@@ -31,6 +31,7 @@ Features:
 ---------
 4.3
 - merged test branch
+- renamed 'SIZE' definitions
 ---------
 4.2
 - updated priv_rdy_insert internal procedure
