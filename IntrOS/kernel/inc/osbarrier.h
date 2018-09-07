@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbarrier.h
     @author  Rajmund Szymanski
-    @date    14.08.2018
+    @date    07.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -48,9 +48,10 @@ typedef struct __bar bar_t, * const bar_id;
 
 struct __bar
 {
-	unsigned signal;
 	unsigned count; // barrier's current value
 	unsigned limit; // barrier's value limit
+
+	unsigned signal;
 };
 
 /******************************************************************************
@@ -68,7 +69,7 @@ struct __bar
  *
  ******************************************************************************/
 
-#define               _BAR_INIT( limit ) { 0, limit, limit }
+#define               _BAR_INIT( limit ) { limit, limit, 0 }
 
 /******************************************************************************
  *

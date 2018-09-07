@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbarrier.c
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    07.09.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -58,10 +58,10 @@ void bar_wait( bar_t *bar )
 	assert(bar);
 	assert(bar->count);
 
-	signal = bar->signal;
-
 	sys_lock();
 	{
+		signal = bar->signal;
+
 		if (--bar->count == 0)
 		{
 			bar->count = bar->limit;
