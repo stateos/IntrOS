@@ -47,6 +47,7 @@
 #include "oskernel.h"
 #include "inc/oscriticalsection.h"
 #include "inc/osspinlock.h"
+#include "inc/osnotification.h"
 #include "inc/ossignal.h"
 #include "inc/osflag.h"
 #include "inc/osbarrier.h"
