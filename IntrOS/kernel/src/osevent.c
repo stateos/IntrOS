@@ -1,8 +1,8 @@
 /******************************************************************************
 
-    @file    IntrOS: osnotification.c
+    @file    IntrOS: osevent.c
     @author  Rajmund Szymanski
-    @date    07.09.2018
+    @date    08.09.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -29,51 +29,51 @@
 
  ******************************************************************************/
 
-#include "inc/osnotification.h"
+#include "inc/osevent.h"
 #include "inc/oscriticalsection.h"
 
 /* -------------------------------------------------------------------------- */
-void nfo_init( nfo_t *nfo )
+void evt_init( evt_t *evt )
 /* -------------------------------------------------------------------------- */
 {
-	assert(nfo);
+	assert(evt);
 
 	sys_lock();
 	{
-		memset(nfo, 0, sizeof(nfo_t));
+		memset(evt, 0, sizeof(evt_t));
 	}
 	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned nfo_wait( nfo_t *nfo )
+unsigned evt_wait( evt_t *evt )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned signal;
 
-	assert(nfo);
+	assert(evt);
 
 	sys_lock();
 	{
-		signal = nfo->signal;
+		signal = evt->signal;
 	}
 	sys_unlock();
 
-	while (nfo->signal == signal) core_ctx_switch();
+	while (evt->signal == signal) core_ctx_switch();
 
-	return nfo->event;
+	return evt->event;
 }
 
 /* -------------------------------------------------------------------------- */
-void nfo_give( nfo_t *nfo, unsigned event )
+void evt_give( evt_t *evt, unsigned event )
 /* -------------------------------------------------------------------------- */
 {
-	assert(nfo);
+	assert(evt);
 
 	sys_lock();
 	{
-		nfo->event = event;
-		nfo->signal++;
+		evt->event = event;
+		evt->signal++;
 	}
 	sys_unlock();
 }

@@ -12,7 +12,7 @@ Features:
 - kernel can operate with 16, 32 or 64-bit timer counter
 - kernel can operate in tick-less mode
 - spin locks
-- notification of the event
+- events
 - signals (auto clearing, protected)
 - flags (any, all)
 - barriers
@@ -33,7 +33,7 @@ Features:
 4.3
 - merged test branch
 - renamed 'SIZE' definitions
-- added notification object
+- back to the event (evt) and event queue (evq)
 ---------
 4.2
 - updated priv_rdy_insert internal procedure

@@ -1,8 +1,8 @@
 /******************************************************************************
 
-    @file    IntrOS: osnotification.h
+    @file    IntrOS: osevent.h
     @author  Rajmund Szymanski
-    @date    07.09.2018
+    @date    08.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -29,8 +29,8 @@
 
  ******************************************************************************/
 
-#ifndef __INTROS_NFO_H
-#define __INTROS_NFO_H
+#ifndef __INTROS_EVT_H
+#define __INTROS_EVT_H
 
 #include "oskernel.h"
 
@@ -40,13 +40,13 @@ extern "C" {
 
 /******************************************************************************
  *
- * Name              : notification of the event
+ * Name              : event
  *
  ******************************************************************************/
 
-typedef struct __nfo nfo_t, * const nfo_id;
+typedef struct __evt evt_t, * const evt_id;
 
-struct __nfo
+struct __evt
 {
 	unsigned event;
 
@@ -55,137 +55,137 @@ struct __nfo
 
 /******************************************************************************
  *
- * Name              : _NFO_INIT
+ * Name              : _EVT_INIT
  *
- * Description       : create and initialize an notification object
+ * Description       : create and initialize an event object
  *
  * Parameters        : none
  *
- * Return            : notification object
+ * Return            : event object
  *
  * Note              : for internal use
  *
  ******************************************************************************/
 
-#define               _NFO_INIT() { 0, 0 }
+#define               _EVT_INIT() { 0, 0 }
 
 /******************************************************************************
  *
- * Name              : OS_NFO
+ * Name              : OS_EVT
  *
- * Description       : define and initialize an notification object
+ * Description       : define and initialize an event object
  *
  * Parameters
- *   nfo             : name of a pointer to notification object
+ *   evt             : name of a pointer to event object
  *
  ******************************************************************************/
 
-#define             OS_NFO( nfo )                     \
-                       nfo_t nfo##__nfo = _NFO_INIT(); \
-                       nfo_id nfo = & nfo##__nfo
+#define             OS_EVT( evt )                     \
+                       evt_t evt##__evt = _EVT_INIT(); \
+                       evt_id evt = & evt##__evt
 
 /******************************************************************************
  *
- * Name              : static_NFO
+ * Name              : static_EVT
  *
- * Description       : define and initialize a static notification object
+ * Description       : define and initialize a static event object
  *
  * Parameters
- *   nfo             : name of a pointer to notification object
+ *   evt             : name of a pointer to event object
  *
  ******************************************************************************/
 
-#define         static_NFO( nfo )                     \
-                static nfo_t nfo##__nfo = _NFO_INIT(); \
-                static nfo_id nfo = & nfo##__nfo
+#define         static_EVT( evt )                     \
+                static evt_t evt##__evt = _EVT_INIT(); \
+                static evt_id evt = & evt##__evt
 
 /******************************************************************************
  *
- * Name              : NFO_INIT
+ * Name              : EVT_INIT
  *
- * Description       : create and initialize an notification object
+ * Description       : create and initialize an event object
  *
  * Parameters        : none
  *
- * Return            : notification object
+ * Return            : event object
  *
  * Note              : use only in 'C' code
  *
  ******************************************************************************/
 
 #ifndef __cplusplus
-#define                NFO_INIT() \
-                      _NFO_INIT()
+#define                EVT_INIT() \
+                      _EVT_INIT()
 #endif
 
 /******************************************************************************
  *
- * Name              : NFO_CREATE
- * Alias             : NFO_NEW
+ * Name              : EVT_CREATE
+ * Alias             : EVT_NEW
  *
- * Description       : create and initialize an notification object
+ * Description       : create and initialize an event object
  *
  * Parameters        : none
  *
- * Return            : pointer to notification object
+ * Return            : pointer to event object
  *
  * Note              : use only in 'C' code
  *
  ******************************************************************************/
 
 #ifndef __cplusplus
-#define                NFO_CREATE() \
-           (nfo_t[]) { NFO_INIT  () }
-#define                NFO_NEW \
-                       NFO_CREATE
+#define                EVT_CREATE() \
+           (evt_t[]) { EVT_INIT  () }
+#define                EVT_NEW \
+                       EVT_CREATE
 #endif
 
 /******************************************************************************
  *
- * Name              : nfo_init
+ * Name              : evt_init
  *
- * Description       : initialize an notification object
+ * Description       : initialize an event object
  *
  * Parameters
- *   nfo             : pointer to notification object
+ *   evt             : pointer to event object
  *
  * Return            : none
  *
  ******************************************************************************/
 
-void nfo_init( nfo_t *nfo );
+void evt_init( evt_t *evt );
 
 /******************************************************************************
  *
- * Name              : nfo_wait
+ * Name              : evt_wait
  *
- * Description       : wait indefinitely until the notification object has been released
+ * Description       : wait indefinitely until the event object has been released
  *
  * Parameters
- *   nfo             : pointer to notification object
+ *   evt             : pointer to event object
  *
  * Return
- *   'another'       : notification object was successfully released
+ *   'another'       : event object was successfully released
  *
  ******************************************************************************/
 
-unsigned nfo_wait( nfo_t *nfo );
+unsigned evt_wait( evt_t *evt );
 
 /******************************************************************************
  *
- * Name              : nfo_give
+ * Name              : evt_give
  *
- * Description       : resume all tasks that are waiting on the notification object
+ * Description       : resume all tasks that are waiting on the event object
  *
  * Parameters
- *   nfo             : pointer to notification object
+ *   evt             : pointer to event object
  *   event           : all waiting tasks are resumed with the 'event' value
  *
  * Return            : none
  *
  ******************************************************************************/
 
-void nfo_give( nfo_t *nfo, unsigned event );
+void evt_give( evt_t *evt, unsigned event );
 
 #ifdef __cplusplus
 }
@@ -197,25 +197,25 @@ void nfo_give( nfo_t *nfo, unsigned event );
 
 /******************************************************************************
  *
- * Class             : Notification
+ * Class             : Event
  *
- * Description       : create and initialize an notification object
+ * Description       : create and initialize an event object
  *
  * Constructor parameters
  *                   : none
  *
  ******************************************************************************/
 
-struct Notification : public __nfo
+struct Event : public __evt
 {
-	Notification( void ): __nfo _NFO_INIT() {}
+	Event( void ): __evt _EVT_INIT() {}
 
-	unsigned wait( void )            { return nfo_wait(this);         }
-	void     give( unsigned _event ) {        nfo_give(this, _event); }
+	unsigned wait( void )            { return evt_wait(this);         }
+	void     give( unsigned _event ) {        evt_give(this, _event); }
 };
 
 #endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */
 
-#endif//__INTROS_NFO_H
+#endif//__INTROS_EVT_H

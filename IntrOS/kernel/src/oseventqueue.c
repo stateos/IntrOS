@@ -2,7 +2,7 @@
 
     @file    IntrOS: oseventqueue.c
     @author  Rajmund Szymanski
-    @date    29.08.2018
+    @date    08.09.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -33,72 +33,72 @@
 #include "inc/oscriticalsection.h"
 
 /* -------------------------------------------------------------------------- */
-void evt_init( evt_t *evt, unsigned *data, unsigned bufsize )
+void evq_init( evq_t *evq, unsigned *data, unsigned bufsize )
 /* -------------------------------------------------------------------------- */
 {
-	assert(evt);
+	assert(evq);
 	assert(data);
 	assert(bufsize);
 
 	sys_lock();
 	{
-		memset(evt, 0, sizeof(evt_t));
+		memset(evq, 0, sizeof(evq_t));
 
-		evt->limit = bufsize / sizeof(unsigned);
-		evt->data  = data;
+		evq->limit = bufsize / sizeof(unsigned);
+		evq->data  = data;
 	}
 	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
 static
-void priv_evt_get( evt_t *evt, unsigned *data )
+void priv_evq_get( evq_t *evq, unsigned *data )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned i = evt->head;
+	unsigned i = evq->head;
 
-	*data = evt->data[i++];
+	*data = evq->data[i++];
 
-	evt->head = (i < evt->limit) ? i : 0;
-	evt->count--;
+	evq->head = (i < evq->limit) ? i : 0;
+	evq->count--;
 }
 
 /* -------------------------------------------------------------------------- */
 static
-void priv_evt_put( evt_t *evt, const unsigned data )
+void priv_evq_put( evq_t *evq, const unsigned data )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned i = evt->tail;
+	unsigned i = evq->tail;
 
-	evt->data[i++] = data;
+	evq->data[i++] = data;
 
-	evt->tail = (i < evt->limit) ? i : 0;
-	evt->count++;
+	evq->tail = (i < evq->limit) ? i : 0;
+	evq->count++;
 }
 
 /* -------------------------------------------------------------------------- */
 static
-void priv_evt_skip( evt_t *evt )
+void priv_evq_skip( evq_t *evq )
 /* -------------------------------------------------------------------------- */
 {
-	evt->count--;
-	evt->head++;
-	if (evt->head == evt->limit) evt->head = 0;
+	evq->count--;
+	evq->head++;
+	if (evq->head == evq->limit) evq->head = 0;
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned evt_take( evt_t *evt, unsigned *data )
+unsigned evq_take( evq_t *evq, unsigned *data )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned event;
 
-	assert(evt);
+	assert(evq);
 
 	sys_lock();
 	{
-		if (evt->count > 0)
+		if (evq->count > 0)
 		{
-			priv_evt_get(evt, data);
+			priv_evq_get(evq, data);
 			event = E_SUCCESS;
 		}
 		else
@@ -112,25 +112,25 @@ unsigned evt_take( evt_t *evt, unsigned *data )
 }
 
 /* -------------------------------------------------------------------------- */
-void evt_wait( evt_t *evt, unsigned *data )
+void evq_wait( evq_t *evq, unsigned *data )
 /* -------------------------------------------------------------------------- */
 {
-	while (evt_take(evt, data) != E_SUCCESS) core_ctx_switch();
+	while (evq_take(evq, data) != E_SUCCESS) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned evt_give( evt_t *evt, unsigned data )
+unsigned evq_give( evq_t *evq, unsigned data )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned event;
 
-	assert(evt);
+	assert(evq);
 
 	sys_lock();
 	{
-		if (evt->count < evt->limit)
+		if (evq->count < evq->limit)
 		{
-			priv_evt_put(evt, data);
+			priv_evq_put(evq, data);
 			event = E_SUCCESS;
 		}
 		else
@@ -144,23 +144,23 @@ unsigned evt_give( evt_t *evt, unsigned data )
 }
 
 /* -------------------------------------------------------------------------- */
-void evt_send( evt_t *evt, unsigned data )
+void evq_send( evq_t *evq, unsigned data )
 /* -------------------------------------------------------------------------- */
 {
-	while (evt_give(evt, data) != E_SUCCESS) core_ctx_switch();
+	while (evq_give(evq, data) != E_SUCCESS) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */
-void evt_push( evt_t *evt, unsigned data )
+void evq_push( evq_t *evq, unsigned data )
 /* -------------------------------------------------------------------------- */
 {
-	assert(evt);
+	assert(evq);
 
 	sys_lock();
 	{
-		if (evt->count == evt->limit)
-			priv_evt_skip(evt);
-		priv_evt_put(evt, data);
+		if (evq->count == evq->limit)
+			priv_evq_skip(evq);
+		priv_evq_put(evq, data);
 	}
 	sys_unlock();
 }
