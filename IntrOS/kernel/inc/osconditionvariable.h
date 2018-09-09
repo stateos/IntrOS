@@ -2,7 +2,7 @@
 
     @file    IntrOS: osconditionvariable.h
     @author  Rajmund Szymanski
-    @date    25.08.2018
+    @date    09.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -174,6 +174,7 @@ void cnd_wait( cnd_t *cnd, mtx_t *mtx );
 /******************************************************************************
  *
  * Name              : cnd_give
+ * Alias             : cnd_notifyAll
  *
  * Description       : signal one or all tasks that are waiting on the condition variable
  *
@@ -185,6 +186,9 @@ void cnd_wait( cnd_t *cnd, mtx_t *mtx );
  ******************************************************************************/
 
 void cnd_give( cnd_t *cnd );
+
+__STATIC_INLINE
+void cnd_notifyAll( cnd_t *cnd ) { cnd_give(cnd); }
 
 #ifdef __cplusplus
 }
@@ -209,9 +213,10 @@ struct ConditionVariable : public __cnd
 {
 	ConditionVariable( void ): __cnd _CND_INIT() {}
 
-	void wait( mtx_t *_mtx ) { cnd_wait(this, _mtx); }
-	void wait( mtx_t &_mtx ) { cnd_wait(this,&_mtx); }
-	void give( void )        { cnd_give(this);       }
+	void wait     ( mtx_t *_mtx ) { cnd_wait     (this, _mtx); }
+	void wait     ( mtx_t &_mtx ) { cnd_wait     (this,&_mtx); }
+	void give     ( void )        { cnd_give     (this);       }
+	void notifyAll( void )        { cnd_notifyAll(this);       }
 };
 
 #endif//__cplusplus
