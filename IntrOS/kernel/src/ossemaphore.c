@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossemaphore.c
     @author  Rajmund Szymanski
-    @date    29.08.2018
+    @date    09.09.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -112,6 +112,21 @@ void sem_send( sem_t *sem )
 /* -------------------------------------------------------------------------- */
 {
 	while (sem_give(sem) != E_SUCCESS) core_ctx_switch();
+}
+
+/* -------------------------------------------------------------------------- */
+unsigned sem_getValue( sem_t *sem )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned val;
+
+	sys_lock();
+	{
+		val = sem->count;
+	}
+	sys_unlock();
+
+	return val;
 }
 
 /* -------------------------------------------------------------------------- */

@@ -277,6 +277,21 @@ unsigned sem_give( sem_t *sem );
 __STATIC_INLINE
 unsigned sem_post( sem_t *sem ) { return sem_give(sem); }
 
+/******************************************************************************
+ *
+ * Name              : sem_getValue
+ *
+ * Description       : return current value of semaphore
+ *
+ * Parameters
+ *   sem             : pointer to semaphore object
+ *
+ * Return            : current value of semaphore
+ *
+ ******************************************************************************/
+
+unsigned sem_getValue( sem_t *sem );
+
 #ifdef __cplusplus
 }
 #endif
@@ -304,12 +319,13 @@ struct Semaphore : public __sem
 {
 	Semaphore( const unsigned _init, const unsigned _limit = semCounting ): __sem _SEM_INIT(_init, _limit) {}
 
-	void     wait   ( void ) {        sem_wait   (this); }
-	unsigned take   ( void ) { return sem_take   (this); }
-	unsigned tryWait( void ) { return sem_tryWait(this); }
-	void     send   ( void ) {        sem_send   (this); }
-	unsigned give   ( void ) { return sem_give   (this); }
-	unsigned post   ( void ) { return sem_post   (this); }
+	void     wait    ( void ) {        sem_wait    (this); }
+	unsigned take    ( void ) { return sem_take    (this); }
+	unsigned tryWait ( void ) { return sem_tryWait (this); }
+	void     send    ( void ) {        sem_send    (this); }
+	unsigned give    ( void ) { return sem_give    (this); }
+	unsigned post    ( void ) { return sem_post    (this); }
+	unsigned getValue( void ) { return sem_getValue(this); }
 };
 
 /******************************************************************************
