@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.h
     @author  Rajmund Szymanski
-    @date    01.09.2018
+    @date    09.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -463,6 +463,7 @@ void tmr_wait( tmr_t *tmr );
 /******************************************************************************
  *
  * Name              : tmr_take
+ * Alias             : tmr_tryWait
  *
  * Description       : check if the timer finishes countdown
  *
@@ -476,6 +477,9 @@ void tmr_wait( tmr_t *tmr );
  ******************************************************************************/
 
 unsigned tmr_take( tmr_t *tmr );
+
+__STATIC_INLINE
+unsigned tmr_tryWait( tmr_t *tmr ) { return tmr_take(tmr); }
 
 /******************************************************************************
  *
@@ -550,6 +554,7 @@ struct staticTimer : public __tmr
 
 	void     wait     ( void )                                       { return tmr_wait         (this);                          }
 	unsigned take     ( void )                                       { return tmr_take         (this);                          }
+	unsigned tryWait  ( void )                                       { return tmr_tryWait      (this);                          }
 
 	bool     operator!( void )                                       { return __tmr::hdr.id == ID_STOPPED;                      }
 };

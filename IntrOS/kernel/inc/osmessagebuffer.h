@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.h
     @author  Rajmund Szymanski
-    @date    27.08.2018
+    @date    09.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -224,6 +224,7 @@ unsigned msg_wait( msg_t *msg, void *data, unsigned size );
 /******************************************************************************
  *
  * Name              : msg_take
+ * Alias             : msg_tryWait
  *
  * Description       : try to transfer data from the message buffer object,
  *                     don't wait if the message buffer object is empty
@@ -238,6 +239,9 @@ unsigned msg_wait( msg_t *msg, void *data, unsigned size );
  ******************************************************************************/
 
 unsigned msg_take( msg_t *msg, void *data, unsigned size );
+
+__STATIC_INLINE
+unsigned msg_tryWait( msg_t *msg, void *data, unsigned size ) { return msg_take(msg, data, size); }
 
 /******************************************************************************
  *
@@ -362,14 +366,15 @@ struct MessageBufferT : public __msg
 {
 	MessageBufferT( void ): __msg _MSG_INIT(limit_, data_) {}
 
-	unsigned wait (       void *_data, unsigned _size ) { return msg_wait (this, _data, _size); }
-	unsigned take (       void *_data, unsigned _size ) { return msg_take (this, _data, _size); }
-	unsigned send ( const void *_data, unsigned _size ) { return msg_send (this, _data, _size); }
-	unsigned give ( const void *_data, unsigned _size ) { return msg_give (this, _data, _size); }
-	unsigned push ( const void *_data, unsigned _size ) { return msg_push (this, _data, _size); }
-	unsigned count( void )                              { return msg_count(this);               }
-	unsigned space( void )                              { return msg_space(this);               }
-	unsigned limit( void )                              { return msg_limit(this);               }
+	unsigned wait   (       void *_data, unsigned _size ) { return msg_wait   (this, _data, _size); }
+	unsigned take   (       void *_data, unsigned _size ) { return msg_take   (this, _data, _size); }
+	unsigned tryWait(       void *_data, unsigned _size ) { return msg_tryWait(this, _data, _size); }
+	unsigned send   ( const void *_data, unsigned _size ) { return msg_send   (this, _data, _size); }
+	unsigned give   ( const void *_data, unsigned _size ) { return msg_give   (this, _data, _size); }
+	unsigned push   ( const void *_data, unsigned _size ) { return msg_push   (this, _data, _size); }
+	unsigned count  ( void )                              { return msg_count  (this);               }
+	unsigned space  ( void )                              { return msg_space  (this);               }
+	unsigned limit  ( void )                              { return msg_limit  (this);               }
 
 	private:
 	char data_[limit_];
@@ -392,11 +397,12 @@ struct MessageBufferTT : public MessageBufferT<limit_*(sizeof(unsigned)+sizeof(T
 {
 	MessageBufferTT( void ): MessageBufferT<limit_*(sizeof(unsigned)+sizeof(T))>() {}
 
-	unsigned wait (       T *_data ) { return msg_wait (this, _data, sizeof(T)); }
-	unsigned take (       T *_data ) { return msg_take (this, _data, sizeof(T)); }
-	unsigned send ( const T *_data ) { return msg_send (this, _data, sizeof(T)); }
-	unsigned give ( const T *_data ) { return msg_give (this, _data, sizeof(T)); }
-	unsigned push ( const T *_data ) { return msg_push (this, _data, sizeof(T)); }
+	unsigned wait   (       T *_data ) { return msg_wait   (this, _data, sizeof(T)); }
+	unsigned take   (       T *_data ) { return msg_take   (this, _data, sizeof(T)); }
+	unsigned tryWait(       T *_data ) { return msg_tryWait(this, _data, sizeof(T)); }
+	unsigned send   ( const T *_data ) { return msg_send   (this, _data, sizeof(T)); }
+	unsigned give   ( const T *_data ) { return msg_give   (this, _data, sizeof(T)); }
+	unsigned push   ( const T *_data ) { return msg_push   (this, _data, sizeof(T)); }
 };
 
 #endif//__cplusplus

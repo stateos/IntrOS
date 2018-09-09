@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossignal.h
     @author  Rajmund Szymanski
-    @date    27.08.2018
+    @date    09.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -207,6 +207,7 @@ void sig_wait( sig_t *sig );
 /******************************************************************************
  *
  * Name              : sig_take
+ * Alias             : sig_tryWait
  *
  * Description       : check if the signal object has been released
  *
@@ -221,9 +222,13 @@ void sig_wait( sig_t *sig );
 
 unsigned sig_take( sig_t *sig );
 
+__STATIC_INLINE
+unsigned sig_tryWait( sig_t *sig ) { return sig_take(sig); }
+
 /******************************************************************************
  *
  * Name              : sig_give
+ * Alias             : sig_set
  *
  * Description       : release the signal object
  *                     resume one (sigClear) or all (sigProtect) tasks that are waiting on the signal object
@@ -236,6 +241,9 @@ unsigned sig_take( sig_t *sig );
  ******************************************************************************/
 
 void sig_give( sig_t *sig );
+
+__STATIC_INLINE
+void sig_set( sig_t *sig ) { sig_give(sig); }
 
 /******************************************************************************
  *
@@ -277,10 +285,12 @@ struct Signal : public __sig
 {
 	Signal( const bool _type = sigClear ): __sig _SIG_INIT(_type) {}
 
-	void     wait ( void ) {        sig_wait (this); }
-	unsigned take ( void ) { return sig_take (this); }
-	void     give ( void ) {        sig_give (this); }
-	void     clear( void ) {        sig_clear(this); }
+	void     wait   ( void ) {        sig_wait   (this); }
+	unsigned take   ( void ) { return sig_take   (this); }
+	unsigned tryWait( void ) { return sig_tryWait(this); }
+	void     give   ( void ) {        sig_give   (this); }
+	void     set    ( void ) {        sig_set    (this); }
+	void     clear  ( void ) {        sig_clear  (this); }
 };
 
 #endif//__cplusplus

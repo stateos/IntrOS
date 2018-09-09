@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossemaphore.h
     @author  Rajmund Szymanski
-    @date    27.08.2018
+    @date    09.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -220,6 +220,7 @@ void sem_wait( sem_t *sem );
 /******************************************************************************
  *
  * Name              : sem_take
+ * Alias             : sem_tryWait
  *
  * Description       : try to lock the semaphore object,
  *                     don't wait if the semaphore object can't be locked immediately
@@ -234,6 +235,9 @@ void sem_wait( sem_t *sem );
  ******************************************************************************/
 
 unsigned sem_take( sem_t *sem );
+
+__STATIC_INLINE
+unsigned sem_tryWait( sem_t *sem ) { return sem_take(sem); }
 
 /******************************************************************************
  *
@@ -254,6 +258,7 @@ void sem_send( sem_t *sem );
 /******************************************************************************
  *
  * Name              : sem_give
+ * Alias             : sem_post
  *
  * Description       : try to unlock the semaphore object,
  *                     don't wait if the semaphore object can't be unlocked immediately
@@ -268,6 +273,9 @@ void sem_send( sem_t *sem );
  ******************************************************************************/
 
 unsigned sem_give( sem_t *sem );
+
+__STATIC_INLINE
+unsigned sem_post( sem_t *sem ) { return sem_give(sem); }
 
 #ifdef __cplusplus
 }
@@ -296,10 +304,12 @@ struct Semaphore : public __sem
 {
 	Semaphore( const unsigned _init, const unsigned _limit = semCounting ): __sem _SEM_INIT(_init, _limit) {}
 
-	void     wait( void ) {        sem_wait(this); }
-	unsigned take( void ) { return sem_take(this); }
-	void     send( void ) {        sem_send(this); }
-	unsigned give( void ) { return sem_give(this); }
+	void     wait   ( void ) {        sem_wait   (this); }
+	unsigned take   ( void ) { return sem_take   (this); }
+	unsigned tryWait( void ) { return sem_tryWait(this); }
+	void     send   ( void ) {        sem_send   (this); }
+	unsigned give   ( void ) { return sem_give   (this); }
+	unsigned post   ( void ) { return sem_post   (this); }
 };
 
 /******************************************************************************

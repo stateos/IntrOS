@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmailboxqueue.h
     @author  Rajmund Szymanski
-    @date    27.08.2018
+    @date    09.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -216,6 +216,7 @@ void box_wait( box_t *box, void *data );
 /******************************************************************************
  *
  * Name              : box_take
+ * Alias             : box_tryWait
  *
  * Description       : try to transfer mailbox data from the mailbox queue object,
  *                     don't wait if the mailbox queue object is empty
@@ -231,6 +232,9 @@ void box_wait( box_t *box, void *data );
  ******************************************************************************/
 
 unsigned box_take( box_t *box, void *data );
+
+__STATIC_INLINE
+unsigned box_tryWait( box_t *box, void *data ) { return box_take(box, data); }
 
 /******************************************************************************
  *
@@ -340,13 +344,14 @@ struct MailBoxQueueT : public __box
 {
 	MailBoxQueueT( void ): __box _BOX_INIT(limit_, data_, size_) {}
 
-	void     wait(       void *_data ) {        box_wait (this, _data); }
-	unsigned take(       void *_data ) { return box_take (this, _data); }
-	void     send( const void *_data ) {        box_send (this, _data); }
-	unsigned give( const void *_data ) { return box_give (this, _data); }
-	void     push( const void *_data ) {        box_push (this, _data); }
-	unsigned count( void )             { return box_count(this);        }
-	unsigned space( void )             { return box_space(this);        }
+	void     wait   (       void *_data ) {        box_wait   (this, _data); }
+	unsigned take   (       void *_data ) { return box_take   (this, _data); }
+	unsigned tryWait(       void *_data ) { return box_tryWait(this, _data); }
+	void     send   ( const void *_data ) {        box_send   (this, _data); }
+	unsigned give   ( const void *_data ) { return box_give   (this, _data); }
+	void     push   ( const void *_data ) {        box_push   (this, _data); }
+	unsigned count  ( void )              { return box_count  (this);        }
+	unsigned space  ( void )              { return box_space  (this);        }
 
 	private:
 	char data_[limit_ * size_];

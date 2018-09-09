@@ -2,7 +2,7 @@
 
     @file    IntrOS: oseventqueue.h
     @author  Rajmund Szymanski
-    @date    08.09.2018
+    @date    09.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -207,6 +207,7 @@ void evq_wait( evq_t *evq, unsigned *data );
 /******************************************************************************
  *
  * Name              : evq_take
+ * Alias             : evq_tryWait
  *
  * Description       : try to transfer event data from the event queue object,
  *                     don't wait if the event queue object is empty
@@ -222,6 +223,9 @@ void evq_wait( evq_t *evq, unsigned *data );
  ******************************************************************************/
 
 unsigned evq_take( evq_t *evq, unsigned *data );
+
+__STATIC_INLINE
+unsigned evq_tryWait( evq_t *evq, unsigned *data ) { return evq_take(evq, data); }
 
 /******************************************************************************
  *
@@ -300,11 +304,12 @@ struct EventQueueT : public __evq
 {
 	EventQueueT( void ): __evq _EVQ_INIT(limit_, data_) {}
 
-	void     wait( unsigned *_data ) {        evq_wait(this, _data); }
-	unsigned take( unsigned *_data ) { return evq_take(this, _data); }
-	void     send( unsigned  _data ) {        evq_send(this, _data); }
-	unsigned give( unsigned  _data ) { return evq_give(this, _data); }
-	void     push( unsigned  _data ) {        evq_push(this, _data); }
+	void     wait   ( unsigned *_data ) {        evq_wait   (this, _data); }
+	unsigned take   ( unsigned *_data ) { return evq_take   (this, _data); }
+	unsigned tryWait( unsigned *_data ) { return evq_tryWait(this, _data); }
+	void     send   ( unsigned  _data ) {        evq_send   (this, _data); }
+	unsigned give   ( unsigned  _data ) { return evq_give   (this, _data); }
+	void     push   ( unsigned  _data ) {        evq_push   (this, _data); }
 
 	private:
 	unsigned data_[limit_];
