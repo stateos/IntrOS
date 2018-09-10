@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmutex.h
     @author  Rajmund Szymanski
-    @date    09.09.2018
+    @date    10.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -48,7 +48,7 @@ typedef struct __mtx mtx_t, * const mtx_id;
 
 struct __mtx
 {
-	tsk_t  * owner; // owner task
+	tsk_t  * owner; // mutex owner
 };
 
 /******************************************************************************
