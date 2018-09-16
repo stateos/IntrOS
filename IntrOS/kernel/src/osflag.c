@@ -2,7 +2,7 @@
 
     @file    IntrOS: osflag.c
     @author  Rajmund Szymanski
-    @date    29.08.2018
+    @date    16.09.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -81,36 +81,35 @@ void flg_wait( flg_t *flg, unsigned flags, bool all )
 unsigned flg_give( flg_t *flg, unsigned flags )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned state;
-
 	assert(flg);
 
 	sys_lock();
 	{
-		state = flg->flags;
 		flg->flags |= flags;
+		flags = flg->flags;
 	}
 	sys_unlock();
 
-	return state;
+	return flags;
 }
 
 /* -------------------------------------------------------------------------- */
 unsigned flg_clear( flg_t *flg, unsigned flags )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned state;
+	unsigned temp;
 
 	assert(flg);
 
 	sys_lock();
 	{
-		state = flg->flags;
+		temp = flg->flags;
 		flg->flags &= ~flags;
+		flags = temp;
 	}
 	sys_unlock();
 
-	return state;
+	return flags;
 }
 
 /* -------------------------------------------------------------------------- */

@@ -2,7 +2,7 @@
 
     @file    IntrOS: osflag.h
     @author  Rajmund Szymanski
-    @date    09.09.2018
+    @date    16.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -230,7 +230,7 @@ unsigned flg_tryWait( flg_t *flg, unsigned flags, bool all ) { return flg_take(f
  *   flg             : pointer to flag object
  *   flags           : all flags to set
  *
- * Return            : flags in flag object before setting
+ * Return            : flags in flag object after setting
  *
  ******************************************************************************/
 

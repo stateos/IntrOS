@@ -37,6 +37,7 @@ Features:
 - back to the event (evt) and event queue (evq)
 - added a few function aliases
 - added once flag object
+- updated flag object
 ---------
 4.2
 - updated priv_rdy_insert internal procedure
