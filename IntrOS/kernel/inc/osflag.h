@@ -223,6 +223,7 @@ unsigned flg_tryWait( flg_t *flg, unsigned flags, bool all ) { return flg_take(f
 /******************************************************************************
  *
  * Name              : flg_give
+ * Alias             : flg_set
  *
  * Description       : set given flags in flag object
  *
@@ -235,6 +236,9 @@ unsigned flg_tryWait( flg_t *flg, unsigned flags, bool all ) { return flg_take(f
  ******************************************************************************/
 
 unsigned flg_give( flg_t *flg, unsigned flags );
+
+__STATIC_INLINE
+unsigned flg_set( flg_t *flg, unsigned flags ) { return flg_give(flg, flags); }
 
 /******************************************************************************
  *
@@ -251,6 +255,21 @@ unsigned flg_give( flg_t *flg, unsigned flags );
  ******************************************************************************/
 
 unsigned flg_clear( flg_t *flg, unsigned flags );
+
+/******************************************************************************
+ *
+ * Name              : flg_get
+ *
+ * Description       : get current flags from flag object
+ *
+ * Parameters
+ *   flg             : pointer to flag object
+ *
+ * Return            : current flags in flag object
+ *
+ ******************************************************************************/
+
+unsigned flg_get( flg_t *flg );
 
 #ifdef __cplusplus
 }
@@ -279,7 +298,9 @@ struct Flag : public __flg
 	unsigned take   ( unsigned _flags, bool _all = true ) { return flg_take   (this, _flags, _all); }
 	unsigned tryWait( unsigned _flags, bool _all = true ) { return flg_tryWait(this, _flags, _all); }
 	unsigned give   ( unsigned _flags )                   { return flg_give   (this, _flags);       }
+	unsigned set    ( unsigned _flags )                   { return flg_set    (this, _flags);       }
 	unsigned clear  ( unsigned _flags )                   { return flg_clear  (this, _flags);       }
+	unsigned get    ( void )                              { return flg_get    (this);               }
 };
 
 #endif//__cplusplus
