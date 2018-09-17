@@ -175,8 +175,6 @@ static
 void priv_msg_putUpdate( msg_t *msg, const char *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	assert(size <= priv_msg_space(msg));
-
 	priv_msg_putSize(msg, size);
 	priv_msg_put(msg, data, size);
 }

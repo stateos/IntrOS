@@ -133,8 +133,6 @@ static
 void priv_stm_putUpdate( stm_t *stm, const char *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	assert(size <= priv_stm_space(stm));
-
 	priv_stm_put(stm, data, size);
 }
 
