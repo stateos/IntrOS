@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmailboxqueue.c
     @author  Rajmund Szymanski
-    @date    29.08.2018
+    @date    17.09.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -70,6 +70,14 @@ unsigned priv_box_space( box_t *box )
 
 /* -------------------------------------------------------------------------- */
 static
+unsigned priv_box_limit( box_t *box )
+/* -------------------------------------------------------------------------- */
+{
+	return box->limit / box->size;
+}
+
+/* -------------------------------------------------------------------------- */
+static
 void priv_box_get( box_t *box, char *data )
 /* -------------------------------------------------------------------------- */
 {
@@ -113,6 +121,8 @@ unsigned box_take( box_t *box, void *data )
 	unsigned event;
 
 	assert(box);
+	assert(box->data);
+	assert(box->limit);
 	assert(data);
 
 	sys_lock();
@@ -146,6 +156,8 @@ unsigned box_give( box_t *box, const void *data )
 	unsigned event;
 
 	assert(box);
+	assert(box->data);
+	assert(box->limit);
 	assert(data);
 
 	sys_lock();
@@ -177,6 +189,8 @@ void box_push( box_t *box, const void *data )
 /* -------------------------------------------------------------------------- */
 {
 	assert(box);
+	assert(box->data);
+	assert(box->limit);
 	assert(data);
 
 	sys_lock();
@@ -216,6 +230,23 @@ unsigned box_space( box_t *box )
 	sys_lock();
 	{
 		cnt = priv_box_space(box);
+	}
+	sys_unlock();
+
+	return cnt;
+}
+
+/* -------------------------------------------------------------------------- */
+unsigned box_limit( box_t *box )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned cnt;
+
+	assert(box);
+
+	sys_lock();
+	{
+		cnt = priv_box_limit(box);
 	}
 	sys_unlock();
 

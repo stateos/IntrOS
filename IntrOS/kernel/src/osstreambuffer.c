@@ -2,7 +2,7 @@
 
     @file    IntrOS: osstreambuffer.c
     @author  Rajmund Szymanski
-    @date    27.08.2018
+    @date    17.09.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -145,6 +145,8 @@ unsigned stm_take( stm_t *stm, void *data, unsigned size )
 	unsigned len = 0;
 
 	assert(stm);
+	assert(stm->data);
+	assert(stm->limit);
 	assert(data);
 
 	sys_lock();
@@ -168,6 +170,8 @@ unsigned stm_wait( stm_t *stm, void *data, unsigned size )
 	unsigned len = 0;
 
 	assert(stm);
+	assert(stm->data);
+	assert(stm->limit);
 	assert(data);
 
 	sys_lock();
@@ -188,6 +192,8 @@ unsigned stm_give( stm_t *stm, const void *data, unsigned size )
 	unsigned len = 0;
 
 	assert(stm);
+	assert(stm->data);
+	assert(stm->limit);
 	assert(data);
 
 	sys_lock();
@@ -211,6 +217,8 @@ unsigned stm_send( stm_t *stm, const void *data, unsigned size )
 	unsigned len = 0;
 
 	assert(stm);
+	assert(stm->data);
+	assert(stm->limit);
 	assert(data);
 
 	sys_lock();
@@ -231,6 +239,8 @@ unsigned stm_push( stm_t *stm, const void *data, unsigned size )
 	unsigned len = 0;
 
 	assert(stm);
+	assert(stm->data);
+	assert(stm->limit);
 	assert(data);
 
 	sys_lock();

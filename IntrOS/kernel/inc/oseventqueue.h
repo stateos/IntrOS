@@ -2,7 +2,7 @@
 
     @file    IntrOS: oseventqueue.h
     @author  Rajmund Szymanski
-    @date    09.09.2018
+    @date    17.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -310,6 +310,9 @@ struct EventQueueT : public __evq
 	void     send   ( unsigned  _data ) {        evq_send   (this, _data); }
 	unsigned give   ( unsigned  _data ) { return evq_give   (this, _data); }
 	void     push   ( unsigned  _data ) {        evq_push   (this, _data); }
+	unsigned count  ( void )            { return evq_count  (this);        }
+	unsigned space  ( void )            { return evq_space  (this);        }
+	unsigned limit  ( void )            { return evq_limit  (this);        }
 
 	private:
 	unsigned data_[limit_];

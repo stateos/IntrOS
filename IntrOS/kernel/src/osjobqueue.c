@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.c
     @author  Rajmund Szymanski
-    @date    29.08.2018
+    @date    17.09.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -52,6 +52,30 @@ void job_init( job_t *job, fun_t **data, unsigned bufsize )
 
 /* -------------------------------------------------------------------------- */
 static
+unsigned priv_job_count( job_t *job )
+/* -------------------------------------------------------------------------- */
+{
+	return job->count;
+}
+
+/* -------------------------------------------------------------------------- */
+static
+unsigned priv_job_space( job_t *job )
+/* -------------------------------------------------------------------------- */
+{
+	return job->limit - job->count;
+}
+
+/* -------------------------------------------------------------------------- */
+static
+unsigned priv_job_limit( job_t *job )
+/* -------------------------------------------------------------------------- */
+{
+	return job->limit;
+}
+
+/* -------------------------------------------------------------------------- */
+static
 fun_t *priv_job_get( job_t *job )
 /* -------------------------------------------------------------------------- */
 {
@@ -96,6 +120,8 @@ unsigned job_take( job_t *job )
 	unsigned event;
 
 	assert(job);
+	assert(job->data);
+	assert(job->limit);
 
 	sys_lock();
 	{
@@ -132,6 +158,8 @@ unsigned job_give( job_t *job, fun_t *fun )
 	unsigned event;
 
 	assert(job);
+	assert(job->data);
+	assert(job->limit);
 	assert(fun);
 
 	sys_lock();
@@ -163,6 +191,8 @@ void job_push( job_t *job, fun_t *fun )
 /* -------------------------------------------------------------------------- */
 {
 	assert(job);
+	assert(job->data);
+	assert(job->limit);
 	assert(fun);
 
 	sys_lock();
@@ -172,6 +202,57 @@ void job_push( job_t *job, fun_t *fun )
 		priv_job_put(job, fun);
 	}
 	sys_unlock();
+}
+
+/* -------------------------------------------------------------------------- */
+unsigned job_count( job_t *job )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned cnt;
+
+	assert(job);
+
+	sys_lock();
+	{
+		cnt = priv_job_count(job);
+	}
+	sys_unlock();
+
+	return cnt;
+}
+
+/* -------------------------------------------------------------------------- */
+unsigned job_space( job_t *job )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned cnt;
+
+	assert(job);
+
+	sys_lock();
+	{
+		cnt = priv_job_space(job);
+	}
+	sys_unlock();
+
+	return cnt;
+}
+
+/* -------------------------------------------------------------------------- */
+unsigned job_limit( job_t *job )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned cnt;
+
+	assert(job);
+
+	sys_lock();
+	{
+		cnt = priv_job_limit(job);
+	}
+	sys_unlock();
+
+	return cnt;
 }
 
 /* -------------------------------------------------------------------------- */

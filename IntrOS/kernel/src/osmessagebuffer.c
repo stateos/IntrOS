@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.c
     @author  Rajmund Szymanski
-    @date    27.08.2018
+    @date    17.09.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -188,6 +188,8 @@ unsigned msg_take( msg_t *msg, void *data, unsigned size )
 	unsigned len = 0;
 
 	assert(msg);
+	assert(msg->data);
+	assert(msg->limit);
 	assert(data);
 
 	sys_lock();
@@ -210,6 +212,8 @@ unsigned msg_wait( msg_t *msg, void *data, unsigned size )
 	unsigned len = 0;
 
 	assert(msg);
+	assert(msg->data);
+	assert(msg->limit);
 	assert(data);
 
 	sys_lock();
@@ -230,6 +234,8 @@ unsigned msg_give( msg_t *msg, const void *data, unsigned size )
 	unsigned len = 0;
 
 	assert(msg);
+	assert(msg->data);
+	assert(msg->limit);
 	assert(data);
 
 	sys_lock();
@@ -253,6 +259,8 @@ unsigned msg_send( msg_t *msg, const void *data, unsigned size )
 	unsigned len = 0;
 
 	assert(msg);
+	assert(msg->data);
+	assert(msg->limit);
 	assert(data);
 
 	sys_lock();
@@ -273,6 +281,8 @@ unsigned msg_push( msg_t *msg, const void *data, unsigned size )
 	unsigned len = 0;
 
 	assert(msg);
+	assert(msg->data);
+	assert(msg->limit);
 	assert(data);
 
 	sys_lock();

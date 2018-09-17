@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmailboxqueue.h
     @author  Rajmund Szymanski
-    @date    09.09.2018
+    @date    17.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -352,6 +352,7 @@ struct MailBoxQueueT : public __box
 	void     push   ( const void *_data ) {        box_push   (this, _data); }
 	unsigned count  ( void )              { return box_count  (this);        }
 	unsigned space  ( void )              { return box_space  (this);        }
+	unsigned limit  ( void )              { return box_limit  (this);        }
 
 	private:
 	char data_[limit_ * size_];

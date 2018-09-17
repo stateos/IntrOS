@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.h
     @author  Rajmund Szymanski
-    @date    09.09.2018
+    @date    17.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -312,6 +312,9 @@ struct staticJobQueueT : public __job
 	void     send   ( fun_t *_fun ) {        job_send   (this, _fun); }
 	unsigned give   ( fun_t *_fun ) { return job_give   (this, _fun); }
 	void     push   ( fun_t *_fun ) {        job_push   (this, _fun); }
+	unsigned count  ( void )        { return job_count  (this);       }
+	unsigned space  ( void )        { return job_space  (this);       }
+	unsigned limit  ( void )        { return job_limit  (this);       }
 
 	private:
 	fun_t *data_[limit_];
@@ -341,6 +344,9 @@ struct JobQueueT : public __box
 	void     send   ( FUN_t _fun ) {                              box_send   (this, &_fun);                                               }
 	unsigned give   ( FUN_t _fun ) {             unsigned event = box_give   (this, &_fun);                                 return event; }
 	void     push   ( FUN_t _fun ) {                              box_push   (this, &_fun);                                               }
+	unsigned count  ( void )       {             unsigned count = box_count  (this);                                        return count; }
+	unsigned space  ( void )       {             unsigned space = box_space  (this);                                        return space; }
+	unsigned limit  ( void )       {             unsigned limit = box_limit  (this);                                        return limit; }
 
 	private:
 	FUN_t data_[limit_];

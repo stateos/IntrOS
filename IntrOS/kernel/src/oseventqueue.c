@@ -2,7 +2,7 @@
 
     @file    IntrOS: oseventqueue.c
     @author  Rajmund Szymanski
-    @date    08.09.2018
+    @date    17.09.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -52,6 +52,30 @@ void evq_init( evq_t *evq, unsigned *data, unsigned bufsize )
 
 /* -------------------------------------------------------------------------- */
 static
+unsigned priv_evq_count( evq_t *evq )
+/* -------------------------------------------------------------------------- */
+{
+	return evq->count;
+}
+
+/* -------------------------------------------------------------------------- */
+static
+unsigned priv_evq_space( evq_t *evq )
+/* -------------------------------------------------------------------------- */
+{
+	return evq->limit - evq->count;
+}
+
+/* -------------------------------------------------------------------------- */
+static
+unsigned priv_evq_limit( evq_t *evq )
+/* -------------------------------------------------------------------------- */
+{
+	return evq->limit;
+}
+
+/* -------------------------------------------------------------------------- */
+static
 void priv_evq_get( evq_t *evq, unsigned *data )
 /* -------------------------------------------------------------------------- */
 {
@@ -93,6 +117,8 @@ unsigned evq_take( evq_t *evq, unsigned *data )
 	unsigned event;
 
 	assert(evq);
+	assert(evq->data);
+	assert(evq->limit);
 
 	sys_lock();
 	{
@@ -125,6 +151,8 @@ unsigned evq_give( evq_t *evq, unsigned data )
 	unsigned event;
 
 	assert(evq);
+	assert(evq->data);
+	assert(evq->limit);
 
 	sys_lock();
 	{
@@ -155,6 +183,8 @@ void evq_push( evq_t *evq, unsigned data )
 /* -------------------------------------------------------------------------- */
 {
 	assert(evq);
+	assert(evq->data);
+	assert(evq->limit);
 
 	sys_lock();
 	{
@@ -163,6 +193,57 @@ void evq_push( evq_t *evq, unsigned data )
 		priv_evq_put(evq, data);
 	}
 	sys_unlock();
+}
+
+/* -------------------------------------------------------------------------- */
+unsigned evq_count( evq_t *evq )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned cnt;
+
+	assert(evq);
+
+	sys_lock();
+	{
+		cnt = priv_evq_count(evq);
+	}
+	sys_unlock();
+
+	return cnt;
+}
+
+/* -------------------------------------------------------------------------- */
+unsigned evq_space( evq_t *evq )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned cnt;
+
+	assert(evq);
+
+	sys_lock();
+	{
+		cnt = priv_evq_space(evq);
+	}
+	sys_unlock();
+
+	return cnt;
+}
+
+/* -------------------------------------------------------------------------- */
+unsigned evq_limit( evq_t *evq )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned cnt;
+
+	assert(evq);
+
+	sys_lock();
+	{
+		cnt = priv_evq_limit(evq);
+	}
+	sys_unlock();
+
+	return cnt;
 }
 
 /* -------------------------------------------------------------------------- */
