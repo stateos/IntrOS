@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossignal.h
     @author  Rajmund Szymanski
-    @date    09.09.2018
+    @date    18.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -191,21 +191,6 @@ void sig_init( sig_t *sig, bool type );
 
 /******************************************************************************
  *
- * Name              : sig_wait
- *
- * Description       : wait indefinitely until the signal object has been released
- *
- * Parameters
- *   sig             : pointer to signal object
- *
- * Return            : none
- *
- ******************************************************************************/
-
-void sig_wait( sig_t *sig );
-
-/******************************************************************************
- *
  * Name              : sig_take
  * Alias             : sig_tryWait
  *
@@ -224,6 +209,21 @@ unsigned sig_take( sig_t *sig );
 
 __STATIC_INLINE
 unsigned sig_tryWait( sig_t *sig ) { return sig_take(sig); }
+
+/******************************************************************************
+ *
+ * Name              : sig_wait
+ *
+ * Description       : wait indefinitely until the signal object has been released
+ *
+ * Parameters
+ *   sig             : pointer to signal object
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
+
+void sig_wait( sig_t *sig );
 
 /******************************************************************************
  *
@@ -285,9 +285,9 @@ struct Signal : public __sig
 {
 	Signal( const bool _type = sigClear ): __sig _SIG_INIT(_type) {}
 
-	void     wait   ( void ) {        sig_wait   (this); }
 	unsigned take   ( void ) { return sig_take   (this); }
 	unsigned tryWait( void ) { return sig_tryWait(this); }
+	void     wait   ( void ) {        sig_wait   (this); }
 	void     give   ( void ) {        sig_give   (this); }
 	void     set    ( void ) {        sig_set    (this); }
 	void     clear  ( void ) {        sig_clear  (this); }

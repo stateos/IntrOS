@@ -2,7 +2,7 @@
 
     @file    IntrOS: oslist.h
     @author  Rajmund Szymanski
-    @date    09.09.2018
+    @date    18.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -184,23 +184,6 @@ void lst_init( lst_t *lst );
 
 /******************************************************************************
  *
- * Name              : lst_wait
- *
- * Description       : try to get memory object from the list object,
- *                     wait indefinitely while the list object is empty
- *
- * Parameters
- *   lst             : pointer to list object
- *   data            : pointer to store the pointer to the memory object
- *
- * Return            : none
- *
- ******************************************************************************/
-
-void lst_wait( lst_t *lst, void **data );
-
-/******************************************************************************
- *
  * Name              : lst_take
  * Alias             : lst_tryWait
  *
@@ -221,6 +204,23 @@ unsigned lst_take( lst_t *lst, void **data );
 
 __STATIC_INLINE
 unsigned lst_tryWait( lst_t *lst, void **data ) { return lst_take(lst, data); }
+
+/******************************************************************************
+ *
+ * Name              : lst_wait
+ *
+ * Description       : try to get memory object from the list object,
+ *                     wait indefinitely while the list object is empty
+ *
+ * Parameters
+ *   lst             : pointer to list object
+ *   data            : pointer to store the pointer to the memory object
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
+
+void lst_wait( lst_t *lst, void **data );
 
 /******************************************************************************
  *
@@ -262,9 +262,9 @@ struct ListTT : public __lst
 {
 	ListTT( void ): __lst _LST_INIT() {}
 
-	void     wait   (       T   **_data ) {        lst_wait   (this, reinterpret_cast<void **>(_data)); }
 	unsigned take   (       T   **_data ) { return lst_take   (this, reinterpret_cast<void **>(_data)); }
 	unsigned tryWait(       T   **_data ) { return lst_tryWait(this, reinterpret_cast<void **>(_data)); }
+	void     wait   (       T   **_data ) {        lst_wait   (this, reinterpret_cast<void **>(_data)); }
 	void     give   ( const void *_data ) {        lst_give   (this,                           _data);  }
 };
 

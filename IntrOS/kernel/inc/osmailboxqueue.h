@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmailboxqueue.h
     @author  Rajmund Szymanski
-    @date    17.09.2018
+    @date    18.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -198,23 +198,6 @@ void box_init( box_t *box, unsigned size, void *data, unsigned bufsize );
 
 /******************************************************************************
  *
- * Name              : box_wait
- *
- * Description       : try to transfer mailbox data from the mailbox queue object,
- *                     wait indefinitely while the mailbox queue object is empty
- *
- * Parameters
- *   box             : pointer to mailbox queue object
- *   data            : pointer to store mailbox data
- *
- * Return            : none
- *
- ******************************************************************************/
-
-void box_wait( box_t *box, void *data );
-
-/******************************************************************************
- *
  * Name              : box_take
  * Alias             : box_tryWait
  *
@@ -238,20 +221,20 @@ unsigned box_tryWait( box_t *box, void *data ) { return box_take(box, data); }
 
 /******************************************************************************
  *
- * Name              : box_send
+ * Name              : box_wait
  *
- * Description       : try to transfer mailbox data to the mailbox queue object,
- *                     wait indefinitely while the mailbox queue object is full
+ * Description       : try to transfer mailbox data from the mailbox queue object,
+ *                     wait indefinitely while the mailbox queue object is empty
  *
  * Parameters
  *   box             : pointer to mailbox queue object
- *   data            : pointer to mailbox data
+ *   data            : pointer to store mailbox data
  *
  * Return            : none
  *
  ******************************************************************************/
 
-void box_send( box_t *box, const void *data );
+void box_wait( box_t *box, void *data );
 
 /******************************************************************************
  *
@@ -271,6 +254,23 @@ void box_send( box_t *box, const void *data );
  ******************************************************************************/
 
 unsigned box_give( box_t *box, const void *data );
+
+/******************************************************************************
+ *
+ * Name              : box_send
+ *
+ * Description       : try to transfer mailbox data to the mailbox queue object,
+ *                     wait indefinitely while the mailbox queue object is full
+ *
+ * Parameters
+ *   box             : pointer to mailbox queue object
+ *   data            : pointer to mailbox data
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
+
+void box_send( box_t *box, const void *data );
 
 /******************************************************************************
  *
@@ -344,11 +344,11 @@ struct MailBoxQueueT : public __box
 {
 	MailBoxQueueT( void ): __box _BOX_INIT(limit_, data_, size_) {}
 
-	void     wait   (       void *_data ) {        box_wait   (this, _data); }
 	unsigned take   (       void *_data ) { return box_take   (this, _data); }
 	unsigned tryWait(       void *_data ) { return box_tryWait(this, _data); }
-	void     send   ( const void *_data ) {        box_send   (this, _data); }
+	void     wait   (       void *_data ) {        box_wait   (this, _data); }
 	unsigned give   ( const void *_data ) { return box_give   (this, _data); }
+	void     send   ( const void *_data ) {        box_send   (this, _data); }
 	void     push   ( const void *_data ) {        box_push   (this, _data); }
 	unsigned count  ( void )              { return box_count  (this);        }
 	unsigned space  ( void )              { return box_space  (this);        }

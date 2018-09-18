@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.h
     @author  Rajmund Szymanski
-    @date    09.09.2018
+    @date    18.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -447,21 +447,6 @@ void tmr_startUntil( tmr_t *tmr, cnt_t time );
 
 /******************************************************************************
  *
- * Name              : tmr_wait
- *
- * Description       : wait indefinitely until the timer finishes countdown
- *
- * Parameters
- *   tmr             : pointer to timer object
- *
- * Return            : none
- *
- ******************************************************************************/
-
-void tmr_wait( tmr_t *tmr );
-
-/******************************************************************************
- *
  * Name              : tmr_take
  * Alias             : tmr_tryWait
  *
@@ -480,6 +465,21 @@ unsigned tmr_take( tmr_t *tmr );
 
 __STATIC_INLINE
 unsigned tmr_tryWait( tmr_t *tmr ) { return tmr_take(tmr); }
+
+/******************************************************************************
+ *
+ * Name              : tmr_wait
+ *
+ * Description       : wait indefinitely until the timer finishes countdown
+ *
+ * Parameters
+ *   tmr             : pointer to timer object
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
+
+void tmr_wait( tmr_t *tmr );
 
 /******************************************************************************
  *
@@ -552,9 +552,9 @@ struct staticTimer : public __tmr
 	void startNext    ( cnt_t _delay )                               {        tmr_startNext    (this, _delay);                  }
 	void startUntil   ( cnt_t _time )                                {        tmr_startUntil   (this, _time);                   }
 
-	void     wait     ( void )                                       { return tmr_wait         (this);                          }
 	unsigned take     ( void )                                       { return tmr_take         (this);                          }
 	unsigned tryWait  ( void )                                       { return tmr_tryWait      (this);                          }
+	void     wait     ( void )                                       { return tmr_wait         (this);                          }
 
 	bool     operator!( void )                                       { return __tmr::hdr.id == ID_STOPPED;                      }
 };

@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmemorypool.h
     @author  Rajmund Szymanski
-    @date    09.09.2018
+    @date    18.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -216,24 +216,6 @@ void mem_init( mem_t *mem, unsigned size, que_t *data, unsigned bufsize );
 
 /******************************************************************************
  *
- * Name              : mem_wait
- *
- * Description       : try to get memory object from the memory pool object,
- *                     wait indefinitely while the memory pool object is empty
- *
- * Parameters
- *   mem             : pointer to memory pool object
- *   data            : pointer to store the pointer to the memory object
- *
- * Return            : none
- *
- ******************************************************************************/
-
-__STATIC_INLINE
-void mem_wait( mem_t *mem, void **data ) { lst_wait(&mem->lst, data); }
-
-/******************************************************************************
- *
  * Name              : mem_take
  * Alias             : mem_tryWait
  *
@@ -255,6 +237,24 @@ unsigned mem_take( mem_t *mem, void **data ) { return lst_take(&mem->lst, data);
 
 __STATIC_INLINE
 unsigned mem_tryWait( mem_t *mem, void **data ) { return mem_take(mem, data); }
+
+/******************************************************************************
+ *
+ * Name              : mem_wait
+ *
+ * Description       : try to get memory object from the memory pool object,
+ *                     wait indefinitely while the memory pool object is empty
+ *
+ * Parameters
+ *   mem             : pointer to memory pool object
+ *   data            : pointer to store the pointer to the memory object
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
+
+__STATIC_INLINE
+void mem_wait( mem_t *mem, void **data ) { lst_wait(&mem->lst, data); }
 
 /******************************************************************************
  *
@@ -298,9 +298,9 @@ struct MemoryPoolT : public __mem
 {
 	MemoryPoolT( void ): __mem _MEM_INIT(limit_, MEM_SIZE(size_), data_) { mem_bind(this); }
 
-	void     wait   (       void **_data ) {        mem_wait   (this, _data); }
 	unsigned take   (       void **_data ) { return mem_take   (this, _data); }
 	unsigned tryWait(       void **_data ) { return mem_tryWait(this, _data); }
+	void     wait   (       void **_data ) {        mem_wait   (this, _data); }
 	void     give   ( const void  *_data ) {        mem_give   (this, _data); }
 
 	private:
@@ -324,9 +324,9 @@ struct MemoryPoolTT : public MemoryPoolT<limit_, sizeof(T)>
 {
 	MemoryPoolTT( void ): MemoryPoolT<limit_, sizeof(T)>() {}
 
-	void     wait   ( T **_data ) {        mem_wait   (this, reinterpret_cast<void **>(_data)); }
 	unsigned take   ( T **_data ) { return mem_take   (this, reinterpret_cast<void **>(_data)); }
 	unsigned tryWait( T **_data ) { return mem_tryWait(this, reinterpret_cast<void **>(_data)); }
+	void     wait   ( T **_data ) {        mem_wait   (this, reinterpret_cast<void **>(_data)); }
 };
 
 #endif//__cplusplus

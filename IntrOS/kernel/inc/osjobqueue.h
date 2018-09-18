@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.h
     @author  Rajmund Szymanski
-    @date    17.09.2018
+    @date    18.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -190,22 +190,6 @@ void job_init( job_t *job, fun_t **data, unsigned bufsize );
 
 /******************************************************************************
  *
- * Name              : job_wait
- *
- * Description       : try to transfer job data from the job queue object and execute the job procedure,
- *                     wait indefinitely while the job queue object is empty
- *
- * Parameters
- *   job             : pointer to job queue object
- *
- * Return            : none
- *
- ******************************************************************************/
-
-void job_wait( job_t *job );
-
-/******************************************************************************
- *
  * Name              : job_take
  * Alias             : job_tryWait
  *
@@ -228,20 +212,19 @@ unsigned job_tryWait( job_t *job ) { return job_take(job); }
 
 /******************************************************************************
  *
- * Name              : job_send
+ * Name              : job_wait
  *
- * Description       : try to transfer job data to the job queue object,
- *                     wait indefinitely while the job queue object is full
+ * Description       : try to transfer job data from the job queue object and execute the job procedure,
+ *                     wait indefinitely while the job queue object is empty
  *
  * Parameters
  *   job             : pointer to job queue object
- *   fun             : pointer to job procedure
  *
  * Return            : none
  *
  ******************************************************************************/
 
-void job_send( job_t *job, fun_t *fun );
+void job_wait( job_t *job );
 
 /******************************************************************************
  *
@@ -261,6 +244,23 @@ void job_send( job_t *job, fun_t *fun );
  ******************************************************************************/
 
 unsigned job_give( job_t *job, fun_t *fun );
+
+/******************************************************************************
+ *
+ * Name              : job_send
+ *
+ * Description       : try to transfer job data to the job queue object,
+ *                     wait indefinitely while the job queue object is full
+ *
+ * Parameters
+ *   job             : pointer to job queue object
+ *   fun             : pointer to job procedure
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
+
+void job_send( job_t *job, fun_t *fun );
 
 /******************************************************************************
  *
@@ -306,11 +306,11 @@ struct staticJobQueueT : public __job
 {
 	staticJobQueueT( void ): __job _JOB_INIT(limit_, data_) {}
 
-	void     wait   ( void )        {        job_wait   (this);       }
 	unsigned take   ( void )        { return job_take   (this);       }
 	unsigned tryWait( void )        { return job_tryWait(this);       }
-	void     send   ( fun_t *_fun ) {        job_send   (this, _fun); }
+	void     wait   ( void )        {        job_wait   (this);       }
 	unsigned give   ( fun_t *_fun ) { return job_give   (this, _fun); }
+	void     send   ( fun_t *_fun ) {        job_send   (this, _fun); }
 	void     push   ( fun_t *_fun ) {        job_push   (this, _fun); }
 	unsigned count  ( void )        { return job_count  (this);       }
 	unsigned space  ( void )        { return job_space  (this);       }
@@ -338,11 +338,11 @@ struct JobQueueT : public __box
 {
 	JobQueueT( void ): __box _BOX_INIT(limit_, reinterpret_cast<char *>(data_), sizeof(FUN_t)) {}
 
-	void     wait   ( void )       { FUN_t _fun;                  box_wait   (this, &_fun);                         _fun();               }
 	unsigned take   ( void )       { FUN_t _fun; unsigned event = box_take   (this, &_fun); if (event == E_SUCCESS) _fun(); return event; }
 	unsigned tryWait( void )       { FUN_t _fun; unsigned event = box_tryWait(this, &_fun); if (event == E_SUCCESS) _fun(); return event; }
-	void     send   ( FUN_t _fun ) {                              box_send   (this, &_fun);                                               }
+	void     wait   ( void )       { FUN_t _fun;                  box_wait   (this, &_fun);                         _fun();               }
 	unsigned give   ( FUN_t _fun ) {             unsigned event = box_give   (this, &_fun);                                 return event; }
+	void     send   ( FUN_t _fun ) {                              box_send   (this, &_fun);                                               }
 	void     push   ( FUN_t _fun ) {                              box_push   (this, &_fun);                                               }
 	unsigned count  ( void )       {             unsigned count = box_count  (this);                                        return count; }
 	unsigned space  ( void )       {             unsigned space = box_space  (this);                                        return space; }

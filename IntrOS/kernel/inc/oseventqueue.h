@@ -2,7 +2,7 @@
 
     @file    IntrOS: oseventqueue.h
     @author  Rajmund Szymanski
-    @date    17.09.2018
+    @date    18.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -189,23 +189,6 @@ void evq_init( evq_t *evq, unsigned *data, unsigned bufsize );
 
 /******************************************************************************
  *
- * Name              : evq_wait
- *
- * Description       : try to transfer event data from the event queue object,
- *                     wait indefinitely while the event queue object is empty
- *
- * Parameters
- *   evq             : pointer to event queue object
- *   data            : pointer to store event data
- *
- * Return            : none
- *
- ******************************************************************************/
-
-void evq_wait( evq_t *evq, unsigned *data );
-
-/******************************************************************************
- *
  * Name              : evq_take
  * Alias             : evq_tryWait
  *
@@ -229,20 +212,20 @@ unsigned evq_tryWait( evq_t *evq, unsigned *data ) { return evq_take(evq, data);
 
 /******************************************************************************
  *
- * Name              : evq_send
+ * Name              : evq_wait
  *
- * Description       : try to transfer event data to the event queue object,
- *                     wait indefinitely while the event queue object is full
+ * Description       : try to transfer event data from the event queue object,
+ *                     wait indefinitely while the event queue object is empty
  *
  * Parameters
  *   evq             : pointer to event queue object
- *   data            : event value
+ *   data            : pointer to store event data
  *
  * Return            : none
  *
  ******************************************************************************/
 
-void evq_send( evq_t *evq, unsigned data );
+void evq_wait( evq_t *evq, unsigned *data );
 
 /******************************************************************************
  *
@@ -262,6 +245,23 @@ void evq_send( evq_t *evq, unsigned data );
  ******************************************************************************/
 
 unsigned evq_give( evq_t *evq, unsigned data );
+
+/******************************************************************************
+ *
+ * Name              : evq_send
+ *
+ * Description       : try to transfer event data to the event queue object,
+ *                     wait indefinitely while the event queue object is full
+ *
+ * Parameters
+ *   evq             : pointer to event queue object
+ *   data            : event value
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
+
+void evq_send( evq_t *evq, unsigned data );
 
 /******************************************************************************
  *
@@ -304,11 +304,11 @@ struct EventQueueT : public __evq
 {
 	EventQueueT( void ): __evq _EVQ_INIT(limit_, data_) {}
 
-	void     wait   ( unsigned *_data ) {        evq_wait   (this, _data); }
 	unsigned take   ( unsigned *_data ) { return evq_take   (this, _data); }
 	unsigned tryWait( unsigned *_data ) { return evq_tryWait(this, _data); }
-	void     send   ( unsigned  _data ) {        evq_send   (this, _data); }
+	void     wait   ( unsigned *_data ) {        evq_wait   (this, _data); }
 	unsigned give   ( unsigned  _data ) { return evq_give   (this, _data); }
+	void     send   ( unsigned  _data ) {        evq_send   (this, _data); }
 	void     push   ( unsigned  _data ) {        evq_push   (this, _data); }
 	unsigned count  ( void )            { return evq_count  (this);        }
 	unsigned space  ( void )            { return evq_space  (this);        }

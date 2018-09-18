@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmutex.h
     @author  Rajmund Szymanski
-    @date    10.09.2018
+    @date    18.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -155,26 +155,6 @@ void mtx_init( mtx_t *mtx );
 
 /******************************************************************************
  *
- * Name              : mtx_wait
- * Alias             : mtx_lock
- *
- * Description       : try to lock the mutex object,
- *                     wait indefinitely if the mutex object can't be locked immediately
- *
- * Parameters
- *   mtx             : pointer to mutex object
- *
- * Return            : none
- *
- ******************************************************************************/
-
-void mtx_wait( mtx_t *mtx );
-
-__STATIC_INLINE
-void mtx_lock( mtx_t *mtx ) { mtx_wait(mtx); }
-
-/******************************************************************************
- *
  * Name              : mtx_take
  * Alias             : mtx_tryLock
  *
@@ -194,6 +174,26 @@ unsigned mtx_take( mtx_t *mtx );
 
 __STATIC_INLINE
 unsigned mtx_tryLock( mtx_t *mtx ) { return mtx_take(mtx); }
+
+/******************************************************************************
+ *
+ * Name              : mtx_wait
+ * Alias             : mtx_lock
+ *
+ * Description       : try to lock the mutex object,
+ *                     wait indefinitely if the mutex object can't be locked immediately
+ *
+ * Parameters
+ *   mtx             : pointer to mutex object
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
+
+void mtx_wait( mtx_t *mtx );
+
+__STATIC_INLINE
+void mtx_lock( mtx_t *mtx ) { mtx_wait(mtx); }
 
 /******************************************************************************
  *
@@ -241,10 +241,10 @@ struct Mutex : public __mtx
 	 Mutex( void ): __mtx _MTX_INIT() {}
 	~Mutex( void ) { assert(__mtx::owner == nullptr); }
 
-	void     wait   ( void ) {        mtx_wait   (this); }
-	void     lock   ( void ) {        mtx_lock   (this); }
 	unsigned take   ( void ) { return mtx_take   (this); }
 	unsigned tryLock( void ) { return mtx_tryLock(this); }
+	void     wait   ( void ) {        mtx_wait   (this); }
+	void     lock   ( void ) {        mtx_lock   (this); }
 	unsigned give   ( void ) { return mtx_give   (this); }
 	unsigned unlock ( void ) { return mtx_unlock (this); }
 };

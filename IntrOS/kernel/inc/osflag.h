@@ -2,7 +2,7 @@
 
     @file    IntrOS: osflag.h
     @author  Rajmund Szymanski
-    @date    16.09.2018
+    @date    18.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -178,25 +178,6 @@ void flg_init( flg_t *flg, unsigned init );
 
 /******************************************************************************
  *
- * Name              : flg_wait
- *
- * Description       : wait indefinitely on flag object until requested flags have been set
- *
- * Parameters
- *   flg             : pointer to flag object
- *   flags           : all flags to wait
- *   all             : waiting mode
- *                     flgAny:    wait for any flags to be set
- *                     flgAll:    wait for all flags to be set
- *
- * Return            : none
- *
- ******************************************************************************/
-
-void flg_wait( flg_t *flg, unsigned flags, bool all );
-
-/******************************************************************************
- *
  * Name              : flg_take
  * Alias             : flg_tryWait
  *
@@ -219,6 +200,25 @@ unsigned flg_take( flg_t *flg, unsigned flags, bool all );
 
 __STATIC_INLINE
 unsigned flg_tryWait( flg_t *flg, unsigned flags, bool all ) { return flg_take(flg, flags, all); }
+
+/******************************************************************************
+ *
+ * Name              : flg_wait
+ *
+ * Description       : wait indefinitely on flag object until requested flags have been set
+ *
+ * Parameters
+ *   flg             : pointer to flag object
+ *   flags           : all flags to wait
+ *   all             : waiting mode
+ *                     flgAny:    wait for any flags to be set
+ *                     flgAll:    wait for all flags to be set
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
+
+void flg_wait( flg_t *flg, unsigned flags, bool all );
 
 /******************************************************************************
  *
@@ -294,9 +294,9 @@ struct Flag : public __flg
 {
 	Flag( const unsigned _init = 0 ): __flg _FLG_INIT(_init) {}
 
-	void     wait   ( unsigned _flags, bool _all = true ) {        flg_wait   (this, _flags, _all); }
 	unsigned take   ( unsigned _flags, bool _all = true ) { return flg_take   (this, _flags, _all); }
 	unsigned tryWait( unsigned _flags, bool _all = true ) { return flg_tryWait(this, _flags, _all); }
+	void     wait   ( unsigned _flags, bool _all = true ) {        flg_wait   (this, _flags, _all); }
 	unsigned give   ( unsigned _flags )                   { return flg_give   (this, _flags);       }
 	unsigned set    ( unsigned _flags )                   { return flg_set    (this, _flags);       }
 	unsigned clear  ( unsigned _flags )                   { return flg_clear  (this, _flags);       }
