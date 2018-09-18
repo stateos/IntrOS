@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.c
     @author  Rajmund Szymanski
-    @date    17.09.2018
+    @date    18.09.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -183,7 +183,7 @@ void priv_msg_putUpdate( msg_t *msg, const char *data, unsigned size )
 unsigned msg_take( msg_t *msg, void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned len = 0;
+	unsigned len;
 
 	assert(msg);
 	assert(msg->data);
@@ -192,10 +192,18 @@ unsigned msg_take( msg_t *msg, void *data, unsigned size )
 
 	sys_lock();
 	{
-		if (msg->count > 0)
+		if (size == 0)
 		{
-			if (size >= priv_msg_count(msg))
-				len = priv_msg_getUpdate(msg, data, size);
+			len = 0;
+		}
+		else
+		if (msg->count > 0 && size >= priv_msg_count(msg))
+		{
+			len = priv_msg_getUpdate(msg, data, size);
+		}
+		else
+		{
+			len = E_FAILURE;
 		}
 	}
 	sys_unlock();
@@ -207,18 +215,12 @@ unsigned msg_take( msg_t *msg, void *data, unsigned size )
 unsigned msg_wait( msg_t *msg, void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned len = 0;
-
-	assert(msg);
-	assert(msg->data);
-	assert(msg->limit);
-	assert(data);
+	unsigned len;
 
 	sys_lock();
 	{
-		if (size > 0)
-			while ((len = msg_take(msg, data, size)) == 0)
-				core_ctx_switch();
+		while ((len = msg_take(msg, data, size)) == E_FAILURE)
+			core_ctx_switch();
 	}
 	sys_unlock();
 
@@ -229,7 +231,7 @@ unsigned msg_wait( msg_t *msg, void *data, unsigned size )
 unsigned msg_give( msg_t *msg, const void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned len = 0;
+	unsigned event;
 
 	assert(msg);
 	assert(msg->data);
@@ -242,41 +244,46 @@ unsigned msg_give( msg_t *msg, const void *data, unsigned size )
 		{
 			if (size > 0)
 				priv_msg_putUpdate(msg, data, size);
-			len = size;
+			event = E_SUCCESS;
+		}
+		else
+		{
+			event = E_FAILURE;
 		}
 	}
 	sys_unlock();
 
-	return len;
+	return event;
 }
 
 /* -------------------------------------------------------------------------- */
 unsigned msg_send( msg_t *msg, const void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned len = 0;
-
-	assert(msg);
-	assert(msg->data);
-	assert(msg->limit);
-	assert(data);
+	unsigned event;
 
 	sys_lock();
 	{
-		if (size > 0 && size <= priv_msg_limit(msg))
-			while ((len = msg_give(msg, data, size)) == 0)
+		if (size <= priv_msg_limit(msg))
+		{
+			while ((event = msg_give(msg, data, size)) != E_SUCCESS)
 				core_ctx_switch();
+		}
+		else
+		{
+			event = E_FAILURE;
+		}
 	}
 	sys_unlock();
 
-	return len;
+	return event;
 }
 
 /* -------------------------------------------------------------------------- */
 unsigned msg_push( msg_t *msg, const void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned len = 0;
+	unsigned event;
 
 	assert(msg);
 	assert(msg->data);
@@ -291,12 +298,16 @@ unsigned msg_push( msg_t *msg, const void *data, unsigned size )
 				priv_msg_skip(msg, priv_msg_getSize(msg));
 			if (size > 0)
 				priv_msg_putUpdate(msg, data, size);
-			len = size;
+			event = E_SUCCESS;
+		}
+		else
+		{
+			event = E_FAILURE;
 		}
 	}
 	sys_unlock();
 
-	return len;
+	return event;
 }
 
 /* -------------------------------------------------------------------------- */
