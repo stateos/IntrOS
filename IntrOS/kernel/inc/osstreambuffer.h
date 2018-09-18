@@ -2,7 +2,7 @@
 
     @file    IntrOS: osstreambuffer.h
     @author  Rajmund Szymanski
-    @date    09.09.2018
+    @date    18.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -205,6 +205,29 @@ void stm_init( stm_t *stm, void *data, unsigned bufsize );
 
 /******************************************************************************
  *
+ * Name              : stm_take
+ * Alias             : stm_tryWait
+ *
+ * Description       : try to transfer data from the stream buffer object,
+ *                     don't wait if the stream buffer object is empty
+ *
+ * Parameters
+ *   stm             : pointer to stream buffer object
+ *   data            : pointer to write buffer
+ *   size            : size of write buffer
+ *
+ * Return            : number of bytes read from the stream buffer or
+ *   E_FAILURE       : stream buffer is empty
+ *
+ ******************************************************************************/
+
+unsigned stm_take( stm_t *stm, void *data, unsigned size );
+
+__STATIC_INLINE
+unsigned stm_tryWait( stm_t *stm, void *data, unsigned size ) { return stm_take(stm, data, size); }
+
+/******************************************************************************
+ *
  * Name              : stm_wait
  *
  * Description       : try to transfer data from the stream buffer object,
@@ -223,25 +246,23 @@ unsigned stm_wait( stm_t *stm, void *data, unsigned size );
 
 /******************************************************************************
  *
- * Name              : stm_take
- * Alias             : stm_tryWait
+ * Name              : stm_give
  *
- * Description       : try to transfer data from the stream buffer object,
- *                     don't wait if the stream buffer object is empty
+ * Description       : try to transfer data to the stream buffer object,
+ *                     don't wait if the stream buffer object is full
  *
  * Parameters
  *   stm             : pointer to stream buffer object
- *   data            : pointer to write buffer
- *   size            : size of write buffer
+ *   data            : pointer to read buffer
+ *   size            : size of read buffer
  *
- * Return            : number of bytes read from the stream buffer
+ * Return
+ *   E_SUCCESS       : stream data was successfully transfered to the stream buffer object
+ *   E_FAILURE       : not enough space in the stream buffer
  *
  ******************************************************************************/
 
-unsigned stm_take( stm_t *stm, void *data, unsigned size );
-
-__STATIC_INLINE
-unsigned stm_tryWait( stm_t *stm, void *data, unsigned size ) { return stm_take(stm, data, size); }
+unsigned stm_give( stm_t *stm, const void *data, unsigned size );
 
 /******************************************************************************
  *
@@ -255,29 +276,13 @@ unsigned stm_tryWait( stm_t *stm, void *data, unsigned size ) { return stm_take(
  *   data            : pointer to read buffer
  *   size            : size of read buffer
  *
- * Return            : number of bytes written to the stream buffer
+ * Return
+ *   E_SUCCESS       : stream data was successfully transfered to the stream buffer object
+ *   E_FAILURE       : size of the stream data is out of the limit
  *
  ******************************************************************************/
 
 unsigned stm_send( stm_t *stm, const void *data, unsigned size );
-
-/******************************************************************************
- *
- * Name              : stm_give
- *
- * Description       : try to transfer data to the stream buffer object,
- *                     don't wait if the stream buffer object is full
- *
- * Parameters
- *   stm             : pointer to stream buffer object
- *   data            : pointer to read buffer
- *   size            : size of read buffer
- *
- * Return            : number of bytes written to the stream buffer
- *
- ******************************************************************************/
-
-unsigned stm_give( stm_t *stm, const void *data, unsigned size );
 
 /******************************************************************************
  *
@@ -291,7 +296,9 @@ unsigned stm_give( stm_t *stm, const void *data, unsigned size );
  *   data            : pointer to read buffer
  *   size            : size of read buffer
  *
- * Return            : number of bytes written to the stream buffer
+ * Return
+ *   E_SUCCESS       : stream data was successfully transfered to the stream buffer object
+ *   E_FAILURE       : size of the stream data is out of the limit
  *
  ******************************************************************************/
 
@@ -367,11 +374,11 @@ struct StreamBufferT : public __stm
 {
 	StreamBufferT( void ): __stm _STM_INIT(limit_, data_) {}
 
-	unsigned wait   (       void *_data, unsigned _size ) { return stm_wait   (this, _data, _size); }
 	unsigned take   (       void *_data, unsigned _size ) { return stm_take   (this, _data, _size); }
 	unsigned tryWait(       void *_data, unsigned _size ) { return stm_tryWait(this, _data, _size); }
-	unsigned send   ( const void *_data, unsigned _size ) { return stm_send   (this, _data, _size); }
+	unsigned wait   (       void *_data, unsigned _size ) { return stm_wait   (this, _data, _size); }
 	unsigned give   ( const void *_data, unsigned _size ) { return stm_give   (this, _data, _size); }
+	unsigned send   ( const void *_data, unsigned _size ) { return stm_send   (this, _data, _size); }
 	unsigned push   ( const void *_data, unsigned _size ) { return stm_push   (this, _data, _size); }
 	unsigned count  ( void )                              { return stm_count  (this);               }
 	unsigned space  ( void )                              { return stm_space  (this);               }
@@ -398,11 +405,11 @@ struct StreamBufferTT : public StreamBufferT<limit_*sizeof(T)>
 {
 	StreamBufferTT( void ): StreamBufferT<limit_*sizeof(T)>() {}
 
-	unsigned wait   (       T *_data ) { return stm_wait   (this, _data, sizeof(T)); }
 	unsigned take   (       T *_data ) { return stm_take   (this, _data, sizeof(T)); }
 	unsigned tryWait(       T *_data ) { return stm_tryWait(this, _data, sizeof(T)); }
-	unsigned send   ( const T *_data ) { return stm_send   (this, _data, sizeof(T)); }
+	unsigned wait   (       T *_data ) { return stm_wait   (this, _data, sizeof(T)); }
 	unsigned give   ( const T *_data ) { return stm_give   (this, _data, sizeof(T)); }
+	unsigned send   ( const T *_data ) { return stm_send   (this, _data, sizeof(T)); }
 	unsigned push   ( const T *_data ) { return stm_push   (this, _data, sizeof(T)); }
 };
 

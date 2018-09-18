@@ -2,7 +2,7 @@
 
     @file    IntrOS: osstreambuffer.c
     @author  Rajmund Szymanski
-    @date    17.09.2018
+    @date    18.09.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -140,7 +140,7 @@ void priv_stm_putUpdate( stm_t *stm, const char *data, unsigned size )
 unsigned stm_take( stm_t *stm, void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned len = 0;
+	unsigned len;
 
 	assert(stm);
 	assert(stm->data);
@@ -149,11 +149,18 @@ unsigned stm_take( stm_t *stm, void *data, unsigned size )
 
 	sys_lock();
 	{
+		if (size == 0)
+		{
+			len = 0;
+		}
+		else
 		if (stm->count > 0)
 		{
-			if (size > 0)
-				size = priv_stm_getUpdate(stm, data, size);
-			len = size;
+			len = priv_stm_getUpdate(stm, data, size);
+		}
+		else
+		{
+			len = E_FAILURE;
 		}
 	}
 	sys_unlock();
@@ -165,18 +172,12 @@ unsigned stm_take( stm_t *stm, void *data, unsigned size )
 unsigned stm_wait( stm_t *stm, void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned len = 0;
-
-	assert(stm);
-	assert(stm->data);
-	assert(stm->limit);
-	assert(data);
+	unsigned len;
 
 	sys_lock();
 	{
-		if (size > 0)
-			while ((len = stm_take(stm, data, size)) == 0)
-				core_ctx_switch();
+		while ((len = stm_take(stm, data, size)) == E_FAILURE)
+			core_ctx_switch();
 	}
 	sys_unlock();
 
@@ -187,7 +188,7 @@ unsigned stm_wait( stm_t *stm, void *data, unsigned size )
 unsigned stm_give( stm_t *stm, const void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned len = 0;
+	unsigned event;
 
 	assert(stm);
 	assert(stm->data);
@@ -198,43 +199,47 @@ unsigned stm_give( stm_t *stm, const void *data, unsigned size )
 	{
 		if (size <= priv_stm_space(stm))
 		{
-			if (size > 0)
-				priv_stm_putUpdate(stm, data, size);
-			len = size;
+			priv_stm_putUpdate(stm, data, size);
+			event = E_SUCCESS;
+		}
+		else
+		{
+			event = E_FAILURE;
 		}
 	}
 	sys_unlock();
 
-	return len;
+	return event;
 }
 
 /* -------------------------------------------------------------------------- */
 unsigned stm_send( stm_t *stm, const void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned len = 0;
-
-	assert(stm);
-	assert(stm->data);
-	assert(stm->limit);
-	assert(data);
+	unsigned event;
 
 	sys_lock();
 	{
-		if (size > 0 && size <= priv_stm_limit(stm))
-			while ((len = stm_give(stm, data, size)) == 0)
+		if (size <= priv_stm_limit(stm))
+		{
+			while ((event = stm_give(stm, data, size)) != E_SUCCESS)
 				core_ctx_switch();
+		}
+		else
+		{
+			event = E_FAILURE;
+		}
 	}
 	sys_unlock();
 
-	return len;
+	return event;
 }
 
 /* -------------------------------------------------------------------------- */
 unsigned stm_push( stm_t *stm, const void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned len = 0;
+	unsigned event;
 
 	assert(stm);
 	assert(stm->data);
@@ -247,14 +252,17 @@ unsigned stm_push( stm_t *stm, const void *data, unsigned size )
 		{
 			if (size > priv_stm_space(stm))
 				priv_stm_skip(stm, size - priv_stm_space(stm));
-			if (size > 0)
-				priv_stm_putUpdate(stm, data, size);
-			len = size;
+			priv_stm_putUpdate(stm, data, size);
+			event = E_SUCCESS;
+		}
+		else
+		{
+			event = E_FAILURE;
 		}
 	}
 	sys_unlock();
 
-	return len;
+	return event;
 }
 
 /* -------------------------------------------------------------------------- */
