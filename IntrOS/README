@@ -39,6 +39,7 @@ Features:
 - added once flag object
 - updated flag object
 - updated queue/buffer objects
+- updated queue/buffer functions
 ---------
 4.2
 - updated priv_rdy_insert internal procedure
