@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.h
     @author  Rajmund Szymanski
-    @date    18.09.2018
+    @date    19.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -349,6 +349,21 @@ unsigned msg_space( msg_t *msg );
 
 unsigned msg_limit( msg_t *msg );
 
+/******************************************************************************
+ *
+ * Name              : msg_size
+ *
+ * Description       : return the size of first message in the message buffer
+ *
+ * Parameters
+ *   msg             : pointer to message buffer object
+ *
+ * Return            : size of first message in the message buffer
+ *
+ ******************************************************************************/
+
+unsigned msg_size( msg_t *msg );
+
 #ifdef __cplusplus
 }
 #endif
@@ -382,6 +397,7 @@ struct MessageBufferT : public __msg
 	unsigned count  ( void )                              { return msg_count  (this);               }
 	unsigned space  ( void )                              { return msg_space  (this);               }
 	unsigned limit  ( void )                              { return msg_limit  (this);               }
+	unsigned size   ( void )                              { return msg_size   (this);               }
 
 	private:
 	char data_[limit_];

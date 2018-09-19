@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmailboxqueue.c
     @author  Rajmund Szymanski
-    @date    17.09.2018
+    @date    19.09.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -50,30 +50,6 @@ void box_init( box_t *box, unsigned size, void *data, unsigned bufsize )
 		box->size  = size;
 	}
 	sys_unlock();
-}
-
-/* -------------------------------------------------------------------------- */
-static
-unsigned priv_box_count( box_t *box )
-/* -------------------------------------------------------------------------- */
-{
-	return box->count / box->size;
-}
-
-/* -------------------------------------------------------------------------- */
-static
-unsigned priv_box_space( box_t *box )
-/* -------------------------------------------------------------------------- */
-{
-	return (box->limit - box->count) / box->size;
-}
-
-/* -------------------------------------------------------------------------- */
-static
-unsigned priv_box_limit( box_t *box )
-/* -------------------------------------------------------------------------- */
-{
-	return box->limit / box->size;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -206,51 +182,51 @@ void box_push( box_t *box, const void *data )
 unsigned box_count( box_t *box )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned cnt;
+	unsigned count;
 
 	assert(box);
 
 	sys_lock();
 	{
-		cnt = priv_box_count(box);
+		count = box->count / box->size;
 	}
 	sys_unlock();
 
-	return cnt;
+	return count;
 }
 
 /* -------------------------------------------------------------------------- */
 unsigned box_space( box_t *box )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned cnt;
+	unsigned space;
 
 	assert(box);
 
 	sys_lock();
 	{
-		cnt = priv_box_space(box);
+		space = (box->limit - box->count) / box->size;
 	}
 	sys_unlock();
 
-	return cnt;
+	return space;
 }
 
 /* -------------------------------------------------------------------------- */
 unsigned box_limit( box_t *box )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned cnt;
+	unsigned limit;
 
 	assert(box);
 
 	sys_lock();
 	{
-		cnt = priv_box_limit(box);
+		limit = box->limit / box->size;
 	}
 	sys_unlock();
 
-	return cnt;
+	return limit;
 }
 
 /* -------------------------------------------------------------------------- */
