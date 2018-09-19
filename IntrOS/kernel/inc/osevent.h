@@ -2,7 +2,7 @@
 
     @file    IntrOS: osevent.h
     @author  Rajmund Szymanski
-    @date    08.09.2018
+    @date    19.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -164,8 +164,7 @@ void evt_init( evt_t *evt );
  * Parameters
  *   evt             : pointer to event object
  *
- * Return
- *   'another'       : event object was successfully released
+ * Return            : event value
  *
  ******************************************************************************/
 

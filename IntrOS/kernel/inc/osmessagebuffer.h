@@ -217,7 +217,7 @@ void msg_init( msg_t *msg, void *data, unsigned bufsize );
  *   size            : size of write buffer
  *
  * Return            : number of bytes read from the message buffer or
- *   E_FAILURE       : message buffer is empty or not enough space in the write buffer
+ *   E_FAILURE       : message buffer object is empty or not enough space in the write buffer
  *
  ******************************************************************************/
 

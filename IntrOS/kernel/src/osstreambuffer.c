@@ -113,6 +113,15 @@ void priv_stm_putUpdate( stm_t *stm, const char *data, unsigned size )
 }
 
 /* -------------------------------------------------------------------------- */
+static
+void priv_stm_skipUpdate( stm_t *stm, unsigned size )
+/* -------------------------------------------------------------------------- */
+{
+	if (stm->count + size > stm->limit)
+		priv_stm_skip(stm, stm->count + size - stm->limit);
+}
+
+/* -------------------------------------------------------------------------- */
 unsigned stm_take( stm_t *stm, void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
@@ -191,7 +200,7 @@ unsigned stm_send( stm_t *stm, const void *data, unsigned size )
 
 	sys_lock();
 	{
-		if (stm->count + size <= stm->limit)
+		if (size <= stm->limit)
 		{
 			while ((event = stm_give(stm, data, size)) != E_SUCCESS)
 				core_ctx_switch();
@@ -219,10 +228,9 @@ unsigned stm_push( stm_t *stm, const void *data, unsigned size )
 
 	sys_lock();
 	{
-		if (stm->count + size <= stm->limit)
+		if (size <= stm->limit)
 		{
-			if (stm->count + size > stm->limit)
-				priv_stm_skip(stm, stm->count + size - stm->limit);
+			priv_stm_skipUpdate(stm, size);
 			priv_stm_putUpdate(stm, data, size);
 			event = E_SUCCESS;
 		}

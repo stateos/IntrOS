@@ -2,7 +2,7 @@
 
     @file    IntrOS: osstreambuffer.h
     @author  Rajmund Szymanski
-    @date    18.09.2018
+    @date    19.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -217,7 +217,7 @@ void stm_init( stm_t *stm, void *data, unsigned bufsize );
  *   size            : size of write buffer
  *
  * Return            : number of bytes read from the stream buffer or
- *   E_FAILURE       : stream buffer is empty
+ *   E_FAILURE       : stream buffer object is empty
  *
  ******************************************************************************/
 

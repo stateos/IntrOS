@@ -163,6 +163,17 @@ void priv_msg_putUpdate( msg_t *msg, const char *data, unsigned size )
 }
 
 /* -------------------------------------------------------------------------- */
+static
+void priv_msg_skipUpdate( msg_t *msg, unsigned size )
+/* -------------------------------------------------------------------------- */
+{
+	while (msg->count + sizeof(unsigned) + size > msg->limit)
+	{
+		priv_msg_skip(msg, priv_msg_getSize(msg));
+	}
+}
+
+/* -------------------------------------------------------------------------- */
 unsigned msg_take( msg_t *msg, void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
@@ -271,8 +282,7 @@ unsigned msg_push( msg_t *msg, const void *data, unsigned size )
 	{
 		if (sizeof(unsigned) + size <= msg->limit)
 		{
-			while (msg->count + sizeof(unsigned) + size > msg->limit)
-				priv_msg_skip(msg, priv_msg_getSize(msg));
+			priv_msg_skipUpdate(msg, size);
 			priv_msg_putUpdate(msg, data, size);
 			event = E_SUCCESS;
 		}
