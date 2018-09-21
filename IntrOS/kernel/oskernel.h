@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.h
     @author  Rajmund Szymanski
-    @date    04.09.2018
+    @date    21.09.2018
     @brief   This file defines set of kernel functions for IntrOS.
 
  ******************************************************************************
@@ -86,7 +86,7 @@ extern sys_t System; // system data
 
 /* -------------------------------------------------------------------------- */
 
-#define core_stk_assert() \
+#define assert_stk_integrity() \
         assert((System.cur == &MAIN) || (System.cur->hdr.id == ID_TIMER) || ((uintptr_t)System.cur->stack <= (uintptr_t)port_get_sp()))
 
 /* -------------------------------------------------------------------------- */

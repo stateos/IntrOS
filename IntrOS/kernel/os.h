@@ -2,7 +2,7 @@
 
     @file    IntrOS: os.h
     @author  Rajmund Szymanski
-    @date    08.09.2018
+    @date    21.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -100,21 +100,6 @@ void sys_init( void ) { port_sys_init(); }
  ******************************************************************************/
 
 cnt_t sys_time( void );
-
-/******************************************************************************
- *
- * Name              : stk_assert
- *
- * Description       : check stack integrity of the current task
- *
- * Parameters        : none
- *
- * Return            : none
- *
- ******************************************************************************/
-
-#define                stk_assert() \
-                       core_stk_assert()
 
 #ifdef __cplusplus
 }
