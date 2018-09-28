@@ -14,7 +14,7 @@ Features:
 - spin locks
 - once flags
 - events
-- signals (auto clearing, protected)
+- signals with protection mask
 - flags (any, all)
 - barriers
 - semaphores
@@ -41,6 +41,7 @@ Features:
 - updated queue/buffer objects
 - updated queue/buffer functions
 - changed assert definitions
+- updated signal object
 ---------
 4.2
 - updated priv_rdy_insert internal procedure

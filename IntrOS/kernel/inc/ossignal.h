@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossignal.h
     @author  Rajmund Szymanski
-    @date    18.09.2018
+    @date    28.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -38,11 +38,6 @@
 extern "C" {
 #endif
 
-/* -------------------------------------------------------------------------- */
-
-#define sigClear     ( false ) // auto clearing signal
-#define sigProtect   ( true  ) // protected signal
-
 /******************************************************************************
  *
  * Name              : signal
@@ -53,8 +48,8 @@ typedef struct __sig sig_t, * const sig_id;
 
 struct __sig
 {
-	bool     flag;  // signal's current value
-	bool     type;  // signal type: sigClear, sigProtect
+	unsigned flags; // signal's current value
+	unsigned mask;  // protection mask
 };
 
 /******************************************************************************
@@ -64,9 +59,7 @@ struct __sig
  * Description       : create and initialize a signal object
  *
  * Parameters
- *   type            : signal type
- *                     sigClear:   auto clearing signal
- *                     sigProtect: protected signal
+ *   mask            : protection mask of signal object
  *
  * Return            : signal object
  *
@@ -74,19 +67,19 @@ struct __sig
  *
  ******************************************************************************/
 
-#define               _SIG_INIT( _type ) { 0, _type }
+#define               _SIG_INIT( _mask ) { 0, _mask }
 
 /******************************************************************************
  *
  * Name              : _VA_SIG
  *
- * Description       : calculate signal type from optional parameter
+ * Description       : calculate protection mask from optional parameter
  *
  * Note              : for internal use
  *
  ******************************************************************************/
 
-#define               _VA_SIG( _type ) ( ( _type + 0 ) ? sigProtect : sigClear )
+#define               _VA_SIG( _mask ) ( _mask + 0 )
 
 /******************************************************************************
  *
@@ -96,9 +89,7 @@ struct __sig
  *
  * Parameters
  *   sig             : name of a pointer to signal object
- *   type            : (optional) signal type
- *                     sigClear:   auto clearing signal (default)
- *                     sigProtect: protected signal
+ *   mask            : (optional) protection mask; default: 0
  *
  ******************************************************************************/
 
@@ -114,9 +105,7 @@ struct __sig
  *
  * Parameters
  *   sig             : name of a pointer to signal object
- *   type            : (optional) signal type
- *                     sigClear:   auto clearing signal (default)
- *                     sigProtect: protected signal
+ *   mask            : (optional) protection mask; default: 0
  *
  ******************************************************************************/
 
@@ -131,9 +120,7 @@ struct __sig
  * Description       : create and initialize a signal object
  *
  * Parameters
- *   type            : (optional) signal type
- *                     sigClear:   auto clearing signal (default)
- *                     sigProtect: protected signal
+ *   mask            : (optional) protection mask; default: 0
  *
  * Return            : signal object
  *
@@ -154,9 +141,7 @@ struct __sig
  * Description       : create and initialize a signal object
  *
  * Parameters
- *   type            : (optional) signal type
- *                     sigClear:   auto clearing signal (default)
- *                     sigProtect: protected signal
+ *   mask            : (optional) protection mask; default: 0
  *
  * Return            : pointer to signal object
  *
@@ -179,15 +164,13 @@ struct __sig
  *
  * Parameters
  *   sig             : pointer to signal object
- *   type            : signal type
- *                     sigClear:   auto clearing signal
- *                     sigProtect: protected signal
+ *   mask            : protection mask of signal object
  *
  * Return            : none
  *
  ******************************************************************************/
 
-void sig_init( sig_t *sig, bool type );
+void sig_init( sig_t *sig, unsigned mask );
 
 /******************************************************************************
  *
@@ -198,6 +181,7 @@ void sig_init( sig_t *sig, bool type );
  *
  * Parameters
  *   sig             : pointer to signal object
+ *   num             : signal number
  *
  * Return
  *   E_SUCCESS       : signal object was successfully released
@@ -205,10 +189,10 @@ void sig_init( sig_t *sig, bool type );
  *
  ******************************************************************************/
 
-unsigned sig_take( sig_t *sig );
+unsigned sig_take( sig_t *sig, unsigned num );
 
 __STATIC_INLINE
-unsigned sig_tryWait( sig_t *sig ) { return sig_take(sig); }
+unsigned sig_tryWait( sig_t *sig, unsigned num ) { return sig_take(sig, num); }
 
 /******************************************************************************
  *
@@ -218,12 +202,13 @@ unsigned sig_tryWait( sig_t *sig ) { return sig_take(sig); }
  *
  * Parameters
  *   sig             : pointer to signal object
+ *   num             : signal number
  *
  * Return            : none
  *
  ******************************************************************************/
 
-void sig_wait( sig_t *sig );
+void sig_wait( sig_t *sig, unsigned num );
 
 /******************************************************************************
  *
@@ -235,15 +220,16 @@ void sig_wait( sig_t *sig );
  *
  * Parameters
  *   sig             : pointer to signal object
+ *   num             : signal number
  *
  * Return            : none
  *
  ******************************************************************************/
 
-void sig_give( sig_t *sig );
+void sig_give( sig_t *sig, unsigned num );
 
 __STATIC_INLINE
-void sig_set( sig_t *sig ) { sig_give(sig); }
+void sig_set( sig_t *sig, unsigned num ) { sig_give(sig, num); }
 
 /******************************************************************************
  *
@@ -253,12 +239,28 @@ void sig_set( sig_t *sig ) { sig_give(sig); }
  *
  * Parameters
  *   sig             : pointer to signal object
+ *   num             : signal number
  *
  * Return            : none
  *
  ******************************************************************************/
 
-void sig_clear( sig_t *sig );
+void sig_clear( sig_t *sig, unsigned num );
+
+/******************************************************************************
+ *
+ * Name              : sig_get
+ *
+ * Description       : get given signal state from signal object
+ *
+ * Parameters
+ *   sig             : pointer to signal object
+ *
+ * Return            : signal state in signal object
+ *
+ ******************************************************************************/
+
+bool sig_get( sig_t *sig, unsigned num );
 
 #ifdef __cplusplus
 }
@@ -275,22 +277,21 @@ void sig_clear( sig_t *sig );
  * Description       : create and initialize a signal object
  *
  * Constructor parameters
- *   type            : signal type
- *                     sigClear:   auto clearing signal (default)
- *                     sigProtect: protected signal
+ *   mask            : protection mask of signal object
  *
  ******************************************************************************/
 
 struct Signal : public __sig
 {
-	Signal( const bool _type = sigClear ): __sig _SIG_INIT(_type) {}
+	Signal( const unsigned _mask = 0 ): __sig _SIG_INIT(_mask) {}
 
-	unsigned take   ( void ) { return sig_take   (this); }
-	unsigned tryWait( void ) { return sig_tryWait(this); }
-	void     wait   ( void ) {        sig_wait   (this); }
-	void     give   ( void ) {        sig_give   (this); }
-	void     set    ( void ) {        sig_set    (this); }
-	void     clear  ( void ) {        sig_clear  (this); }
+	unsigned take   ( unsigned num ) { return sig_take   (this, num); }
+	unsigned tryWait( unsigned num ) { return sig_tryWait(this, num); }
+	void     wait   ( unsigned num ) {        sig_wait   (this, num); }
+	void     give   ( unsigned num ) {        sig_give   (this, num); }
+	void     set    ( unsigned num ) {        sig_set    (this, num); }
+	void     clear  ( unsigned num ) {        sig_clear  (this, num); }
+	bool     get    ( unsigned num ) { return sig_get    (this, num); }
 };
 
 #endif//__cplusplus

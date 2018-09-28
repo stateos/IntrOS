@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    04.09.2018
+    @date    27.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -718,7 +718,7 @@ void tsk_sleep( void ) { tsk_sleepFor(INFINITE); }
  *
  * Return
  *   E_SUCCESS       : task was successfully suspended
- *   E_FAILURE       : task can not be suspended
+ *   E_FAILURE       : task cannot be suspended
  *
  ******************************************************************************/
 
@@ -736,7 +736,7 @@ unsigned tsk_suspend( tsk_t *tsk );
  *
  * Return
  *   E_SUCCESS       : task was successfully resumed
- *   E_FAILURE       : task can not be resumed
+ *   E_FAILURE       : task cannot be resumed
  *
  ******************************************************************************/
 
