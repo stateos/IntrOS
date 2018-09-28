@@ -19,7 +19,7 @@ There's a dedicated function for immediate change the task state.
 - spin locks
 - once flags
 - events
-- signals (auto clearing, protected)
+- signals with protection mask
 - flags (any, all)
 - barriers
 - semaphores
