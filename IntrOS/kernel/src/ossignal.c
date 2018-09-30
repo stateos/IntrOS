@@ -59,9 +59,17 @@ unsigned sig_take( sig_t *sig, unsigned num )
 	sys_lock();
 	{
 		flag &= sig->flags;
-		sig->flags &= (~flag | sig->mask);
 
-		event = (flag != 0) ? E_SUCCESS : E_FAILURE;
+		if (flag != 0)
+		{
+			sig->flags &= ~flag | sig->mask;
+
+			event = E_SUCCESS;
+		}
+		else
+		{
+			event = E_FAILURE;
+		}
 	}
 	sys_unlock();
 
