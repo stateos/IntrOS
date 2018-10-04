@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.c
     @author  Rajmund Szymanski
-    @date    01.09.2018
+    @date    04.10.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -147,7 +147,7 @@ static
 void priv_tsk_sleep( tsk_t *cur )
 /* -------------------------------------------------------------------------- */
 {
-	cur->hdr.id = ID_DELAYED;
+	cur->hdr.id = ID_BLOCKED;
 	core_ctx_switch();
 }
 
@@ -231,7 +231,7 @@ unsigned tsk_suspend( tsk_t *tsk )
 	if (tsk->hdr.id != ID_READY)
 		return E_FAILURE;
 
-	tsk->hdr.id = ID_DELAYED;
+	tsk->hdr.id = ID_BLOCKED;
 	tsk->delay = INFINITE;
 	if (tsk == System.cur)
 		core_ctx_switch();
@@ -244,7 +244,7 @@ unsigned tsk_resume( tsk_t *tsk )
 {
 	assert(tsk);
 
-	if (tsk->hdr.id != ID_DELAYED || tsk->delay != INFINITE)
+	if (tsk->hdr.id != ID_BLOCKED || tsk->delay != INFINITE)
 		return E_FAILURE;
 
 	tsk->hdr.id = ID_READY;

@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    21.09.2018
+    @date    04.10.2018
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -183,7 +183,7 @@ void core_tsk_switch( void )
 		if (priv_tmr_countdown((tmr_t *)cur))
 			continue;
 
-		if (cur->hdr.id == ID_DELAYED)
+		if (cur->hdr.id == ID_BLOCKED)
 		{
 			cur->hdr.id = ID_READY;
 			cur->event = E_SUCCESS;

@@ -42,6 +42,7 @@ Features:
 - updated queue/buffer functions
 - changed assert definitions
 - updated signal object
+- renamed ID_DELAYED to ID_BLOCKED
 ---------
 4.2
 - updated priv_rdy_insert internal procedure
