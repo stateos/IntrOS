@@ -43,7 +43,6 @@ Features:
 - changed assert definitions
 - updated signal object
 - renamed ID_DELAYED to ID_BLOCKED
-- added function aliases for the current task
 ---------
 4.2
 - updated priv_rdy_insert internal procedure

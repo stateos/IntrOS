@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    06.10.2018
+    @date    27.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -726,22 +726,6 @@ unsigned tsk_suspend( tsk_t *tsk );
 
 /******************************************************************************
  *
- * Name              : cur_suspend
- *
- * Description       : delay indefinitely execution of given task
- *                     execution of the task can be resumed
- *
- * Parameters        : none
- *
- * Return            : none
- *
- ******************************************************************************/
-
-__STATIC_INLINE
-void tsk_suspend( void ) { tsk_suspend(System.cur); }
-
-/******************************************************************************
- *
  * Name              : tsk_resume
  *
  * Description       : resume execution of given suspended task
@@ -878,7 +862,7 @@ namespace ThisTask
 	static inline void flip      ( FUN_t    _state ) { tsk_flip      (_state);                }
 #endif
 	static inline void stop      ( void )            { tsk_stop      ();                      }
-	static inline void suspend   ( void )            { cur_suspend   ();                      }
+	static inline void suspend   ( void )            { tsk_suspend   (System.cur);            }
 	static inline void wait      ( unsigned _flags ) { tsk_wait      (_flags);                }
 	static inline void sleepFor  ( cnt_t    _delay ) { tsk_sleepFor  (_delay);                }
 	static inline void sleepNext ( cnt_t    _delay ) { tsk_sleepNext (_delay);                }
