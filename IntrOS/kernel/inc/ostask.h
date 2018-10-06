@@ -462,6 +462,7 @@ struct __tsk
 /******************************************************************************
  *
  * Name              : tsk_this
+ * Alias             : cur_task
  *
  * Description       : return current task object
  *
@@ -473,6 +474,9 @@ struct __tsk
 
 __STATIC_INLINE
 tsk_t *tsk_this( void ) { return System.cur; }
+
+__STATIC_INLINE
+tsk_t *cur_task( void ) { return System.cur; }
 
 /******************************************************************************
  *
@@ -554,6 +558,21 @@ void tsk_stop( void );
  ******************************************************************************/
 
 void tsk_kill( tsk_t *tsk );
+
+/******************************************************************************
+ *
+ * Name              : cur_kill
+ *
+ * Description       : stop execution of current task
+ *
+ * Parameters        : none
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
+
+__STATIC_INLINE
+void cur_kill( void ) { tsk_kill(System.cur); }
 
 /******************************************************************************
  *
