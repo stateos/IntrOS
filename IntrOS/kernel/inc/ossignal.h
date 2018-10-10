@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossignal.h
     @author  Rajmund Szymanski
-    @date    28.09.2018
+    @date    10.10.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -48,7 +48,7 @@ typedef struct __sig sig_t, * const sig_id;
 
 struct __sig
 {
-	unsigned flags; // signal's current value
+	unsigned flags; // pending signals
 	unsigned mask;  // protection mask
 };
 

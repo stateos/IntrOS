@@ -2,7 +2,7 @@
 
     @file    IntrOS: osflag.h
     @author  Rajmund Szymanski
-    @date    19.09.2018
+    @date    10.10.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -53,7 +53,7 @@ typedef struct __flg flg_t, * const flg_id;
 
 struct __flg
 {
-	unsigned flags; // flag's current value
+	unsigned flags; // pending flags
 };
 
 /******************************************************************************
