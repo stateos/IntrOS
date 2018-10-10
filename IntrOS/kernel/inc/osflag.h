@@ -181,17 +181,17 @@ void flg_init( flg_t *flg, unsigned init );
  * Name              : flg_take
  * Alias             : flg_tryWait
  *
- * Description       : don't wait on flag object until requested flags have been set
+ * Description       : check if required flags have been set in the flag object
  *
  * Parameters
  *   flg             : pointer to flag object
  *   flags           : all flags to wait
  *   all             : waiting mode
- *                     flgAny:    wait for any flags to be set
- *                     flgAll:    wait for all flags to be set
+ *                     flgAny: wait for any flags to be set
+ *                     flgAll: wait for all flags to be set
  *
  * Return            : flags that remain to be set or
- *   0               : requested flags have been set
+ *   0               : required flags have been set
  *
  ******************************************************************************/
 
@@ -204,14 +204,14 @@ unsigned flg_tryWait( flg_t *flg, unsigned flags, bool all ) { return flg_take(f
  *
  * Name              : flg_wait
  *
- * Description       : wait indefinitely on flag object until requested flags have been set
+ * Description       : wait indefinitely on flag object until required flags have been set
  *
  * Parameters
  *   flg             : pointer to flag object
  *   flags           : all flags to wait
  *   all             : waiting mode
- *                     flgAny:    wait for any flags to be set
- *                     flgAll:    wait for all flags to be set
+ *                     flgAny: wait for any flags to be set
+ *                     flgAll: wait for all flags to be set
  *
  * Return            : none
  *

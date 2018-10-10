@@ -177,15 +177,15 @@ void sig_init( sig_t *sig, unsigned mask );
  * Name              : sig_take
  * Alias             : sig_tryWait
  *
- * Description       : check if the signal object has been released
+ * Description       : check signal object for the given signal number
  *
  * Parameters
  *   sig             : pointer to signal object
  *   num             : signal number
  *
  * Return
- *   E_SUCCESS       : signal object was successfully released
- *   E_FAILURE       : signal object was not released
+ *   E_SUCCESS       : required signal number has been set
+ *   E_FAILURE       : required signal number has not been set, try again
  *
  ******************************************************************************/
 
@@ -198,7 +198,7 @@ unsigned sig_tryWait( sig_t *sig, unsigned num ) { return sig_take(sig, num); }
  *
  * Name              : sig_wait
  *
- * Description       : wait indefinitely until the signal object has been released
+ * Description       : wait indefinitely until the given signal number has been set
  *
  * Parameters
  *   sig             : pointer to signal object
@@ -215,8 +215,7 @@ void sig_wait( sig_t *sig, unsigned num );
  * Name              : sig_give
  * Alias             : sig_set
  *
- * Description       : release the signal object
- *                     resume one (sigClear) or all (sigProtect) tasks that are waiting on the signal object
+ * Description       : set given signal number in the signal object
  *
  * Parameters
  *   sig             : pointer to signal object
@@ -235,7 +234,7 @@ void sig_set( sig_t *sig, unsigned num ) { sig_give(sig, num); }
  *
  * Name              : sig_clear
  *
- * Description       : reset the signal object
+ * Description       : reset given signal number in the signal object
  *
  * Parameters
  *   sig             : pointer to signal object
