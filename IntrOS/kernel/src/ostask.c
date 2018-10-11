@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.c
     @author  Rajmund Szymanski
-    @date    04.10.2018
+    @date    11.10.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -201,23 +201,48 @@ void tsk_sleepUntil( cnt_t time )
 }
 
 /* -------------------------------------------------------------------------- */
-void tsk_wait( unsigned flags )
+unsigned tsk_take( unsigned sig )
 /* -------------------------------------------------------------------------- */
 {
-	System.cur->event = flags;
-	while (System.cur->event) core_ctx_switch();
+	unsigned flag = 1U << sig;
+	unsigned event;
+
+	sys_lock();
+	{
+		flag &= System.cur->flags;
+
+		if (flag != 0)
+		{
+			System.cur->flags &= ~flag;
+
+			event = E_SUCCESS;
+		}
+		else
+			event = E_FAILURE;
+	}
+	sys_unlock();
+
+	return event;
 }
 
 /* -------------------------------------------------------------------------- */
-void tsk_give( tsk_t *tsk, unsigned flags )
+void tsk_wait( unsigned sig )
 /* -------------------------------------------------------------------------- */
 {
+	while (tsk_take(sig) != E_SUCCESS) core_ctx_switch();
+}
+
+/* -------------------------------------------------------------------------- */
+void tsk_give( tsk_t *tsk, unsigned sig )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned flag = 1U << sig;
+
 	assert(tsk);
 
 	sys_lock();
 	{
-		if (tsk->hdr.id == ID_READY)
-			tsk->event &= ~flags;
+		tsk->flags |= flag;
 	}
 	sys_unlock();
 }

@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    06.10.2018
+    @date    11.10.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -61,6 +61,7 @@ struct __tsk
 	cnt_t    delay; // inherited from timer
 	cnt_t    period;// inherited from timer
 
+	unsigned flags; // pending signals
 	unsigned event; // wakeup event
 
 	stk_t  * stack; // base of stack
@@ -91,7 +92,7 @@ struct __tsk
  ******************************************************************************/
 
 #define               _TSK_INIT( _state, _stack, _size ) \
-                    { _HDR_INIT(), _state, 0, 0, 0, 0, _stack, _size, { _CTX_INIT() } }
+                    { _HDR_INIT(), _state, 0, 0, 0, 0, 0, _stack, _size, { _CTX_INIT() } }
 
 /******************************************************************************
  *
@@ -626,34 +627,51 @@ void tsk_flip( fun_t *state );
 
 /******************************************************************************
  *
- * Name              : tsk_wait
+ * Name              : tsk_take
  *
- * Description       : delay indefinitely execution of current task and wait for flags or message
+ * Description       : check pending signals of the current task for the given signal
  *
  * Parameters
- *   flags           : all flags to wait
+ *   sig             : signal number
+ *
+ * Return
+ *   E_SUCCESS       : required signal has been set
+ *   E_FAILURE       : required signal has not been set, try again
+ *
+ ******************************************************************************/
+
+unsigned tsk_take( unsigned sig );
+
+/******************************************************************************
+ *
+ * Name              : tsk_wait
+ *
+ * Description       : wait indefinitely until the given signal has been set
+ *
+ * Parameters
+ *   sig             : signal number
  *
  * Return            : none
  *
  ******************************************************************************/
 
-void tsk_wait( unsigned flags );
+void tsk_wait( unsigned sig );
 
 /******************************************************************************
  *
  * Name              : tsk_give
  *
- * Description       : set given flags in waiting task (tsk_wait)
+ * Description       : set given signal for the given task
  *
  * Parameters
- *   tsk             : pointer to delayed task object
- *   flags           : flags or message transfered to the task
+ *   tsk             : pointer to the task object
+ *   sig             : signal number
  *
  * Return            : none
  *
  ******************************************************************************/
 
-void tsk_give( tsk_t *tsk, unsigned flags );
+void tsk_give( tsk_t *tsk, unsigned sig );
 
 /******************************************************************************
  *
@@ -808,7 +826,7 @@ struct staticTaskT : public __tsk
 	void     join     ( void )            {        tsk_join     (this);         }
 	void     start    ( void )            {        tsk_start    (this);         }
 	void     startFrom( fun_t  * _state ) {        tsk_startFrom(this, _state); }
-	void     give     ( unsigned _flags ) {        tsk_give     (this, _flags); }
+	void     give     ( unsigned _sig )   {        tsk_give     (this, _sig);   }
 	unsigned suspend  ( void )            { return tsk_suspend  (this);         }
 	unsigned resume   ( void )            { return tsk_resume   (this);         }
 
@@ -888,22 +906,23 @@ typedef startTaskT<OS_STACK_SIZE> startTask;
 
 namespace ThisTask
 {
-	static inline void pass      ( void )            { tsk_pass      ();                      }
-	static inline void yield     ( void )            { tsk_yield     ();                      }
+	static inline void     pass      ( void )            {        tsk_pass      ();                    }
+	static inline void     yield     ( void )            {        tsk_yield     ();                    }
 #if OS_FUNCTIONAL
-	static inline void flip      ( FUN_t    _state ) { ((TaskT<>*)System.cur)->fun_ = _state;
-	                                                   tsk_flip      (TaskT<>::run_);         }
+	static inline void     flip      ( FUN_t    _state ) {      ((TaskT<>*)System.cur)->fun_ = _state;
+	                                                              tsk_flip      (TaskT<>::run_);       }
 #else
-	static inline void flip      ( FUN_t    _state ) { tsk_flip      (_state);                }
+	static inline void     flip      ( FUN_t    _state ) {        tsk_flip      (_state);              }
 #endif
-	static inline void stop      ( void )            { tsk_stop      ();                      }
-	static inline void suspend   ( void )            { cur_suspend   ();                      }
-	static inline void wait      ( unsigned _flags ) { tsk_wait      (_flags);                }
-	static inline void sleepFor  ( cnt_t    _delay ) { tsk_sleepFor  (_delay);                }
-	static inline void sleepNext ( cnt_t    _delay ) { tsk_sleepNext (_delay);                }
-	static inline void sleepUntil( cnt_t    _time )  { tsk_sleepUntil(_time);                 }
-	static inline void sleep     ( void )            { tsk_sleep     ();                      }
-	static inline void delay     ( cnt_t    _delay ) { tsk_delay     (_delay);                }
+	static inline void     stop      ( void )            {        tsk_stop      ();                    }
+	static inline void     suspend   ( void )            {        cur_suspend   ();                    }
+	static inline unsigned take      ( unsigned _sig )   { return tsk_take      (_sig);                }
+	static inline void     wait      ( unsigned _sig )   {        tsk_wait      (_sig);                }
+	static inline void     sleepFor  ( cnt_t    _delay ) {        tsk_sleepFor  (_delay);              }
+	static inline void     sleepNext ( cnt_t    _delay ) {        tsk_sleepNext (_delay);              }
+	static inline void     sleepUntil( cnt_t    _time )  {        tsk_sleepUntil(_time);               }
+	static inline void     sleep     ( void )            {        tsk_sleep     ();                    }
+	static inline void     delay     ( cnt_t    _delay ) {        tsk_delay     (_delay);              }
 }
 
 #endif//__cplusplus

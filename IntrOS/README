@@ -44,6 +44,7 @@ Features:
 - updated signal object
 - renamed ID_DELAYED to ID_BLOCKED
 - added function aliases for the current task
+- changed usage of signals sent directly to the task
 ---------
 4.2
 - updated priv_rdy_insert internal procedure
