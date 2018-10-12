@@ -84,7 +84,7 @@ unsigned sig_wait( sig_t *sig, unsigned sigset )
 	assert(sig);
 	assert(sigset);
 
-	while ((event = sig_take(sig, sigset) == E_FAILURE)) core_ctx_switch();
+	while ((event = sig_take(sig, sigset)) == E_FAILURE) core_ctx_switch();
 
 	return event;
 }
