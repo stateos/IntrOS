@@ -6,26 +6,30 @@ auto sig = Signal();
 
 void slave()
 {
+	unsigned x;
+
 	for (;;)
 	{
-		sig.wait(SIGSET(1));
-		led.tick();
+		x = sig.wait(SIGALL);
+		led = SIGSET(x);
 	}
 }
 
 void master()
 {
+	unsigned x = 0;
+
 	for (;;)
 	{
 		ThisTask::sleepFor(SEC);
-		sig.give(1);
+		sig.give(x++ % 4);
 	}
 }
 
-auto sla = startTask(slave);
-auto mas = startTask(master);
-
 int main()
 {
-	ThisTask::stop();
+	auto sla = startTask(slave);
+	auto mas = startTask(master);
+
+	ThisTask::sleep();
 }

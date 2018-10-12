@@ -5,14 +5,21 @@ sig_id sig = SIG_CREATE(0);
 
 void slave()
 {
-	sig_wait(sig, SIGSET(1));
-	LED_Tick();
+	unsigned x;
+
+	x = sig_wait(sig, SIGALL);
+	LEDs = SIGSET(x);
 }
 
 void master()
 {
-	tsk_delay(SEC);
-	sig_give(sig, 1);
+	unsigned x = 0;
+
+	for (;;)
+	{
+		tsk_delay(SEC);
+		sig_give(sig, x++ % 4);
+	}
 }
 
 int main()
