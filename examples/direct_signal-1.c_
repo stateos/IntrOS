@@ -3,7 +3,7 @@
 
 void slave()
 {
-	tsk_wait(1);
+	tsk_wait(SIGSET(1));
 	LED_Tick();
 }
 

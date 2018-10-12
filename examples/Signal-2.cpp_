@@ -8,7 +8,7 @@ void slave()
 {
 	for (;;)
 	{
-		sig.wait(1);
+		sig.wait(SIGSET(1));
 		led.tick();
 	}
 }

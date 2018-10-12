@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossignal.h
     @author  Rajmund Szymanski
-    @date    10.10.2018
+    @date    12.10.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -37,6 +37,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/* -------------------------------------------------------------------------- */
+
+#define SIGSET(signo) (1U << (signo))   // signal mask from the signal number
+#define SIGALL        (~0U)             // signal mask for all signals
 
 /******************************************************************************
  *
@@ -177,89 +182,89 @@ void sig_init( sig_t *sig, unsigned mask );
  * Name              : sig_take
  * Alias             : sig_tryWait
  *
- * Description       : check signal object for the given signal number
+ * Description       : check signal object for a given set of signals
  *
  * Parameters
  *   sig             : pointer to signal object
- *   num             : signal number
+ *   sigset          : set of expected signals
  *
- * Return
- *   E_SUCCESS       : required signal number has been set
- *   E_FAILURE       : required signal number has not been set, try again
+ * Return            : the lowest number of expected signal from the set of all pending signals or
+ *   E_FAILURE       : no expected signal has been set, try again
  *
  ******************************************************************************/
 
-unsigned sig_take( sig_t *sig, unsigned num );
+unsigned sig_take( sig_t *sig, unsigned sigset );
 
 __STATIC_INLINE
-unsigned sig_tryWait( sig_t *sig, unsigned num ) { return sig_take(sig, num); }
+unsigned sig_tryWait( sig_t *sig, unsigned sigset ) { return sig_take(sig, sigset); }
 
 /******************************************************************************
  *
  * Name              : sig_wait
  *
- * Description       : wait indefinitely until the given signal number has been set
+ * Description       : wait indefinitely for a signal from the given set of signals
  *
  * Parameters
  *   sig             : pointer to signal object
- *   num             : signal number
+ *   sigset          : set of expected signals
  *
- * Return            : none
+ * Return            : the lowest number of expected signal from the set of all pending signals
  *
  ******************************************************************************/
 
-void sig_wait( sig_t *sig, unsigned num );
+unsigned sig_wait( sig_t *sig, unsigned sigset );
 
 /******************************************************************************
  *
  * Name              : sig_give
  * Alias             : sig_set
  *
- * Description       : set given signal number in the signal object
+ * Description       : set given signal in the signal object
  *
  * Parameters
  *   sig             : pointer to signal object
- *   num             : signal number
+ *   signo           : signal number
  *
  * Return            : none
  *
  ******************************************************************************/
 
-void sig_give( sig_t *sig, unsigned num );
+void sig_give( sig_t *sig, unsigned signo );
 
 __STATIC_INLINE
-void sig_set( sig_t *sig, unsigned num ) { sig_give(sig, num); }
+void sig_set( sig_t *sig, unsigned signo ) { sig_give(sig, signo); }
 
 /******************************************************************************
  *
  * Name              : sig_clear
  *
- * Description       : reset given signal number in the signal object
+ * Description       : reset given signal in the signal object
  *
  * Parameters
  *   sig             : pointer to signal object
- *   num             : signal number
+ *   signo           : signal number
  *
  * Return            : none
  *
  ******************************************************************************/
 
-void sig_clear( sig_t *sig, unsigned num );
+void sig_clear( sig_t *sig, unsigned signo );
 
 /******************************************************************************
  *
  * Name              : sig_get
  *
- * Description       : get given signal state from signal object
+ * Description       : get state of the given signal in the signal object
  *
  * Parameters
  *   sig             : pointer to signal object
+ *   signo           : signal number
  *
  * Return            : signal state in signal object
  *
  ******************************************************************************/
 
-bool sig_get( sig_t *sig, unsigned num );
+bool sig_get( sig_t *sig, unsigned signo );
 
 #ifdef __cplusplus
 }
@@ -284,13 +289,13 @@ struct Signal : public __sig
 {
 	Signal( const unsigned _mask = 0 ): __sig _SIG_INIT(_mask) {}
 
-	unsigned take   ( unsigned num ) { return sig_take   (this, num); }
-	unsigned tryWait( unsigned num ) { return sig_tryWait(this, num); }
-	void     wait   ( unsigned num ) {        sig_wait   (this, num); }
-	void     give   ( unsigned num ) {        sig_give   (this, num); }
-	void     set    ( unsigned num ) {        sig_set    (this, num); }
-	void     clear  ( unsigned num ) {        sig_clear  (this, num); }
-	bool     get    ( unsigned num ) { return sig_get    (this, num); }
+	unsigned take   ( unsigned _sigset ) { return sig_take   (this, _sigset); }
+	unsigned tryWait( unsigned _sigset ) { return sig_tryWait(this, _sigset); }
+	unsigned wait   ( unsigned _sigset ) { return sig_wait   (this, _sigset); }
+	void     give   ( unsigned _signo )  {        sig_give   (this, _signo);  }
+	void     set    ( unsigned _signo )  {        sig_set    (this, _signo);  }
+	void     clear  ( unsigned _signo )  {        sig_clear  (this, _signo);  }
+	bool     get    ( unsigned _signo )  { return sig_get    (this, _signo);  }
 };
 
 #endif//__cplusplus

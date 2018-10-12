@@ -5,7 +5,7 @@ sig_id sig = SIG_CREATE(0);
 
 void slave()
 {
-	sig_wait(sig, 1);
+	sig_wait(sig, SIGSET(1));
 	LED_Tick();
 }
 

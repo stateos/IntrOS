@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.c
     @author  Rajmund Szymanski
-    @date    11.10.2018
+    @date    12.10.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -30,6 +30,7 @@
  ******************************************************************************/
 
 #include "inc/ostask.h"
+#include "inc/ossignal.h"
 #include "inc/oscriticalsection.h"
 
 /* -------------------------------------------------------------------------- */
@@ -146,6 +147,62 @@ void tsk_flip( fun_t *state )
 }
 
 /* -------------------------------------------------------------------------- */
+unsigned tsk_take( unsigned sigset )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned flags;
+	unsigned signo;
+
+	assert(sigset);
+
+	sys_lock();
+	{
+		flags = sigset & System.cur->flags;
+		signo = sizeof(unsigned) * 8;
+
+		if (flags)
+		{
+			do signo--; while ((flags <<= 1) != 0);
+			System.cur->flags &= ~SIGSET(signo);
+		}
+		else
+			signo = E_FAILURE;
+	}
+	sys_unlock();
+
+	return signo;
+}
+
+/* -------------------------------------------------------------------------- */
+unsigned tsk_wait( unsigned sigset )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned event;
+
+	assert(sigset);
+
+	while ((event = tsk_take(sigset)) == E_FAILURE) core_ctx_switch();
+
+	return event;
+}
+
+/* -------------------------------------------------------------------------- */
+void tsk_give( tsk_t *tsk, unsigned signo )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned flag = SIGSET(signo);
+
+	assert(tsk);
+	assert(flag);
+
+	sys_lock();
+	{
+		tsk->flags |= flag;
+	}
+	sys_unlock();
+}
+
+/* -------------------------------------------------------------------------- */
 static
 void priv_tsk_sleep( tsk_t *cur )
 /* -------------------------------------------------------------------------- */
@@ -199,53 +256,6 @@ void tsk_sleepUntil( cnt_t time )
 			cur->delay = 0;
 
 		priv_tsk_sleep(cur);
-	}
-	sys_unlock();
-}
-
-/* -------------------------------------------------------------------------- */
-unsigned tsk_take( unsigned sig )
-/* -------------------------------------------------------------------------- */
-{
-	unsigned flag = 1U << sig;
-	unsigned event;
-
-	sys_lock();
-	{
-		flag &= System.cur->flags;
-
-		if (flag != 0)
-		{
-			System.cur->flags &= ~flag;
-
-			event = E_SUCCESS;
-		}
-		else
-			event = E_FAILURE;
-	}
-	sys_unlock();
-
-	return event;
-}
-
-/* -------------------------------------------------------------------------- */
-void tsk_wait( unsigned sig )
-/* -------------------------------------------------------------------------- */
-{
-	while (tsk_take(sig) != E_SUCCESS) core_ctx_switch();
-}
-
-/* -------------------------------------------------------------------------- */
-void tsk_give( tsk_t *tsk, unsigned sig )
-/* -------------------------------------------------------------------------- */
-{
-	unsigned flag = 1U << sig;
-
-	assert(tsk);
-
-	sys_lock();
-	{
-		tsk->flags |= flag;
 	}
 	sys_unlock();
 }

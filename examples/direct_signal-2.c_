@@ -1,0 +1,34 @@
+#include <stm32f4_discovery.h>
+#include <os.h>
+
+void slave()
+{
+	unsigned x;
+
+	x = tsk_wait(SIGALL);
+	LEDs = 1U << x;
+}
+
+OS_TSK(sla, slave);
+
+void master()
+{
+	unsigned x = 0;
+
+	for (;;)
+	{
+		tsk_delay(SEC);
+		tsk_give(sla, x++ % 4);
+	}
+}
+
+OS_TSK(mas, master);
+
+int main()
+{
+	LED_Init();
+
+	tsk_start(sla);
+	tsk_start(mas);
+	tsk_stop();
+}

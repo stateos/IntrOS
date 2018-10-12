@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossignal.c
     @author  Rajmund Szymanski
-    @date    28.09.2018
+    @date    12.10.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -48,48 +48,55 @@ void sig_init( sig_t *sig, unsigned mask )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned sig_take( sig_t *sig, unsigned num )
+unsigned sig_take( sig_t *sig, unsigned sigset )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned flag = 1U << num;
-	unsigned event;
+	unsigned flags;
+	unsigned signo;
 
 	assert(sig);
+	assert(sigset);
 
 	sys_lock();
 	{
-		flag &= sig->flags;
+		flags = sigset & sig->flags;
+		signo = sizeof(unsigned) * 8;
 
-		if (flag != 0)
+		if (flags)
 		{
-			sig->flags &= ~flag | sig->mask;
-
-			event = E_SUCCESS;
+			do signo--; while ((flags <<= 1) != 0);
+			sig->flags &= ~SIGSET(signo) | sig->mask;
 		}
 		else
-		{
-			event = E_FAILURE;
-		}
+			signo = E_FAILURE;
 	}
 	sys_unlock();
+
+	return signo;
+}
+
+/* -------------------------------------------------------------------------- */
+unsigned sig_wait( sig_t *sig, unsigned sigset )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned event;
+
+	assert(sig);
+	assert(sigset);
+
+	while ((event = sig_take(sig, sigset) == E_FAILURE)) core_ctx_switch();
 
 	return event;
 }
 
 /* -------------------------------------------------------------------------- */
-void sig_wait( sig_t *sig, unsigned num )
+void sig_give( sig_t *sig, unsigned signo )
 /* -------------------------------------------------------------------------- */
 {
-	while (sig_take(sig, num) != E_SUCCESS) core_ctx_switch();
-}
-
-/* -------------------------------------------------------------------------- */
-void sig_give( sig_t *sig, unsigned num )
-/* -------------------------------------------------------------------------- */
-{
-	unsigned flag = 1U << num;
+	unsigned flag = SIGSET(signo);
 
 	assert(sig);
+	assert(flag);
 
 	sys_lock();
 	{
@@ -99,18 +106,37 @@ void sig_give( sig_t *sig, unsigned num )
 }
 
 /* -------------------------------------------------------------------------- */
-void sig_clear( sig_t *sig, unsigned num )
+void sig_clear( sig_t *sig, unsigned signo )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned flag = 1U << num;
+	unsigned flag = SIGSET(signo);
 
 	assert(sig);
+	assert(flag);
 
 	sys_lock();
 	{
 		sig->flags &= ~flag;
 	}
 	sys_unlock();
+}
+
+/* -------------------------------------------------------------------------- */
+bool sig_get( sig_t *sig, unsigned signo )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned flag = SIGSET(signo);
+
+	assert(sig);
+	assert(flag);
+
+	sys_lock();
+	{
+		flag &= sig->flags;
+	}
+	sys_unlock();
+
+	return flag != 0;
 }
 
 /* -------------------------------------------------------------------------- */
