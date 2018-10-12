@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossemaphore.h
     @author  Rajmund Szymanski
-    @date    18.09.2018
+    @date    12.10.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -40,8 +40,8 @@ extern "C" {
 
 /* -------------------------------------------------------------------------- */
 
-#define semBinary    (  1U ) // binary semaphore
-#define semCounting  ( ~0U ) // counting semaphore
+#define semBinary    ( 1U )   // binary semaphore
+#define semCounting  ( 0U-1 ) // counting semaphore
 
 /******************************************************************************
  *

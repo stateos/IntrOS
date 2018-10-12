@@ -60,7 +60,7 @@ unsigned sig_take( sig_t *sig, unsigned sigset )
 	sys_lock();
 	{
 		flags = sigset & sig->flags;
-		signo = sizeof(unsigned) * 8;
+		signo = sizeof(unsigned) * CHAR_BIT;
 
 		if (flags)
 		{

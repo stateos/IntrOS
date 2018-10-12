@@ -158,7 +158,7 @@ unsigned tsk_take( unsigned sigset )
 	sys_lock();
 	{
 		flags = sigset & System.cur->flags;
-		signo = sizeof(unsigned) * 8;
+		signo = sizeof(unsigned) * CHAR_BIT;
 
 		if (flags)
 		{
