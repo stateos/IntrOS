@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossignal.c
     @author  Rajmund Szymanski
-    @date    12.10.2018
+    @date    13.10.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -51,24 +51,21 @@ void sig_init( sig_t *sig, unsigned mask )
 unsigned sig_take( sig_t *sig, unsigned sigset )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned flags;
-	unsigned signo;
+	unsigned signo = E_FAILURE;
 
 	assert(sig);
 	assert(sigset);
 
 	sys_lock();
 	{
-		flags = sigset & sig->flags;
-		signo = sizeof(unsigned) * CHAR_BIT;
+		sigset &= sig->flags;
 
-		if (flags)
+		if (sigset)
 		{
-			do signo--; while ((flags <<= 1) != 0);
-			sig->flags &= ~SIGSET(signo) | sig->mask;
+			sigset &= -sigset;
+			sig->flags &= ~sigset | sig->mask;
+			for (signo = 0; sigset >>= 1; signo++);
 		}
-		else
-			signo = E_FAILURE;
 	}
 	sys_unlock();
 
@@ -93,14 +90,14 @@ unsigned sig_wait( sig_t *sig, unsigned sigset )
 void sig_give( sig_t *sig, unsigned signo )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned flag = SIGSET(signo);
+	unsigned sigset = SIGSET(signo);
 
 	assert(sig);
-	assert(flag);
+	assert(sigset);
 
 	sys_lock();
 	{
-		sig->flags |= flag;
+		sig->flags |= sigset;
 	}
 	sys_unlock();
 }
@@ -109,14 +106,14 @@ void sig_give( sig_t *sig, unsigned signo )
 void sig_clear( sig_t *sig, unsigned signo )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned flag = SIGSET(signo);
+	unsigned sigset = SIGSET(signo);
 
 	assert(sig);
-	assert(flag);
+	assert(sigset);
 
 	sys_lock();
 	{
-		sig->flags &= ~flag;
+		sig->flags &= ~sigset;
 	}
 	sys_unlock();
 }
@@ -125,18 +122,18 @@ void sig_clear( sig_t *sig, unsigned signo )
 bool sig_get( sig_t *sig, unsigned signo )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned flag = SIGSET(signo);
+	unsigned sigset = SIGSET(signo);
 
 	assert(sig);
-	assert(flag);
+	assert(sigset);
 
 	sys_lock();
 	{
-		flag &= sig->flags;
+		sigset &= sig->flags;
 	}
 	sys_unlock();
 
-	return flag != 0;
+	return sigset != 0;
 }
 
 /* -------------------------------------------------------------------------- */

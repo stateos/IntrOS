@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.c
     @author  Rajmund Szymanski
-    @date    12.10.2018
+    @date    13.10.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -150,23 +150,20 @@ void tsk_flip( fun_t *state )
 unsigned tsk_take( unsigned sigset )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned flags;
-	unsigned signo;
+	unsigned signo = E_FAILURE;
 
 	assert(sigset);
 
 	sys_lock();
 	{
-		flags = sigset & System.cur->flags;
-		signo = sizeof(unsigned) * CHAR_BIT;
+		sigset &= System.cur->flags;
 
-		if (flags)
+		if (sigset)
 		{
-			do signo--; while ((flags <<= 1) != 0);
-			System.cur->flags &= ~SIGSET(signo);
+			sigset &= -sigset;
+			System.cur->flags &= ~sigset;
+			for (signo = 0; sigset >>= 1; signo++);
 		}
-		else
-			signo = E_FAILURE;
 	}
 	sys_unlock();
 
@@ -190,14 +187,14 @@ unsigned tsk_wait( unsigned sigset )
 void tsk_give( tsk_t *tsk, unsigned signo )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned flag = SIGSET(signo);
+	unsigned sigset = SIGSET(signo);
 
 	assert(tsk);
-	assert(flag);
+	assert(sigset);
 
 	sys_lock();
 	{
-		tsk->flags |= flag;
+		tsk->flags |= sigset;
 	}
 	sys_unlock();
 }
