@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    12.10.2018
+    @date    14.10.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -635,7 +635,7 @@ void tsk_flip( fun_t *state );
  *   sigset          : set of expected signals
  *
  * Return            : the lowest number of expected signal from the set of all pending signals or
- *   E_FAILURE       : no expected signal has been set, try again
+ *   0               : no expected signal has been set, try again
  *
  ******************************************************************************/
 

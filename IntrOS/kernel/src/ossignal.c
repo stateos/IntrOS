@@ -51,7 +51,7 @@ void sig_init( sig_t *sig, unsigned mask )
 unsigned sig_take( sig_t *sig, unsigned sigset )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned signo = E_FAILURE;
+	unsigned signo;
 
 	assert(sig);
 	assert(sigset);
@@ -59,13 +59,9 @@ unsigned sig_take( sig_t *sig, unsigned sigset )
 	sys_lock();
 	{
 		sigset &= sig->flags;
-
-		if (sigset)
-		{
-			sigset &= -sigset;
-			sig->flags &= ~sigset | sig->mask;
-			for (signo = 0; sigset >>= 1; signo++);
-		}
+		sigset &= -sigset;
+		sig->flags &= ~sigset | sig->mask;
+		for (signo = 0; sigset; sigset >>= 1, signo++);
 	}
 	sys_unlock();
 
@@ -76,14 +72,14 @@ unsigned sig_take( sig_t *sig, unsigned sigset )
 unsigned sig_wait( sig_t *sig, unsigned sigset )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event;
+	unsigned signo;
 
 	assert(sig);
 	assert(sigset);
 
-	while ((event = sig_take(sig, sigset)) == E_FAILURE) core_ctx_switch();
+	while ((signo = sig_take(sig, sigset)) == 0) core_ctx_switch();
 
-	return event;
+	return signo;
 }
 
 /* -------------------------------------------------------------------------- */
