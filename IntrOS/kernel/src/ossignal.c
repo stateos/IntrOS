@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossignal.c
     @author  Rajmund Szymanski
-    @date    13.10.2018
+    @date    14.10.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -116,24 +116,6 @@ void sig_clear( sig_t *sig, unsigned signo )
 		sig->flags &= ~sigset;
 	}
 	sys_unlock();
-}
-
-/* -------------------------------------------------------------------------- */
-bool sig_get( sig_t *sig, unsigned signo )
-/* -------------------------------------------------------------------------- */
-{
-	unsigned sigset = SIGSET(signo);
-
-	assert(sig);
-	assert(sigset);
-
-	sys_lock();
-	{
-		sigset &= sig->flags;
-	}
-	sys_unlock();
-
-	return sigset != 0;
 }
 
 /* -------------------------------------------------------------------------- */

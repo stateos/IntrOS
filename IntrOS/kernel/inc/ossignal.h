@@ -252,22 +252,6 @@ void sig_set( sig_t *sig, unsigned signo ) { sig_give(sig, signo); }
 
 void sig_clear( sig_t *sig, unsigned signo );
 
-/******************************************************************************
- *
- * Name              : sig_get
- *
- * Description       : get state of the given signal in the signal object
- *
- * Parameters
- *   sig             : pointer to signal object
- *   signo           : signal number
- *
- * Return            : signal state in signal object
- *
- ******************************************************************************/
-
-bool sig_get( sig_t *sig, unsigned signo );
-
 #ifdef __cplusplus
 }
 #endif
@@ -297,7 +281,6 @@ struct Signal : public __sig
 	void     give   ( unsigned _signo )  {        sig_give   (this, _signo);  }
 	void     set    ( unsigned _signo )  {        sig_set    (this, _signo);  }
 	void     clear  ( unsigned _signo )  {        sig_clear  (this, _signo);  }
-	bool     get    ( unsigned _signo )  { return sig_get    (this, _signo);  }
 };
 
 #endif//__cplusplus
