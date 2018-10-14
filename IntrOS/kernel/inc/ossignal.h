@@ -55,7 +55,7 @@ typedef struct __sig sig_t, * const sig_id;
 
 struct __sig
 {
-	unsigned flags; // pending signals
+	unsigned sigset;// pending signals
 	unsigned mask;  // protection mask
 };
 

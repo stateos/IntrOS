@@ -69,7 +69,7 @@ void tsk_start( tsk_t *tsk )
 	{
 		if (tsk->hdr.id == ID_STOPPED)
 		{
-			tsk->flags = 0;
+			tsk->sigset = 0;
 
 			core_ctx_init(tsk);
 			core_tsk_insert(tsk);
@@ -90,7 +90,7 @@ void tsk_startFrom( tsk_t *tsk, fun_t *state )
 		if (tsk->hdr.id == ID_STOPPED)
 		{
 			tsk->state = state;
-			tsk->flags = 0;
+			tsk->sigset = 0;
 
 			core_ctx_init(tsk);
 			core_tsk_insert(tsk);
@@ -156,9 +156,9 @@ unsigned tsk_take( unsigned sigset )
 
 	sys_lock();
 	{
-		sigset &= System.cur->flags;
+		sigset &= System.cur->sigset;
 		sigset &= -sigset;
-		System.cur->flags &= ~sigset;
+		System.cur->sigset &= ~sigset;
 		for (signo = 0; sigset; sigset >>= 1, signo++);
 	}
 	sys_unlock();
@@ -190,7 +190,7 @@ void tsk_give( tsk_t *tsk, unsigned signo )
 
 	sys_lock();
 	{
-		tsk->flags |= sigset;
+		tsk->sigset |= sigset;
 	}
 	sys_unlock();
 }

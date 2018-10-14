@@ -61,7 +61,7 @@ struct __tsk
 	cnt_t    delay; // inherited from timer
 	cnt_t    period;// inherited from timer
 
-	unsigned flags; // pending signals
+	unsigned sigset;// pending signals
 	unsigned event; // wakeup event
 
 	stk_t  * stack; // base of stack

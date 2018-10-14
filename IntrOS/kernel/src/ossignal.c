@@ -58,9 +58,9 @@ unsigned sig_take( sig_t *sig, unsigned sigset )
 
 	sys_lock();
 	{
-		sigset &= sig->flags;
+		sigset &= sig->sigset;
 		sigset &= -sigset;
-		sig->flags &= ~sigset | sig->mask;
+		sig->sigset &= ~sigset | sig->mask;
 		for (signo = 0; sigset; sigset >>= 1, signo++);
 	}
 	sys_unlock();
@@ -93,7 +93,7 @@ void sig_give( sig_t *sig, unsigned signo )
 
 	sys_lock();
 	{
-		sig->flags |= sigset;
+		sig->sigset |= sigset;
 	}
 	sys_unlock();
 }
@@ -109,7 +109,7 @@ void sig_clear( sig_t *sig, unsigned signo )
 
 	sys_lock();
 	{
-		sig->flags &= ~sigset;
+		sig->sigset &= ~sigset;
 	}
 	sys_unlock();
 }
