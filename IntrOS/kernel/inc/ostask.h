@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    14.10.2018
+    @date    15.10.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -547,7 +547,8 @@ void tsk_stop( void );
 
 /******************************************************************************
  *
- * Name              : tsk_kill
+ * Name              : tsk_reset
+ * Alias             : tsk_kill
  *
  * Description       : stop execution of given task
  *
@@ -558,11 +559,15 @@ void tsk_stop( void );
  *
  ******************************************************************************/
 
-void tsk_kill( tsk_t *tsk );
+void tsk_reset( tsk_t *tsk );
+
+__STATIC_INLINE
+void tsk_kill( tsk_t *tsk ) { tsk_reset(tsk); }
 
 /******************************************************************************
  *
- * Name              : cur_kill
+ * Name              : cur_reset
+ * Alias             : cur_kill
  *
  * Description       : stop execution of current task
  *
@@ -573,7 +578,10 @@ void tsk_kill( tsk_t *tsk );
  ******************************************************************************/
 
 __STATIC_INLINE
-void cur_kill( void ) { tsk_kill(System.cur); }
+void cur_reset( void ) { tsk_reset(System.cur); }
+
+__STATIC_INLINE
+void cur_kill( void ) { cur_reset(); }
 
 /******************************************************************************
  *
@@ -821,6 +829,7 @@ struct staticTaskT : public __tsk
 	 staticTaskT( fun_t *_state ): __tsk _TSK_INIT(_state, stack_, size_) {}
 	~staticTaskT( void ) { assert(__tsk::hdr.id == ID_STOPPED); }
 
+	void     reset    ( void )            {        tsk_reset    (this);         }
 	void     kill     ( void )            {        tsk_kill     (this);         }
 	void     join     ( void )            {        tsk_join     (this);         }
 	void     start    ( void )            {        tsk_start    (this);         }
@@ -914,6 +923,8 @@ namespace ThisTask
 	static inline void     flip      ( FUN_t    _state )  {        tsk_flip      (_state);              }
 #endif
 	static inline void     stop      ( void )             {        tsk_stop      ();                    }
+	static inline void     reset     ( void )             {        cur_reset     ();                    }
+	static inline void     kill      ( void )             {        cur_kill      ();                    }
 	static inline void     suspend   ( void )             {        cur_suspend   ();                    }
 	static inline unsigned take      ( unsigned _sigset ) { return tsk_take      (_sigset);             }
 	static inline unsigned wait      ( unsigned _sigset ) { return tsk_wait      (_sigset);             }

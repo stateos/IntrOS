@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.c
     @author  Rajmund Szymanski
-    @date    14.10.2018
+    @date    15.10.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -110,7 +110,7 @@ void tsk_stop( void )
 }
 
 /* -------------------------------------------------------------------------- */
-void tsk_kill( tsk_t *tsk )
+void tsk_reset( tsk_t *tsk )
 /* -------------------------------------------------------------------------- */
 {
 	assert(tsk);
