@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    15.10.2018
+    @date    16.10.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -62,7 +62,6 @@ struct __tsk
 	cnt_t    period;// inherited from timer
 
 	unsigned sigset;// pending signals
-	unsigned event; // wakeup event
 
 	stk_t  * stack; // base of stack
 	unsigned size;  // size of stack (in bytes)
@@ -92,7 +91,7 @@ struct __tsk
  ******************************************************************************/
 
 #define               _TSK_INIT( _state, _stack, _size ) \
-                    { _HDR_INIT(), _state, 0, 0, 0, 0, 0, _stack, _size, { _CTX_INIT() } }
+                    { _HDR_INIT(), _state, 0, 0, 0, 0, _stack, _size, { _CTX_INIT() } }
 
 /******************************************************************************
  *
