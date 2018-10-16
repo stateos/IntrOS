@@ -257,7 +257,7 @@ unsigned stm_wait( stm_t *stm, void *data, unsigned size );
  *   size            : size of read buffer
  *
  * Return
- *   E_SUCCESS       : stream data was successfully transfered to the stream buffer object
+ *   E_SUCCESS       : stream data was successfully transferred to the stream buffer object
  *   E_FAILURE       : not enough space in the stream buffer
  *
  ******************************************************************************/
@@ -277,7 +277,7 @@ unsigned stm_give( stm_t *stm, const void *data, unsigned size );
  *   size            : size of read buffer
  *
  * Return
- *   E_SUCCESS       : stream data was successfully transfered to the stream buffer object
+ *   E_SUCCESS       : stream data was successfully transferred to the stream buffer object
  *   E_FAILURE       : size of the stream data is out of the limit
  *
  ******************************************************************************/
@@ -297,7 +297,7 @@ unsigned stm_send( stm_t *stm, const void *data, unsigned size );
  *   size            : size of read buffer
  *
  * Return
- *   E_SUCCESS       : stream data was successfully transfered to the stream buffer object
+ *   E_SUCCESS       : stream data was successfully transferred to the stream buffer object
  *   E_FAILURE       : size of the stream data is out of the limit
  *
  ******************************************************************************/

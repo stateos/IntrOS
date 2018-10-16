@@ -200,7 +200,7 @@ void evq_init( evq_t *evq, unsigned *data, unsigned bufsize );
  *   data            : pointer to store event data
  *
  * Return
- *   E_SUCCESS       : event data was successfully transfered from the event queue object
+ *   E_SUCCESS       : event data was successfully transferred from the event queue object
  *   E_FAILURE       : event queue object is empty
  *
  ******************************************************************************/
@@ -239,7 +239,7 @@ void evq_wait( evq_t *evq, unsigned *data );
  *   data            : event value
  *
  * Return
- *   E_SUCCESS       : event data was successfully transfered to the event queue object
+ *   E_SUCCESS       : event data was successfully transferred to the event queue object
  *   E_FAILURE       : event queue object is full
  *
  ******************************************************************************/

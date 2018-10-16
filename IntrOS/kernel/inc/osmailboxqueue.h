@@ -209,7 +209,7 @@ void box_init( box_t *box, unsigned size, void *data, unsigned bufsize );
  *   data            : pointer to store mailbox data
  *
  * Return
- *   E_SUCCESS       : mailbox data was successfully transfered from the mailbox queue object
+ *   E_SUCCESS       : mailbox data was successfully transferred from the mailbox queue object
  *   E_FAILURE       : mailbox queue object is empty
  *
  ******************************************************************************/
@@ -248,7 +248,7 @@ void box_wait( box_t *box, void *data );
  *   data            : pointer to mailbox data
  *
  * Return
- *   E_SUCCESS       : mailbox data was successfully transfered to the mailbox queue object
+ *   E_SUCCESS       : mailbox data was successfully transferred to the mailbox queue object
  *   E_FAILURE       : mailbox queue object is full
  *
  ******************************************************************************/

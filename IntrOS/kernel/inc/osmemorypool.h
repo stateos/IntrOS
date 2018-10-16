@@ -227,7 +227,7 @@ void mem_init( mem_t *mem, unsigned size, que_t *data, unsigned bufsize );
  *   data            : pointer to store the pointer to the memory object
  *
  * Return
- *   E_SUCCESS       : pointer to memory object was successfully transfered to the data pointer
+ *   E_SUCCESS       : pointer to memory object was successfully transferred to the data pointer
  *   E_FAILURE       : memory pool object is empty
  *
  ******************************************************************************/

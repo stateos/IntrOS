@@ -257,7 +257,7 @@ unsigned msg_wait( msg_t *msg, void *data, unsigned size );
  *   size            : size of read buffer
  *
  * Return
- *   E_SUCCESS       : message data was successfully transfered to the message buffer object
+ *   E_SUCCESS       : message data was successfully transferred to the message buffer object
  *   E_FAILURE       : not enough space in the message buffer
  *
  ******************************************************************************/
@@ -277,7 +277,7 @@ unsigned msg_give( msg_t *msg, const void *data, unsigned size );
  *   size            : size of read buffer
  *
  * Return
- *   E_SUCCESS       : message data was successfully transfered to the message buffer object
+ *   E_SUCCESS       : message data was successfully transferred to the message buffer object
  *   E_FAILURE       : size of the message data is out of the limit
  *
  ******************************************************************************/
@@ -297,7 +297,7 @@ unsigned msg_send( msg_t *msg, const void *data, unsigned size );
  *   size            : size of read buffer
  *
  * Return
- *   E_SUCCESS       : message data was successfully transfered to the message buffer object
+ *   E_SUCCESS       : message data was successfully transferred to the message buffer object
  *   E_FAILURE       : size of the message data is out of the limit
  *
  ******************************************************************************/

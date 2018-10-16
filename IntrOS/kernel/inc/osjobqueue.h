@@ -200,7 +200,7 @@ void job_init( job_t *job, fun_t **data, unsigned bufsize );
  *   job             : pointer to job queue object
  *
  * Return
- *   E_SUCCESS       : job data was successfully transfered from the job queue object
+ *   E_SUCCESS       : job data was successfully transferred from the job queue object
  *   E_FAILURE       : job queue object is empty
  *
  ******************************************************************************/
@@ -238,7 +238,7 @@ void job_wait( job_t *job );
  *   fun             : pointer to job procedure
  *
  * Return
- *   E_SUCCESS       : job data was successfully transfered to the job queue object
+ *   E_SUCCESS       : job data was successfully transferred to the job queue object
  *   E_FAILURE       : job queue object is full
  *
  ******************************************************************************/
