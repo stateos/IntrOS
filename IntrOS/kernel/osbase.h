@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    12.10.2018
+    @date    16.10.2018
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -77,8 +77,8 @@ typedef         void fun_t(); // timer/task procedure
 
 /* -------------------------------------------------------------------------- */
 
-#define E_SUCCESS  ( 0U )     // process was released as a result of taking the supervising object
-#define E_FAILURE  ( 0U - 1 ) // process was released as a result of any failure
+#define E_SUCCESS  ( 0U )   // process was released as a result of taking the supervising object
+#define E_FAILURE  ( 0U-1 ) // process was released as a result of any failure
 
 /* -------------------------------------------------------------------------- */
 
