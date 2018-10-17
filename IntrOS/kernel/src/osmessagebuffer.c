@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.c
     @author  Rajmund Szymanski
-    @date    19.09.2018
+    @date    17.10.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -206,12 +206,7 @@ unsigned msg_wait( msg_t *msg, void *data, unsigned size )
 {
 	unsigned len;
 
-	sys_lock();
-	{
-		while ((len = msg_take(msg, data, size)) == E_FAILURE)
-			core_ctx_switch();
-	}
-	sys_unlock();
+	while ((len = msg_take(msg, data, size)) == E_FAILURE) core_ctx_switch();
 
 	return len;
 }
@@ -248,23 +243,12 @@ unsigned msg_give( msg_t *msg, const void *data, unsigned size )
 unsigned msg_send( msg_t *msg, const void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event;
+	if (sizeof(unsigned) + size > msg->limit)
+		return E_FAILURE;
 
-	sys_lock();
-	{
-		if (sizeof(unsigned) + size <= msg->limit)
-		{
-			while ((event = msg_give(msg, data, size)) != E_SUCCESS)
-				core_ctx_switch();
-		}
-		else
-		{
-			event = E_FAILURE;
-		}
-	}
-	sys_unlock();
+	while (msg_give(msg, data, size) != E_SUCCESS) core_ctx_switch();
 
-	return event;
+	return E_SUCCESS;
 }
 
 /* -------------------------------------------------------------------------- */

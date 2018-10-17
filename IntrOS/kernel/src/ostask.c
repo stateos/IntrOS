@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.c
     @author  Rajmund Szymanski
-    @date    15.10.2018
+    @date    17.10.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -171,8 +171,6 @@ unsigned tsk_wait( unsigned sigset )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned signo;
-
-	assert(sigset);
 
 	while ((signo = tsk_take(sigset)) == 0) core_ctx_switch();
 

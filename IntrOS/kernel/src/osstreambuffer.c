@@ -2,7 +2,7 @@
 
     @file    IntrOS: osstreambuffer.c
     @author  Rajmund Szymanski
-    @date    19.09.2018
+    @date    17.10.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -154,12 +154,7 @@ unsigned stm_wait( stm_t *stm, void *data, unsigned size )
 {
 	unsigned len;
 
-	sys_lock();
-	{
-		while ((len = stm_take(stm, data, size)) == E_FAILURE)
-			core_ctx_switch();
-	}
-	sys_unlock();
+	while ((len = stm_take(stm, data, size)) == E_FAILURE) core_ctx_switch();
 
 	return len;
 }
@@ -196,23 +191,12 @@ unsigned stm_give( stm_t *stm, const void *data, unsigned size )
 unsigned stm_send( stm_t *stm, const void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event;
+	if (size > stm->limit)
+		return E_FAILURE;
 
-	sys_lock();
-	{
-		if (size <= stm->limit)
-		{
-			while ((event = stm_give(stm, data, size)) != E_SUCCESS)
-				core_ctx_switch();
-		}
-		else
-		{
-			event = E_FAILURE;
-		}
-	}
-	sys_unlock();
+	while (stm_give(stm, data, size) != E_SUCCESS) core_ctx_switch();
 
-	return event;
+	return E_SUCCESS;
 }
 
 /* -------------------------------------------------------------------------- */
