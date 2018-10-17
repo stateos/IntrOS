@@ -2,7 +2,7 @@
 
     @file    IntrOS: oseventqueue.h
     @author  Rajmund Szymanski
-    @date    18.09.2018
+    @date    17.10.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -304,15 +304,18 @@ struct EventQueueT : public __evq
 {
 	EventQueueT( void ): __evq _EVQ_INIT(limit_, data_) {}
 
-	unsigned take   ( unsigned *_data ) { return evq_take   (this, _data); }
-	unsigned tryWait( unsigned *_data ) { return evq_tryWait(this, _data); }
-	void     wait   ( unsigned *_data ) {        evq_wait   (this, _data); }
-	unsigned give   ( unsigned  _data ) { return evq_give   (this, _data); }
-	void     send   ( unsigned  _data ) {        evq_send   (this, _data); }
-	void     push   ( unsigned  _data ) {        evq_push   (this, _data); }
-	unsigned count  ( void )            { return evq_count  (this);        }
-	unsigned space  ( void )            { return evq_space  (this);        }
-	unsigned limit  ( void )            { return evq_limit  (this);        }
+	unsigned take   ( unsigned*_data ) { return evq_take   (this, _data); }
+	unsigned take   ( unsigned&_data ) { return evq_take   (this,&_data); }
+	unsigned tryWait( unsigned*_data ) { return evq_tryWait(this, _data); }
+	unsigned tryWait( unsigned&_data ) { return evq_tryWait(this,&_data); }
+	void     wait   ( unsigned*_data ) {        evq_wait   (this, _data); }
+	void     wait   ( unsigned&_data ) {        evq_wait   (this,&_data); }
+	unsigned give   ( unsigned _data ) { return evq_give   (this, _data); }
+	void     send   ( unsigned _data ) {        evq_send   (this, _data); }
+	void     push   ( unsigned _data ) {        evq_push   (this, _data); }
+	unsigned count  ( void )           { return evq_count  (this);        }
+	unsigned space  ( void )           { return evq_space  (this);        }
+	unsigned limit  ( void )           { return evq_limit  (this);        }
 
 	private:
 	unsigned data_[limit_];

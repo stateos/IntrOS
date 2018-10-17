@@ -2,7 +2,7 @@
 
     @file    IntrOS: oseventqueue.c
     @author  Rajmund Szymanski
-    @date    19.09.2018
+    @date    17.10.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -95,6 +95,7 @@ unsigned evq_take( evq_t *evq, unsigned *data )
 	assert(evq);
 	assert(evq->data);
 	assert(evq->limit);
+	assert(data);
 
 	sys_lock();
 	{
