@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.c
     @author  Rajmund Szymanski
-    @date    17.10.2018
+    @date    19.10.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -147,53 +147,6 @@ void tsk_flip( fun_t *state )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned tsk_take( unsigned sigset )
-/* -------------------------------------------------------------------------- */
-{
-	unsigned signo;
-
-	assert(sigset);
-
-	sys_lock();
-	{
-		sigset &= System.cur->sigset;
-		sigset &= -sigset;
-		System.cur->sigset &= ~sigset;
-		for (signo = 0; sigset; sigset >>= 1, signo++);
-	}
-	sys_unlock();
-
-	return signo;
-}
-
-/* -------------------------------------------------------------------------- */
-unsigned tsk_wait( unsigned sigset )
-/* -------------------------------------------------------------------------- */
-{
-	unsigned signo;
-
-	while ((signo = tsk_take(sigset)) == 0) core_ctx_switch();
-
-	return signo;
-}
-
-/* -------------------------------------------------------------------------- */
-void tsk_give( tsk_t *tsk, unsigned signo )
-/* -------------------------------------------------------------------------- */
-{
-	unsigned sigset = SIGSET(signo);
-
-	assert(tsk);
-	assert(sigset);
-
-	sys_lock();
-	{
-		tsk->sigset |= sigset;
-	}
-	sys_unlock();
-}
-
-/* -------------------------------------------------------------------------- */
 static
 void priv_tsk_sleep( tsk_t *cur )
 /* -------------------------------------------------------------------------- */
@@ -278,6 +231,53 @@ unsigned tsk_resume( tsk_t *tsk )
 
 	tsk->hdr.id = ID_READY;
 	return E_SUCCESS;
+}
+
+/* -------------------------------------------------------------------------- */
+unsigned tsk_take( unsigned sigset )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned signo;
+
+	assert(sigset);
+
+	sys_lock();
+	{
+		sigset &= System.cur->sigset;
+		sigset &= -sigset;
+		System.cur->sigset &= ~sigset;
+		for (signo = 0; sigset; sigset >>= 1, signo++);
+	}
+	sys_unlock();
+
+	return signo;
+}
+
+/* -------------------------------------------------------------------------- */
+unsigned tsk_wait( unsigned sigset )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned signo;
+
+	while ((signo = tsk_take(sigset)) == 0) core_ctx_switch();
+
+	return signo;
+}
+
+/* -------------------------------------------------------------------------- */
+void tsk_give( tsk_t *tsk, unsigned signo )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned sigset = SIGSET(signo);
+
+	assert(tsk);
+	assert(sigset);
+
+	sys_lock();
+	{
+		tsk->sigset |= sigset;
+	}
+	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */

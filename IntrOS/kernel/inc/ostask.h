@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    16.10.2018
+    @date    19.10.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -634,53 +634,6 @@ void tsk_flip( fun_t *state );
 
 /******************************************************************************
  *
- * Name              : tsk_take
- *
- * Description       : check pending signals of the current task for the given set of signals
- *
- * Parameters
- *   sigset          : set of expected signals
- *
- * Return            : the lowest number of expected signal from the set of all pending signals or
- *   0               : no expected signal has been set, try again
- *
- ******************************************************************************/
-
-unsigned tsk_take( unsigned sigset );
-
-/******************************************************************************
- *
- * Name              : tsk_wait
- *
- * Description       : wait indefinitely for a signal from the given set of signals
- *
- * Parameters
- *   sigset          : set of expected signals
- *
- * Return            : the lowest number of expected signal from the set of all pending signals
- *
- ******************************************************************************/
-
-unsigned tsk_wait( unsigned sigset );
-
-/******************************************************************************
- *
- * Name              : tsk_give
- *
- * Description       : set given signal for the given task
- *
- * Parameters
- *   tsk             : pointer to the task object
- *   signo           : signal number
- *
- * Return            : none
- *
- ******************************************************************************/
-
-void tsk_give( tsk_t *tsk, unsigned signo );
-
-/******************************************************************************
- *
  * Name              : tsk_sleepFor
  * Alias             : tsk_delay
  *
@@ -801,6 +754,78 @@ void cur_suspend( void ) { tsk_suspend(System.cur); }
 
 unsigned tsk_resume( tsk_t *tsk );
 
+/******************************************************************************
+ *
+ * Name              : tsk_take
+ *
+ * Description       : check pending signals of the current task for the given set of signals
+ *
+ * Parameters
+ *   sigset          : set of expected signals
+ *
+ * Return            : the lowest number of expected signal from the set of all pending signals or
+ *   0               : no expected signal has been set, try again
+ *
+ ******************************************************************************/
+
+unsigned tsk_take( unsigned sigset );
+
+/******************************************************************************
+ *
+ * Name              : tsk_wait
+ *
+ * Description       : wait indefinitely for a signal from the given set of signals
+ *
+ * Parameters
+ *   sigset          : set of expected signals
+ *
+ * Return            : the lowest number of expected signal from the set of all pending signals
+ *
+ ******************************************************************************/
+
+unsigned tsk_wait( unsigned sigset );
+
+/******************************************************************************
+ *
+ * Name              : tsk_give
+ * Alias             : tsk_signal
+ *
+ * Description       : send given signal to the task
+ *
+ * Parameters
+ *   tsk             : pointer to the task object
+ *   signo           : signal number
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
+
+void tsk_give( tsk_t *tsk, unsigned signo );
+
+__STATIC_INLINE
+void tsk_signal( tsk_t *tsk, unsigned signo ) { tsk_give(tsk, signo); }
+
+/******************************************************************************
+ *
+ * Name              : cur_give
+ * Alias             : cur_signal
+ *
+ * Description       : send given signal to the current task
+ *
+ * Parameters
+ *   tsk             : pointer to the task object
+ *   signo           : signal number
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
+
+__STATIC_INLINE
+void cur_give( unsigned signo ) { tsk_give(System.cur, signo); }
+
+__STATIC_INLINE
+void cur_signal( unsigned signo ) { cur_give(signo); }
+
 #ifdef __cplusplus
 }
 #endif
@@ -833,10 +858,10 @@ struct staticTaskT : public __tsk
 	void     join     ( void )            {        tsk_join     (this);         }
 	void     start    ( void )            {        tsk_start    (this);         }
 	void     startFrom( fun_t  * _state ) {        tsk_startFrom(this, _state); }
-	void     give     ( unsigned _signo ) {        tsk_give     (this, _signo); }
 	unsigned suspend  ( void )            { return tsk_suspend  (this);         }
 	unsigned resume   ( void )            { return tsk_resume   (this);         }
-
+	void     give     ( unsigned _signo ) {        tsk_give     (this, _signo); }
+	void     signal   ( unsigned _signo ) {        tsk_signal   (this, _signo); }
 	bool     operator!( void )            { return __tsk::hdr.id == ID_STOPPED; }
 
 	private:
@@ -925,13 +950,15 @@ namespace ThisTask
 	static inline void     reset     ( void )             {        cur_reset     ();                    }
 	static inline void     kill      ( void )             {        cur_kill      ();                    }
 	static inline void     suspend   ( void )             {        cur_suspend   ();                    }
-	static inline unsigned take      ( unsigned _sigset ) { return tsk_take      (_sigset);             }
-	static inline unsigned wait      ( unsigned _sigset ) { return tsk_wait      (_sigset);             }
 	static inline void     sleepFor  ( cnt_t    _delay )  {        tsk_sleepFor  (_delay);              }
 	static inline void     sleepNext ( cnt_t    _delay )  {        tsk_sleepNext (_delay);              }
 	static inline void     sleepUntil( cnt_t    _time )   {        tsk_sleepUntil(_time);               }
 	static inline void     sleep     ( void )             {        tsk_sleep     ();                    }
 	static inline void     delay     ( cnt_t    _delay )  {        tsk_delay     (_delay);              }
+	static inline unsigned take      ( unsigned _sigset ) { return tsk_take      (_sigset);             }
+	static inline unsigned wait      ( unsigned _sigset ) { return tsk_wait      (_sigset);             }
+	static inline void     give      ( unsigned _signo )  {        cur_give      (_signo);              }
+	static inline void     signal    ( unsigned _signo )  {        cur_signal    (_signo);              }
 }
 
 #endif//__cplusplus
