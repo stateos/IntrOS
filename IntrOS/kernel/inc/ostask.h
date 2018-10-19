@@ -764,7 +764,7 @@ unsigned tsk_resume( tsk_t *tsk );
  *   sigset          : set of expected signals
  *
  * Return            : the lowest number of expected signal from the set of all pending signals or
- *   0               : no expected signal has been set, try again
+ *   E_FAILURE       : no expected signal has been set, try again
  *
  ******************************************************************************/
 

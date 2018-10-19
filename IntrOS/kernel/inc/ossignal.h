@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossignal.h
     @author  Rajmund Szymanski
-    @date    14.10.2018
+    @date    19.10.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -42,8 +42,8 @@ extern "C" {
 
 #define SIG_LIMIT     (sizeof(unsigned) * CHAR_BIT)
 
-#define SIGSET(signo) ((((signo)-1) < SIG_LIMIT) ? 1U<<((signo)-1) : 0U) // signal mask from the given signal number
-#define sigAll        (0U-1)                                             // signal mask for all signals
+#define SIGSET(signo) (((signo) < SIG_LIMIT) ? 1U << (signo) : 0U) // signal mask from the given signal number
+#define sigAll        (0U-1)                                       // signal mask for all signals
 
 /******************************************************************************
  *
@@ -191,7 +191,7 @@ void sig_init( sig_t *sig, unsigned mask );
  *   sigset          : set of expected signals
  *
  * Return            : the lowest number of expected signal from the set of all pending signals or
- *   0               : no expected signal has been set, try again
+ *   E_FAILURE       : no expected signal has been set, try again
  *
  ******************************************************************************/
 

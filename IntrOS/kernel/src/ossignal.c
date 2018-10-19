@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossignal.c
     @author  Rajmund Szymanski
-    @date    17.10.2018
+    @date    19.10.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -51,7 +51,7 @@ void sig_init( sig_t *sig, unsigned mask )
 unsigned sig_take( sig_t *sig, unsigned sigset )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned signo;
+	unsigned signo = E_FAILURE;
 
 	assert(sig);
 	assert(sigset);
@@ -61,7 +61,8 @@ unsigned sig_take( sig_t *sig, unsigned sigset )
 		sigset &= sig->sigset;
 		sigset &= -sigset;
 		sig->sigset &= ~sigset | sig->mask;
-		for (signo = 0; sigset; sigset >>= 1, signo++);
+		if (sigset)
+			for (signo = 0; sigset >>= 1; signo++);
 	}
 	sys_unlock();
 
@@ -74,7 +75,7 @@ unsigned sig_wait( sig_t *sig, unsigned sigset )
 {
 	unsigned signo;
 
-	while ((signo = sig_take(sig, sigset)) == 0) core_ctx_switch();
+	while ((signo = sig_take(sig, sigset)) == E_FAILURE) core_ctx_switch();
 
 	return signo;
 }

@@ -237,7 +237,7 @@ unsigned tsk_resume( tsk_t *tsk )
 unsigned tsk_take( unsigned sigset )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned signo;
+	unsigned signo = E_FAILURE;
 
 	assert(sigset);
 
@@ -246,7 +246,8 @@ unsigned tsk_take( unsigned sigset )
 		sigset &= System.cur->sigset;
 		sigset &= -sigset;
 		System.cur->sigset &= ~sigset;
-		for (signo = 0; sigset; sigset >>= 1, signo++);
+		if (sigset)
+			for (signo = 0; sigset >>= 1; signo++);
 	}
 	sys_unlock();
 
@@ -259,7 +260,7 @@ unsigned tsk_wait( unsigned sigset )
 {
 	unsigned signo;
 
-	while ((signo = tsk_take(sigset)) == 0) core_ctx_switch();
+	while ((signo = tsk_take(sigset)) == E_FAILURE) core_ctx_switch();
 
 	return signo;
 }
