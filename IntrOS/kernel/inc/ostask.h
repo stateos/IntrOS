@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    19.10.2018
+    @date    20.10.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -758,32 +758,30 @@ unsigned tsk_resume( tsk_t *tsk );
  *
  * Name              : tsk_take
  *
- * Description       : check pending signals of the current task for the given set of signals
+ * Description       : check pending signals of the current task
  *
- * Parameters
- *   sigset          : set of expected signals
+ * Parameters        : none
  *
- * Return            : the lowest number of expected signal from the set of all pending signals or
- *   E_FAILURE       : no expected signal has been set, try again
+ * Return            : the lowest signal number from the set of all pending signals or
+ *   E_FAILURE       : no signal has been sent, try again
  *
  ******************************************************************************/
 
-unsigned tsk_take( unsigned sigset );
+unsigned tsk_take( void );
 
 /******************************************************************************
  *
  * Name              : tsk_wait
  *
- * Description       : wait indefinitely for a signal from the given set of signals
+ * Description       : wait indefinitely for a signal
  *
- * Parameters
- *   sigset          : set of expected signals
+ * Parameters        : none
  *
- * Return            : the lowest number of expected signal from the set of all pending signals
+ * Return            : the lowest signal number from the set of all pending signals
  *
  ******************************************************************************/
 
-unsigned tsk_wait( unsigned sigset );
+unsigned tsk_wait( void );
 
 /******************************************************************************
  *
@@ -955,8 +953,8 @@ namespace ThisTask
 	static inline void     sleepUntil( cnt_t    _time )   {        tsk_sleepUntil(_time);               }
 	static inline void     sleep     ( void )             {        tsk_sleep     ();                    }
 	static inline void     delay     ( cnt_t    _delay )  {        tsk_delay     (_delay);              }
-	static inline unsigned take      ( unsigned _sigset ) { return tsk_take      (_sigset);             }
-	static inline unsigned wait      ( unsigned _sigset ) { return tsk_wait      (_sigset);             }
+	static inline unsigned take      ( void )             { return tsk_take      ();                    }
+	static inline unsigned wait      ( void )             { return tsk_wait      ();                    }
 	static inline void     give      ( unsigned _signo )  {        cur_give      (_signo);              }
 	static inline void     signal    ( unsigned _signo )  {        cur_signal    (_signo);              }
 }
