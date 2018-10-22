@@ -2,7 +2,7 @@
 
     @file    IntrOS: osstreambuffer.c
     @author  Rajmund Szymanski
-    @date    17.10.2018
+    @date    22.10.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -125,7 +125,7 @@ void priv_stm_skipUpdate( stm_t *stm, unsigned size )
 unsigned stm_take( stm_t *stm, void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned len;
+	unsigned len = E_FAILURE;
 
 	assert(stm);
 	assert(stm->data);
@@ -137,10 +137,6 @@ unsigned stm_take( stm_t *stm, void *data, unsigned size )
 		if (stm->count > 0)
 		{
 			len = priv_stm_getUpdate(stm, data, size);
-		}
-		else
-		{
-			len = E_FAILURE;
 		}
 	}
 	sys_unlock();
@@ -163,7 +159,7 @@ unsigned stm_wait( stm_t *stm, void *data, unsigned size )
 unsigned stm_give( stm_t *stm, const void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event;
+	unsigned event = E_FAILURE;
 
 	assert(stm);
 	assert(stm->data);
@@ -176,10 +172,6 @@ unsigned stm_give( stm_t *stm, const void *data, unsigned size )
 		{
 			priv_stm_putUpdate(stm, data, size);
 			event = E_SUCCESS;
-		}
-		else
-		{
-			event = E_FAILURE;
 		}
 	}
 	sys_unlock();
@@ -203,7 +195,7 @@ unsigned stm_send( stm_t *stm, const void *data, unsigned size )
 unsigned stm_push( stm_t *stm, const void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event;
+	unsigned event = E_FAILURE;
 
 	assert(stm);
 	assert(stm->data);
@@ -217,10 +209,6 @@ unsigned stm_push( stm_t *stm, const void *data, unsigned size )
 			priv_stm_skipUpdate(stm, size);
 			priv_stm_putUpdate(stm, data, size);
 			event = E_SUCCESS;
-		}
-		else
-		{
-			event = E_FAILURE;
 		}
 	}
 	sys_unlock();
