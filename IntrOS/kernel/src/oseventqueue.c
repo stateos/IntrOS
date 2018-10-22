@@ -2,7 +2,7 @@
 
     @file    IntrOS: oseventqueue.c
     @author  Rajmund Szymanski
-    @date    17.10.2018
+    @date    22.10.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -90,7 +90,7 @@ void priv_evq_skip( evq_t *evq )
 unsigned evq_take( evq_t *evq, unsigned *data )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event;
+	unsigned event = E_FAILURE;
 
 	assert(evq);
 	assert(evq->data);
@@ -103,10 +103,6 @@ unsigned evq_take( evq_t *evq, unsigned *data )
 		{
 			priv_evq_get(evq, data);
 			event = E_SUCCESS;
-		}
-		else
-		{
-			event = E_FAILURE;
 		}
 	}
 	sys_unlock();
@@ -125,7 +121,7 @@ void evq_wait( evq_t *evq, unsigned *data )
 unsigned evq_give( evq_t *evq, unsigned data )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event;
+	unsigned event = E_FAILURE;
 
 	assert(evq);
 	assert(evq->data);
@@ -137,10 +133,6 @@ unsigned evq_give( evq_t *evq, unsigned data )
 		{
 			priv_evq_put(evq, data);
 			event = E_SUCCESS;
-		}
-		else
-		{
-			event = E_FAILURE;
 		}
 	}
 	sys_unlock();
