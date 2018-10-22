@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmailboxqueue.c
     @author  Rajmund Szymanski
-    @date    19.09.2018
+    @date    22.10.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -94,7 +94,7 @@ void priv_box_skip( box_t *box )
 unsigned box_take( box_t *box, void *data )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event;
+	unsigned event = E_FAILURE;
 
 	assert(box);
 	assert(box->data);
@@ -107,10 +107,6 @@ unsigned box_take( box_t *box, void *data )
 		{
 			priv_box_get(box, data);
 			event = E_SUCCESS;
-		}
-		else
-		{
-			event = E_FAILURE;
 		}
 	}
 	sys_unlock();
@@ -129,7 +125,7 @@ void box_wait( box_t *box, void *data )
 unsigned box_give( box_t *box, const void *data )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event;
+	unsigned event = E_FAILURE;
 
 	assert(box);
 	assert(box->data);
@@ -142,10 +138,6 @@ unsigned box_give( box_t *box, const void *data )
 		{
 			priv_box_put(box, data);
 			event = E_SUCCESS;
-		}
-		else
-		{
-			event = E_FAILURE;
 		}
 	}
 	sys_unlock();
