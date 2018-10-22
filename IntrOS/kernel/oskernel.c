@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    16.10.2018
+    @date    22.10.2018
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -41,7 +41,7 @@ static  stk_t     MAIN_STK[STK_SIZE(OS_STACK_SIZE)];
 #define MAIN_TOP (MAIN_STK+STK_SIZE(OS_STACK_SIZE))
 #endif
 
-tsk_t MAIN   = { .hdr={ .prev=&MAIN, .next=&MAIN, .id=ID_READY }, .stack=MAIN_TOP }; // main task
+tsk_t MAIN = { .hdr={ .prev=&MAIN, .next=&MAIN, .id=ID_READY }, .stack=MAIN_TOP }; // main task
 sys_t System = { .cur=&MAIN };
 
 /* -------------------------------------------------------------------------- */
@@ -177,17 +177,11 @@ void core_tsk_switch( void )
 		if (cur->hdr.id == ID_STOPPED)
 			continue;
 
-		if (cur->hdr.id == ID_READY)
-			break;
-
-		if (priv_tmr_countdown((tmr_t *)cur))
+		if (cur->delay && priv_tmr_countdown((tmr_t *)cur))
 			continue;
 
-		if (cur->hdr.id == ID_BLOCKED)
-		{
-			cur->hdr.id = ID_READY;
+		if (cur->hdr.id == ID_READY)
 			break;
-		}
 
 //		if (cur->hdr.id == ID_TIMER)
 		{

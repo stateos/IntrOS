@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.c
     @author  Rajmund Szymanski
-    @date    19.10.2018
+    @date    22.10.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -147,15 +147,6 @@ void tsk_flip( fun_t *state )
 }
 
 /* -------------------------------------------------------------------------- */
-static
-void priv_tsk_sleep( tsk_t *cur )
-/* -------------------------------------------------------------------------- */
-{
-	cur->hdr.id = ID_BLOCKED;
-	core_ctx_switch();
-}
-
-/* -------------------------------------------------------------------------- */
 void tsk_sleepFor( cnt_t delay )
 /* -------------------------------------------------------------------------- */
 {
@@ -166,7 +157,7 @@ void tsk_sleepFor( cnt_t delay )
 		cur->start = core_sys_time();
 		cur->delay = delay;
 
-		priv_tsk_sleep(cur);
+		core_ctx_switch();
 	}
 	sys_unlock();
 }
@@ -181,7 +172,7 @@ void tsk_sleepNext( cnt_t delay )
 	{
 		cur->delay = delay;
 
-		priv_tsk_sleep(cur);
+		core_ctx_switch();
 	}
 	sys_unlock();
 }
@@ -199,7 +190,7 @@ void tsk_sleepUntil( cnt_t time )
 		if (cur->delay > ((CNT_MAX)>>1))
 			cur->delay = 0;
 
-		priv_tsk_sleep(cur);
+		core_ctx_switch();
 	}
 	sys_unlock();
 }
@@ -210,10 +201,9 @@ unsigned tsk_suspend( tsk_t *tsk )
 {
 	assert(tsk);
 
-	if (tsk->hdr.id != ID_READY)
+	if (tsk->hdr.id != ID_READY || tsk->delay != 0)
 		return E_FAILURE;
 
-	tsk->hdr.id = ID_BLOCKED;
 	tsk->delay = INFINITE;
 	if (tsk == System.cur)
 		core_ctx_switch();
@@ -226,10 +216,10 @@ unsigned tsk_resume( tsk_t *tsk )
 {
 	assert(tsk);
 
-	if (tsk->hdr.id != ID_BLOCKED || tsk->delay != INFINITE)
+	if (tsk->hdr.id != ID_READY || tsk->delay != INFINITE)
 		return E_FAILURE;
 
-	tsk->hdr.id = ID_READY;
+	tsk->delay = 0;
 	return E_SUCCESS;
 }
 

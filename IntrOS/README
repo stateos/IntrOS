@@ -46,6 +46,7 @@ Features:
 - added function aliases for the current task
 - changed usage of signals
 - updated event object and examples
+- removed ID_BLOCKED constant
 ---------
 4.2
 - updated priv_rdy_insert internal procedure
