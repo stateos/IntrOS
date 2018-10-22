@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.c
     @author  Rajmund Szymanski
-    @date    17.10.2018
+    @date    22.10.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -177,7 +177,7 @@ void priv_msg_skipUpdate( msg_t *msg, unsigned size )
 unsigned msg_take( msg_t *msg, void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned len;
+	unsigned len = E_FAILURE;
 
 	assert(msg);
 	assert(msg->data);
@@ -189,10 +189,6 @@ unsigned msg_take( msg_t *msg, void *data, unsigned size )
 		if (msg->count > 0 && size >= priv_msg_size(msg))
 		{
 			len = priv_msg_getUpdate(msg, data, size);
-		}
-		else
-		{
-			len = E_FAILURE;
 		}
 	}
 	sys_unlock();
@@ -215,7 +211,7 @@ unsigned msg_wait( msg_t *msg, void *data, unsigned size )
 unsigned msg_give( msg_t *msg, const void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event;
+	unsigned event = E_FAILURE;
 
 	assert(msg);
 	assert(msg->data);
@@ -228,10 +224,6 @@ unsigned msg_give( msg_t *msg, const void *data, unsigned size )
 		{
 			priv_msg_putUpdate(msg, data, size);
 			event = E_SUCCESS;
-		}
-		else
-		{
-			event = E_FAILURE;
 		}
 	}
 	sys_unlock();
@@ -255,7 +247,7 @@ unsigned msg_send( msg_t *msg, const void *data, unsigned size )
 unsigned msg_push( msg_t *msg, const void *data, unsigned size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event;
+	unsigned event = E_FAILURE;
 
 	assert(msg);
 	assert(msg->data);
@@ -269,10 +261,6 @@ unsigned msg_push( msg_t *msg, const void *data, unsigned size )
 			priv_msg_skipUpdate(msg, size);
 			priv_msg_putUpdate(msg, data, size);
 			event = E_SUCCESS;
-		}
-		else
-		{
-			event = E_FAILURE;
 		}
 	}
 	sys_unlock();
