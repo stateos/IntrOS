@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmutex.h
     @author  Rajmund Szymanski
-    @date    22.10.2018
+    @date    18.09.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -200,19 +200,22 @@ void mtx_lock( mtx_t *mtx ) { mtx_wait(mtx); }
  * Name              : mtx_give
  * Alias             : mtx_unlock
  *
- * Description       : unlock the mutex object
+ * Description       : try to unlock the mutex object (only owner task can unlock mutex object),
+ *                     don't wait if the mutex object can't be unlocked
  *
  * Parameters
  *   mtx             : pointer to mutex object
  *
- * Return            : none
+ * Return
+ *   E_SUCCESS       : mutex object was successfully unlocked
+ *   E_FAILURE       : mutex object can't be unlocked
  *
  ******************************************************************************/
 
-void mtx_give( mtx_t *mtx );
+unsigned mtx_give( mtx_t *mtx );
 
 __STATIC_INLINE
-void mtx_unlock( mtx_t *mtx ) { mtx_give(mtx); }
+unsigned mtx_unlock( mtx_t *mtx ) { return mtx_give(mtx); }
 
 #ifdef __cplusplus
 }
@@ -242,8 +245,8 @@ struct Mutex : public __mtx
 	unsigned tryLock( void ) { return mtx_tryLock(this); }
 	void     wait   ( void ) {        mtx_wait   (this); }
 	void     lock   ( void ) {        mtx_lock   (this); }
-	void     give   ( void ) {        mtx_give   (this); }
-	void     unlock ( void ) {        mtx_unlock (this); }
+	unsigned give   ( void ) { return mtx_give   (this); }
+	unsigned unlock ( void ) { return mtx_unlock (this); }
 };
 
 #endif//__cplusplus
