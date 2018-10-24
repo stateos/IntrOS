@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    22.10.2018
+    @date    24.10.2018
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -86,7 +86,7 @@ typedef         void fun_t(); // timer/task procedure
 
 typedef enum __tid
 {
-	ID_STOPPED = 0, // inactive task / timer
+	ID_STOPPED = 0, // inactive object
 	ID_READY,       // active task
 	ID_TIMER,       // active timer
 
