@@ -82,7 +82,7 @@ typedef         void fun_t(); // timer/task procedure
 
 /* -------------------------------------------------------------------------- */
 
-// timer / task id
+// object id
 
 typedef enum __tid
 {
