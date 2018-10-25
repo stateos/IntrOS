@@ -266,10 +266,10 @@ void priv_sig_deliver( void )
 
 	port_set_lock();
 
+	priv_sig_handler(tsk);
+
 	tsk->ctx.reg.pc = tsk->sig.backup.pc;
 	tsk->delay = tsk->sig.backup.delay;
-
-	priv_sig_handler(tsk);
 
 	core_tsk_switch();
 }
