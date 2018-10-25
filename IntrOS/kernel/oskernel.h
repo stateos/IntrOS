@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.h
     @author  Rajmund Szymanski
-    @date    21.09.2018
+    @date    25.10.2018
     @brief   This file defines set of kernel functions for IntrOS.
 
  ******************************************************************************
@@ -52,9 +52,11 @@
 
 #if OS_FUNCTIONAL
 #include <functional>
-typedef std::function<void( void )> FUN_t;
+typedef std::function<void( void )>     FUN_t;
+typedef std::function<void( unsigned )> ACT_t;
 #else
 typedef     void (* FUN_t)( void );
+typedef     void (* ACT_t)( unsigned );
 #endif
 
 #endif

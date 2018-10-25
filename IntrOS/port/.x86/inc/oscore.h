@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    22.08.2018
+    @date    25.10.2018
     @brief   IntrOS port file for X86.
 
  ******************************************************************************
@@ -78,12 +78,12 @@ struct __ctx
 	long long int R13;
 	long long int R14;
 	long long int R15;
-	long long int Rsp;
-	long long int Rip;
+	void        * sp;
+	fun_t       * pc;
 #else
 	long long int Frame;
 	long long int Rbx;
-	long long int Rsp;
+	void        * sp;
 	long long int Rbp;
 	long long int Rsi;
 	long long int Rdi;
@@ -91,7 +91,7 @@ struct __ctx
 	long long int R13;
 	long long int R14;
 	long long int R15;
-	long long int Rip;
+	fun_t       * pc;
 	long long int Spare;
 #endif
 #else
@@ -100,15 +100,15 @@ struct __ctx
 	unsigned long Esi;
 	unsigned long Edi;
 	unsigned long Ebp;
-	unsigned long Esp;
-	unsigned long Eip;
+	void        * sp;
+	fun_t       * pc;
 #else
 	unsigned long Ebp;
 	unsigned long Ebx;
 	unsigned long Edi;
 	unsigned long Esi;
-	unsigned long Esp;
-	unsigned long Eip;
+	void        * sp;
+	fun_t       * pc;
 #endif
 #endif
 };
@@ -130,13 +130,9 @@ __STATIC_INLINE
 void port_ctx_init( ctx_t *ctx, stk_t *sp, fun_t *pc )
 {
 	setjmp((void *)ctx);
-#ifdef __x86_64__
-	ctx->Rsp = (uintptr_t) sp;
-	ctx->Rip = (uintptr_t) pc;
-#else
-	ctx->Esp = (uintptr_t) sp;
-	ctx->Eip = (uintptr_t) pc;
-#endif
+
+	ctx->sp = sp;
+	ctx->pc = pc;
 }
 
 /* -------------------------------------------------------------------------- */

@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    20.10.2018
+    @date    25.10.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -61,7 +61,14 @@ struct __tsk
 	cnt_t    delay; // inherited from timer
 	cnt_t    period;// inherited from timer
 
+	struct {
 	unsigned sigset;// pending signals
+	act_t  * action;// signal handler
+	struct {
+	fun_t  * pc;
+	cnt_t    delay;
+	}        backup;
+	}        sig;
 
 	stk_t  * stack; // base of stack
 	unsigned size;  // size of stack (in bytes)
@@ -91,7 +98,7 @@ struct __tsk
  ******************************************************************************/
 
 #define               _TSK_INIT( _state, _stack, _size ) \
-                    { _HDR_INIT(), _state, 0, 0, 0, 0, _stack, _size, { _CTX_INIT() } }
+                    { _HDR_INIT(), _state, 0, 0, 0, { 0, 0, { 0, 0 } }, _stack, _size, { _CTX_INIT() } }
 
 /******************************************************************************
  *
@@ -756,35 +763,6 @@ unsigned tsk_resume( tsk_t *tsk );
 
 /******************************************************************************
  *
- * Name              : tsk_take
- *
- * Description       : check pending signals of the current task
- *
- * Parameters        : none
- *
- * Return            : the lowest signal number from the set of all pending signals or
- *   E_FAILURE       : no signal has been sent, try again
- *
- ******************************************************************************/
-
-unsigned tsk_take( void );
-
-/******************************************************************************
- *
- * Name              : tsk_wait
- *
- * Description       : wait indefinitely for a signal
- *
- * Parameters        : none
- *
- * Return            : the lowest signal number from the set of all pending signals
- *
- ******************************************************************************/
-
-unsigned tsk_wait( void );
-
-/******************************************************************************
- *
  * Name              : tsk_give
  * Alias             : tsk_signal
  *
@@ -824,6 +802,39 @@ void cur_give( unsigned signo ) { tsk_give(System.cur, signo); }
 __STATIC_INLINE
 void cur_signal( unsigned signo ) { cur_give(signo); }
 
+/******************************************************************************
+ *
+ * Name              : tsk_action
+ *
+ * Description       : set given function as a signal handler
+ *
+ * Parameters
+ *   tsk             : pointer to the task object
+ *   action          : signal handler
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
+
+void tsk_action( tsk_t *tsk, act_t *action );
+
+/******************************************************************************
+ *
+ * Name              : cur_action
+ *
+ * Description       : set given function as a signal handler for current task
+ *
+ * Parameters
+ *   signo           : signal number
+ *   action          : signal handler
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
+
+__STATIC_INLINE
+void cur_action( act_t *action ) { tsk_action(System.cur, action); }
+
 #ifdef __cplusplus
 }
 #endif
@@ -851,16 +862,17 @@ struct staticTaskT : public __tsk
 	 staticTaskT( fun_t *_state ): __tsk _TSK_INIT(_state, stack_, size_) {}
 	~staticTaskT( void ) { assert(__tsk::hdr.id == ID_STOPPED); }
 
-	void     reset    ( void )            {        tsk_reset    (this);         }
-	void     kill     ( void )            {        tsk_kill     (this);         }
-	void     join     ( void )            {        tsk_join     (this);         }
-	void     start    ( void )            {        tsk_start    (this);         }
-	void     startFrom( fun_t  * _state ) {        tsk_startFrom(this, _state); }
-	unsigned suspend  ( void )            { return tsk_suspend  (this);         }
-	unsigned resume   ( void )            { return tsk_resume   (this);         }
-	void     give     ( unsigned _signo ) {        tsk_give     (this, _signo); }
-	void     signal   ( unsigned _signo ) {        tsk_signal   (this, _signo); }
-	bool     operator!( void )            { return __tsk::hdr.id == ID_STOPPED; }
+	void     reset    ( void )             {        tsk_reset    (this);          }
+	void     kill     ( void )             {        tsk_kill     (this);          }
+	void     join     ( void )             {        tsk_join     (this);          }
+	void     start    ( void )             {        tsk_start    (this);          }
+	void     startFrom( fun_t  * _state )  {        tsk_startFrom(this, _state);  }
+	unsigned suspend  ( void )             { return tsk_suspend  (this);          }
+	unsigned resume   ( void )             { return tsk_resume   (this);          }
+	void     give     ( unsigned _signo )  {        tsk_give     (this, _signo);  }
+	void     signal   ( unsigned _signo )  {        tsk_signal   (this, _signo);  }
+	void     action   ( act_t  * _action ) {        tsk_action   (this, _action); }
+	bool     operator!( void )             { return __tsk::hdr.id == ID_STOPPED;  }
 
 	private:
 	stk_t stack_[STK_SIZE(size_)];
@@ -889,11 +901,15 @@ struct TaskT : public staticTaskT<size_>
 #if OS_FUNCTIONAL
 	TaskT( FUN_t _state ): staticTaskT<size_>(run_), fun_(_state) {}
 
-	void  startFrom( FUN_t _state ) { fun_ = _state; tsk_startFrom(this, run_); }
+	void  startFrom( FUN_t _state )  { fun_ = _state;  tsk_startFrom(this, run_); }
+	void  action   ( ACT_t _action ) { act_ = _action; tsk_action   (this, sig_); }
 
 	static
-	void  run_( void ) { ((TaskT *)System.cur)->fun_(); }
+	void  run_( void )          { ((TaskT *)System.cur)->fun_();     }
 	FUN_t fun_;
+	static
+	void  sig_( unsigned _sig ) { ((TaskT *)System.cur)->act_(_sig); }
+	ACT_t act_;
 #else
 	TaskT( FUN_t _state ): staticTaskT<size_>(_state) {}
 #endif
@@ -936,27 +952,31 @@ typedef startTaskT<OS_STACK_SIZE> startTask;
 
 namespace ThisTask
 {
-	static inline void     pass      ( void )             {        tsk_pass      ();                    }
-	static inline void     yield     ( void )             {        tsk_yield     ();                    }
+	static inline void     pass      ( void )             { tsk_pass      ();                      }
+	static inline void     yield     ( void )             { tsk_yield     ();                      }
 #if OS_FUNCTIONAL
-	static inline void     flip      ( FUN_t    _state )  {      ((TaskT<>*)System.cur)->fun_ = _state;
-	                                                               tsk_flip      (TaskT<>::run_);       }
+	static inline void     flip      ( FUN_t    _state )  { ((TaskT<>*)System.cur)->fun_ = _state;
+	                                                        tsk_flip      (TaskT<>::run_);         }
 #else
-	static inline void     flip      ( FUN_t    _state )  {        tsk_flip      (_state);              }
+	static inline void     flip      ( FUN_t    _state )  { tsk_flip      (_state);                }
 #endif
-	static inline void     stop      ( void )             {        tsk_stop      ();                    }
-	static inline void     reset     ( void )             {        cur_reset     ();                    }
-	static inline void     kill      ( void )             {        cur_kill      ();                    }
-	static inline void     suspend   ( void )             {        cur_suspend   ();                    }
-	static inline void     sleepFor  ( cnt_t    _delay )  {        tsk_sleepFor  (_delay);              }
-	static inline void     sleepNext ( cnt_t    _delay )  {        tsk_sleepNext (_delay);              }
-	static inline void     sleepUntil( cnt_t    _time )   {        tsk_sleepUntil(_time);               }
-	static inline void     sleep     ( void )             {        tsk_sleep     ();                    }
-	static inline void     delay     ( cnt_t    _delay )  {        tsk_delay     (_delay);              }
-	static inline unsigned take      ( void )             { return tsk_take      ();                    }
-	static inline unsigned wait      ( void )             { return tsk_wait      ();                    }
-	static inline void     give      ( unsigned _signo )  {        cur_give      (_signo);              }
-	static inline void     signal    ( unsigned _signo )  {        cur_signal    (_signo);              }
+	static inline void     stop      ( void )             { tsk_stop      ();                      }
+	static inline void     reset     ( void )             { cur_reset     ();                      }
+	static inline void     kill      ( void )             { cur_kill      ();                      }
+	static inline void     suspend   ( void )             { cur_suspend   ();                      }
+	static inline void     sleepFor  ( cnt_t    _delay )  { tsk_sleepFor  (_delay);                }
+	static inline void     sleepNext ( cnt_t    _delay )  { tsk_sleepNext (_delay);                }
+	static inline void     sleepUntil( cnt_t    _time )   { tsk_sleepUntil(_time);                 }
+	static inline void     sleep     ( void )             { tsk_sleep     ();                      }
+	static inline void     delay     ( cnt_t    _delay )  { tsk_delay     (_delay);                }
+	static inline void     give      ( unsigned _signo )  { cur_give      (_signo);                }
+	static inline void     signal    ( unsigned _signo )  { cur_signal    (_signo);                }
+#if OS_FUNCTIONAL
+	static inline void     action    ( ACT_t    _action ) { ((TaskT<>*)System.cur)->act_ = _action;
+	                                                        cur_action    (TaskT<>::sig_);         }
+#else
+	static inline void     action    ( ACT_t    _action ) { cur_action    (_action);               }
+#endif
 }
 
 #endif//__cplusplus

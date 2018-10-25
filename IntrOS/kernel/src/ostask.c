@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.c
     @author  Rajmund Szymanski
-    @date    22.10.2018
+    @date    25.10.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -69,7 +69,7 @@ void tsk_start( tsk_t *tsk )
 	{
 		if (tsk->hdr.id == ID_STOPPED)
 		{
-			tsk->sigset = 0;
+			tsk->sig.sigset = 0;
 
 			core_ctx_init(tsk);
 			core_tsk_insert(tsk);
@@ -90,7 +90,7 @@ void tsk_startFrom( tsk_t *tsk, fun_t *state )
 		if (tsk->hdr.id == ID_STOPPED)
 		{
 			tsk->state = state;
-			tsk->sigset = 0;
+			tsk->sig.sigset = 0;
 
 			core_ctx_init(tsk);
 			core_tsk_insert(tsk);
@@ -224,34 +224,67 @@ unsigned tsk_resume( tsk_t *tsk )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned tsk_take( void )
-/* -------------------------------------------------------------------------- */
-{
-	unsigned signo = E_FAILURE;
-	unsigned sigset;
-
-	sys_lock();
-	{
-		sigset = System.cur->sigset;
-		sigset &= -sigset;
-		System.cur->sigset &= ~sigset;
-		if (sigset)
-			for (signo = 0; sigset >>= 1; signo++);
-	}
-	sys_unlock();
-
-	return signo;
-}
-
-/* -------------------------------------------------------------------------- */
-unsigned tsk_wait( void )
+static
+void priv_sig_handler( tsk_t *tsk )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned signo;
+	unsigned sigset;
+	act_t  * action = tsk->sig.action;
 
-	while ((signo = tsk_take()) == E_FAILURE) core_ctx_switch();
+	while (tsk->sig.sigset)
+	{
+		sigset = tsk->sig.sigset;
+		sigset &= -sigset;
+		tsk->sig.sigset &= ~sigset;
 
-	return signo;
+		port_clr_lock();
+		{
+			if (action)
+			{
+				for (signo = 0; sigset >>= 1; signo++);
+				action(signo);
+			}
+		}
+		port_set_lock();
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+static
+void priv_sig_deliver( void )
+/* -------------------------------------------------------------------------- */
+{
+	tsk_t *tsk = System.cur;
+
+	port_set_lock();
+
+	tsk->ctx.reg.pc = tsk->sig.backup.pc;
+	tsk->delay = tsk->sig.backup.delay;
+
+	priv_sig_handler(tsk);
+
+	core_tsk_switch();
+}
+
+/* -------------------------------------------------------------------------- */
+static
+void priv_sig_dispatch( tsk_t *tsk )
+/* -------------------------------------------------------------------------- */
+{
+	if (tsk == System.cur)
+	{
+		priv_sig_handler(tsk);
+	}
+	else
+	if (tsk->ctx.reg.pc != priv_sig_deliver)
+	{
+		tsk->sig.backup.pc = tsk->ctx.reg.pc;
+		tsk->sig.backup.delay = tsk->delay;
+
+		tsk->ctx.reg.pc = priv_sig_deliver;
+		tsk->delay = 0;
+	}
 }
 
 /* -------------------------------------------------------------------------- */
@@ -265,7 +298,30 @@ void tsk_give( tsk_t *tsk, unsigned signo )
 
 	sys_lock();
 	{
-		tsk->sigset |= sigset;
+		if (tsk->hdr.id == ID_READY)
+		{
+			tsk->sig.sigset |= sigset;
+			if (tsk->sig.sigset && tsk->sig.action)
+				priv_sig_dispatch(tsk);
+		}
+	}
+	sys_unlock();
+}
+
+/* -------------------------------------------------------------------------- */
+void tsk_action( tsk_t *tsk, act_t *action )
+/* -------------------------------------------------------------------------- */
+{
+	assert(tsk);
+
+	sys_lock();
+	{
+		if (tsk->hdr.id == ID_READY)
+		{
+			tsk->sig.action = action;
+			if (tsk->sig.action && tsk->sig.sigset)
+				priv_sig_dispatch(tsk);
+		}
 	}
 	sys_unlock();
 }
