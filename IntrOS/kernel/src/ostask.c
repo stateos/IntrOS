@@ -69,8 +69,6 @@ void tsk_start( tsk_t *tsk )
 	{
 		if (tsk->hdr.id == ID_STOPPED)
 		{
-			tsk->sig.sigset = 0;
-
 			core_ctx_init(tsk);
 			core_tsk_insert(tsk);
 		}
@@ -90,7 +88,6 @@ void tsk_startFrom( tsk_t *tsk, fun_t *state )
 		if (tsk->hdr.id == ID_STOPPED)
 		{
 			tsk->state = state;
-			tsk->sig.sigset = 0;
 
 			core_ctx_init(tsk);
 			core_tsk_insert(tsk);
@@ -100,11 +97,20 @@ void tsk_startFrom( tsk_t *tsk, fun_t *state )
 }
 
 /* -------------------------------------------------------------------------- */
+static
+void priv_tsk_reset( tsk_t *tsk )
+/* -------------------------------------------------------------------------- */
+{
+	tsk->sig.sigset = 0;
+}
+
+/* -------------------------------------------------------------------------- */
 void tsk_stop( void )
 /* -------------------------------------------------------------------------- */
 {
 	port_set_lock();
 
+	priv_tsk_reset(System.cur);
 	core_tsk_remove(System.cur);
 	core_tsk_switch();
 }
@@ -117,6 +123,7 @@ void tsk_reset( tsk_t *tsk )
 
 	sys_lock();
 	{
+		priv_tsk_reset(tsk);
 		core_tsk_remove(tsk);
 		if (tsk == System.cur)
 			core_ctx_switch();
