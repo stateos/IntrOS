@@ -789,7 +789,6 @@ void tsk_signal( tsk_t *tsk, unsigned signo ) { tsk_give(tsk, signo); }
  * Description       : send given signal to the current task
  *
  * Parameters
- *   tsk             : pointer to the task object
  *   signo           : signal number
  *
  * Return            : none
@@ -862,11 +861,11 @@ struct staticTaskT : public __tsk
 	 staticTaskT( fun_t *_state ): __tsk _TSK_INIT(_state, stack_, size_) {}
 	~staticTaskT( void ) { assert(__tsk::hdr.id == ID_STOPPED); }
 
-	void     reset    ( void )             {        tsk_reset    (this);          }
-	void     kill     ( void )             {        tsk_kill     (this);          }
-	void     join     ( void )             {        tsk_join     (this);          }
 	void     start    ( void )             {        tsk_start    (this);          }
 	void     startFrom( fun_t  * _state )  {        tsk_startFrom(this, _state);  }
+	void     join     ( void )             {        tsk_join     (this);          }
+	void     reset    ( void )             {        tsk_reset    (this);          }
+	void     kill     ( void )             {        tsk_kill     (this);          }
 	unsigned suspend  ( void )             { return tsk_suspend  (this);          }
 	unsigned resume   ( void )             { return tsk_resume   (this);          }
 	void     give     ( unsigned _signo )  {        tsk_give     (this, _signo);  }
@@ -932,10 +931,10 @@ typedef TaskT<OS_STACK_SIZE> Task;
  *
  ******************************************************************************/
 
-template<unsigned _size>
-struct startTaskT : public TaskT<_size>
+template<unsigned size_ = OS_STACK_SIZE>
+struct startTaskT : public TaskT<size_>
 {
-	startTaskT( FUN_t _state ): TaskT<_size>(_state) { tsk_start(this); }
+	startTaskT( FUN_t _state ): TaskT<size_>(_state) { tsk_start(this); }
 };
 
 /* -------------------------------------------------------------------------- */
@@ -952,23 +951,23 @@ typedef startTaskT<OS_STACK_SIZE> startTask;
 
 namespace ThisTask
 {
-	static inline void     pass      ( void )             { tsk_pass      ();                      }
+	static inline void     stop      ( void )             { tsk_stop      ();                      }
+	static inline void     reset     ( void )             { cur_reset     ();                      }
+	static inline void     kill      ( void )             { cur_kill      ();                      }
 	static inline void     yield     ( void )             { tsk_yield     ();                      }
+	static inline void     pass      ( void )             { tsk_pass      ();                      }
 #if OS_FUNCTIONAL
 	static inline void     flip      ( FUN_t    _state )  { ((TaskT<>*)System.cur)->fun_ = _state;
 	                                                        tsk_flip      (TaskT<>::run_);         }
 #else
 	static inline void     flip      ( FUN_t    _state )  { tsk_flip      (_state);                }
 #endif
-	static inline void     stop      ( void )             { tsk_stop      ();                      }
-	static inline void     reset     ( void )             { cur_reset     ();                      }
-	static inline void     kill      ( void )             { cur_kill      ();                      }
-	static inline void     suspend   ( void )             { cur_suspend   ();                      }
 	static inline void     sleepFor  ( cnt_t    _delay )  { tsk_sleepFor  (_delay);                }
 	static inline void     sleepNext ( cnt_t    _delay )  { tsk_sleepNext (_delay);                }
 	static inline void     sleepUntil( cnt_t    _time )   { tsk_sleepUntil(_time);                 }
 	static inline void     sleep     ( void )             { tsk_sleep     ();                      }
 	static inline void     delay     ( cnt_t    _delay )  { tsk_delay     (_delay);                }
+	static inline void     suspend   ( void )             { cur_suspend   ();                      }
 	static inline void     give      ( unsigned _signo )  { cur_give      (_signo);                }
 	static inline void     signal    ( unsigned _signo )  { cur_signal    (_signo);                }
 #if OS_FUNCTIONAL
