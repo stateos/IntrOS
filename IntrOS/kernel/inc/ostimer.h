@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.h
     @author  Rajmund Szymanski
-    @date    18.09.2018
+    @date    25.10.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -574,13 +574,13 @@ struct Timer : public staticTimer
 {
 	Timer( void ): staticTimer() {}
 #if OS_FUNCTIONAL
-	Timer( FUN_t _state ): staticTimer(run_), fun_(_state) {}
+	Timer( FUN_t _state ): staticTimer(fun_), Fun_(_state) {}
 
-	void  startFrom( cnt_t _delay, cnt_t _period, FUN_t _state ) { fun_ = _state; tmr_startFrom(this, _delay, _period, run_); }
+	void  startFrom( cnt_t _delay, cnt_t _period, FUN_t _state ) { Fun_ = _state; tmr_startFrom(this, _delay, _period, fun_); }
 
 	static
-	void  run_( void ) { ((Timer *)System.cur)->fun_(); }
-	FUN_t fun_;
+	void  fun_( void ) { ((Timer *)System.cur)->Fun_(); }
+	FUN_t Fun_;
 #else
 	Timer( FUN_t _state ): staticTimer(_state) {}
 #endif
@@ -688,8 +688,8 @@ struct startTimerUntil : public Timer
 namespace ThisTimer
 {
 #if OS_FUNCTIONAL
-	static inline void flip ( FUN_t _state ) { ((Timer *)System.cur)->fun_ = _state;
-	                                           tmr_flip (Timer::run_);               }
+	static inline void flip ( FUN_t _state ) { ((Timer *)System.cur)->Fun_ = _state;
+	                                           tmr_flip (Timer::fun_);               }
 #else
 	static inline void flip ( FUN_t _state ) { tmr_flip (_state);                    }
 #endif

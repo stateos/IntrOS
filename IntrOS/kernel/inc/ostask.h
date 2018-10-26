@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    25.10.2018
+    @date    26.10.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -898,17 +898,17 @@ template<unsigned size_ = OS_STACK_SIZE>
 struct TaskT : public staticTaskT<size_>
 {
 #if OS_FUNCTIONAL
-	TaskT( FUN_t _state ): staticTaskT<size_>(run_), fun_(_state) {}
+	TaskT( FUN_t _state ): staticTaskT<size_>(fun_), Fun_(_state) {}
 
-	void  startFrom( FUN_t _state )  { fun_ = _state;  tsk_startFrom(this, run_); }
-	void  action   ( ACT_t _action ) { act_ = _action; tsk_action   (this, sig_); }
+	void  startFrom( FUN_t _state )  { Fun_ =   _state; tsk_startFrom(this, fun_); }
+	void  action   ( ACT_t _action ) { Act_ = &_action; tsk_action   (this, act_); }
 
 	static
-	void  run_( void )          { ((TaskT *)System.cur)->fun_();     }
-	FUN_t fun_;
+	void  fun_( void )          {    ((TaskT<>*)System.cur)->Fun_();       }
+	FUN_t  Fun_;
 	static
-	void  sig_( unsigned _sig ) { ((TaskT *)System.cur)->act_(_sig); }
-	ACT_t act_;
+	void  act_( unsigned _sig ) { (*(((TaskT<>*)System.cur)->Act_))(_sig); }
+	ACT_t *Act_;
 #else
 	TaskT( FUN_t _state ): staticTaskT<size_>(_state) {}
 #endif
@@ -957,8 +957,8 @@ namespace ThisTask
 	static inline void     yield     ( void )             { tsk_yield     ();                      }
 	static inline void     pass      ( void )             { tsk_pass      ();                      }
 #if OS_FUNCTIONAL
-	static inline void     flip      ( FUN_t    _state )  { ((TaskT<>*)System.cur)->fun_ = _state;
-	                                                        tsk_flip      (TaskT<>::run_);         }
+	static inline void     flip      ( FUN_t    _state )  { ((TaskT<>*)System.cur)->Fun_ =   _state;
+	                                                        tsk_flip      (TaskT<>::fun_);         }
 #else
 	static inline void     flip      ( FUN_t    _state )  { tsk_flip      (_state);                }
 #endif
@@ -971,8 +971,8 @@ namespace ThisTask
 	static inline void     give      ( unsigned _signo )  { cur_give      (_signo);                }
 	static inline void     signal    ( unsigned _signo )  { cur_signal    (_signo);                }
 #if OS_FUNCTIONAL
-	static inline void     action    ( ACT_t    _action ) { ((TaskT<>*)System.cur)->act_ = _action;
-	                                                        cur_action    (TaskT<>::sig_);         }
+	static inline void     action    ( ACT_t    _action ) { ((TaskT<>*)System.cur)->Act_ = &_action;
+	                                                        cur_action    (TaskT<>::act_);         }
 #else
 	static inline void     action    ( ACT_t    _action ) { cur_action    (_action);               }
 #endif
