@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.h
     @author  Rajmund Szymanski
-    @date    26.10.2018
+    @date    29.10.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -554,9 +554,14 @@ struct staticTimer : public __tmr
 
 	unsigned take     ( void )                                       { return tmr_take         (this);                          }
 	unsigned tryWait  ( void )                                       { return tmr_tryWait      (this);                          }
-	void     wait     ( void )                                       { return tmr_wait         (this);                          }
+	void     wait     ( void )                                       {        tmr_wait         (this);                          }
 
 	bool     operator!( void )                                       { return __tmr::hdr.id == ID_STOPPED;                      }
+#if OS_FUNCTIONAL
+	static
+	void     fun_     ( void )                                       { reinterpret_cast<staticTimer *>(System.cur)->Fun_();     }
+	FUN_t    Fun_;
+#endif
 };
 
 /******************************************************************************
@@ -574,13 +579,9 @@ struct Timer : public staticTimer
 {
 	Timer( void ): staticTimer() {}
 #if OS_FUNCTIONAL
-	Timer( FUN_t _state ): staticTimer(fun_), Fun_(_state) {}
+	Timer( FUN_t _state ): staticTimer(staticTimer::fun_) { staticTimer::Fun_ = _state; }
 
-	void  startFrom( cnt_t _delay, cnt_t _period, FUN_t _state ) { Fun_ = _state; tmr_startFrom(this, _delay, _period, fun_); }
-
-	static
-	void  fun_( void ) { ((Timer *)System.cur)->Fun_(); }
-	FUN_t Fun_;
+	void  startFrom( cnt_t _delay, cnt_t _period, FUN_t _state ) { staticTimer::Fun_ = _state; tmr_startFrom(this, _delay, _period, staticTimer::fun_); }
 #else
 	Timer( FUN_t _state ): staticTimer(_state) {}
 #endif
@@ -687,13 +688,13 @@ struct startTimerUntil : public Timer
 
 namespace ThisTimer
 {
-	static inline void flip ( FUN_t  _state )
 #if OS_FUNCTIONAL
-	 { ((Timer *)System.cur)->Fun_ = _state;    tmr_flip (Timer::fun_); }
+	static inline void flip ( FUN_t _state ) { reinterpret_cast<staticTimer *>(System.cur)->Fun_ = _state;
+	                                           tmr_flip (staticTimer::fun_); }
 #else
-	                                          { tmr_flip (_state);      }
+	static inline void flip ( FUN_t _state ) { tmr_flip (_state); }
 #endif
-	static inline void delay( cnt_t  _delay ) { tmr_delay(_delay);      }
+	static inline void delay( cnt_t _delay ) { tmr_delay(_delay); }
 }
 
 #endif//__cplusplus
