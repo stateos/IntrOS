@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    26.10.2018
+    @date    29.10.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -871,10 +871,18 @@ struct staticTaskT : public __tsk
 	void     give     ( unsigned _signo )  {        tsk_give     (this, _signo);  }
 	void     signal   ( unsigned _signo )  {        tsk_signal   (this, _signo);  }
 	void     action   ( act_t  * _action ) {        tsk_action   (this, _action); }
-	bool     operator!( void )             { return __tsk::hdr.id == ID_STOPPED;  }
 
+	bool     operator!( void )             { return __tsk::hdr.id == ID_STOPPED;  }
+#if OS_FUNCTIONAL
+	static
+	void     fun_     ( void )             { reinterpret_cast<staticTaskT<>*>(System.cur)->Fun_(); }
+	FUN_t    Fun_;
+	static
+	void     act_     ( unsigned _signo )  { reinterpret_cast<staticTaskT<>*>(System.cur)->Act_(_signo); }
+	ACT_t    Act_;
+#endif
 	private:
-	stk_t stack_[STK_SIZE(size_)];
+	stk_t    stack_   [ STK_SIZE(size_) ];
 };
 
 /* -------------------------------------------------------------------------- */
@@ -898,17 +906,10 @@ template<unsigned size_ = OS_STACK_SIZE>
 struct TaskT : public staticTaskT<size_>
 {
 #if OS_FUNCTIONAL
-	TaskT( FUN_t _state ): staticTaskT<size_>(fun_), Fun_(_state) {}
+	TaskT( FUN_t _state ): staticTaskT<size_>(staticTaskT<size_>::fun_) { staticTaskT<size_>::Fun_ = _state; }
 
-	void  startFrom( FUN_t _state )  { Fun_ =   _state; tsk_startFrom(this, fun_); }
-	void  action   ( ACT_t _action ) { Act_ = &_action; tsk_action   (this, act_); }
-
-	static
-	void  fun_( void )          {    ((TaskT<>*)System.cur)->Fun_();       }
-	FUN_t  Fun_;
-	static
-	void  act_( unsigned _sig ) { (*(((TaskT<>*)System.cur)->Act_))(_sig); }
-	ACT_t *Act_;
+	void  startFrom( FUN_t _state )  { staticTaskT<size_>::Fun_ = _state;  tsk_startFrom(this, staticTaskT<size_>::fun_); }
+	void  action   ( ACT_t _action ) { staticTaskT<size_>::Act_ = _action; tsk_action   (this, staticTaskT<size_>::act_); }
 #else
 	TaskT( FUN_t _state ): staticTaskT<size_>(_state) {}
 #endif
@@ -951,30 +952,30 @@ typedef startTaskT<OS_STACK_SIZE> startTask;
 
 namespace ThisTask
 {
-	static inline void     stop      ( void )             { tsk_stop      ();              }
-	static inline void     reset     ( void )             { cur_reset     ();              }
-	static inline void     kill      ( void )             { cur_kill      ();              }
-	static inline void     yield     ( void )             { tsk_yield     ();              }
-	static inline void     pass      ( void )             { tsk_pass      ();              }
-	static inline void     flip      ( FUN_t    _state )
+	static inline void     stop      ( void )             { tsk_stop      ();        }
+	static inline void     reset     ( void )             { cur_reset     ();        }
+	static inline void     kill      ( void )             { cur_kill      ();        }
+	static inline void     yield     ( void )             { tsk_yield     ();        }
+	static inline void     pass      ( void )             { tsk_pass      ();        }
 #if OS_FUNCTIONAL
-	         { ((TaskT<>*)System.cur)->Fun_ =   _state;     tsk_flip      (TaskT<>::fun_); }
+	static inline void     flip      ( FUN_t    _state )  { reinterpret_cast<staticTaskT<>*>(System.cur)->Fun_ = _state;
+	                                                        tsk_flip      (staticTaskT<>::fun_); }
 #else
-	                                                      { tsk_flip      (_state);        }
+	static inline void     flip      ( FUN_t    _state )  { tsk_flip      (_state);  }
 #endif
-	static inline void     sleepFor  ( cnt_t    _delay )  { tsk_sleepFor  (_delay);        }
-	static inline void     sleepNext ( cnt_t    _delay )  { tsk_sleepNext (_delay);        }
-	static inline void     sleepUntil( cnt_t    _time )   { tsk_sleepUntil(_time);         }
-	static inline void     sleep     ( void )             { tsk_sleep     ();              }
-	static inline void     delay     ( cnt_t    _delay )  { tsk_delay     (_delay);        }
-	static inline void     suspend   ( void )             { cur_suspend   ();              }
-	static inline void     give      ( unsigned _signo )  { cur_give      (_signo);        }
-	static inline void     signal    ( unsigned _signo )  { cur_signal    (_signo);        }
-	static inline void     action    ( ACT_t    _action )
+	static inline void     sleepFor  ( cnt_t    _delay )  { tsk_sleepFor  (_delay);  }
+	static inline void     sleepNext ( cnt_t    _delay )  { tsk_sleepNext (_delay);  }
+	static inline void     sleepUntil( cnt_t    _time )   { tsk_sleepUntil(_time);   }
+	static inline void     sleep     ( void )             { tsk_sleep     ();        }
+	static inline void     delay     ( cnt_t    _delay )  { tsk_delay     (_delay);  }
+	static inline void     suspend   ( void )             { cur_suspend   ();        }
+	static inline void     give      ( unsigned _signo )  { cur_give      (_signo);  }
+	static inline void     signal    ( unsigned _signo )  { cur_signal    (_signo);  }
 #if OS_FUNCTIONAL
-	         { ((TaskT<>*)System.cur)->Act_ =  &_action;    cur_action    (TaskT<>::act_); }
+	static inline void     action    ( ACT_t    _action ) { reinterpret_cast<staticTaskT<>*>(System.cur)->Act_ = _action;
+	                                                        cur_action    (staticTaskT<>::act_); }
 #else
-	                                                      { cur_action    (_action);       }
+	static inline void     action    ( ACT_t    _action ) { cur_action    (_action); }
 #endif
 }
 
