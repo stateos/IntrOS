@@ -16,5 +16,5 @@ auto tsk = startTask([]
 
 int main()
 {
-	ThisTask::stop();
+	tsk_stop();
 }

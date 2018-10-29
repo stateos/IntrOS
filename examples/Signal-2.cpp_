@@ -32,5 +32,5 @@ int main()
 	auto sla = startTask(slave);
 	auto mas = startTask(master);
 
-	ThisTask::sleep();
+	tsk_sleep();
 }

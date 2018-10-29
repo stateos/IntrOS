@@ -25,5 +25,5 @@ int main()
 	Semaphore sem(0);
 	startTask sla([&] { slave(sem, led); });
 	startTask mas([&] { master(sem); });
-	ThisTask::sleep();
+	tsk_sleep();
 }
