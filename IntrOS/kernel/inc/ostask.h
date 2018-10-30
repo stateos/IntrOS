@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    29.10.2018
+    @date    30.10.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -844,22 +844,22 @@ void cur_action( act_t *action ) { tsk_action(System.cur, action); }
 
 /******************************************************************************
  *
- * Class             : staticTaskT<>
+ * Class             : baseTask
  *
- * Description       : create and initialize complete work area for static task object
+ * Description       : create and initialize base class for task objects
  *
  * Constructor parameters
- *   size            : size of task private stack (in bytes)
  *   state           : task state (initial task function) doesn't have to be noreturn-type
  *                     it will be executed into an infinite system-implemented loop
+ *   stack           : base of task's private stack storage
+ *   size            : size of task private stack (in bytes)
  *
  ******************************************************************************/
 
-template<unsigned size_ = OS_STACK_SIZE>
-struct staticTaskT : public __tsk
+struct baseTask : public __tsk
 {
-	 staticTaskT( fun_t *_state ): __tsk _TSK_INIT(_state, stack_, size_) {}
-	~staticTaskT( void ) { assert(__tsk::hdr.id == ID_STOPPED); }
+	 baseTask( fun_t *_state, stk_t * const _stack, const unsigned _size ): __tsk _TSK_INIT(_state, _stack, _size) {}
+	~baseTask( void ) { assert(__tsk::hdr.id == ID_STOPPED); }
 
 	void     start    ( void )             {        tsk_start    (this);          }
 	void     startFrom( fun_t  * _state )  {        tsk_startFrom(this, _state);  }
@@ -875,14 +875,34 @@ struct staticTaskT : public __tsk
 	bool     operator!( void )             { return __tsk::hdr.id == ID_STOPPED;  }
 #if OS_FUNCTIONAL
 	static
-	void     fun_     ( void )             { reinterpret_cast<staticTaskT<>*>(System.cur)->Fun_(); }
+	void     fun_     ( void )             { reinterpret_cast<baseTask*>(System.cur)->Fun_(); }
 	FUN_t    Fun_;
 	static
-	void     act_     ( unsigned _signo )  { reinterpret_cast<staticTaskT<>*>(System.cur)->Act_(_signo); }
+	void     act_     ( unsigned _signo )  { reinterpret_cast<baseTask*>(System.cur)->Act_(_signo); }
 	ACT_t    Act_;
 #endif
+};
+
+/******************************************************************************
+ *
+ * Class             : staticTaskT<>
+ *
+ * Description       : create and initialize complete work area for static task object
+ *
+ * Constructor parameters
+ *   size            : size of task private stack (in bytes)
+ *   state           : task state (initial task function) doesn't have to be noreturn-type
+ *                     it will be executed into an infinite system-implemented loop
+ *
+ ******************************************************************************/
+
+template<unsigned size_ = OS_STACK_SIZE>
+struct staticTaskT : public baseTask
+{
+	staticTaskT( fun_t *_state ): baseTask(_state, stack_, size_) {}
+
 	private:
-	stk_t    stack_   [ STK_SIZE(size_) ];
+	stk_t stack_[ STK_SIZE(size_) ];
 };
 
 /* -------------------------------------------------------------------------- */
@@ -906,10 +926,10 @@ template<unsigned size_ = OS_STACK_SIZE>
 struct TaskT : public staticTaskT<size_>
 {
 #if OS_FUNCTIONAL
-	TaskT( FUN_t _state ): staticTaskT<size_>(staticTaskT<size_>::fun_) { staticTaskT<size_>::Fun_ = _state; }
+	TaskT( FUN_t _state ): staticTaskT<size_>(baseTask::fun_) { baseTask::Fun_ = _state; }
 
-	void  startFrom( FUN_t _state )  { staticTaskT<size_>::Fun_ = _state;  tsk_startFrom(this, staticTaskT<size_>::fun_); }
-	void  action   ( ACT_t _action ) { staticTaskT<size_>::Act_ = _action; tsk_action   (this, staticTaskT<size_>::act_); }
+	void  startFrom( FUN_t _state )  { baseTask::Fun_ = _state;  tsk_startFrom(this, baseTask::fun_); }
+	void  action   ( ACT_t _action ) { baseTask::Act_ = _action; tsk_action   (this, baseTask::act_); }
 #else
 	TaskT( FUN_t _state ): staticTaskT<size_>(_state) {}
 #endif
@@ -958,8 +978,8 @@ namespace ThisTask
 	static inline void     yield     ( void )             { tsk_yield     ();        }
 	static inline void     pass      ( void )             { tsk_pass      ();        }
 #if OS_FUNCTIONAL
-	static inline void     flip      ( FUN_t    _state )  { reinterpret_cast<staticTaskT<>*>(System.cur)->Fun_ = _state;
-	                                                        tsk_flip      (staticTaskT<>::fun_); }
+	static inline void     flip      ( FUN_t    _state )  { reinterpret_cast<baseTask*>(System.cur)->Fun_ = _state;
+	                                                        tsk_flip      (baseTask::fun_); }
 #else
 	static inline void     flip      ( FUN_t    _state )  { tsk_flip      (_state);  }
 #endif
@@ -972,8 +992,8 @@ namespace ThisTask
 	static inline void     give      ( unsigned _signo )  { cur_give      (_signo);  }
 	static inline void     signal    ( unsigned _signo )  { cur_signal    (_signo);  }
 #if OS_FUNCTIONAL
-	static inline void     action    ( ACT_t    _action ) { reinterpret_cast<staticTaskT<>*>(System.cur)->Act_ = _action;
-	                                                        cur_action    (staticTaskT<>::act_); }
+	static inline void     action    ( ACT_t    _action ) { reinterpret_cast<baseTask*>(System.cur)->Act_ = _action;
+	                                                        cur_action    (baseTask::act_); }
 #else
 	static inline void     action    ( ACT_t    _action ) { cur_action    (_action); }
 #endif
