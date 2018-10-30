@@ -61,6 +61,9 @@ struct __tsk
 	cnt_t    delay; // inherited from timer
 	cnt_t    period;// inherited from timer
 
+	stk_t  * stack; // base of stack
+	unsigned size;  // size of stack (in bytes)
+
 	struct {
 	unsigned sigset;// pending signals
 	act_t  * action;// signal handler
@@ -69,9 +72,6 @@ struct __tsk
 	cnt_t    delay;
 	}        backup;
 	}        sig;
-
-	stk_t  * stack; // base of stack
-	unsigned size;  // size of stack (in bytes)
 
 	union  {
 	ctx_t    reg;   // task context
@@ -98,7 +98,7 @@ struct __tsk
  ******************************************************************************/
 
 #define               _TSK_INIT( _state, _stack, _size ) \
-                    { _HDR_INIT(), _state, 0, 0, 0, { 0, 0, { 0, 0 } }, _stack, _size, { _CTX_INIT() } }
+                    { _HDR_INIT(), _state, 0, 0, 0, _stack, _size, { 0, 0, { 0, 0 } }, { _CTX_INIT() } }
 
 /******************************************************************************
  *
