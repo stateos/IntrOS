@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    30.10.2018
+    @date    31.10.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -854,15 +854,26 @@ void cur_action( act_t *action ) { tsk_action(System.cur, action); }
  *   stack           : base of task's private stack storage
  *   size            : size of task private stack (in bytes)
  *
+ * Note              : for internal use
+ *
  ******************************************************************************/
 
 struct baseTask : public __tsk
 {
-	 baseTask( fun_t *_state, stk_t * const _stack, const unsigned _size ): __tsk _TSK_INIT(_state, _stack, _size) {}
+#if OS_FUNCTIONAL
+	 baseTask( FUN_t _state, stk_t * const _stack, const unsigned _size ): __tsk _TSK_INIT(fun_, _stack, _size), Fun_(_state) {}
+#else
+	 baseTask( FUN_t _state, stk_t * const _stack, const unsigned _size ): __tsk _TSK_INIT(_state, _stack, _size) {}
+#endif
 	~baseTask( void ) { assert(__tsk::hdr.id == ID_STOPPED); }
 
 	void     start    ( void )             {        tsk_start    (this);          }
-	void     startFrom( fun_t  * _state )  {        tsk_startFrom(this, _state);  }
+#if OS_FUNCTIONAL
+	void     startFrom( FUN_t    _state )  {        Fun_ = _state;
+	                                                tsk_startFrom(this, fun_);    }
+#else
+	void     startFrom( FUN_t    _state )  {        tsk_startFrom(this, _state);  }
+#endif
 	void     join     ( void )             {        tsk_join     (this);          }
 	void     reset    ( void )             {        tsk_reset    (this);          }
 	void     kill     ( void )             {        tsk_kill     (this);          }
@@ -870,8 +881,12 @@ struct baseTask : public __tsk
 	unsigned resume   ( void )             { return tsk_resume   (this);          }
 	void     give     ( unsigned _signo )  {        tsk_give     (this, _signo);  }
 	void     signal   ( unsigned _signo )  {        tsk_signal   (this, _signo);  }
-	void     action   ( act_t  * _action ) {        tsk_action   (this, _action); }
-
+#if OS_FUNCTIONAL
+	void     action   ( ACT_t    _action ) {        Act_ = _action;
+	                                                tsk_action   (this, act_);    }
+#else
+	void     action   ( ACT_t    _action ) {        tsk_action   (this, _action); }
+#endif
 	bool     operator!( void )             { return __tsk::hdr.id == ID_STOPPED;  }
 #if OS_FUNCTIONAL
 	static
@@ -882,32 +897,6 @@ struct baseTask : public __tsk
 	ACT_t    Act_;
 #endif
 };
-
-/******************************************************************************
- *
- * Class             : staticTaskT<>
- *
- * Description       : create and initialize complete work area for static task object
- *
- * Constructor parameters
- *   size            : size of task private stack (in bytes)
- *   state           : task state (initial task function) doesn't have to be noreturn-type
- *                     it will be executed into an infinite system-implemented loop
- *
- ******************************************************************************/
-
-template<unsigned size_ = OS_STACK_SIZE>
-struct staticTaskT : public baseTask
-{
-	staticTaskT( fun_t *_state ): baseTask(_state, stack_, size_) {}
-
-	private:
-	stk_t stack_[ STK_SIZE(size_) ];
-};
-
-/* -------------------------------------------------------------------------- */
-
-typedef staticTaskT<OS_STACK_SIZE> staticTask;
 
 /******************************************************************************
  *
@@ -923,16 +912,12 @@ typedef staticTaskT<OS_STACK_SIZE> staticTask;
  ******************************************************************************/
 
 template<unsigned size_ = OS_STACK_SIZE>
-struct TaskT : public staticTaskT<size_>
+struct TaskT : public baseTask
 {
-#if OS_FUNCTIONAL
-	TaskT( FUN_t _state ): staticTaskT<size_>(baseTask::fun_) { baseTask::Fun_ = _state; }
+	TaskT( FUN_t _state ): baseTask(_state, stack_, size_) {}
 
-	void  startFrom( FUN_t _state )  { baseTask::Fun_ = _state;  tsk_startFrom(this, baseTask::fun_); }
-	void  action   ( ACT_t _action ) { baseTask::Act_ = _action; tsk_action   (this, baseTask::act_); }
-#else
-	TaskT( FUN_t _state ): staticTaskT<size_>(_state) {}
-#endif
+	private:
+	stk_t stack_[ STK_SIZE(size_) ];
 };
 
 /* -------------------------------------------------------------------------- */
