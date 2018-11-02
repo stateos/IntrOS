@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    01.11.2018
     @brief   IntrOS port file for ARM Cotrex-M uC.
 
  ******************************************************************************
@@ -46,8 +46,6 @@ extern "C" {
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef  __cplusplus
-
 #ifndef OS_FUNCTIONAL
 
 #if   defined(__CC_ARM) || defined(__CSMC__) || defined(__ICCARM__)
@@ -63,8 +61,6 @@ extern "C" {
 #endif
 
 #endif//OS_FUNCTIONAL
-
-#endif
 
 /* -------------------------------------------------------------------------- */
 

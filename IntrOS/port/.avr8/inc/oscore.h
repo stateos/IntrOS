@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    01.11.2018
     @brief   IntrOS port file for AVR8 uC.
 
  ******************************************************************************
@@ -46,19 +46,11 @@ extern "C" {
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef  __cplusplus
-
 #ifndef OS_FUNCTIONAL
-
 #define OS_FUNCTIONAL         0 /* c++ functional library header not included */
-
 #elif   OS_FUNCTIONAL
-
 #error  c++ functional library not allowed for this compiler.
-
 #endif//OS_FUNCTIONAL
-
-#endif
 
 /* -------------------------------------------------------------------------- */
 

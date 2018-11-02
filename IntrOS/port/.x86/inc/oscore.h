@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    25.10.2018
+    @date    02.11.2018
     @brief   IntrOS port file for X86.
 
  ******************************************************************************
@@ -43,15 +43,9 @@ extern "C" {
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef  __cplusplus
-
 #ifndef OS_FUNCTIONAL
-
 #define OS_FUNCTIONAL         1 /* include c++ functional library header      */
-
 #endif//OS_FUNCTIONAL
-
-#endif
 
 /* -------------------------------------------------------------------------- */
 
@@ -129,7 +123,7 @@ struct __ctx
 __STATIC_INLINE
 void port_ctx_init( ctx_t *ctx, stk_t *sp, fun_t *pc )
 {
-	setjmp((void *)ctx);
+	setjmp((_JBTYPE *)ctx);
 
 	ctx->sp = sp;
 	ctx->pc = pc;
