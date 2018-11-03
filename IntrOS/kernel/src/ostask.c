@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.c
     @author  Rajmund Szymanski
-    @date    25.10.2018
+    @date    03.11.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -101,7 +101,9 @@ static
 void priv_tsk_reset( tsk_t *tsk )
 /* -------------------------------------------------------------------------- */
 {
+	tsk->delay = 0;
 	tsk->sig.sigset = 0;
+	tsk->sig.backup.pc = 0;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -149,6 +151,7 @@ void tsk_flip( fun_t *state )
 
 	System.cur->state = state;
 
+	priv_tsk_reset(System.cur);
 	core_ctx_init(System.cur);
 	core_tsk_switch();
 }
@@ -269,6 +272,7 @@ void priv_sig_deliver( void )
 	priv_sig_handler(tsk);
 
 	tsk->ctx.reg.pc = tsk->sig.backup.pc;
+	tsk->sig.backup.pc = 0;
 	tsk->delay = tsk->sig.backup.delay;
 
 	core_tsk_switch();
@@ -284,7 +288,7 @@ void priv_sig_dispatch( tsk_t *tsk )
 		priv_sig_handler(tsk);
 	}
 	else
-	if (tsk->ctx.reg.pc != priv_sig_deliver)
+	if (tsk->sig.backup.pc == 0)
 	{
 		tsk->sig.backup.pc = tsk->ctx.reg.pc;
 		tsk->sig.backup.delay = tsk->delay;
