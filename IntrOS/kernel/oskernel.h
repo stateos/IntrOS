@@ -70,6 +70,19 @@ typedef     void  * ACT_t [ OS_FUNCTIONAL ];
 
 /* -------------------------------------------------------------------------- */
 
+#if OS_FUNCTIONAL
+
+#define assert_functional() \
+        assert(sizeof(FUN_t) == sizeof(void *) * OS_FUNCTIONAL)
+
+#else
+
+#define assert_functional()
+
+#endif
+
+/* -------------------------------------------------------------------------- */
+
 #define ALIGNED_SIZE( size, type ) \
           (((size_t)( size ) + sizeof(type) - 1) / sizeof(type))
 
@@ -95,8 +108,11 @@ extern sys_t System; // system data
 
 /* -------------------------------------------------------------------------- */
 
+#define assert_ctx_integrity(tsk) \
+        assert(((tsk) == &MAIN) || ((uintptr_t)(tsk)->stack < (uintptr_t)(tsk)->ctx.reg.sp))
+
 #define assert_stk_integrity() \
-        assert((System.cur == &MAIN) || (System.cur->hdr.id == ID_TIMER) || ((uintptr_t)System.cur->stack <= (uintptr_t)port_get_sp()))
+        assert((System.cur == &MAIN) || ((uintptr_t)System.cur->stack < (uintptr_t)port_get_sp()))
 
 /* -------------------------------------------------------------------------- */
 

@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    29.10.2018
+    @date    05.11.2018
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -111,6 +111,7 @@ void core_ctx_init( tsk_t *tsk )
 		memset(tsk->stack, 0xFF, tsk->size);
 #endif
 	port_ctx_init(&tsk->ctx.reg, (stk_t *)STK_CROP(tsk->stack, tsk->size), core_tsk_loop);
+	assert_ctx_integrity(tsk);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -165,7 +166,7 @@ void core_tsk_switch( void )
 	tsk_t *cur;
 	tmr_t *tmr;
 
-	assert_stk_integrity();
+	assert_ctx_integrity(System.cur);
 
 	for (;;)
 	{
@@ -201,6 +202,8 @@ void core_tsk_switch( void )
 			port_clr_lock();
 		}
 	}
+
+	assert_ctx_integrity(System.cur);
 
 	longjmp(cur->ctx.buf, 1);
 }
