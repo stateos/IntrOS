@@ -33,6 +33,8 @@ Features:
 ---------
 4.4
 - added signal handler
+- changed c++ functional procedures
+- updated assertions
 ---------
 4.3
 - merged test branch
