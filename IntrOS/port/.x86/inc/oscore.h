@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    02.11.2018
+    @date    05.11.2018
     @brief   IntrOS port file for X86.
 
  ******************************************************************************
@@ -44,7 +44,15 @@ extern "C" {
 /* -------------------------------------------------------------------------- */
 
 #ifndef OS_FUNCTIONAL
-#define OS_FUNCTIONAL         1 /* include c++ functional library header      */
+
+#if   defined(__GNUC__)
+#define OS_FUNCTIONAL         4
+#else
+#define OS_FUNCTIONAL         0 /* c++ functional library header not included */
+#endif
+
+#elif   OS_FUNCTIONAL
+#error  OS_FUNCTIONAL is an internal port definition!
 #endif//OS_FUNCTIONAL
 
 /* -------------------------------------------------------------------------- */
