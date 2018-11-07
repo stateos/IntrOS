@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.c
     @author  Rajmund Szymanski
-    @date    03.11.2018
+    @date    07.11.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -283,19 +283,20 @@ static
 void priv_sig_dispatch( tsk_t *tsk )
 /* -------------------------------------------------------------------------- */
 {
+	if (tsk->sig.backup.pc)
+		return;
+
 	if (tsk == System.cur)
 	{
 		priv_sig_handler(tsk);
+		return;
 	}
-	else
-	if (tsk->sig.backup.pc == 0)
-	{
-		tsk->sig.backup.pc = tsk->ctx.reg.pc;
-		tsk->sig.backup.delay = tsk->delay;
 
-		tsk->ctx.reg.pc = priv_sig_deliver;
-		tsk->delay = 0;
-	}
+	tsk->sig.backup.pc = tsk->ctx.reg.pc;
+	tsk->sig.backup.delay = tsk->delay;
+
+	tsk->ctx.reg.pc = priv_sig_deliver;
+	tsk->delay = 0;
 }
 
 /* -------------------------------------------------------------------------- */
