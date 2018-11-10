@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    25.10.2018
+    @date    10.11.2018
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -32,9 +32,16 @@
 #ifndef __INTROSBASE_H
 #define __INTROSBASE_H
 
+#ifndef   DEBUG
+#ifndef   NDEBUG
+#define   NDEBUG
+#endif // NDEBUG
+#endif // DEBUG
+
 #include <stdint.h>
 #include <limits.h>
 #include <stdbool.h>
+#include <assert.h>
 #include <setjmp.h>
 #include "osport.h"
 
