@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    04.11.2018
+    @date    12.11.2018
     @brief   IntrOS port file for AVR8 uC.
 
  ******************************************************************************
@@ -110,13 +110,35 @@ void * port_get_sp( void )
 
 /* -------------------------------------------------------------------------- */
 
-#define port_get_lock()       SREG
-#define port_put_lock(lck)    SREG = lck
+__STATIC_INLINE
+lck_t port_get_lock( void )
+{
+	return SREG;
+}
 
-#define port_set_lock()       cli()
-#define port_clr_lock()       sei()
+__STATIC_INLINE
+void port_put_lock( lck_t lck )
+{
+	SREG = lck;
+}
 
-#define port_set_barrier()    asm volatile ("nop" ::: "memory")
+__STATIC_INLINE
+void port_set_lock( void )
+{
+	cli();
+}
+
+__STATIC_INLINE
+void port_clr_lock( void )
+{
+	sei();
+}
+
+__STATIC_INLINE
+void port_set_barrier( void )
+{
+	asm volatile ("nop" ::: "memory");
+}
 
 /* -------------------------------------------------------------------------- */
 

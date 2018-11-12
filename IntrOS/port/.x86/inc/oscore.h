@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    06.11.2018
+    @date    12.11.2018
     @brief   IntrOS port file for X86.
 
  ******************************************************************************
@@ -195,13 +195,32 @@ unsigned __xchg( volatile unsigned *lock, unsigned value )
 
 /* -------------------------------------------------------------------------- */
 
-#define port_get_lock()      (lck_t)(0)
-#define port_put_lock(cc)    (void)(cc)
+__STATIC_INLINE
+lck_t port_get_lock( void )
+{
+	return 0;
+}
 
-#define port_set_lock()      (void)(0)
-#define port_clr_lock()      (void)(0)
+__STATIC_INLINE
+void port_put_lock( lck_t lck )
+{
+	(void) lck;
+}
 
-#define port_set_barrier()   (void)(0)
+__STATIC_INLINE
+void port_set_lock( void )
+{
+}
+
+__STATIC_INLINE
+void port_clr_lock( void )
+{
+}
+
+__STATIC_INLINE
+void port_set_barrier( void )
+{
+}
 
 /* -------------------------------------------------------------------------- */
 
