@@ -178,6 +178,11 @@ void port_set_barrier( void )
 	nop();
 }
 
+__STATIC_INLINE
+void port_set_sync( void )
+{
+}
+
 /* -------------------------------------------------------------------------- */
 
 #ifdef __cplusplus

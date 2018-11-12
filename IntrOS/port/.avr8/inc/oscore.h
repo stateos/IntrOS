@@ -140,6 +140,12 @@ void port_set_barrier( void )
 	asm volatile ("nop" ::: "memory");
 }
 
+__STATIC_INLINE
+void port_set_sync( void )
+{
+	asm volatile ("" ::: "memory");
+}
+
 /* -------------------------------------------------------------------------- */
 
 #ifdef __cplusplus

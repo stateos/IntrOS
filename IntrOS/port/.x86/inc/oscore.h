@@ -222,6 +222,11 @@ void port_set_barrier( void )
 {
 }
 
+__STATIC_INLINE
+void port_set_sync( void )
+{
+}
+
 /* -------------------------------------------------------------------------- */
 
 #ifndef OS_MULTICORE

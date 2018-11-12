@@ -182,18 +182,6 @@ void __enable_irq( void )
 /* -------------------------------------------------------------------------- */
 
 __STATIC_INLINE
-void port_set_synchronization( void )
-{
-#if   defined(__ARMCC_VERSION)
-	__schedule_barrier();
-#elif defined(__GNUC__)
-	__ASM("" ::: "memory");
-#endif	
-}
-
-/* -------------------------------------------------------------------------- */
-
-__STATIC_INLINE
 lck_t port_get_lock( void )
 {
 	return __get_PRIMASK();
@@ -202,7 +190,6 @@ lck_t port_get_lock( void )
 __STATIC_INLINE
 void port_put_lock( lck_t lck )
 {
-	port_set_synchronization();
 	__set_PRIMASK(lck);
 }
 
@@ -210,7 +197,6 @@ __STATIC_INLINE
 void port_set_lock( void )
 {
 	__disable_irq();
-	port_set_synchronization();
 }
 
 __STATIC_INLINE
@@ -223,6 +209,18 @@ __STATIC_INLINE
 void port_set_barrier( void )
 {
 	__ISB();
+}
+
+__STATIC_INLINE
+void port_set_sync( void )
+{
+#if   defined(__ARMCC_VERSION)
+	__schedule_barrier();
+#elif defined(__GNUC__)
+	__ASM volatile ("" ::: "memory");
+#elif defined(__ICCARM__)
+	__ASM ("" ::: "memory");
+#endif	
 }
 
 /* -------------------------------------------------------------------------- */
