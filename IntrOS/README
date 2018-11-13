@@ -35,6 +35,7 @@ Features:
 - added signal handler
 - changed c++ functional procedures
 - updated assertions
+- updated tsk_init function
 ---------
 4.3
 - merged test branch
