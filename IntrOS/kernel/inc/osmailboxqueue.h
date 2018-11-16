@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmailboxqueue.h
     @author  Rajmund Szymanski
-    @date    18.09.2018
+    @date    16.11.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -66,8 +66,8 @@ struct __box
  *
  * Parameters
  *   limit           : size of a queue (max number of stored mails)
- *   data            : mailbox queue data buffer
  *   size            : size of a single mail (in bytes)
+ *   data            : mailbox queue data buffer
  *
  * Return            : mailbox queue object
  *
@@ -75,7 +75,7 @@ struct __box
  *
  ******************************************************************************/
 
-#define               _BOX_INIT( _limit, _data, _size ) { 0, _limit * _size, 0, 0, _data, _size }
+#define               _BOX_INIT( _limit, _size, _data ) { 0, _limit * _size, 0, 0, _data, _size }
 
 /******************************************************************************
  *
@@ -112,7 +112,7 @@ struct __box
 
 #define             OS_BOX( box, limit, size )                                \
                        char box##__buf[limit*size];                            \
-                       box_t box##__box = _BOX_INIT( limit, box##__buf, size ); \
+                       box_t box##__box = _BOX_INIT( limit, size, box##__buf ); \
                        box_id box = & box##__box
 
 /******************************************************************************
@@ -130,7 +130,7 @@ struct __box
 
 #define         static_BOX( box, limit, size )                                \
                 static char box##__buf[limit*size];                            \
-                static box_t box##__box = _BOX_INIT( limit, box##__buf, size ); \
+                static box_t box##__box = _BOX_INIT( limit, size, box##__buf ); \
                 static box_id box = & box##__box
 
 /******************************************************************************
@@ -151,7 +151,7 @@ struct __box
 
 #ifndef __cplusplus
 #define                BOX_INIT( limit, size ) \
-                      _BOX_INIT( limit, _BOX_DATA( limit, size ), size )
+                      _BOX_INIT( limit, size, _BOX_DATA( limit, size ) )
 #endif
 
 /******************************************************************************
@@ -342,7 +342,7 @@ unsigned box_space( box_t *box );
 template<unsigned limit_, unsigned size_>
 struct MailBoxQueueT : public __box
 {
-	MailBoxQueueT( void ): __box _BOX_INIT(limit_, data_, size_) {}
+	MailBoxQueueT( void ): __box _BOX_INIT(limit_, size_, data_) {}
 
 	unsigned take   (       void *_data ) { return box_take   (this, _data); }
 	unsigned tryWait(       void *_data ) { return box_tryWait(this, _data); }
