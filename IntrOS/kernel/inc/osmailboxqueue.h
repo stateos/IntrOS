@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmailboxqueue.h
     @author  Rajmund Szymanski
-    @date    16.11.2018
+    @date    19.11.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -48,14 +48,13 @@ typedef struct __box box_t, * const box_id;
 
 struct __box
 {
-	unsigned count; // inherited from stream buffer
-	unsigned limit; // inherited from stream buffer
-
-	unsigned head;  // inherited from stream buffer
-	unsigned tail;  // inherited from stream buffer
-	char   * data;  // inherited from stream buffer
-
+	unsigned count; // inherited from semaphore
+	unsigned limit; // inherited from semaphore
 	unsigned size;  // size of a single mail (in bytes)
+
+	unsigned head;  // first element to read from data buffer
+	unsigned tail;  // first element to write into data buffer
+	char   * data;  // data buffer
 };
 
 /******************************************************************************
@@ -75,7 +74,7 @@ struct __box
  *
  ******************************************************************************/
 
-#define               _BOX_INIT( _limit, _size, _data ) { 0, _limit * _size, 0, 0, _data, _size }
+#define               _BOX_INIT( _limit, _size, _data ) { 0, _limit * _size, _size, 0, 0, _data }
 
 /******************************************************************************
  *
@@ -110,10 +109,10 @@ struct __box
  *
  ******************************************************************************/
 
-#define             OS_BOX( box, limit, size )                                \
-                       char box##__buf[limit*size];                            \
-                       box_t box##__box = _BOX_INIT( limit, size, box##__buf ); \
-                       box_id box = & box##__box
+#define             OS_BOX( box, limit, size )                                   \
+                       struct { box_t box; char buf[limit * size]; } box##__wrk = \
+                       { _BOX_INIT( limit, size, box##__wrk.buf ), { 0 } };        \
+                       box_id box = & box##__wrk.box
 
 /******************************************************************************
  *
@@ -128,10 +127,10 @@ struct __box
  *
  ******************************************************************************/
 
-#define         static_BOX( box, limit, size )                                \
-                static char box##__buf[limit*size];                            \
-                static box_t box##__box = _BOX_INIT( limit, size, box##__buf ); \
-                static box_id box = & box##__box
+#define         static_BOX( box, limit, size )                                   \
+                static struct { box_t box; char buf[limit * size]; } box##__wrk = \
+                       { _BOX_INIT( limit, size, box##__wrk.buf ), { 0 } };        \
+                static box_id box = & box##__wrk.box
 
 /******************************************************************************
  *

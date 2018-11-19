@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmailboxqueue.c
     @author  Rajmund Szymanski
-    @date    22.10.2018
+    @date    19.11.2018
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -46,8 +46,8 @@ void box_init( box_t *box, unsigned size, void *data, unsigned bufsize )
 		memset(box, 0, sizeof(box_t));
 
 		box->limit = (bufsize / size) * size;
-		box->data  = data;
 		box->size  = size;
+		box->data  = data;
 	}
 	sys_unlock();
 }

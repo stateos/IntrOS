@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmemorypool.h
     @author  Rajmund Szymanski
-    @date    18.09.2018
+    @date    19.11.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -113,10 +113,10 @@ struct __mem
  *
  ******************************************************************************/
 
-#define             OS_MEM( mem, limit, size )                                          \
-                       que_t mem##__buf[limit * (1 + MEM_SIZE(size))];                   \
-                       mem_t mem##__mem = _MEM_INIT( limit, MEM_SIZE(size), mem##__buf ); \
-                       mem_id mem = & mem##__mem
+#define             OS_MEM( mem, limit, size )                                                    \
+                       struct { mem_t mem; que_t buf[limit * (1 + MEM_SIZE(size))]; } mem##__wrk = \
+                       { _MEM_INIT( limit, MEM_SIZE(size), mem##__wrk.buf ), { { 0 } } };           \
+                       mem_id mem = & mem##__wrk.mem
 
 /******************************************************************************
  *
@@ -131,10 +131,10 @@ struct __mem
  *
  ******************************************************************************/
 
-#define         static_MEM( mem, limit, size )                                          \
-                static que_t mem##__buf[limit * (1 + MEM_SIZE(size))];                   \
-                static mem_t mem##__mem = _MEM_INIT( limit, MEM_SIZE(size), mem##__buf ); \
-                static mem_id mem = & mem##__mem
+#define         static_MEM( mem, limit, size )                                                    \
+                static struct { mem_t mem; que_t buf[limit * (1 + MEM_SIZE(size))]; } mem##__wrk = \
+                       { _MEM_INIT( limit, MEM_SIZE(size), mem##__wrk.buf ), { { 0 } } };           \
+                static mem_id mem = & mem##__wrk.mem
 
 /******************************************************************************
  *
