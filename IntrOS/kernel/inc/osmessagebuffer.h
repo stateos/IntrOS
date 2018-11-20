@@ -34,10 +34,6 @@
 
 #include "oskernel.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /******************************************************************************
  *
  * Name              : message buffer
@@ -55,6 +51,10 @@ struct __msg
 	unsigned tail;  // inherited from stream buffer
 	char   * data;  // inherited from stream buffer
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /******************************************************************************
  *

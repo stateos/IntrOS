@@ -34,10 +34,6 @@
 
 #include "oskernel.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /* -------------------------------------------------------------------------- */
 
 #define STK_SIZE( size ) \
@@ -90,6 +86,10 @@ struct __tsk
 	jmp_buf  buf;   // setjmp/longjmp buffer
 	}        ctx;
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /******************************************************************************
  *

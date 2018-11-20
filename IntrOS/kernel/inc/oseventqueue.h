@@ -34,10 +34,6 @@
 
 #include "oskernel.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /******************************************************************************
  *
  * Name              : event queue
@@ -55,6 +51,10 @@ struct __evq
 	unsigned tail;  // first element to write into data buffer
 	unsigned*data;  // data buffer
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /******************************************************************************
  *

@@ -35,10 +35,6 @@
 #include "oskernel.h"
 #include "osmailboxqueue.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /******************************************************************************
  *
  * Name              : job queue
@@ -56,6 +52,10 @@ struct __job
 	unsigned tail;  // first element to write into data buffer
 	fun_t ** data;  // data buffer
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /******************************************************************************
  *

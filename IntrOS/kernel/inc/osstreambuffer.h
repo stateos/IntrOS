@@ -34,10 +34,6 @@
 
 #include "oskernel.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /******************************************************************************
  *
  * Name              : stream buffer
@@ -55,6 +51,10 @@ struct __stm
 	unsigned tail;  // first element to write into data buffer
 	char   * data;  // data buffer
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /******************************************************************************
  *

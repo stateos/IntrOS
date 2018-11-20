@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossignal.h
     @author  Rajmund Szymanski
-    @date    19.10.2018
+    @date    19.11.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -34,10 +34,6 @@
 
 #include "oskernel.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /* -------------------------------------------------------------------------- */
 
 #define SIG_LIMIT     (sizeof(unsigned) * CHAR_BIT)
@@ -58,6 +54,10 @@ struct __sig
 	unsigned sigset;// pending signals
 	unsigned mask;  // protection mask
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /******************************************************************************
  *

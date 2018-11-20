@@ -2,7 +2,7 @@
 
     @file    IntrOS: osconditionvariable.h
     @author  Rajmund Szymanski
-    @date    09.09.2018
+    @date    19.11.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -35,10 +35,6 @@
 #include "oskernel.h"
 #include "osmutex.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /******************************************************************************
  *
  * Name              : condition variable
@@ -51,6 +47,10 @@ struct __cnd
 {
 	unsigned signal;
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /******************************************************************************
  *

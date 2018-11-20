@@ -35,10 +35,6 @@
 #include "oskernel.h"
 #include "oslist.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /* -------------------------------------------------------------------------- */
 
 #define MEM_SIZE( size ) \
@@ -60,6 +56,10 @@ struct __mem
 	unsigned size;  // size of memory object (in sizeof(que_t) units)
 	que_t  * data;  // pointer to memory pool buffer
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /******************************************************************************
  *

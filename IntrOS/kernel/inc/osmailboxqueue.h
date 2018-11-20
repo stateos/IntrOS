@@ -34,10 +34,6 @@
 
 #include "oskernel.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /******************************************************************************
  *
  * Name              : mailbox queue
@@ -56,6 +52,10 @@ struct __box
 	unsigned tail;  // first element to write into data buffer
 	char   * data;  // data buffer
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /******************************************************************************
  *

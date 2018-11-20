@@ -2,7 +2,7 @@
 
     @file    IntrOS: osevent.h
     @author  Rajmund Szymanski
-    @date    16.10.2018
+    @date    19.11.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -34,10 +34,6 @@
 
 #include "oskernel.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /******************************************************************************
  *
  * Name              : event
@@ -52,6 +48,10 @@ struct __evt
 
 	unsigned signal;
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /******************************************************************************
  *

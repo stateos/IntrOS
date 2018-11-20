@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.h
     @author  Rajmund Szymanski
-    @date    02.11.2018
+    @date    19.11.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -34,10 +34,6 @@
 
 #include "oskernel.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /******************************************************************************
  *
  * Name              : timer
@@ -61,6 +57,10 @@ struct __tmr
 
 	unsigned signal;
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /******************************************************************************
  *

@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossemaphore.h
     @author  Rajmund Szymanski
-    @date    12.10.2018
+    @date    19.11.2018
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -34,10 +34,6 @@
 
 #include "oskernel.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /* -------------------------------------------------------------------------- */
 
 #define semBinary    ( 1U )   // binary semaphore
@@ -56,6 +52,10 @@ struct __sem
 	unsigned count; // current value of the semaphore counter
 	unsigned limit; // limit value of the semaphore counter
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /******************************************************************************
  *
