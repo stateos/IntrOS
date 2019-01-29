@@ -33,6 +33,7 @@ Features:
 ---------
 4.5
 - updated os version
+- added support for stm32l1
 ---------
 4.4
 - added signal handler
