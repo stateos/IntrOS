@@ -2,7 +2,7 @@
 
     @file    IntrOS: os.h
     @author  Rajmund Szymanski
-    @date    23.10.2018
+    @date    29.01.2019
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -32,7 +32,7 @@
 #ifndef __INTROS
 
 #define __INTROS_MAJOR        4
-#define __INTROS_MINOR        4
+#define __INTROS_MINOR        5
 #define __INTROS_BUILD        0
 
 #define __INTROS        ((((__INTROS_MAJOR)&0xFFUL)<<24)|(((__INTROS_MINOR)&0xFFUL)<<16)|((__INTROS_BUILD)&0xFFFFUL))
