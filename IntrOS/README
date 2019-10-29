@@ -34,6 +34,7 @@ Features:
 4.5
 - updated os version
 - added support for stm32l1
+- updated stm8s port file
 ---------
 4.4
 - added signal handler
