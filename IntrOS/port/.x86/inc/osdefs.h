@@ -2,7 +2,7 @@
 
     @file    IntrOS: osdefs.h
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    18.11.2019
     @brief   IntrOS port file for X86.
 
  ******************************************************************************
@@ -46,6 +46,12 @@
 #ifndef __STATIC_FORCEINLINE
 #define __STATIC_FORCEINLINE  static inline \
                             __attribute__((always_inline))
+#endif
+#ifndef __ISB
+#define __ISB()
+#endif
+#ifndef __COMPILER_BARRIER
+#define __COMPILER_BARRIER()
 #endif
 
 /* -------------------------------------------------------------------------- */

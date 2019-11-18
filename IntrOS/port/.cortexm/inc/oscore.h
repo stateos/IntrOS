@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    12.11.2018
+    @date    18.11.2019
     @brief   IntrOS port file for ARM Cotrex-M uC.
 
  ******************************************************************************
@@ -203,24 +203,6 @@ __STATIC_INLINE
 void port_clr_lock( void )
 {
 	__enable_irq();
-}
-
-__STATIC_INLINE
-void port_set_barrier( void )
-{
-	__ISB();
-}
-
-__STATIC_INLINE
-void port_set_sync( void )
-{
-#if   defined(__ARMCC_VERSION)
-	__schedule_barrier();
-#elif defined(__GNUC__)
-	__ASM volatile ("" ::: "memory");
-#elif defined(__ICCARM__)
-	__ASM ("" ::: "memory");
-#endif	
 }
 
 /* -------------------------------------------------------------------------- */
