@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossemaphore.h
     @author  Rajmund Szymanski
-    @date    19.11.2018
+    @date    19.11.2019
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -76,7 +76,7 @@ extern "C" {
  *
  ******************************************************************************/
 
-#define               _SEM_INIT( init, limit ) { init, limit }
+#define               _SEM_INIT( _init, _limit ) { _init, _limit }
 
 /******************************************************************************
  *

@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbarrier.h
     @author  Rajmund Szymanski
-    @date    19.11.2018
+    @date    19.11.2019
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -69,7 +69,7 @@ extern "C" {
  *
  ******************************************************************************/
 
-#define               _BAR_INIT( limit ) { limit, limit, 0 }
+#define               _BAR_INIT( _limit ) { _limit, _limit, 0 }
 
 /******************************************************************************
  *

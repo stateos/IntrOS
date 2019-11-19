@@ -2,7 +2,7 @@
 
     @file    IntrOS: osflag.h
     @author  Rajmund Szymanski
-    @date    19.11.2018
+    @date    19.11.2019
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -71,7 +71,7 @@ extern "C" {
  *
  ******************************************************************************/
 
-#define               _FLG_INIT( init ) { init }
+#define               _FLG_INIT( _init ) { _init }
 
 /******************************************************************************
  *
