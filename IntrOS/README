@@ -36,6 +36,7 @@ Features:
 - added support for stm32l1
 - updated stm8s port file
 - updated port definitions
+- added tsk_exit alias
 ---------
 4.4
 - added signal handler
