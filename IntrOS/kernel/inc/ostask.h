@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    30.11.2019
+    @date    03.12.2019
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -551,6 +551,7 @@ void tsk_startFrom( tsk_t *tsk, fun_t *state );
 /******************************************************************************
  *
  * Name              : tsk_stop
+ * Alias             : tsk_exit
  *
  * Description       : stop execution of current task
  *
@@ -562,6 +563,9 @@ void tsk_startFrom( tsk_t *tsk, fun_t *state );
 
 __NO_RETURN
 void tsk_stop( void );
+
+__STATIC_INLINE
+void tsk_exit( void ) { tsk_stop(); }
 
 /******************************************************************************
  *
@@ -968,6 +972,7 @@ typedef startTaskT<OS_STACK_SIZE> startTask;
 namespace ThisTask
 {
 	static inline void     stop      ( void )             { tsk_stop      ();        }
+	static inline void     exit      ( void )             { tsk_exit      ();        }
 	static inline void     reset     ( void )             { cur_reset     ();        }
 	static inline void     kill      ( void )             { cur_kill      ();        }
 	static inline void     yield     ( void )             { tsk_yield     ();        }
