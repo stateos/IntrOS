@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    06.12.2019
+    @date    09.12.2019
     @brief   IntrOS port file for STM8 uC.
 
  ******************************************************************************
@@ -109,7 +109,7 @@ lck_t port_get_lock( void )
 __STATIC_INLINE
 void port_put_lock( lck_t lck )
 {
-	__set_interrupt_state(_cc);
+	__set_interrupt_state(lck);
 }
 
 __STATIC_INLINE
