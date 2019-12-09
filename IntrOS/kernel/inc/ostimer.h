@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.h
     @author  Rajmund Szymanski
-    @date    19.11.2018
+    @date    06.12.2019
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -47,9 +47,13 @@ struct __tmr
 	fun_t  * state; // callback procedure
 #if OS_FUNCTIONAL
 	FUN_t    fun;   // function<void(void)> for internal use in c++ functions
-#define     _FUN_INIT(_state) _state, { 0 }
+#ifdef     __cplusplus
+#define     _FUN_INIT(_state) (fun_t*)_state, { FUN_t() }
 #else
-#define     _FUN_INIT(_state) _state
+#define     _FUN_INIT(_state) (fun_t*)_state, { NULL }
+#endif
+#else
+#define     _FUN_INIT(_state) (fun_t*)_state
 #endif
 	cnt_t    start;
 	cnt_t    delay;
@@ -547,7 +551,7 @@ void tmr_delay( cnt_t delay ) { tmr_this()->delay = delay; }
 
 struct Timer : public __tmr
 {
-	 Timer( void ): __tmr _TMR_INIT(0) {}
+	 Timer( void ): __tmr _TMR_INIT(NULL) {}
 #if OS_FUNCTIONAL
 	 Timer( FUN_t _state ): __tmr _TMR_INIT(fun_) { __tmr::fun = _state; }
 #else

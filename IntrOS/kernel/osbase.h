@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    10.11.2018
+    @date    06.12.2019
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -112,7 +112,7 @@ typedef struct __hdr
 
 }	hdr_t;
 
-#define               _HDR_INIT() { 0, 0, ID_STOPPED }
+#define               _HDR_INIT() { NULL, NULL, ID_STOPPED }
 
 /* -------------------------------------------------------------------------- */
 

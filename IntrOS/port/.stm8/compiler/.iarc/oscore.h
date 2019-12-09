@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    18.11.2019
+    @date    06.12.2019
     @brief   IntrOS port file for STM8 uC.
 
  ******************************************************************************
@@ -59,35 +59,21 @@ typedef uint8_t               stk_t;
 
 /* -------------------------------------------------------------------------- */
 
-#if   defined(__CSMC__)
 extern  stk_t                _stack[];
 #define MAIN_TOP             _stack+1
-#endif
 
 /* -------------------------------------------------------------------------- */
 // task context
 
 typedef struct __ctx ctx_t;
 
-#if   defined(__CSMC__)
-
-struct __ctx
-{
-	void   * sp;
-	fun_t  * pc;
-};
-
-#elif defined(__SDCC)
-
 struct __ctx
 {
 	fun_t  * pc;
 	void   * sp;
 };
 
-#endif
-
-#define _CTX_INIT() { 0, 0 }
+#define _CTX_INIT() { NULL, NULL }
 
 /* -------------------------------------------------------------------------- */
 // init task context
@@ -101,41 +87,7 @@ void port_ctx_init( ctx_t *ctx, stk_t *sp, fun_t *pc )
 
 /* -------------------------------------------------------------------------- */
 
-#if   defined(__CSMC__)
-
-__STATIC_INLINE
-void *_get_SP( void )
-{
-	return (void*)_asm("ldw x, sp");
-}
-
-__STATIC_INLINE
-void _set_SP( void *sp )
-{
-	_asm("ldw sp, x", sp);
-}
-
-__STATIC_INLINE
-lck_t _get_CC( void )
-{
-	return (lck_t)_asm("push cc""\n""pop a");
-}
-
-__STATIC_INLINE
-void _set_CC( lck_t lck )
-{
-	_asm("push a""\n""pop cc", lck);
-}
-
-#elif defined(__SDCC)
-
 void *_get_SP( void );
-void  _set_SP( void *sp );
-
-lck_t _get_CC( void );
-void  _set_CC( lck_t lck );
-
-#endif
 
 /* -------------------------------------------------------------------------- */
 // get current stack pointer
@@ -151,13 +103,13 @@ void * port_get_sp( void )
 __STATIC_INLINE
 lck_t port_get_lock( void )
 {
-	return _get_CC();
+	return __get_interrupt_state();
 }
 
 __STATIC_INLINE
 void port_put_lock( lck_t lck )
 {
-	_set_CC(lck);
+	__set_interrupt_state(_cc);
 }
 
 __STATIC_INLINE

@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    18.11.2019
+    @date    06.12.2019
     @brief   IntrOS port file for X86.
 
  ******************************************************************************
@@ -82,6 +82,7 @@ struct __ctx
 	long long int R15;
 	void        * sp;
 	fun_t       * pc;
+#define _CTX_INIT() { 0, 0, 0, 0, 0, 0, NULL, NULL }
 #else
 	long long int Frame;
 	long long int Rbx;
@@ -95,6 +96,7 @@ struct __ctx
 	long long int R15;
 	fun_t       * pc;
 	long long int Spare;
+#define _CTX_INIT() { 0, 0, NULL, 0, 0, 0, 0, 0, 0, 0, NULL, 0 }
 #endif
 #else
 #ifdef __linux__
@@ -112,18 +114,9 @@ struct __ctx
 	void        * sp;
 	fun_t       * pc;
 #endif
+#define _CTX_INIT() { 0, 0, 0, 0, NULL, NULL }
 #endif
 };
-
-#ifdef __x86_64__
-#ifdef __linux__
-#define _CTX_INIT() { 0, 0, 0, 0, 0, 0, 0, 0 }
-#else
-#define _CTX_INIT() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-#endif
-#else
-#define _CTX_INIT() { 0, 0, 0, 0, 0, 0 }
-#endif
 
 /* -------------------------------------------------------------------------- */
 // init task context

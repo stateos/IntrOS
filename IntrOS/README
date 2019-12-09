@@ -37,6 +37,9 @@ Features:
 - updated stm8s port file
 - updated port definitions
 - added tsk_exit alias
+- fixed 'zero-as-null-pointer-constant' warnings
+- updated iarcc osdefs header file for cortexm
+- updated gnucc osdefs header file for x86
 ---------
 4.4
 - added signal handler

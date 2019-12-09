@@ -1,9 +1,9 @@
 /******************************************************************************
 
-    @file    IntrOS: oscore.c
+    @file    IntrOS: osdefs.h
     @author  Rajmund Szymanski
     @date    06.12.2019
-    @brief   IntrOS port file for STM8 uC.
+    @brief   IntrOS port file for ARM Cotrex-M uC.
 
  ******************************************************************************
 
@@ -29,65 +29,15 @@
 
  ******************************************************************************/
 
-#include "oscore.h"
+#ifndef __INTROSDEFS_H
+#define __INTROSDEFS_H
 
 /* -------------------------------------------------------------------------- */
 
-void *_get_SP( void ) __naked
-{
-	__asm
-
-#ifdef __SDCC_MODEL_LARGE
-	pop    a
+#ifndef __CONSTRUCTOR
+#define __CONSTRUCTOR       __attribute__((constructor))
 #endif
-	popw   y
-	ldw    x, sp
-	pushw  y
-#ifdef __SDCC_MODEL_LARGE
-	push   a
-	retf
-#else
-	ret
-#endif
-
-	__endasm;
-}
 
 /* -------------------------------------------------------------------------- */
 
-lck_t _get_CC( void ) __naked
-{
-	__asm
-
-	push   cc
-	pop    a
-#ifdef __SDCC_MODEL_LARGE
-	retf
-#else
-	ret
-#endif
-
-	__endasm;
-}
-
-void _set_CC( lck_t cc ) __naked
-{
-	(void) cc;
-
-	__asm
-
-#ifdef __SDCC_MODEL_LARGE
-	ld     a, (4, sp)
-#else
-	ld     a, (3, sp)
-#endif
-	push   a
-	pop    cc
-#ifdef __SDCC_MODEL_LARGE
-	retf
-#else
-	ret
-#endif
-
-	__endasm;
-}
+#endif//__INTROSDEFS_H

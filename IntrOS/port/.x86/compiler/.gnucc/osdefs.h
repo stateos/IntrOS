@@ -2,7 +2,7 @@
 
     @file    IntrOS: osdefs.h
     @author  Rajmund Szymanski
-    @date    18.11.2019
+    @date    09.12.2019
     @brief   IntrOS port file for X86.
 
  ******************************************************************************
@@ -51,7 +51,8 @@
 #define __ISB()
 #endif
 #ifndef __COMPILER_BARRIER
-#define __COMPILER_BARRIER()
+#define __COMPILER_BARRIER() \
+                            __asm__ volatile("":::"memory")
 #endif
 
 /* -------------------------------------------------------------------------- */
