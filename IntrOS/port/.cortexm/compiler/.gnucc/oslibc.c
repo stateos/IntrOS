@@ -2,7 +2,7 @@
 
     @file    IntrOS: oslibc.c
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    09.12.2019
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -28,8 +28,6 @@
    IN THE SOFTWARE.
 
  ******************************************************************************/
-
-#if defined(__GNUC__) && !defined(__ARMCC_VERSION)
 
 #include <errno.h>
 #include <sys/stat.h>
@@ -60,6 +58,7 @@ caddr_t _sbrk_r( struct _reent *reent, size_t size )
 }
 
 /* -------------------------------------------------------------------------- */
+
 #if !defined(USE_SEMIHOST) && !defined(USE_NOHOST)
 
 static
@@ -83,6 +82,7 @@ int _getpid_r( struct _reent *reent )                                        __a
 int   _kill_r( struct _reent *reent, int pid, int sig )                      __attribute__((weak, alias("__enosys")));
 
 #endif // !USE_SEMIHOST && !USE_NOHOST
+
 /* -------------------------------------------------------------------------- */
 
 #include <stdlib.h>
@@ -95,4 +95,3 @@ void __assert_func(const char* const file, const int line, const char* const fun
 }
 
 /* -------------------------------------------------------------------------- */
-#endif // __GNUC__ && !__ARMCC_VERSION

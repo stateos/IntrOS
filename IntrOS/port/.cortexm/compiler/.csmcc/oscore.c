@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.c
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    09.12.2019
     @brief   IntrOS port file for ARM Cotrex-M uC.
 
  ******************************************************************************
@@ -28,8 +28,6 @@
    IN THE SOFTWARE.
 
  ******************************************************************************/
-
-#if defined(__CSMC__)
 
 #include "oskernel.h"
 
@@ -74,5 +72,3 @@ void longjmp( jmp_buf buf, int val )
 #endif
 
 /* -------------------------------------------------------------------------- */
-
-#endif // __CSMC__

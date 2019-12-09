@@ -2,7 +2,7 @@
 
     @file    IntrOS: oslibc.c
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    09.12.2019
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -29,22 +29,19 @@
 
  ******************************************************************************/
 
-#if  defined(__ARMCOMPILER_VERSION)
-#if !defined(__MICROLIB)
-
 #include "oskernel.h"
 
 /* -------------------------------------------------------------------------- */
 
-__attribute__((weak))
+#if !defined(__MICROLIB)
+
+__WEAK
 char *_sys_command_string( char *cmd, int len )
 {
 	(void) len;
 
 	return cmd;
 }
-
-/* -------------------------------------------------------------------------- */
 
 #endif // !__MICROLIB
 
@@ -60,5 +57,3 @@ void __aeabi_assert(const char* expr, const char* file, int line)
 }
 
 /* -------------------------------------------------------------------------- */
-
-#endif // __ARMCOMPILER_VERSION
