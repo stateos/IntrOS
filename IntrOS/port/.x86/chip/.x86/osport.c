@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.c
     @author  Rajmund Szymanski
-    @date    16.07.2018
+    @date    29.03.2020
     @brief   IntrOS port file for X86.
 
  ******************************************************************************

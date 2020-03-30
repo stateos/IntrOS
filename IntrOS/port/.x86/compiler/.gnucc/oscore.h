@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    09.12.2019
+    @date    29.03.2020
     @brief   IntrOS port file for X86.
 
  ******************************************************************************

@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.h
     @author  Rajmund Szymanski
-    @date    22.08.2018
+    @date    29.03.2020
     @brief   IntrOS port definitions for X86.
 
  ******************************************************************************
