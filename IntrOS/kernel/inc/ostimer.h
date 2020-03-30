@@ -559,6 +559,11 @@ struct Timer : public __tmr
 #endif
 	~Timer( void ) { assert(__tmr::hdr.id == ID_STOPPED); }
 
+	Timer( Timer&& ) = default;
+	Timer( const Timer& ) = delete;
+	Timer& operator=( Timer&& ) = delete;
+	const Timer& operator=( const Timer& ) = delete;
+
 	void start        ( cnt_t _delay, cnt_t _period )               {        tmr_start        (this, _delay, _period);         }
 	void startFor     ( cnt_t _delay )                              {        tmr_startFor     (this, _delay);                  }
 	void startPeriodic( cnt_t _period )                             {        tmr_startPeriodic(this,         _period);         }

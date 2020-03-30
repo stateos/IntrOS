@@ -298,6 +298,11 @@ struct MemoryPoolT : public __mem
 {
 	MemoryPoolT( void ): __mem _MEM_INIT(limit_, MEM_SIZE(size_), data_) { mem_bind(this); }
 
+	MemoryPoolT( MemoryPoolT&& ) = default;
+	MemoryPoolT( const MemoryPoolT& ) = delete;
+	MemoryPoolT& operator=( MemoryPoolT&& ) = delete;
+	const MemoryPoolT& operator=( const MemoryPoolT& ) = delete;
+
 	unsigned take   (       void **_data ) { return mem_take   (this, _data); }
 	unsigned tryWait(       void **_data ) { return mem_tryWait(this, _data); }
 	void     wait   (       void **_data ) {        mem_wait   (this, _data); }

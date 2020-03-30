@@ -275,6 +275,11 @@ struct Signal : public __sig
 {
 	Signal( const unsigned _mask = 0 ): __sig _SIG_INIT(_mask) {}
 
+	Signal( Signal&& ) = default;
+	Signal( const Signal& ) = delete;
+	Signal& operator=( Signal&& ) = delete;
+	const Signal& operator=( const Signal& ) = delete;
+
 	unsigned take   ( unsigned _sigset ) { return sig_take   (this, _sigset); }
 	unsigned tryWait( unsigned _sigset ) { return sig_tryWait(this, _sigset); }
 	unsigned wait   ( unsigned _sigset ) { return sig_wait   (this, _sigset); }

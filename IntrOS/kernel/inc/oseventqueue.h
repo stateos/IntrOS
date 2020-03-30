@@ -304,6 +304,11 @@ struct EventQueueT : public __evq
 {
 	EventQueueT( void ): __evq _EVQ_INIT(limit_, data_) {}
 
+	EventQueueT( EventQueueT&& ) = default;
+	EventQueueT( const EventQueueT& ) = delete;
+	EventQueueT& operator=( EventQueueT&& ) = delete;
+	const EventQueueT& operator=( const EventQueueT& ) = delete;
+
 	unsigned take   ( unsigned*_data ) { return evq_take   (this, _data); }
 	unsigned take   ( unsigned&_data ) { return evq_take   (this,&_data); }
 	unsigned tryWait( unsigned*_data ) { return evq_tryWait(this, _data); }

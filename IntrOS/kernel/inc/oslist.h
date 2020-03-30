@@ -262,6 +262,11 @@ struct ListTT : public __lst
 {
 	ListTT( void ): __lst _LST_INIT() {}
 
+	ListTT( ListTT&& ) = default;
+	ListTT( const ListTT& ) = delete;
+	ListTT& operator=( ListTT&& ) = delete;
+	const ListTT& operator=( const ListTT& ) = delete;
+
 	unsigned take   (       T   **_data ) { return lst_take   (this, reinterpret_cast<void **>(_data)); }
 	unsigned tryWait(       T   **_data ) { return lst_tryWait(this, reinterpret_cast<void **>(_data)); }
 	void     wait   (       T   **_data ) {        lst_wait   (this, reinterpret_cast<void **>(_data)); }

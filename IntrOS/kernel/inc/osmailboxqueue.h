@@ -343,6 +343,11 @@ struct MailBoxQueueT : public __box
 {
 	MailBoxQueueT( void ): __box _BOX_INIT(limit_, size_, data_) {}
 
+	MailBoxQueueT( MailBoxQueueT&& ) = default;
+	MailBoxQueueT( const MailBoxQueueT& ) = delete;
+	MailBoxQueueT& operator=( MailBoxQueueT&& ) = delete;
+	const MailBoxQueueT& operator=( const MailBoxQueueT& ) = delete;
+
 	unsigned take   (       void *_data ) { return box_take   (this, _data); }
 	unsigned tryWait(       void *_data ) { return box_tryWait(this, _data); }
 	void     wait   (       void *_data ) {        box_wait   (this, _data); }

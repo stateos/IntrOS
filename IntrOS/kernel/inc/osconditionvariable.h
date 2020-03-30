@@ -213,6 +213,11 @@ struct ConditionVariable : public __cnd
 {
 	ConditionVariable( void ): __cnd _CND_INIT() {}
 
+	ConditionVariable( ConditionVariable&& ) = default;
+	ConditionVariable( const ConditionVariable& ) = delete;
+	ConditionVariable& operator=( ConditionVariable&& ) = delete;
+	const ConditionVariable& operator=( const ConditionVariable& ) = delete;
+
 	void wait     ( mtx_t *_mtx ) { cnd_wait     (this, _mtx); }
 	void wait     ( mtx_t &_mtx ) { cnd_wait     (this,&_mtx); }
 	void give     ( void )        { cnd_give     (this);       }

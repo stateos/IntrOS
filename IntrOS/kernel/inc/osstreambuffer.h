@@ -374,6 +374,11 @@ struct StreamBufferT : public __stm
 {
 	StreamBufferT( void ): __stm _STM_INIT(limit_, data_) {}
 
+	StreamBufferT( StreamBufferT&& ) = default;
+	StreamBufferT( const StreamBufferT& ) = delete;
+	StreamBufferT& operator=( StreamBufferT&& ) = delete;
+	const StreamBufferT& operator=( const StreamBufferT& ) = delete;
+
 	unsigned take   (       void *_data, unsigned _size ) { return stm_take   (this, _data, _size); }
 	unsigned tryWait(       void *_data, unsigned _size ) { return stm_tryWait(this, _data, _size); }
 	unsigned wait   (       void *_data, unsigned _size ) { return stm_wait   (this, _data, _size); }

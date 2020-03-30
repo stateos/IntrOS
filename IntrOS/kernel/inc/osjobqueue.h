@@ -306,6 +306,11 @@ struct staticJobQueueT : public __job
 {
 	staticJobQueueT( void ): __job _JOB_INIT(limit_, data_) {}
 
+	staticJobQueueT( staticJobQueueT&& ) = default;
+	staticJobQueueT( const staticJobQueueT& ) = delete;
+	staticJobQueueT& operator=( staticJobQueueT&& ) = delete;
+	const staticJobQueueT& operator=( const staticJobQueueT& ) = delete;
+
 	unsigned take   ( void )        { return job_take   (this);       }
 	unsigned tryWait( void )        { return job_tryWait(this);       }
 	void     wait   ( void )        {        job_wait   (this);       }
@@ -337,6 +342,11 @@ template<unsigned limit_>
 struct JobQueueT : public __box
 {
 	JobQueueT( void ): __box _BOX_INIT(limit_, sizeof(FUN_t), reinterpret_cast<char *>(data_)) {}
+
+	JobQueueT( JobQueueT&& ) = default;
+	JobQueueT( const JobQueueT& ) = delete;
+	JobQueueT& operator=( JobQueueT&& ) = delete;
+	const JobQueueT& operator=( const JobQueueT& ) = delete;
 
 	unsigned take   ( void )       { FUN_t _fun; unsigned event = box_take   (this, &_fun); if (event == E_SUCCESS) _fun(); return event; }
 	unsigned tryWait( void )       { FUN_t _fun; unsigned event = box_tryWait(this, &_fun); if (event == E_SUCCESS) _fun(); return event; }

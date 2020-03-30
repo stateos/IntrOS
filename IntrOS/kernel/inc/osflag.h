@@ -293,6 +293,11 @@ struct Flag : public __flg
 {
 	Flag( const unsigned _init = 0 ): __flg _FLG_INIT(_init) {}
 
+	Flag( Flag&& ) = default;
+	Flag( const Flag& ) = delete;
+	Flag& operator=( Flag&& ) = delete;
+	const Flag& operator=( const Flag& ) = delete;
+
 	unsigned take   ( unsigned _flags, bool _all = true ) { return flg_take   (this, _flags, _all); }
 	unsigned tryWait( unsigned _flags, bool _all = true ) { return flg_tryWait(this, _flags, _all); }
 	void     wait   ( unsigned _flags, bool _all = true ) {        flg_wait   (this, _flags, _all); }

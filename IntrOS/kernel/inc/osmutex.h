@@ -241,6 +241,11 @@ struct Mutex : public __mtx
 	 Mutex( void ): __mtx _MTX_INIT() {}
 	~Mutex( void ) { assert(__mtx::owner == nullptr); }
 
+	Mutex( Mutex&& ) = default;
+	Mutex( const Mutex& ) = delete;
+	Mutex& operator=( Mutex&& ) = delete;
+	const Mutex& operator=( const Mutex& ) = delete;
+
 	unsigned take   ( void ) { return mtx_take   (this); }
 	unsigned tryLock( void ) { return mtx_tryLock(this); }
 	void     wait   ( void ) {        mtx_wait   (this); }

@@ -200,6 +200,11 @@ struct Barrier : public __bar
 {
 	Barrier( const unsigned _limit ): __bar _BAR_INIT(_limit) {}
 
+	Barrier( Barrier&& ) = default;
+	Barrier( const Barrier& ) = delete;
+	Barrier& operator=( Barrier&& ) = delete;
+	const Barrier& operator=( const Barrier& ) = delete;
+
 	void wait( void ) { bar_wait(this); }
 };
 

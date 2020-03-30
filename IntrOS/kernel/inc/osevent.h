@@ -210,6 +210,11 @@ struct Event : public __evt
 {
 	Event( void ): __evt _EVT_INIT() {}
 
+	Event( Event&& ) = default;
+	Event( const Event& ) = delete;
+	Event& operator=( Event&& ) = delete;
+	const Event& operator=( const Event& ) = delete;
+
 	void wait( unsigned*_event ) { evt_wait(this, _event); }
 	void wait( unsigned&_event ) { evt_wait(this,&_event); }
 	void give( unsigned _event ) { evt_give(this, _event); }

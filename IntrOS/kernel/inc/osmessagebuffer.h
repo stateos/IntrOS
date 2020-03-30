@@ -388,6 +388,11 @@ struct MessageBufferT : public __msg
 {
 	MessageBufferT( void ): __msg _MSG_INIT(limit_, data_) {}
 
+	MessageBufferT( MessageBufferT&& ) = default;
+	MessageBufferT( const MessageBufferT& ) = delete;
+	MessageBufferT& operator=( MessageBufferT&& ) = delete;
+	const MessageBufferT& operator=( const MessageBufferT& ) = delete;
+
 	unsigned take   (       void *_data, unsigned _size ) { return msg_take   (this, _data, _size); }
 	unsigned tryWait(       void *_data, unsigned _size ) { return msg_tryWait(this, _data, _size); }
 	unsigned wait   (       void *_data, unsigned _size ) { return msg_wait   (this, _data, _size); }
