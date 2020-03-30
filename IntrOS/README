@@ -35,6 +35,7 @@ Features:
 - updated os version
 - updated license
 - updated c++ constructors
+- updated baseJobQueue class
 ---------
 4.5
 - updated os version
