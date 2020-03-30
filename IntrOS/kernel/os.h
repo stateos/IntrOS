@@ -32,7 +32,7 @@
 #ifndef __INTROS
 
 #define __INTROS_MAJOR        4
-#define __INTROS_MINOR        5
+#define __INTROS_MINOR        6
 #define __INTROS_BUILD        0
 
 #define __INTROS        ((((__INTROS_MAJOR)&0xFFUL)<<24)|(((__INTROS_MINOR)&0xFFUL)<<16)|((__INTROS_BUILD)&0xFFFFUL))
