@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.h
     @author  Rajmund Szymanski
-    @date    29.03.2020
+    @date    30.03.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -289,27 +289,24 @@ void job_push( job_t *job, fun_t *fun );
 
 /******************************************************************************
  *
- * Class             : staticJobQueueT<>
+ * Class             : baseJobQueueT<>
  *
- * Description       : create and initialize a static job queue object
+ * Description       : create and initialize a base job queue object
  *
  * Constructor parameters
  *   limit           : size of a queue (max number of stored job procedures)
- *   data            : job queue data buffer
- *
- * Note              : for internal use
  *
  ******************************************************************************/
 
 template<unsigned limit_>
-struct staticJobQueueT : public __job
+struct baseJobQueueT : public __job
 {
-	staticJobQueueT( void ): __job _JOB_INIT(limit_, data_) {}
+	baseJobQueueT( void ): __job _JOB_INIT(limit_, data_) {}
 
-	staticJobQueueT( staticJobQueueT&& ) = default;
-	staticJobQueueT( const staticJobQueueT& ) = delete;
-	staticJobQueueT& operator=( staticJobQueueT&& ) = delete;
-	const staticJobQueueT& operator=( const staticJobQueueT& ) = delete;
+	baseJobQueueT( baseJobQueueT&& ) = default;
+	baseJobQueueT( const baseJobQueueT& ) = delete;
+	baseJobQueueT& operator=( baseJobQueueT&& ) = delete;
+	const baseJobQueueT& operator=( const baseJobQueueT& ) = delete;
 
 	unsigned take   ( void )        { return job_take   (this);       }
 	unsigned tryWait( void )        { return job_tryWait(this);       }
@@ -365,9 +362,9 @@ struct JobQueueT : public __box
 #else
 
 template<unsigned limit_>
-struct JobQueueT : public staticJobQueueT<limit_>
+struct JobQueueT : public baseJobQueueT<limit_>
 {
-	JobQueueT( void ): staticJobQueueT<limit_>() {}
+	JobQueueT( void ): baseJobQueueT<limit_>() {}
 };
 
 #endif
