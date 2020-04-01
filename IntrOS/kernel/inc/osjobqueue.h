@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.h
     @author  Rajmund Szymanski
-    @date    29.03.2020
+    @date    01.04.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -289,44 +289,6 @@ void job_push( job_t *job, fun_t *fun );
 
 /******************************************************************************
  *
- * Class             : staticJobQueueT<>
- *
- * Description       : create and initialize a static job queue object
- *
- * Constructor parameters
- *   limit           : size of a queue (max number of stored job procedures)
- *   data            : job queue data buffer
- *
- * Note              : for internal use
- *
- ******************************************************************************/
-
-template<unsigned limit_>
-struct staticJobQueueT : public __job
-{
-	staticJobQueueT( void ): __job _JOB_INIT(limit_, data_) {}
-
-	staticJobQueueT( staticJobQueueT&& ) = default;
-	staticJobQueueT( const staticJobQueueT& ) = delete;
-	staticJobQueueT& operator=( staticJobQueueT&& ) = delete;
-	const staticJobQueueT& operator=( const staticJobQueueT& ) = delete;
-
-	unsigned take   ( void )        { return job_take   (this);       }
-	unsigned tryWait( void )        { return job_tryWait(this);       }
-	void     wait   ( void )        {        job_wait   (this);       }
-	unsigned give   ( fun_t *_fun ) { return job_give   (this, _fun); }
-	void     send   ( fun_t *_fun ) {        job_send   (this, _fun); }
-	void     push   ( fun_t *_fun ) {        job_push   (this, _fun); }
-	unsigned count  ( void )        { return job_count  (this);       }
-	unsigned space  ( void )        { return job_space  (this);       }
-	unsigned limit  ( void )        { return job_limit  (this);       }
-
-	private:
-	fun_t *data_[limit_];
-};
-
-/******************************************************************************
- *
  * Class             : JobQueueT<>
  *
  * Description       : create and initialize a job queue object
@@ -365,9 +327,27 @@ struct JobQueueT : public __box
 #else
 
 template<unsigned limit_>
-struct JobQueueT : public staticJobQueueT<limit_>
+struct JobQueueT : public __job
 {
-	JobQueueT( void ): staticJobQueueT<limit_>() {}
+	JobQueueT( void ): __job _JOB_INIT(limit_, data_) {}
+
+	JobQueueT( JobQueueT&& ) = default;
+	JobQueueT( const JobQueueT& ) = delete;
+	JobQueueT& operator=( JobQueueT&& ) = delete;
+	const JobQueueT& operator=( const JobQueueT& ) = delete;
+
+	unsigned take   ( void )       { return job_take   (this);       }
+	unsigned tryWait( void )       { return job_tryWait(this);       }
+	void     wait   ( void )       {        job_wait   (this);       }
+	unsigned give   ( FUN_t _fun ) { return job_give   (this, _fun); }
+	void     send   ( FUN_t _fun ) {        job_send   (this, _fun); }
+	void     push   ( FUN_t _fun ) {        job_push   (this, _fun); }
+	unsigned count  ( void )       { return job_count  (this);       }
+	unsigned space  ( void )       { return job_space  (this);       }
+	unsigned limit  ( void )       { return job_limit  (this);       }
+
+	private:
+	FUN_t data_[limit_];
 };
 
 #endif
