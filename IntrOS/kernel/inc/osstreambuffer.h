@@ -2,7 +2,7 @@
 
     @file    IntrOS: osstreambuffer.h
     @author  Rajmund Szymanski
-    @date    29.03.2020
+    @date    21.04.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -377,7 +377,7 @@ struct StreamBufferT : public __stm
 	StreamBufferT( StreamBufferT&& ) = default;
 	StreamBufferT( const StreamBufferT& ) = delete;
 	StreamBufferT& operator=( StreamBufferT&& ) = delete;
-	const StreamBufferT& operator=( const StreamBufferT& ) = delete;
+	StreamBufferT& operator=( const StreamBufferT& ) = delete;
 
 	unsigned take   (       void *_data, unsigned _size ) { return stm_take   (this, _data, _size); }
 	unsigned tryWait(       void *_data, unsigned _size ) { return stm_tryWait(this, _data, _size); }

@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmutex.h
     @author  Rajmund Szymanski
-    @date    29.03.2020
+    @date    21.04.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -244,7 +244,7 @@ struct Mutex : public __mtx
 	Mutex( Mutex&& ) = default;
 	Mutex( const Mutex& ) = delete;
 	Mutex& operator=( Mutex&& ) = delete;
-	const Mutex& operator=( const Mutex& ) = delete;
+	Mutex& operator=( const Mutex& ) = delete;
 
 	unsigned take   ( void ) { return mtx_take   (this); }
 	unsigned tryLock( void ) { return mtx_tryLock(this); }

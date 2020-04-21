@@ -2,7 +2,7 @@
 
     @file    IntrOS: osflag.h
     @author  Rajmund Szymanski
-    @date    29.03.2020
+    @date    21.04.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -296,7 +296,7 @@ struct Flag : public __flg
 	Flag( Flag&& ) = default;
 	Flag( const Flag& ) = delete;
 	Flag& operator=( Flag&& ) = delete;
-	const Flag& operator=( const Flag& ) = delete;
+	Flag& operator=( const Flag& ) = delete;
 
 	unsigned take   ( unsigned _flags, bool _all = true ) { return flg_take   (this, _flags, _all); }
 	unsigned tryWait( unsigned _flags, bool _all = true ) { return flg_tryWait(this, _flags, _all); }

@@ -2,7 +2,7 @@
 
     @file    IntrOS: oseventqueue.h
     @author  Rajmund Szymanski
-    @date    29.03.2020
+    @date    21.04.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -307,7 +307,7 @@ struct EventQueueT : public __evq
 	EventQueueT( EventQueueT&& ) = default;
 	EventQueueT( const EventQueueT& ) = delete;
 	EventQueueT& operator=( EventQueueT&& ) = delete;
-	const EventQueueT& operator=( const EventQueueT& ) = delete;
+	EventQueueT& operator=( const EventQueueT& ) = delete;
 
 	unsigned take   ( unsigned*_data ) { return evq_take   (this, _data); }
 	unsigned take   ( unsigned&_data ) { return evq_take   (this,&_data); }

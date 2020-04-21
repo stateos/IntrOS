@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.h
     @author  Rajmund Szymanski
-    @date    29.03.2020
+    @date    21.04.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -391,7 +391,7 @@ struct MessageBufferT : public __msg
 	MessageBufferT( MessageBufferT&& ) = default;
 	MessageBufferT( const MessageBufferT& ) = delete;
 	MessageBufferT& operator=( MessageBufferT&& ) = delete;
-	const MessageBufferT& operator=( const MessageBufferT& ) = delete;
+	MessageBufferT& operator=( const MessageBufferT& ) = delete;
 
 	unsigned take   (       void *_data, unsigned _size ) { return msg_take   (this, _data, _size); }
 	unsigned tryWait(       void *_data, unsigned _size ) { return msg_tryWait(this, _data, _size); }

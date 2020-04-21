@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.h
     @author  Rajmund Szymanski
-    @date    03.04.2020
+    @date    21.04.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -308,7 +308,7 @@ struct baseJobQueueT : public __job
 	baseJobQueueT( baseJobQueueT&& ) = default;
 	baseJobQueueT( const baseJobQueueT& ) = delete;
 	baseJobQueueT& operator=( baseJobQueueT&& ) = delete;
-	const baseJobQueueT& operator=( const baseJobQueueT& ) = delete;
+	baseJobQueueT& operator=( const baseJobQueueT& ) = delete;
 
 	unsigned take   ( void )        { return job_take   (this);       }
 	unsigned tryWait( void )        { return job_tryWait(this);       }
@@ -345,7 +345,7 @@ struct JobQueueT : public __box
 	JobQueueT( JobQueueT&& ) = default;
 	JobQueueT( const JobQueueT& ) = delete;
 	JobQueueT& operator=( JobQueueT&& ) = delete;
-	const JobQueueT& operator=( const JobQueueT& ) = delete;
+	JobQueueT& operator=( const JobQueueT& ) = delete;
 
 	unsigned take   ( void )       { FUN_t _fun; unsigned event = box_take   (this, &_fun); if (event == E_SUCCESS) _fun(); return event; }
 	unsigned tryWait( void )       { FUN_t _fun; unsigned event = box_tryWait(this, &_fun); if (event == E_SUCCESS) _fun(); return event; }
