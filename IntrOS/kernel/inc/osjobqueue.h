@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.h
     @author  Rajmund Szymanski
-    @date    21.04.2020
+    @date    22.04.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -364,10 +364,7 @@ struct JobQueueT : public __box
 #else
 
 template<unsigned limit_>
-struct JobQueueT : public baseJobQueueT<limit_>
-{
-	JobQueueT( void ): baseJobQueueT<limit_>() {}
-};
+using JobQueueT = baseJobQueueT<limit_>;
 
 #endif
 

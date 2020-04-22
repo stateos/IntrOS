@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmailboxqueue.h
     @author  Rajmund Szymanski
-    @date    21.04.2020
+    @date    22.04.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -375,10 +375,7 @@ struct MailBoxQueueT : public __box
  ******************************************************************************/
 
 template<unsigned limit_, class T>
-struct MailBoxQueueTT : public MailBoxQueueT<limit_, sizeof(T)>
-{
-	MailBoxQueueTT( void ): MailBoxQueueT<limit_, sizeof(T)>() {}
-};
+using MailBoxQueueTT = MailBoxQueueT<limit_, sizeof(T)>;
 
 #endif//__cplusplus
 

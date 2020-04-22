@@ -2,7 +2,7 @@
 
     @file    IntrOS: oslist.h
     @author  Rajmund Szymanski
-    @date    21.04.2020
+    @date    22.04.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -273,9 +273,15 @@ struct ListTT : public __lst
 	void     give   ( const void *_data ) {        lst_give   (this,                           _data);  }
 };
 
-/* -------------------------------------------------------------------------- */
+/******************************************************************************
+ *
+ * Class             : List
+ *
+ * Description       : create and initialize a list object
+ *
+ ******************************************************************************/
 
-typedef ListTT<void> List;
+using List = ListTT<void>;
 
 #endif//__cplusplus
 

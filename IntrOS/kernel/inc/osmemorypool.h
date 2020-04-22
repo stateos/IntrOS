@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmemorypool.h
     @author  Rajmund Szymanski
-    @date    21.04.2020
+    @date    22.04.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -327,7 +327,7 @@ struct MemoryPoolT : public __mem
 template<unsigned limit_, class T>
 struct MemoryPoolTT : public MemoryPoolT<limit_, sizeof(T)>
 {
-	MemoryPoolTT( void ): MemoryPoolT<limit_, sizeof(T)>() {}
+	using MemoryPoolT<limit_, sizeof(T)>::MemoryPoolT;
 
 	unsigned take   ( T **_data ) { return mem_take   (this, reinterpret_cast<void **>(_data)); }
 	unsigned tryWait( T **_data ) { return mem_tryWait(this, reinterpret_cast<void **>(_data)); }
