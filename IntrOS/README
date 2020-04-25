@@ -36,6 +36,7 @@ Features:
 - updated license
 - updated c++ constructors
 - updated JobQueueT class
+- added baseStack class
 ---------
 4.5
 - updated os version

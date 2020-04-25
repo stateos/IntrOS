@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.c
     @author  Rajmund Szymanski
-    @date    29.03.2020
+    @date    25.04.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -34,7 +34,7 @@
 #include "inc/oscriticalsection.h"
 
 /* -------------------------------------------------------------------------- */
-void tsk_init( tsk_t *tsk, fun_t *state, stk_t *stack, unsigned size )
+void tsk_init( tsk_t *tsk, fun_t *state, stk_t *stack, size_t size )
 /* -------------------------------------------------------------------------- */
 {
 	assert(tsk);

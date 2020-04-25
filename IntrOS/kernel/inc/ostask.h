@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    22.04.2020
+    @date    25.04.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -68,7 +68,7 @@ struct __tsk
 	cnt_t    period;// inherited from timer
 
 	stk_t  * stack; // base of stack
-	unsigned size;  // size of stack (in bytes)
+	size_t   size;  // size of stack (in bytes)
 
 	struct {
 	unsigned sigset;// pending signals
@@ -522,7 +522,7 @@ tsk_t *cur_task( void ) { return System.cur; }
  *
  ******************************************************************************/
 
-void tsk_init( tsk_t *tsk, fun_t *state, stk_t *stack, unsigned size );
+void tsk_init( tsk_t *tsk, fun_t *state, stk_t *stack, size_t size );
 
 /******************************************************************************
  *
@@ -868,6 +868,26 @@ void cur_action( act_t *action ) { tsk_action(System.cur, action); }
 
 /******************************************************************************
  *
+ * Class             : baseStack
+ *
+ * Description       : create base class for stack storage object
+ *
+ * Constructor parameters
+ *   size            : size of stack (in bytes)
+ *
+ * Note              : for internal use
+ *
+ ******************************************************************************/
+
+template<size_t size_ = OS_STACK_SIZE>
+struct baseStack
+{
+	protected:
+	stk_t stack_[ STK_SIZE(size_) ];
+};
+
+/******************************************************************************
+ *
  * Class             : baseTask
  *
  * Description       : create and initialize base class for task objects
@@ -885,9 +905,9 @@ void cur_action( act_t *action ) { tsk_action(System.cur, action); }
 struct baseTask : public __tsk
 {
 #if OS_FUNCTIONAL
-	baseTask( FUN_t _state, stk_t * const _stack, const unsigned _size ): __tsk _TSK_INIT(fun_, _stack, _size) { __tsk::fun = _state; }
+	baseTask( FUN_t _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_INIT(fun_, _stack, _size) { __tsk::fun = _state; }
 #else
-	baseTask( FUN_t _state, stk_t * const _stack, const unsigned _size ): __tsk _TSK_INIT(_state, _stack, _size) {}
+	baseTask( FUN_t _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_INIT(_state, _stack, _size) {}
 #endif
 	baseTask( baseTask&& ) = default;
 	baseTask( const baseTask& ) = delete;
@@ -938,13 +958,10 @@ struct baseTask : public __tsk
  *
  ******************************************************************************/
 
-template<unsigned size_ = OS_STACK_SIZE>
-struct TaskT : public baseTask
+template<size_t size_ = OS_STACK_SIZE>
+struct TaskT : public baseTask, public baseStack<size_>
 {
-	TaskT( FUN_t _state ): baseTask(_state, stack_, size_) {}
-
-	private:
-	stk_t stack_[ STK_SIZE(size_) ];
+	TaskT( FUN_t _state ): baseTask(_state, baseStack<size_>::stack_, size_) {}
 };
 
 /* -------------------------------------------------------------------------- */
@@ -964,7 +981,7 @@ using Task = TaskT<OS_STACK_SIZE>;
  *
  ******************************************************************************/
 
-template<unsigned size_ = OS_STACK_SIZE>
+template<size_t size_ = OS_STACK_SIZE>
 struct startTaskT : public TaskT<size_>
 {
 	startTaskT( FUN_t _state ): TaskT<size_>(_state) { tsk_start(this); }
