@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.h
     @author  Rajmund Szymanski
-    @date    22.04.2020
+    @date    25.04.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -347,15 +347,15 @@ struct JobQueueT : public __box
 	JobQueueT& operator=( JobQueueT&& ) = delete;
 	JobQueueT& operator=( const JobQueueT& ) = delete;
 
-	unsigned take   ( void )       { FUN_t _fun; unsigned event = box_take   (this, &_fun); if (event == E_SUCCESS) _fun(); return event; }
-	unsigned tryWait( void )       { FUN_t _fun; unsigned event = box_tryWait(this, &_fun); if (event == E_SUCCESS) _fun(); return event; }
-	void     wait   ( void )       { FUN_t _fun;                  box_wait   (this, &_fun);                         _fun();               }
-	unsigned give   ( FUN_t _fun ) {             unsigned event = box_give   (this, &_fun);                                 return event; }
-	void     send   ( FUN_t _fun ) {                              box_send   (this, &_fun);                                               }
-	void     push   ( FUN_t _fun ) {                              box_push   (this, &_fun);                                               }
-	unsigned count  ( void )       {             unsigned count = box_count  (this);                                        return count; }
-	unsigned space  ( void )       {             unsigned space = box_space  (this);                                        return space; }
-	unsigned limit  ( void )       {             unsigned limit = box_limit  (this);                                        return limit; }
+	unsigned take   ( void )        { FUN_t _fun; unsigned event = box_take   (this, &_fun); if (event == E_SUCCESS) _fun(); return event; }
+	unsigned tryWait( void )        { FUN_t _fun; unsigned event = box_tryWait(this, &_fun); if (event == E_SUCCESS) _fun(); return event; }
+	void     wait   ( void )        { FUN_t _fun;                  box_wait   (this, &_fun);                         _fun();               }
+	unsigned give   ( Fun_t  _fun ) {             unsigned event = box_give   (this, &_fun);                                 return event; }
+	void     send   ( Fun_t  _fun ) {                              box_send   (this, &_fun);                                               }
+	void     push   ( Fun_t  _fun ) {                              box_push   (this, &_fun);                                               }
+	unsigned count  ( void )        {             unsigned count = box_count  (this);                                        return count; }
+	unsigned space  ( void )        {             unsigned space = box_space  (this);                                        return space; }
+	unsigned limit  ( void )        {             unsigned limit = box_limit  (this);                                        return limit; }
 
 	private:
 	FUN_t data_[limit_];

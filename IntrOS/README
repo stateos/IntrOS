@@ -37,6 +37,8 @@ Features:
 - updated c++ constructors
 - updated JobQueueT class
 - added baseStack class
+- added baseTimer class
+- updated usage of std::function
 ---------
 4.5
 - updated os version

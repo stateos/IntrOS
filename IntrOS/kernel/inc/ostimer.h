@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.h
     @author  Rajmund Szymanski
-    @date    22.04.2020
+    @date    25.04.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -46,14 +46,16 @@ struct __tmr
 
 	fun_t  * state; // callback procedure
 #if OS_FUNCTIONAL
-	FUN_t    fun;   // function<void(void)> for internal use in c++ functions
 #ifdef     __cplusplus
-#define     _FUN_INIT(_state) (fun_t*)_state, { FUN_t() }
+	FUN_t    fun;   // function<void(void)> for internal use in c++ functions
+#define     _FUN_INIT(_state)       (fun_t*)_state, { FUN_t() }
+#define     _FUN_MAKE(_state, _fun) (fun_t*)_state,  _fun
 #else
-#define     _FUN_INIT(_state) (fun_t*)_state, { NULL }
+	void   * fun[OS_FUNCTIONAL];
+#define     _FUN_INIT(_state)       (fun_t*)_state, { NULL }
 #endif
 #else
-#define     _FUN_INIT(_state) (fun_t*)_state
+#define     _FUN_INIT(_state)       (fun_t*)_state
 #endif
 	cnt_t    start;
 	cnt_t    delay;
@@ -69,6 +71,7 @@ extern "C" {
 /******************************************************************************
  *
  * Name              : _TMR_INIT
+ * Alias             : _TMR_MAKE (for std::function)
  *
  * Description       : create and initialize a timer object
  *
@@ -82,7 +85,9 @@ extern "C" {
  *
  ******************************************************************************/
 
-#define               _TMR_INIT( _state ) { _HDR_INIT(), _FUN_INIT(_state), 0, 0, 0, 0 }
+#define               _TMR_INIT( _state )       { _HDR_INIT(), _FUN_INIT(_state),       0, 0, 0, 0 }
+
+#define               _TMR_MAKE( _state, _fun ) { _HDR_INIT(), _FUN_MAKE(_state, _fun), 0, 0, 0, 0 }
 
 /******************************************************************************
  *
@@ -540,38 +545,40 @@ void tmr_delay( cnt_t delay ) { tmr_this()->delay = delay; }
 
 /******************************************************************************
  *
- * Class             : Timer
+ * Class             : baseTimer
  *
- * Description       : create and initialize a timer object
+ * Description       : create and initialize base class for timer objects
  *
  * Constructor parameters
  *   state           : callback procedure
  *
+ * Note              : for internal use
+ *
  ******************************************************************************/
 
-struct Timer : public __tmr
+struct baseTimer : public __tmr
 {
-	Timer( void ): __tmr _TMR_INIT(NULL) {}
+	baseTimer( void ):         __tmr _TMR_INIT(NULL) {}
 #if OS_FUNCTIONAL
-	Timer( FUN_t _state ): __tmr _TMR_INIT(fun_) { __tmr::fun = _state; }
+	baseTimer( Fun_t _state ): __tmr _TMR_MAKE(fun_, _state) {}
 #else
-	Timer( FUN_t _state ): __tmr _TMR_INIT(_state) {}
+	baseTimer( Fun_t _state ): __tmr _TMR_INIT(_state) {}
 #endif
-	Timer( Timer&& ) = default;
-	Timer( const Timer& ) = delete;
-	Timer& operator=( Timer&& ) = delete;
-	Timer& operator=( const Timer& ) = delete;
+	baseTimer( baseTimer&& ) = default;
+	baseTimer( const baseTimer& ) = delete;
+	baseTimer& operator=( baseTimer&& ) = delete;
+	baseTimer& operator=( const baseTimer& ) = delete;
 
-	~Timer( void ) { assert(__tmr::hdr.id == ID_STOPPED); }
+	~baseTimer( void ) { assert(__tmr::hdr.id == ID_STOPPED); }
 
 	void start        ( cnt_t _delay, cnt_t _period )               {        tmr_start        (this, _delay, _period);         }
 	void startFor     ( cnt_t _delay )                              {        tmr_startFor     (this, _delay);                  }
 	void startPeriodic( cnt_t _period )                             {        tmr_startPeriodic(this,         _period);         }
 #if OS_FUNCTIONAL
-	void startFrom    ( cnt_t _delay, cnt_t _period, FUN_t _state ) {        __tmr::fun = _state;
+	void startFrom    ( cnt_t _delay, cnt_t _period, Fun_t _state ) {        __tmr::fun = _state;
 	                                                                         tmr_startFrom    (this, _delay, _period, fun_);   }
 #else
-	void startFrom    ( cnt_t _delay, cnt_t _period, FUN_t _state ) {        tmr_startFrom    (this, _delay, _period, _state); }
+	void startFrom    ( cnt_t _delay, cnt_t _period, Fun_t _state ) {        tmr_startFrom    (this, _delay, _period, _state); }
 #endif
 	void startNext    ( cnt_t _delay )                              {        tmr_startNext    (this, _delay);                  }
 	void startUntil   ( cnt_t _time )                               {        tmr_startUntil   (this, _time);                   }
@@ -585,6 +592,23 @@ struct Timer : public __tmr
 	static
 	void     fun_     ( void )                                      {        tmr_this()->fun();                                }
 #endif
+};
+
+/******************************************************************************
+ *
+ * Class             : Timer
+ *
+ * Description       : create and initialize a timer object
+ *
+ * Constructor parameters
+ *   state           : callback procedure
+ *
+ ******************************************************************************/
+
+struct Timer : public baseTimer
+{
+	Timer( void ):         baseTimer() {}
+	Timer( Fun_t _state ): baseTimer(forward(_state)) {}
 };
 
 /******************************************************************************
@@ -609,8 +633,8 @@ struct Timer : public __tmr
 
 struct startTimer : public Timer
 {
-	startTimer( const cnt_t _delay, const cnt_t _period ):               Timer()       { tmr_start(this, _delay, _period); }
-	startTimer( const cnt_t _delay, const cnt_t _period, FUN_t _state ): Timer(_state) { tmr_start(this, _delay, _period); }
+	startTimer( const cnt_t _delay, const cnt_t _period ):               Timer()                { tmr_start(this, _delay, _period); }
+	startTimer( const cnt_t _delay, const cnt_t _period, Fun_t _state ): Timer(forward(_state)) { tmr_start(this, _delay, _period); }
 };
 
 /******************************************************************************
@@ -631,8 +655,8 @@ struct startTimer : public Timer
 
 struct startTimerFor : public startTimer
 {
-	startTimerFor( const cnt_t _delay ):               startTimer(_delay, 0)         {}
-	startTimerFor( const cnt_t _delay, FUN_t _state ): startTimer(_delay, 0, _state) {}
+	startTimerFor( const cnt_t _delay ):               startTimer(_delay, 0) {}
+	startTimerFor( const cnt_t _delay, Fun_t _state ): startTimer(_delay, 0, forward(_state)) {}
 };
 
 /******************************************************************************
@@ -654,8 +678,8 @@ struct startTimerFor : public startTimer
 
 struct startTimerPeriodic : public startTimer
 {
-	startTimerPeriodic( const cnt_t _period ):               startTimer(_period, _period)         {}
-	startTimerPeriodic( const cnt_t _period, FUN_t _state ): startTimer(_period, _period, _state) {}
+	startTimerPeriodic( const cnt_t _period ):               startTimer(_period, _period) {}
+	startTimerPeriodic( const cnt_t _period, Fun_t _state ): startTimer(_period, _period, forward(_state)) {}
 };
 
 /******************************************************************************
@@ -674,8 +698,8 @@ struct startTimerPeriodic : public startTimer
 
 struct startTimerUntil : public Timer
 {
-	startTimerUntil( const cnt_t _time ):               Timer()       { tmr_startUntil(this, _time); }
-	startTimerUntil( const cnt_t _time, FUN_t _state ): Timer(_state) { tmr_startUntil(this, _time); }
+	startTimerUntil( const cnt_t _time ):               Timer()                { tmr_startUntil(this, _time); }
+	startTimerUntil( const cnt_t _time, Fun_t _state ): Timer(forward(_state)) { tmr_startUntil(this, _time); }
 };
 
 /******************************************************************************
@@ -689,10 +713,10 @@ struct startTimerUntil : public Timer
 namespace ThisTimer
 {
 #if OS_FUNCTIONAL
-	static inline void flip ( FUN_t _state ) { tmr_this()->fun = _state;
+	static inline void flip ( Fun_t _state ) { tmr_this()->fun = _state;
 	                                           tmr_flip (Timer::fun_); }
 #else
-	static inline void flip ( FUN_t _state ) { tmr_flip (_state); }
+	static inline void flip ( Fun_t _state ) { tmr_flip (_state); }
 #endif
 	static inline void delay( cnt_t _delay ) { tmr_delay(_delay); }
 }

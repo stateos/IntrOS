@@ -54,14 +54,16 @@ struct __tsk
 
 	fun_t  * state; // task state (initial task function, doesn't have to be noreturn-type)
 #if OS_FUNCTIONAL
-	FUN_t    fun;   // function<void(void)> for internal use in c++ functions
 #ifdef     __cplusplus
-#define     _FUN_INIT(_state) (fun_t*)_state, { FUN_t() }
+	FUN_t    fun;   // function<void(void)> for internal use in c++ functions
+#define     _FUN_INIT(_state)       (fun_t*)_state, { FUN_t() }
+#define     _FUN_MAKE(_state, _fun) (fun_t*)_state,  _fun
 #else
-#define     _FUN_INIT(_state) (fun_t*)_state, { NULL }
+	void   * fun[OS_FUNCTIONAL];
+#define     _FUN_INIT(_state)       (fun_t*)_state, { NULL }
 #endif
 #else
-#define     _FUN_INIT(_state) (fun_t*)_state
+#define     _FUN_INIT(_state)       (fun_t*)_state
 #endif
 	cnt_t    start; // inherited from timer
 	cnt_t    delay; // inherited from timer
@@ -74,10 +76,11 @@ struct __tsk
 	unsigned sigset;// pending signals
 	act_t  * action;// signal handler
 #if OS_FUNCTIONAL
-	ACT_t    act;   // function<void(unsigned)> for internal use in c++ functions
 #ifdef     __cplusplus
+	ACT_t    act;   // function<void(unsigned)> for internal use in c++ functions
 #define     _ACT_INIT() NULL, { ACT_t() }
 #else
+	void   * act[OS_FUNCTIONAL];
 #define     _ACT_INIT() NULL, { NULL }
 #endif
 #else
@@ -102,6 +105,7 @@ extern "C" {
 /******************************************************************************
  *
  * Name              : _TSK_INIT
+ * Alias             : _TSK_MAKE (for std::function)
  *
  * Description       : create and initialize a task object
  *
@@ -118,7 +122,10 @@ extern "C" {
  ******************************************************************************/
 
 #define               _TSK_INIT( _state, _stack, _size ) \
-                    { _HDR_INIT(), _FUN_INIT(_state), 0, 0, 0, _stack, _size, { 0, _ACT_INIT(), { NULL, 0 } }, { _CTX_INIT() } }
+                    { _HDR_INIT(), _FUN_INIT(_state),       0, 0, 0, _stack, _size, { 0, _ACT_INIT(), { NULL, 0 } }, { _CTX_INIT() } }
+
+#define               _TSK_MAKE( _state, _fun, _stack, _size ) \
+                    { _HDR_INIT(), _FUN_MAKE(_state, _fun), 0, 0, 0, _stack, _size, { 0, _ACT_INIT(), { NULL, 0 } }, { _CTX_INIT() } }
 
 /******************************************************************************
  *
@@ -905,9 +912,9 @@ struct baseStack
 struct baseTask : public __tsk
 {
 #if OS_FUNCTIONAL
-	baseTask( FUN_t _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_INIT(fun_, _stack, _size) { __tsk::fun = _state; }
+	baseTask( Fun_t _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_MAKE(fun_, _state, _stack, _size) {}
 #else
-	baseTask( FUN_t _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_INIT(_state, _stack, _size) {}
+	baseTask( Fun_t _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_INIT(_state, _stack, _size) {}
 #endif
 	baseTask( baseTask&& ) = default;
 	baseTask( const baseTask& ) = delete;
@@ -918,10 +925,10 @@ struct baseTask : public __tsk
 
 	void     start    ( void )             {        tsk_start    (this);          }
 #if OS_FUNCTIONAL
-	void     startFrom( FUN_t    _state )  {        __tsk::fun = _state;
+	void     startFrom( Fun_t    _state )  {        __tsk::fun = _state;
 	                                                tsk_startFrom(this, fun_);    }
 #else
-	void     startFrom( FUN_t    _state )  {        tsk_startFrom(this, _state);  }
+	void     startFrom( Fun_t    _state )  {        tsk_startFrom(this, _state);  }
 #endif
 	void     join     ( void )             {        tsk_join     (this);          }
 	void     reset    ( void )             {        tsk_reset    (this);          }
@@ -931,10 +938,10 @@ struct baseTask : public __tsk
 	void     give     ( unsigned _signo )  {        tsk_give     (this, _signo);  }
 	void     signal   ( unsigned _signo )  {        tsk_signal   (this, _signo);  }
 #if OS_FUNCTIONAL
-	void     action   ( ACT_t    _action ) {        __tsk::sig.act = _action;
+	void     action   ( Act_t    _action ) {        __tsk::sig.act = _action;
 	                                                tsk_action   (this, act_);    }
 #else
-	void     action   ( ACT_t    _action ) {        tsk_action   (this, _action); }
+	void     action   ( Act_t    _action ) {        tsk_action   (this, _action); }
 #endif
 	bool     operator!( void )             { return __tsk::hdr.id == ID_STOPPED;  }
 #if OS_FUNCTIONAL
@@ -961,7 +968,7 @@ struct baseTask : public __tsk
 template<size_t size_ = OS_STACK_SIZE>
 struct TaskT : public baseTask, public baseStack<size_>
 {
-	TaskT( FUN_t _state ): baseTask(_state, baseStack<size_>::stack_, size_) {}
+	TaskT( Fun_t _state ): baseTask(forward(_state), baseStack<size_>::stack_, size_) {}
 };
 
 /* -------------------------------------------------------------------------- */
@@ -984,7 +991,7 @@ using Task = TaskT<OS_STACK_SIZE>;
 template<size_t size_ = OS_STACK_SIZE>
 struct startTaskT : public TaskT<size_>
 {
-	startTaskT( FUN_t _state ): TaskT<size_>(_state) { tsk_start(this); }
+	startTaskT( Fun_t _state ): TaskT<size_>(forward(_state)) { tsk_start(this); }
 };
 
 /* -------------------------------------------------------------------------- */
@@ -1008,10 +1015,10 @@ namespace ThisTask
 	static inline void     yield     ( void )             { tsk_yield     ();        }
 	static inline void     pass      ( void )             { tsk_pass      ();        }
 #if OS_FUNCTIONAL
-	static inline void     flip      ( FUN_t    _state )  { tsk_this()->fun = _state;
+	static inline void     flip      ( Fun_t    _state )  { tsk_this()->fun = _state;
 	                                                        tsk_flip      (baseTask::fun_); }
 #else
-	static inline void     flip      ( FUN_t    _state )  { tsk_flip      (_state);  }
+	static inline void     flip      ( Fun_t    _state )  { tsk_flip      (_state);  }
 #endif
 	static inline void     sleepFor  ( cnt_t    _delay )  { tsk_sleepFor  (_delay);  }
 	static inline void     sleepNext ( cnt_t    _delay )  { tsk_sleepNext (_delay);  }
@@ -1022,10 +1029,10 @@ namespace ThisTask
 	static inline void     give      ( unsigned _signo )  { cur_give      (_signo);  }
 	static inline void     signal    ( unsigned _signo )  { cur_signal    (_signo);  }
 #if OS_FUNCTIONAL
-	static inline void     action    ( ACT_t    _action ) { tsk_this()->sig.act = _action;
+	static inline void     action    ( Act_t    _action ) { tsk_this()->sig.act = _action;
 	                                                        cur_action    (baseTask::act_); }
 #else
-	static inline void     action    ( ACT_t    _action ) { cur_action    (_action); }
+	static inline void     action    ( Act_t    _action ) { cur_action    (_action); }
 #endif
 }
 
