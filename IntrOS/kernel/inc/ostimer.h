@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.h
     @author  Rajmund Szymanski
-    @date    25.04.2020
+    @date    26.04.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -564,12 +564,6 @@ struct baseTimer : public __tmr
 #else
 	baseTimer( Fun_t _state ): __tmr _TMR_INIT(_state) {}
 #endif
-	baseTimer( baseTimer&& ) = default;
-	baseTimer( const baseTimer& ) = delete;
-	baseTimer& operator=( baseTimer&& ) = delete;
-	baseTimer& operator=( const baseTimer& ) = delete;
-
-	~baseTimer( void ) { assert(__tmr::hdr.id == ID_STOPPED); }
 
 	void start        ( cnt_t _delay, cnt_t _period )               {        tmr_start        (this, _delay, _period);         }
 	void startFor     ( cnt_t _delay )                              {        tmr_startFor     (this, _delay);                  }
@@ -609,6 +603,13 @@ struct Timer : public baseTimer
 {
 	Timer( void ):         baseTimer() {}
 	Timer( Fun_t _state ): baseTimer(forward(_state)) {}
+
+	Timer( Timer&& ) = default;
+	Timer( const Timer& ) = delete;
+	Timer& operator=( Timer&& ) = delete;
+	Timer& operator=( const Timer& ) = delete;
+
+	~Timer( void ) { assert(__tmr::hdr.id == ID_STOPPED); }
 };
 
 /******************************************************************************
