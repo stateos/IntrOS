@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.h
     @author  Rajmund Szymanski
-    @date    25.04.2020
+    @date    27.04.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -340,16 +340,16 @@ struct baseJobQueueT : public __job
 template<unsigned limit_>
 struct JobQueueT : public __box
 {
-	JobQueueT( void ): __box _BOX_INIT(limit_, sizeof(FUN_t), reinterpret_cast<char *>(data_)) {}
+	JobQueueT( void ): __box _BOX_INIT(limit_, sizeof(Fun_t), reinterpret_cast<char *>(data_)) {}
 
 	JobQueueT( JobQueueT&& ) = default;
 	JobQueueT( const JobQueueT& ) = delete;
 	JobQueueT& operator=( JobQueueT&& ) = delete;
 	JobQueueT& operator=( const JobQueueT& ) = delete;
 
-	unsigned take   ( void )        { FUN_t _fun; unsigned event = box_take   (this, &_fun); if (event == E_SUCCESS) _fun(); return event; }
-	unsigned tryWait( void )        { FUN_t _fun; unsigned event = box_tryWait(this, &_fun); if (event == E_SUCCESS) _fun(); return event; }
-	void     wait   ( void )        { FUN_t _fun;                  box_wait   (this, &_fun);                         _fun();               }
+	unsigned take   ( void )        { Fun_t _fun; unsigned event = box_take   (this, &_fun); if (event == E_SUCCESS) _fun(); return event; }
+	unsigned tryWait( void )        { Fun_t _fun; unsigned event = box_tryWait(this, &_fun); if (event == E_SUCCESS) _fun(); return event; }
+	void     wait   ( void )        { Fun_t _fun;                  box_wait   (this, &_fun);                         _fun();               }
 	unsigned give   ( Fun_t  _fun ) {             unsigned event = box_give   (this, &_fun);                                 return event; }
 	void     send   ( Fun_t  _fun ) {                              box_send   (this, &_fun);                                               }
 	void     push   ( Fun_t  _fun ) {                              box_push   (this, &_fun);                                               }
@@ -358,7 +358,7 @@ struct JobQueueT : public __box
 	unsigned limit  ( void )        {             unsigned limit = box_limit  (this);                                        return limit; }
 
 	private:
-	FUN_t data_[limit_];
+	Fun_t data_[limit_];
 };
 
 #else
