@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    27.04.2020
+    @date    28.04.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -498,7 +498,7 @@ tsk_t *cur_task( void ) { return System.cur; }
  *   stack           : base of task's private stack storage
  *   size            : size of task private stack (in bytes)
  *
- * Return            : task object
+ * Return            : none
  *
  ******************************************************************************/
 
