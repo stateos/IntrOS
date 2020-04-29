@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    28.04.2020
+    @date    29.04.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -484,6 +484,25 @@ tsk_t *tsk_this( void ) { return System.cur; }
 
 __STATIC_INLINE
 tsk_t *cur_task( void ) { return System.cur; }
+
+/******************************************************************************
+ *
+ * Name              : wrk_init
+ *
+ * Description       : initialize complete work area for task object
+ *
+ * Parameters
+ *   tsk             : pointer to task object
+ *   state           : task state (initial task function) doesn't have to be noreturn-type
+ *                     it will be executed into an infinite system-implemented loop
+ *   stack           : base of task's private stack storage
+ *   size            : size of task private stack (in bytes)
+ *
+ * Return            : none
+ *
+ ******************************************************************************/
+
+void wrk_init( tsk_t *tsk, fun_t *state, stk_t *stack, size_t size );
 
 /******************************************************************************
  *
