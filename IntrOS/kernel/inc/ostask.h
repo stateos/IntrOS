@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    29.04.2020
+    @date    01.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -508,7 +508,8 @@ void wrk_init( tsk_t *tsk, fun_t *state, stk_t *stack, size_t size );
  *
  * Name              : tsk_init
  *
- * Description       : initialize complete work area for task object and start the task
+ * Description       : initialize complete work area for task object
+ *                     and start the task
  *
  * Parameters
  *   tsk             : pointer to task object
