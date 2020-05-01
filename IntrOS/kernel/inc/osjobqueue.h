@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.h
     @author  Rajmund Szymanski
-    @date    27.04.2020
+    @date    01.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -289,26 +289,24 @@ void job_push( job_t *job, fun_t *fun );
 
 /******************************************************************************
  *
- * Class             : baseJobQueueT<>
+ * Class             : JobQueueT<>
  *
- * Description       : create and initialize a base job queue object
+ * Description       : create and initialize a job queue object
  *
  * Constructor parameters
  *   limit           : size of a queue (max number of stored job procedures)
  *
- * Note              : for internal use
- *
  ******************************************************************************/
 
 template<unsigned limit_>
-struct baseJobQueueT : public __job
+struct JobQueueT : public __job
 {
-	baseJobQueueT( void ): __job _JOB_INIT(limit_, data_) {}
+	JobQueueT( void ): __job _JOB_INIT(limit_, data_) {}
 
-	baseJobQueueT( baseJobQueueT&& ) = default;
-	baseJobQueueT( const baseJobQueueT& ) = delete;
-	baseJobQueueT& operator=( baseJobQueueT&& ) = delete;
-	baseJobQueueT& operator=( const baseJobQueueT& ) = delete;
+	JobQueueT( JobQueueT&& ) = default;
+	JobQueueT( const JobQueueT& ) = delete;
+	JobQueueT& operator=( JobQueueT&& ) = delete;
+	JobQueueT& operator=( const JobQueueT& ) = delete;
 
 	unsigned take   ( void )        { return job_take   (this);       }
 	unsigned tryWait( void )        { return job_tryWait(this);       }
@@ -323,50 +321,6 @@ struct baseJobQueueT : public __job
 	private:
 	fun_t *data_[limit_];
 };
-
-/******************************************************************************
- *
- * Class             : JobQueueT<>
- *
- * Description       : create and initialize a job queue object
- *
- * Constructor parameters
- *   limit           : size of a queue (max number of stored job procedures)
- *
- ******************************************************************************/
-
-#if OS_FUNCTIONAL
-
-template<unsigned limit_>
-struct JobQueueT : public __box
-{
-	JobQueueT( void ): __box _BOX_INIT(limit_, sizeof(Fun_t), reinterpret_cast<char *>(data_)) {}
-
-	JobQueueT( JobQueueT&& ) = default;
-	JobQueueT( const JobQueueT& ) = delete;
-	JobQueueT& operator=( JobQueueT&& ) = delete;
-	JobQueueT& operator=( const JobQueueT& ) = delete;
-
-	unsigned take   ( void )        { Fun_t _fun; unsigned event = box_take   (this, &_fun); if (event == E_SUCCESS) _fun(); return event; }
-	unsigned tryWait( void )        { Fun_t _fun; unsigned event = box_tryWait(this, &_fun); if (event == E_SUCCESS) _fun(); return event; }
-	void     wait   ( void )        { Fun_t _fun;                  box_wait   (this, &_fun);                         _fun();               }
-	unsigned give   ( Fun_t  _fun ) {             unsigned event = box_give   (this, &_fun);                                 return event; }
-	void     send   ( Fun_t  _fun ) {                              box_send   (this, &_fun);                                               }
-	void     push   ( Fun_t  _fun ) {                              box_push   (this, &_fun);                                               }
-	unsigned count  ( void )        {             unsigned count = box_count  (this);                                        return count; }
-	unsigned space  ( void )        {             unsigned space = box_space  (this);                                        return space; }
-	unsigned limit  ( void )        {             unsigned limit = box_limit  (this);                                        return limit; }
-
-	private:
-	Fun_t data_[limit_];
-};
-
-#else
-
-template<unsigned limit_>
-using JobQueueT = baseJobQueueT<limit_>;
-
-#endif
 
 #endif//__cplusplus
 
