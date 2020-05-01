@@ -882,7 +882,6 @@ void cur_action( act_t *action ) { tsk_action(System.cur, action); }
 template<size_t size_ = OS_STACK_SIZE>
 struct baseStack
 {
-	protected:
 	stk_t stack_[ STK_SIZE(size_) ];
 };
 
@@ -905,18 +904,21 @@ struct baseStack
 struct baseTask : public __tsk
 {
 #if OS_FUNCTIONAL
-	baseTask( const Fun_t&& _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_INIT(fun_, _stack, _size), fun(_state) {}
-	baseTask( const Fun_t&  _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_INIT(fun_, _stack, _size), fun(_state) {}
+	template<class T>
+	baseTask( const T _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_INIT(fun_, _stack, _size), fun(_state) {}
 #else
-	baseTask( const Fun_t   _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_INIT(_state, _stack, _size) {}
+	template<class T>
+	baseTask( const T _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_INIT(_state, _stack, _size) {}
 #endif
 
 	void     start    ( void )             {        tsk_start    (this);          }
 #if OS_FUNCTIONAL
-	void     startFrom( Fun_t    _state )  {        fun = _state;
+	template<class T>
+	void     startFrom( const T  _state )  {        fun = _state;
 	                                                tsk_startFrom(this, fun_);    }
 #else
-	void     startFrom( Fun_t    _state )  {        tsk_startFrom(this, _state);  }
+	template<class T>
+	void     startFrom( const T  _state )  {        tsk_startFrom(this, _state);  }
 #endif
 	void     join     ( void )             {        tsk_join     (this);          }
 	void     reset    ( void )             {        tsk_reset    (this);          }
@@ -926,18 +928,20 @@ struct baseTask : public __tsk
 	void     give     ( unsigned _signo )  {        tsk_give     (this, _signo);  }
 	void     signal   ( unsigned _signo )  {        tsk_signal   (this, _signo);  }
 #if OS_FUNCTIONAL
-	void     action   ( Act_t    _action ) {        act = _action;
+	template<class T>
+	void     action   ( const T  _action ) {        act = _action;
 	                                                tsk_action   (this, act_);    }
 #else
-	void     action   ( Act_t    _action ) {        tsk_action   (this, _action); }
+	template<class T>
+	void     action   ( const T  _action ) {        tsk_action   (this, _action); }
 #endif
 	bool     operator!( void )             { return __tsk::hdr.id == ID_STOPPED;  }
 #if OS_FUNCTIONAL
 	static
-	void     fun_     ( void )             {        reinterpret_cast<baseTask*>(tsk_this())->fun(); }
+	void     fun_     ( void )             { reinterpret_cast<baseTask*>(tsk_this())->fun(); }
 	Fun_t    fun;
 	static
-	void     act_     ( unsigned _signo )  {        reinterpret_cast<baseTask*>(tsk_this())->act(_signo); }
+	void     act_     ( unsigned _signo )  { reinterpret_cast<baseTask*>(tsk_this())->act(_signo); }
 	Act_t    act;
 #endif
 };
@@ -958,12 +962,8 @@ struct baseTask : public __tsk
 template<size_t size_ = OS_STACK_SIZE>
 struct TaskT : public baseTask, public baseStack<size_>
 {
-#if OS_FUNCTIONAL
-	TaskT( const Fun_t&& _state ): baseTask(_state, baseStack<size_>::stack_, size_) {}
-	TaskT( const Fun_t&  _state ): baseTask(_state, baseStack<size_>::stack_, size_) {}
-#else
-	TaskT( const Fun_t   _state ): baseTask(_state, baseStack<size_>::stack_, size_) {}
-#endif
+	template<class T>
+	TaskT( const T _state ): baseTask(_state, baseStack<size_>::stack_, size_) {}
 
 	TaskT( TaskT<size_>&& ) = default;
 	TaskT( const TaskT<size_>& ) = delete;
@@ -993,12 +993,8 @@ using Task = TaskT<OS_STACK_SIZE>;
 template<size_t size_ = OS_STACK_SIZE>
 struct startTaskT : public TaskT<size_>
 {
-#if OS_FUNCTIONAL
-	startTaskT( const Fun_t&& _state ): TaskT<size_>(_state) { tsk_start(this); }
-	startTaskT( const Fun_t&  _state ): TaskT<size_>(_state) { tsk_start(this); }
-#else
-	startTaskT( const Fun_t   _state ): TaskT<size_>(_state) { tsk_start(this); }
-#endif
+	template<class T>
+	startTaskT( const T _state ): TaskT<size_>(_state) { tsk_start(this); }
 };
 
 /* -------------------------------------------------------------------------- */
@@ -1022,10 +1018,12 @@ namespace ThisTask
 	static inline void     yield     ( void )             { tsk_yield     ();        }
 	static inline void     pass      ( void )             { tsk_pass      ();        }
 #if OS_FUNCTIONAL
-	static inline void     flip      ( Fun_t    _state )  { reinterpret_cast<baseTask*>(tsk_this())->fun = _state;
+	template<class T>
+	static inline void     flip      ( const T  _state )  { reinterpret_cast<baseTask*>(tsk_this())->fun = _state;
 	                                                        tsk_flip      (baseTask::fun_); }
 #else
-	static inline void     flip      ( Fun_t    _state )  { tsk_flip      (_state);  }
+	template<class T>
+	static inline void     flip      ( const T  _state )  { tsk_flip      (_state);  }
 #endif
 	static inline void     sleepFor  ( cnt_t    _delay )  { tsk_sleepFor  (_delay);  }
 	static inline void     sleepNext ( cnt_t    _delay )  { tsk_sleepNext (_delay);  }
@@ -1036,10 +1034,12 @@ namespace ThisTask
 	static inline void     give      ( unsigned _signo )  { cur_give      (_signo);  }
 	static inline void     signal    ( unsigned _signo )  { cur_signal    (_signo);  }
 #if OS_FUNCTIONAL
-	static inline void     action    ( Act_t    _action ) { reinterpret_cast<baseTask*>(tsk_this())->act = _action;
+	template<class T>
+	static inline void     action    ( const T  _action ) { reinterpret_cast<baseTask*>(tsk_this())->act = _action;
 	                                                        cur_action    (baseTask::act_); }
 #else
-	static inline void     action    ( Act_t    _action ) { cur_action    (_action); }
+	template<class T>
+	static inline void     action    ( const T  _action ) { cur_action    (_action); }
 #endif
 }
 

@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.h
     @author  Rajmund Szymanski
-    @date    27.04.2020
+    @date    01.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -299,6 +299,8 @@ extern "C" {
  *
  * Return            : current timer object
  *
+ * Note              : use only in timer's callback procedure
+ *
  ******************************************************************************/
 
 __STATIC_INLINE
@@ -544,34 +546,37 @@ void tmr_delay( cnt_t delay ) { tmr_this()->delay = delay; }
 
 struct baseTimer : public __tmr
 {
-	baseTimer( void ):                 __tmr _TMR_INIT(NULL) {}
+	baseTimer( void ):           __tmr _TMR_INIT(NULL) {}
 #if OS_FUNCTIONAL
-	baseTimer( const Fun_t&& _state ): __tmr _TMR_INIT(fun_), fun(_state) {}
-	baseTimer( const Fun_t&  _state ): __tmr _TMR_INIT(fun_), fun(_state) {}
+	template<class T>
+	baseTimer( const T _state ): __tmr _TMR_INIT(fun_), fun(_state) {}
 #else
-	baseTimer( const Fun_t   _state ): __tmr _TMR_INIT(_state) {}
+	template<class T>
+	baseTimer( const T _state ): __tmr _TMR_INIT(_state) {}
 #endif
 
-	void start        ( cnt_t _delay, cnt_t _period )               {        tmr_start        (this, _delay, _period);         }
-	void startFor     ( cnt_t _delay )                              {        tmr_startFor     (this, _delay);                  }
-	void startPeriodic( cnt_t _period )                             {        tmr_startPeriodic(this,         _period);         }
+	void start        ( cnt_t _delay, cnt_t _period )                 {        tmr_start        (this, _delay, _period);         }
+	void startFor     ( cnt_t _delay )                                {        tmr_startFor     (this, _delay);                  }
+	void startPeriodic( cnt_t _period )                               {        tmr_startPeriodic(this,         _period);         }
 #if OS_FUNCTIONAL
-	void startFrom    ( cnt_t _delay, cnt_t _period, Fun_t _state ) {        fun = _state;
-	                                                                         tmr_startFrom    (this, _delay, _period, fun_);   }
+	template<class T>
+	void startFrom    ( cnt_t _delay, cnt_t _period, const T _state ) {        fun = _state;
+	                                                                           tmr_startFrom    (this, _delay, _period, fun_);   }
 #else
-	void startFrom    ( cnt_t _delay, cnt_t _period, Fun_t _state ) {        tmr_startFrom    (this, _delay, _period, _state); }
+	template<class T>
+	void startFrom    ( cnt_t _delay, cnt_t _period, const T _state ) {        tmr_startFrom    (this, _delay, _period, _state); }
 #endif
-	void startNext    ( cnt_t _delay )                              {        tmr_startNext    (this, _delay);                  }
-	void startUntil   ( cnt_t _time )                               {        tmr_startUntil   (this, _time);                   }
+	void startNext    ( cnt_t _delay )                                {        tmr_startNext    (this, _delay);                  }
+	void startUntil   ( cnt_t _time )                                 {        tmr_startUntil   (this, _time);                   }
 
-	unsigned take     ( void )                                      { return tmr_take         (this);                          }
-	unsigned tryWait  ( void )                                      { return tmr_tryWait      (this);                          }
-	void     wait     ( void )                                      {        tmr_wait         (this);                          }
+	unsigned take     ( void )                                        { return tmr_take         (this);                          }
+	unsigned tryWait  ( void )                                        { return tmr_tryWait      (this);                          }
+	void     wait     ( void )                                        {        tmr_wait         (this);                          }
 
-	bool     operator!( void )                                      { return __tmr::hdr.id == ID_STOPPED;                      }
+	bool     operator!( void )                                        { return __tmr::hdr.id == ID_STOPPED;                      }
 #if OS_FUNCTIONAL
 	static
-	void     fun_     ( void )                                      {        reinterpret_cast<baseTimer*>(tmr_this())->fun();  }
+	void     fun_     ( void )                                        { reinterpret_cast<baseTimer*>(tmr_this())->fun();         }
 	Fun_t    fun;
 #endif
 };
@@ -589,13 +594,9 @@ struct baseTimer : public __tmr
 
 struct Timer : public baseTimer
 {
-	Timer( void ):                 baseTimer() {}
-#if OS_FUNCTIONAL
-	Timer( const Fun_t&& _state ): baseTimer(_state) {}
-	Timer( const Fun_t&  _state ): baseTimer(_state) {}
-#else
-	Timer( const Fun_t   _state ): baseTimer(_state) {}
-#endif
+	Timer( void ):           baseTimer() {}
+	template<class T>
+	Timer( const T _state ): baseTimer(_state) {}
 
 	Timer( Timer&& ) = default;
 	Timer( const Timer& ) = delete;
@@ -627,13 +628,9 @@ struct Timer : public baseTimer
 
 struct startTimer : public Timer
 {
-	startTimer( const cnt_t _delay, const cnt_t _period ):                       Timer()       { tmr_start(this, _delay, _period); }
-#if OS_FUNCTIONAL
-	startTimer( const cnt_t _delay, const cnt_t _period, const Fun_t&& _state ): Timer(_state) { tmr_start(this, _delay, _period); }
-	startTimer( const cnt_t _delay, const cnt_t _period, const Fun_t&  _state ): Timer(_state) { tmr_start(this, _delay, _period); }
-#else
-	startTimer( const cnt_t _delay, const cnt_t _period, const Fun_t   _state ): Timer(_state) { tmr_start(this, _delay, _period); }
-#endif
+	startTimer( const cnt_t _delay, const cnt_t _period ):                 Timer()       { tmr_start(this, _delay, _period); }
+	template<class T>
+	startTimer( const cnt_t _delay, const cnt_t _period, const T _state ): Timer(_state) { tmr_start(this, _delay, _period); }
 };
 
 /******************************************************************************
@@ -654,13 +651,9 @@ struct startTimer : public Timer
 
 struct startTimerFor : public startTimer
 {
-	startTimerFor( const cnt_t _delay ):                       startTimer(_delay, 0) {}
-#if OS_FUNCTIONAL
-	startTimerFor( const cnt_t _delay, const Fun_t&& _state ): startTimer(_delay, 0, _state) {}
-	startTimerFor( const cnt_t _delay, const Fun_t&  _state ): startTimer(_delay, 0, _state) {}
-#else
-	startTimerFor( const cnt_t _delay, const Fun_t   _state ): startTimer(_delay, 0, _state) {}
-#endif
+	startTimerFor( const cnt_t _delay ):                 startTimer(_delay, 0) {}
+	template<class T>
+	startTimerFor( const cnt_t _delay, const T _state ): startTimer(_delay, 0, _state) {}
 };
 
 /******************************************************************************
@@ -682,13 +675,9 @@ struct startTimerFor : public startTimer
 
 struct startTimerPeriodic : public startTimer
 {
-	startTimerPeriodic( const cnt_t _period ):                       startTimer(_period, _period) {}
-#if OS_FUNCTIONAL
-	startTimerPeriodic( const cnt_t _period, const Fun_t&& _state ): startTimer(_period, _period, _state) {}
-	startTimerPeriodic( const cnt_t _period, const Fun_t&  _state ): startTimer(_period, _period, _state) {}
-#else
-	startTimerPeriodic( const cnt_t _period, const Fun_t   _state ): startTimer(_period, _period, _state) {}
-#endif
+	startTimerPeriodic( const cnt_t _period ):                 startTimer(_period, _period) {}
+	template<class T>
+	startTimerPeriodic( const cnt_t _period, const T _state ): startTimer(_period, _period, _state) {}
 };
 
 /******************************************************************************
@@ -707,13 +696,9 @@ struct startTimerPeriodic : public startTimer
 
 struct startTimerUntil : public Timer
 {
-	startTimerUntil( const cnt_t _time ):                       Timer()       { tmr_startUntil(this, _time); }
-#if OS_FUNCTIONAL
-	startTimerUntil( const cnt_t _time, const Fun_t&& _state ): Timer(_state) { tmr_startUntil(this, _time); }
-	startTimerUntil( const cnt_t _time, const Fun_t&  _state ): Timer(_state) { tmr_startUntil(this, _time); }
-#else
-	startTimerUntil( const cnt_t _time, const Fun_t   _state ): Timer(_state) { tmr_startUntil(this, _time); }
-#endif
+	startTimerUntil( const cnt_t _time ):                 Timer()       { tmr_startUntil(this, _time); }
+	template<class T>
+	startTimerUntil( const cnt_t _time, const T _state ): Timer(_state) { tmr_startUntil(this, _time); }
 };
 
 /******************************************************************************
@@ -727,12 +712,14 @@ struct startTimerUntil : public Timer
 namespace ThisTimer
 {
 #if OS_FUNCTIONAL
-	static inline void flip ( Fun_t _state ) { reinterpret_cast<baseTimer*>(tmr_this())->fun = _state;
-	                                           tmr_flip (baseTimer::fun_); }
+	template<class T>
+	static inline void flip ( const T _state ) { reinterpret_cast<baseTimer*>(tmr_this())->fun = _state;
+	                                             tmr_flip (baseTimer::fun_); }
 #else
-	static inline void flip ( Fun_t _state ) { tmr_flip (_state); }
+	template<class T>
+	static inline void flip ( const T _state ) { tmr_flip (_state); }
 #endif
-	static inline void delay( cnt_t _delay ) { tmr_delay(_delay); }
+	static inline void delay( cnt_t   _delay ) { tmr_delay(_delay); }
 }
 
 #endif//__cplusplus
