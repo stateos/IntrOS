@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.c
     @author  Rajmund Szymanski
-    @date    29.04.2020
+    @date    01.05.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -34,6 +34,20 @@
 #include "inc/oscriticalsection.h"
 
 /* -------------------------------------------------------------------------- */
+static
+void priv_wrk_init( tsk_t *tsk, fun_t *state, stk_t *stack, size_t size )
+/* -------------------------------------------------------------------------- */
+{
+	memset(tsk, 0, sizeof(tsk_t));
+
+	core_hdr_init(&tsk->hdr);
+
+	tsk->state = state;
+	tsk->stack = stack;
+	tsk->size  = size;
+}
+
+/* -------------------------------------------------------------------------- */
 void wrk_init( tsk_t *tsk, fun_t *state, stk_t *stack, size_t size )
 /* -------------------------------------------------------------------------- */
 {
@@ -44,13 +58,7 @@ void wrk_init( tsk_t *tsk, fun_t *state, stk_t *stack, size_t size )
 
 	sys_lock();
 	{
-		memset(tsk, 0, sizeof(tsk_t));
-
-		core_hdr_init(&tsk->hdr);
-
-		tsk->state = state;
-		tsk->stack = stack;
-		tsk->size  = size;
+		priv_wrk_init(tsk, state, stack, size);
 	}
 	sys_unlock();
 }
@@ -59,8 +67,18 @@ void wrk_init( tsk_t *tsk, fun_t *state, stk_t *stack, size_t size )
 void tsk_init( tsk_t *tsk, fun_t *state, stk_t *stack, size_t size )
 /* -------------------------------------------------------------------------- */
 {
-	wrk_init(tsk, state, stack, size);
-	tsk_start(tsk);
+	assert(tsk);
+	assert(state);
+	assert(stack);
+	assert(size);
+
+	sys_lock();
+	{
+		priv_wrk_init(tsk, state, stack, size);
+		core_ctx_init(tsk);
+		core_tsk_insert(tsk);
+	}
+	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -90,7 +108,7 @@ void tsk_startFrom( tsk_t *tsk, fun_t *state )
 
 	sys_lock();
 	{
-		if (tsk->hdr.id == ID_STOPPED)
+		if (tsk->hdr.id == ID_STOPPED)  // active tasks cannot be started
 		{
 			tsk->state = state;
 
