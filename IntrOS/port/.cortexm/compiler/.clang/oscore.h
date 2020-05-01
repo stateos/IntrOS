@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    27.04.2020
+    @date    01.05.2020
     @brief   IntrOS port file for ARM Cotrex-M uC.
 
  ******************************************************************************
@@ -47,7 +47,7 @@ extern "C" {
 /* -------------------------------------------------------------------------- */
 
 #ifndef OS_FUNCTIONAL
-#define OS_FUNCTIONAL         1 /* included c++ functional library header     */
+#define OS_FUNCTIONAL        24 /* c++ functional library header not included */
 #elif   OS_FUNCTIONAL
 #error  OS_FUNCTIONAL is an internal port definition!
 #endif//OS_FUNCTIONAL
