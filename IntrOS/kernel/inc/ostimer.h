@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.h
     @author  Rajmund Szymanski
-    @date    01.05.2020
+    @date    02.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -546,37 +546,40 @@ void tmr_delay( cnt_t delay ) { tmr_this()->delay = delay; }
 
 struct baseTimer : public __tmr
 {
-	baseTimer( void ):           __tmr _TMR_INIT(NULL) {}
+	baseTimer( void )
+		: __tmr _TMR_INIT(NULL) {}
+	template<class T>
+	baseTimer( const T _state )
 #if OS_FUNCTIONAL
-	template<class T>
-	baseTimer( const T _state ): __tmr _TMR_INIT(fun_), fun(_state) {}
+		: __tmr _TMR_INIT(fun_), fun(_state) {}
 #else
-	template<class T>
-	baseTimer( const T _state ): __tmr _TMR_INIT(_state) {}
+		: __tmr _TMR_INIT(_state) {}
 #endif
 
-	void start        ( cnt_t _delay, cnt_t _period )                 {        tmr_start        (this, _delay, _period);         }
-	void startFor     ( cnt_t _delay )                                {        tmr_startFor     (this, _delay);                  }
-	void startPeriodic( cnt_t _period )                               {        tmr_startPeriodic(this,         _period);         }
+	void start        ( cnt_t _delay, cnt_t _period ) {        tmr_start        (this, _delay, _period); }
+	void startFor     ( cnt_t _delay )                {        tmr_startFor     (this, _delay);          }
+	void startPeriodic( cnt_t _period )               {        tmr_startPeriodic(this,         _period); }
+	void startNext    ( cnt_t _delay )                {        tmr_startNext    (this, _delay);          }
+	void startUntil   ( cnt_t _time )                 {        tmr_startUntil   (this, _time);           }
+	unsigned take     ( void )                        { return tmr_take         (this);                  }
+	unsigned tryWait  ( void )                        { return tmr_tryWait      (this);                  }
+	void     wait     ( void )                        {        tmr_wait         (this);                  }
+	bool     operator!( void )                        { return __tmr::hdr.id == ID_STOPPED;              }
+
+	template<class T>
+	void startFrom( cnt_t _delay, cnt_t _period, const T _state )
+	{
 #if OS_FUNCTIONAL
-	template<class T>
-	void startFrom    ( cnt_t _delay, cnt_t _period, const T _state ) {        fun = _state;
-	                                                                           tmr_startFrom    (this, _delay, _period, fun_);   }
+		new (&fun) Fun_t(_state);
+		tmr_startFrom(this, _delay, _period, fun_);
 #else
-	template<class T>
-	void startFrom    ( cnt_t _delay, cnt_t _period, const T _state ) {        tmr_startFrom    (this, _delay, _period, _state); }
+		tmr_startFrom(this, _delay, _period, _state);
 #endif
-	void startNext    ( cnt_t _delay )                                {        tmr_startNext    (this, _delay);                  }
-	void startUntil   ( cnt_t _time )                                 {        tmr_startUntil   (this, _time);                   }
+	}
 
-	unsigned take     ( void )                                        { return tmr_take         (this);                          }
-	unsigned tryWait  ( void )                                        { return tmr_tryWait      (this);                          }
-	void     wait     ( void )                                        {        tmr_wait         (this);                          }
-
-	bool     operator!( void )                                        { return __tmr::hdr.id == ID_STOPPED;                      }
 #if OS_FUNCTIONAL
 	static
-	void     fun_     ( void )                                        { reinterpret_cast<baseTimer*>(tmr_this())->fun();         }
+	void     fun_( void ) { reinterpret_cast<baseTimer*>(tmr_this())->fun(); }
 	Fun_t    fun;
 #endif
 };
@@ -711,15 +714,18 @@ struct startTimerUntil : public Timer
 
 namespace ThisTimer
 {
+	static inline void delay( cnt_t _delay ) { tmr_delay(_delay); }
+
+	template<class T>
+	static inline void flip( const T _state )
+	{
 #if OS_FUNCTIONAL
-	template<class T>
-	static inline void flip ( const T _state ) { reinterpret_cast<baseTimer*>(tmr_this())->fun = _state;
-	                                             tmr_flip (baseTimer::fun_); }
+		new (&reinterpret_cast<baseTimer*>(tmr_this())->fun) Fun_t(_state);
+		tmr_flip(baseTimer::fun_);
 #else
-	template<class T>
-	static inline void flip ( const T _state ) { tmr_flip (_state); }
+		tmr_flip(_state);
 #endif
-	static inline void delay( cnt_t   _delay ) { tmr_delay(_delay); }
+	}
 }
 
 #endif//__cplusplus

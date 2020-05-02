@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    01.05.2020
+    @date    02.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -903,23 +903,15 @@ struct baseStack
 
 struct baseTask : public __tsk
 {
+	template<class T>
+	baseTask( const T _state, stk_t * const _stack, const size_t _size )
 #if OS_FUNCTIONAL
-	template<class T>
-	baseTask( const T _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_INIT(fun_, _stack, _size), fun(_state) {}
+		: __tsk _TSK_INIT(fun_, _stack, _size), fun(_state) {}
 #else
-	template<class T>
-	baseTask( const T _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_INIT(_state, _stack, _size) {}
+		: __tsk _TSK_INIT(_state, _stack, _size) {}
 #endif
 
 	void     start    ( void )             {        tsk_start    (this);          }
-#if OS_FUNCTIONAL
-	template<class T>
-	void     startFrom( const T  _state )  {        fun = _state;
-	                                                tsk_startFrom(this, fun_);    }
-#else
-	template<class T>
-	void     startFrom( const T  _state )  {        tsk_startFrom(this, _state);  }
-#endif
 	void     join     ( void )             {        tsk_join     (this);          }
 	void     reset    ( void )             {        tsk_reset    (this);          }
 	void     kill     ( void )             {        tsk_kill     (this);          }
@@ -927,21 +919,37 @@ struct baseTask : public __tsk
 	unsigned resume   ( void )             { return tsk_resume   (this);          }
 	void     give     ( unsigned _signo )  {        tsk_give     (this, _signo);  }
 	void     signal   ( unsigned _signo )  {        tsk_signal   (this, _signo);  }
-#if OS_FUNCTIONAL
-	template<class T>
-	void     action   ( const T  _action ) {        act = _action;
-	                                                tsk_action   (this, act_);    }
-#else
-	template<class T>
-	void     action   ( const T  _action ) {        tsk_action   (this, _action); }
-#endif
 	bool     operator!( void )             { return __tsk::hdr.id == ID_STOPPED;  }
+
+	template<class T>
+	void startFrom( const T  _state )
+	{
+#if OS_FUNCTIONAL
+		new (&fun) Fun_t(_state);
+        tsk_startFrom(this, fun_);
+#else
+		tsk_startFrom(this, _state);
+#endif
+	}
+
+	template<class T>
+	void action( const T  _action )
+	{
+#if OS_FUNCTIONAL
+		new (&act) Act_t(_action);
+		tsk_action(this, act_);
+#else
+		tsk_action(this, _action);
+#endif
+	}
+
 #if OS_FUNCTIONAL
 	static
-	void     fun_     ( void )             { reinterpret_cast<baseTask*>(tsk_this())->fun(); }
+	void     fun_( void )            { reinterpret_cast<baseTask*>(tsk_this())->fun(); }
 	Fun_t    fun;
+
 	static
-	void     act_     ( unsigned _signo )  { reinterpret_cast<baseTask*>(tsk_this())->act(_signo); }
+	void     act_( unsigned _signo ) { reinterpret_cast<baseTask*>(tsk_this())->act(_signo); }
 	Act_t    act;
 #endif
 };
@@ -1017,14 +1025,6 @@ namespace ThisTask
 	static inline void     kill      ( void )             { cur_kill      ();        }
 	static inline void     yield     ( void )             { tsk_yield     ();        }
 	static inline void     pass      ( void )             { tsk_pass      ();        }
-#if OS_FUNCTIONAL
-	template<class T>
-	static inline void     flip      ( const T  _state )  { reinterpret_cast<baseTask*>(tsk_this())->fun = _state;
-	                                                        tsk_flip      (baseTask::fun_); }
-#else
-	template<class T>
-	static inline void     flip      ( const T  _state )  { tsk_flip      (_state);  }
-#endif
 	static inline void     sleepFor  ( cnt_t    _delay )  { tsk_sleepFor  (_delay);  }
 	static inline void     sleepNext ( cnt_t    _delay )  { tsk_sleepNext (_delay);  }
 	static inline void     sleepUntil( cnt_t    _time )   { tsk_sleepUntil(_time);   }
@@ -1033,14 +1033,28 @@ namespace ThisTask
 	static inline void     suspend   ( void )             { cur_suspend   ();        }
 	static inline void     give      ( unsigned _signo )  { cur_give      (_signo);  }
 	static inline void     signal    ( unsigned _signo )  { cur_signal    (_signo);  }
+
+	template<class T>
+	static inline void flip( const T _state )
+	{
 #if OS_FUNCTIONAL
-	template<class T>
-	static inline void     action    ( const T  _action ) { reinterpret_cast<baseTask*>(tsk_this())->act = _action;
-	                                                        cur_action    (baseTask::act_); }
+		new (&reinterpret_cast<baseTask*>(tsk_this())->fun) Fun_t(_state);
+		tsk_flip(baseTask::fun_);
 #else
-	template<class T>
-	static inline void     action    ( const T  _action ) { cur_action    (_action); }
+		tsk_flip(_state);
 #endif
+	}
+
+	template<class T>
+	static inline void action( const T _action )
+	{
+#if OS_FUNCTIONAL
+		new (&reinterpret_cast<baseTask*>(tsk_this())->act) Act_t(_action);
+		cur_action(baseTask::act_);
+#else
+		cur_action(_action);
+#endif
+	}
 }
 
 #endif//__cplusplus
