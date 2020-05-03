@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.h
     @author  Rajmund Szymanski
-    @date    02.05.2020
+    @date    03.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -64,7 +64,7 @@ extern "C" {
  *
  * Parameters
  *   state           : callback procedure
- *                     0: no callback
+ *                     NULL: no callback
  *
  * Return            : timer object
  *
@@ -84,7 +84,7 @@ extern "C" {
  * Parameters
  *   tmr             : name of a pointer to timer object
  *   state           : callback procedure
- *                     0: no callback
+ *                     NULL: no callback
  *
  ******************************************************************************/
 
@@ -169,7 +169,7 @@ extern "C" {
  * Parameters
  *   tmr             : name of a pointer to timer object
  *   state           : callback procedure
- *                     0: no callback
+ *                     NULL: no callback
  *
  ******************************************************************************/
 
@@ -252,7 +252,7 @@ extern "C" {
  *
  * Parameters
  *   state           : callback procedure
- *                     0: no callback
+ *                     NULL: no callback
  *
  * Return            : timer object
  *
@@ -274,7 +274,7 @@ extern "C" {
  *
  * Parameters
  *   state           : callback procedure
- *                     0: no callback
+ *                     NULL: no callback
  *
  * Return            : pointer to timer object
  *
@@ -315,7 +315,7 @@ tmr_t *tmr_this( void ) { return (tmr_t *) System.cur; }
  * Parameters
  *   tmr             : pointer to timer object
  *   state           : callback procedure
- *                     0: no callback
+ *                     NULL: no callback
  *
  * Return            : none
  *
@@ -404,7 +404,7 @@ void tmr_startPeriodic( tmr_t *tmr, cnt_t period ) { tmr_start(tmr, period, peri
  *                     IMMEDIATE: don't countdown
  *                     INFINITE:  countdown indefinitely
  *   proc            : callback procedure
- *                     0: no callback
+ *                     NULL: no callback
  *
  * Return            : none
  *
@@ -492,7 +492,7 @@ void tmr_wait( tmr_t *tmr );
  *
  * Parameters
  *   proc            : new callback procedure
- *                     0: no callback
+ *                     NULL: no callback
  *
  * Return            : none
  *
@@ -539,6 +539,7 @@ void tmr_delay( cnt_t delay ) { tmr_this()->delay = delay; }
  *
  * Constructor parameters
  *   state           : callback procedure
+ *                     nullptr: no callback
  *
  * Note              : for internal use
  *
@@ -546,40 +547,36 @@ void tmr_delay( cnt_t delay ) { tmr_this()->delay = delay; }
 
 struct baseTimer : public __tmr
 {
-	baseTimer( void )
-		: __tmr _TMR_INIT(NULL) {}
-	template<class T>
-	baseTimer( const T _state )
+	baseTimer( void ):           __tmr _TMR_INIT(NULL) {}
 #if OS_FUNCTIONAL
-		: __tmr _TMR_INIT(_state == nullptr ? NULL : fun_), fun(_state) {}
+	baseTimer( std::nullptr_t ): __tmr _TMR_INIT(NULL) {}
+	template<class T>
+	baseTimer( const T _state ): __tmr _TMR_INIT(fun_), fun(_state) {}
 #else
-		: __tmr _TMR_INIT(_state) {}
+	baseTimer( Fun_t   _state ): __tmr _TMR_INIT(_state) {}
 #endif
 
-	void start        ( cnt_t _delay, cnt_t _period ) {        tmr_start        (this, _delay, _period); }
-	void startFor     ( cnt_t _delay )                {        tmr_startFor     (this, _delay);          }
-	void startPeriodic( cnt_t _period )               {        tmr_startPeriodic(this,         _period); }
-	void startNext    ( cnt_t _delay )                {        tmr_startNext    (this, _delay);          }
-	void startUntil   ( cnt_t _time )                 {        tmr_startUntil   (this, _time);           }
-	unsigned take     ( void )                        { return tmr_take         (this);                  }
-	unsigned tryWait  ( void )                        { return tmr_tryWait      (this);                  }
-	void     wait     ( void )                        {        tmr_wait         (this);                  }
-	bool     operator!( void )                        { return __tmr::hdr.id == ID_STOPPED;              }
-
-	template<class T>
-	void startFrom( cnt_t _delay, cnt_t _period, const T _state )
-	{
+	void start        ( cnt_t _delay, cnt_t _period )                 {        tmr_start        (this, _delay, _period); }
+	void startFor     ( cnt_t _delay )                                {        tmr_startFor     (this, _delay);          }
+	void startPeriodic( cnt_t _period )                               {        tmr_startPeriodic(this,         _period); }
+	void startNext    ( cnt_t _delay )                                {        tmr_startNext    (this, _delay);          }
+	void startUntil   ( cnt_t _time )                                 {        tmr_startUntil   (this, _time);           }
 #if OS_FUNCTIONAL
-		new (&fun) Fun_t(_state);
-		tmr_startFrom(this, _delay, _period, _state == nullptr ? NULL : fun_);
+	void startFrom    ( cnt_t _delay, cnt_t _period, std::nullptr_t ) {        tmr_startFrom    (this, _delay, _period, NULL); }
+	template<class T>
+	void startFrom    ( cnt_t _delay, cnt_t _period, const T _state ) {        new (&fun) Fun_t(_state);
+	                                                                           tmr_startFrom    (this, _delay, _period, fun_); }
 #else
-		tmr_startFrom(this, _delay, _period, _state);
+	void startFrom    ( cnt_t _delay, cnt_t _period, Fun_t   _state ) {        tmr_startFrom    (this, _delay, _period, _state); }
 #endif
-	}
+	unsigned take     ( void )                                        { return tmr_take         (this);                  }
+	unsigned tryWait  ( void )                                        { return tmr_tryWait      (this);                  }
+	void     wait     ( void )                                        {        tmr_wait         (this);                  }
+	bool     operator!( void )                                        { return __tmr::hdr.id == ID_STOPPED;              }
 
 #if OS_FUNCTIONAL
 	static
-	void     fun_( void ) { reinterpret_cast<baseTimer*>(tmr_this())->fun(); }
+	void     fun_     ( void )                                        {        reinterpret_cast<baseTimer *>(tmr_this())->fun(); }
 	Fun_t    fun;
 #endif
 };
@@ -592,6 +589,7 @@ struct baseTimer : public __tmr
  *
  * Constructor parameters
  *   state           : callback procedure
+ *                     nullptr: no callback
  *
  ******************************************************************************/
 
@@ -626,6 +624,7 @@ struct Timer : public baseTimer
  *                     IMMEDIATE: don't countdown
  *                     INFINITE:  countdown indefinitely
  *   state           : callback procedure
+ *                     nullptr: no callback
  *
  ******************************************************************************/
 
@@ -649,6 +648,7 @@ struct startTimer : public Timer
  *                     IMMEDIATE: don't countdown
  *                     INFINITE:  countdown indefinitely
  *   state           : callback procedure
+ *                     nullptr: no callback
  *
  ******************************************************************************/
 
@@ -673,6 +673,7 @@ struct startTimerFor : public startTimer
  *                     IMMEDIATE: don't countdown
  *                     INFINITE:  countdown indefinitely
  *   state           : callback procedure
+ *                     nullptr: no callback
  *
  ******************************************************************************/
 
@@ -694,6 +695,7 @@ struct startTimerPeriodic : public startTimer
  * Constructor parameters
  *   time            : timepoint value
  *   state           : callback procedure
+ *                     nullptr: no callback
  *
  ******************************************************************************/
 
@@ -714,18 +716,15 @@ struct startTimerUntil : public Timer
 
 namespace ThisTimer
 {
-	static inline void delay( cnt_t _delay ) { tmr_delay(_delay); }
-
-	template<class T>
-	static inline void flip( const T _state )
-	{
 #if OS_FUNCTIONAL
-		new (&reinterpret_cast<baseTimer*>(tmr_this())->fun) Fun_t(_state);
-		tmr_flip(_state == nullptr ? NULL : baseTimer::fun_);
+	static inline void flip ( std::nullptr_t ) { tmr_flip (NULL);   }
+	template<class T>
+	static inline void flip ( const T _state ) { new (&reinterpret_cast<baseTimer *>(tmr_this())->fun) Fun_t(_state);
+	                                             tmr_flip (baseTimer::fun_); }
 #else
-		tmr_flip(_state);
+	static inline void flip ( Fun_t   _state ) { tmr_flip (_state); }
 #endif
-	}
+	static inline void delay( cnt_t   _delay ) { tmr_delay(_delay); }
 }
 
 #endif//__cplusplus
