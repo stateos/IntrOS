@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    03.05.2020
+    @date    04.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -907,7 +907,7 @@ struct baseTask : public __tsk
 	template<class T>
 	baseTask( const T _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_INIT(fun_, _stack, _size), fun(_state) {}
 #else
-	baseTask( Fun_t   _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_INIT(_state, _stack, _size) {}
+	baseTask( fun_t * _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_INIT(_state, _stack, _size) {}
 #endif
 
 	void     start    ( void )             {        tsk_start    (this);          }
@@ -916,7 +916,7 @@ struct baseTask : public __tsk
 	void startFrom    ( const T  _state )  {        new (&fun) Fun_t(_state);
 	                                                tsk_startFrom(this, fun_);    }
 #else
-	void startFrom    ( Fun_t    _state )  {        tsk_startFrom(this, _state);  }
+	void startFrom    ( fun_t *  _state )  {        tsk_startFrom(this, _state);  }
 #endif
 	void     join     ( void )             {        tsk_join     (this);          }
 	void     reset    ( void )             {        tsk_reset    (this);          }
@@ -930,7 +930,7 @@ struct baseTask : public __tsk
 	void     action   ( const T  _action ) {        new (&act) Act_t(_action);
 	                                                tsk_action   (this, act_);    }
 #else
-	void     action   ( Act_t    _action ) {        tsk_action   (this, _action); }
+	void     action   ( act_t *  _action ) {        tsk_action   (this, _action); }
 #endif
 	bool     operator!( void )             { return __tsk::hdr.id == ID_STOPPED;  }
 
@@ -1020,7 +1020,7 @@ namespace ThisTask
 	static inline void     flip      ( const T  _state )  { new (&reinterpret_cast<baseTask *>(tsk_this())->fun) Fun_t(_state);
 	                                                        tsk_flip      (baseTask::fun_); }
 #else
-	static inline void     flip      ( Fun_t    _state )  { tsk_flip      (_state);  }
+	static inline void     flip      ( fun_t *  _state )  { tsk_flip      (_state);  }
 #endif
 	static inline void     sleepFor  ( cnt_t    _delay )  { tsk_sleepFor  (_delay);  }
 	static inline void     sleepNext ( cnt_t    _delay )  { tsk_sleepNext (_delay);  }
@@ -1035,7 +1035,7 @@ namespace ThisTask
 	static inline void     action    ( const T  _action ) { new (&reinterpret_cast<baseTask *>(tsk_this())->act) Act_t(_action);
 	                                                        cur_action    (baseTask::act_); }
 #else
-	static inline void     action    ( Act_t    _action ) { cur_action    (_action); }
+	static inline void     action    ( act_t *  _action ) { cur_action    (_action); }
 #endif
 }
 

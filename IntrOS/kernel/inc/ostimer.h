@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.h
     @author  Rajmund Szymanski
-    @date    03.05.2020
+    @date    04.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -553,7 +553,7 @@ struct baseTimer : public __tmr
 	template<class T>
 	baseTimer( const T _state ): __tmr _TMR_INIT(fun_), fun(_state) {}
 #else
-	baseTimer( Fun_t   _state ): __tmr _TMR_INIT(_state) {}
+	baseTimer( fun_t * _state ): __tmr _TMR_INIT(_state) {}
 #endif
 
 	void start        ( cnt_t _delay, cnt_t _period )                 {        tmr_start        (this, _delay, _period); }
@@ -567,7 +567,7 @@ struct baseTimer : public __tmr
 	void startFrom    ( cnt_t _delay, cnt_t _period, const T _state ) {        new (&fun) Fun_t(_state);
 	                                                                           tmr_startFrom    (this, _delay, _period, fun_); }
 #else
-	void startFrom    ( cnt_t _delay, cnt_t _period, Fun_t   _state ) {        tmr_startFrom    (this, _delay, _period, _state); }
+	void startFrom    ( cnt_t _delay, cnt_t _period, fun_t * _state ) {        tmr_startFrom    (this, _delay, _period, _state); }
 #endif
 	unsigned take     ( void )                                        { return tmr_take         (this);                  }
 	unsigned tryWait  ( void )                                        { return tmr_tryWait      (this);                  }
@@ -722,7 +722,7 @@ namespace ThisTimer
 	static inline void flip ( const T _state ) { new (&reinterpret_cast<baseTimer *>(tmr_this())->fun) Fun_t(_state);
 	                                             tmr_flip (baseTimer::fun_); }
 #else
-	static inline void flip ( Fun_t   _state ) { tmr_flip (_state); }
+	static inline void flip ( fun_t * _state ) { tmr_flip (_state); }
 #endif
 	static inline void delay( cnt_t   _delay ) { tmr_delay(_delay); }
 }
