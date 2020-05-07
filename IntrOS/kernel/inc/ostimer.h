@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.h
     @author  Rajmund Szymanski
-    @date    04.05.2020
+    @date    07.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -652,11 +652,11 @@ struct startTimer : public Timer
  *
  ******************************************************************************/
 
-struct startTimerFor : public startTimer
+struct startTimerFor : public Timer
 {
-	startTimerFor( const cnt_t _delay ):                 startTimer(_delay, 0) {}
+	startTimerFor( const cnt_t _delay ):                 Timer()       { tmr_startFor(this, _delay); }
 	template<class T>
-	startTimerFor( const cnt_t _delay, const T _state ): startTimer(_delay, 0, _state) {}
+	startTimerFor( const cnt_t _delay, const T _state ): Timer(_state) { tmr_startFor(this, _delay); }
 };
 
 /******************************************************************************
@@ -677,11 +677,11 @@ struct startTimerFor : public startTimer
  *
  ******************************************************************************/
 
-struct startTimerPeriodic : public startTimer
+struct startTimerPeriodic : public Timer
 {
-	startTimerPeriodic( const cnt_t _period ):                 startTimer(_period, _period) {}
+	startTimerPeriodic( const cnt_t _period ):                 Timer()       { tmr_startPeriodic(this, _period); }
 	template<class T>
-	startTimerPeriodic( const cnt_t _period, const T _state ): startTimer(_period, _period, _state) {}
+	startTimerPeriodic( const cnt_t _period, const T _state ): Timer(_state) { tmr_startPeriodic(this, _period); }
 };
 
 /******************************************************************************
