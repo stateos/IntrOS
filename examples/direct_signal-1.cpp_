@@ -3,13 +3,13 @@
 
 auto led = Led();
 
-auto sla = startTask([]
+auto sla = Task::Start([]
 {
 	ThisTask::action([](unsigned signo){ led = SIGSET(signo); });
 	ThisTask::suspend();
 });
 
-auto mas = startTask([]
+auto mas = Task::Start([]
 {
 	unsigned x = 0;
 

@@ -3,9 +3,9 @@
 
 int main()
 {
-	BinarySemaphore sem;
+	auto sem = Semaphore::Binary();
 
-	startTask sla([&]
+	Task::Start([&]
 	{
 		Led led;
 
@@ -16,7 +16,7 @@ int main()
 		}
 	});
 
-	startTask mas([&]
+	Task::Start([&]
 	{
 		for (;;)
 		{
