@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    04.05.2020
+    @date    07.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -913,10 +913,10 @@ struct baseTask : public __tsk
 	void     start    ( void )             {        tsk_start    (this);          }
 #if OS_FUNCTIONAL
 	template<class T>
-	void startFrom    ( const T  _state )  {        new (&fun) Fun_t(_state);
+	void     startFrom( const T  _state )  {        new (&fun) Fun_t(_state);
 	                                                tsk_startFrom(this, fun_);    }
 #else
-	void startFrom    ( fun_t *  _state )  {        tsk_startFrom(this, _state);  }
+	void     startFrom( fun_t *  _state )  {        tsk_startFrom(this, _state);  }
 #endif
 	void     join     ( void )             {        tsk_join     (this);          }
 	void     reset    ( void )             {        tsk_reset    (this);          }
@@ -969,35 +969,35 @@ struct TaskT : public baseTask, public baseStack<size_>
 	TaskT<size_>& operator=( const TaskT<size_>& ) = delete;
 
 	~TaskT( void ) { assert(__tsk::hdr.id == ID_STOPPED); }
-};
-
-/* -------------------------------------------------------------------------- */
-
-using Task = TaskT<OS_STACK_SIZE>;
 
 /******************************************************************************
  *
- * Class             : startTaskT<>
+ * Name              : TaskT<>::Start
  *
- * Description       : create and initialize complete work area for autorun task object
+ * Description       : create, initialize and start task object
  *
  * Constructor parameters
  *   size            : size of task private stack (in bytes)
  *   state           : task state (initial task function) doesn't have to be noreturn-type
  *                     it will be executed into an infinite system-implemented loop
  *
+ * Return            : Task<> object
+ *
  ******************************************************************************/
 
-template<size_t size_ = OS_STACK_SIZE>
-struct startTaskT : public TaskT<size_>
-{
 	template<class T>
-	startTaskT( const T _state ): TaskT<size_>(_state) { tsk_start(this); }
+	static
+	TaskT<size_> Start( const T _state )
+	{
+		TaskT<size_> tsk { _state };
+		tsk.start();
+		return tsk;
+	}
 };
 
 /* -------------------------------------------------------------------------- */
 
-using startTask = startTaskT<OS_STACK_SIZE>;
+using Task = TaskT<OS_STACK_SIZE>;
 
 /******************************************************************************
  *

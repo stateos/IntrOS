@@ -43,6 +43,7 @@ Features:
 - simplified c++ constructors
 - added wrk_init function
 - updated c++ wrapper
+- rebuilded c++ static functions
 ---------
 4.5
 - updated os version

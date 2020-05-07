@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossemaphore.h
     @author  Rajmund Szymanski
-    @date    21.04.2020
+    @date    07.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -324,6 +324,46 @@ struct Semaphore : public __sem
 	Semaphore& operator=( Semaphore&& ) = delete;
 	Semaphore& operator=( const Semaphore& ) = delete;
 
+/******************************************************************************
+ *
+ * Name              : Semaphore::Binary
+ *
+ * Description       : create and initialize binary semaphore object
+ *
+ * Parameters
+ *   init            : initial value of semaphore counter
+ *
+ * Return            : Semaphore object
+ *
+ ******************************************************************************/
+
+	static
+	Semaphore Binary( const unsigned _init = 0 )
+	{
+		return { _init, semBinary };
+	}
+
+/******************************************************************************
+ *
+ * Name              : Semaphore::Counting
+ *
+ * Description       : create and initialize counting semaphore object
+ *
+ * Parameters
+ *   init            : initial value of semaphore counter
+ *
+ * Return            : Semaphore object
+ *
+ ******************************************************************************/
+
+	static
+	Semaphore Counting( const unsigned _init = 0 )
+	{
+		return { _init, semCounting };
+	}
+
+/* -------------------------------------------------------------------------- */
+
 	unsigned take    ( void ) { return sem_take    (this); }
 	unsigned tryWait ( void ) { return sem_tryWait (this); }
 	void     wait    ( void ) {        sem_wait    (this); }
@@ -331,38 +371,6 @@ struct Semaphore : public __sem
 	unsigned post    ( void ) { return sem_post    (this); }
 	void     send    ( void ) {        sem_send    (this); }
 	unsigned getValue( void ) { return sem_getValue(this); }
-};
-
-/******************************************************************************
- *
- * Class             : BinarySemaphore
- *
- * Description       : create and initialize a binary semaphore object
- *
- * Constructor parameters
- *   init            : initial value of semaphore counter
- *
- ******************************************************************************/
-
-struct BinarySemaphore : public Semaphore
-{
-	BinarySemaphore( const unsigned _init = 0 ): Semaphore(_init, semBinary) {}
-};
-
-/******************************************************************************
- *
- * Class             : CountingSemaphore
- *
- * Description       : create and initialize a counting semaphore object
- *
- * Constructor parameters
- *   init            : initial value of semaphore counter
- *
- ******************************************************************************/
-
-struct CountingSemaphore : public Semaphore
-{
-	CountingSemaphore( const unsigned _init = 0 ): Semaphore(_init, semCounting) {}
 };
 
 #endif//__cplusplus
