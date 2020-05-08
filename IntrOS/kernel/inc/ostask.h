@@ -961,7 +961,11 @@ template<size_t size_ = OS_STACK_SIZE>
 struct TaskT : public baseTask, public baseStack<size_>
 {
 	template<class T>
-	TaskT( const T _state ): baseTask(_state, baseStack<size_>::stack_, size_) {}
+	TaskT( const T _state ):           baseTask(_state, baseStack<size_>::stack_, size_) {}
+#if OS_FUNCTIONAL
+	template<typename F, typename... A>
+	TaskT( F&& _state, A&&... _args ): baseTask(std::bind(std::forward<F>(_state), std::forward<A>(_args)...), baseStack<size_>::stack_, size_) {}
+#endif
 
 	TaskT( TaskT<size_>&& ) = default;
 	TaskT( const TaskT<size_>& ) = delete;
