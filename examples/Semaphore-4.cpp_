@@ -23,7 +23,7 @@ int main()
 {
 	Led led;
 	Semaphore sem(0);
-	Task::Start([&] { slave(sem, led); });
-	Task::Start([&] { master(sem); });
+	Task::Start([&]{ slave(sem, led); });
+	Task::Start([&]{ master(sem); });
 	ThisTask::sleep();
 }

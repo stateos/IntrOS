@@ -3,8 +3,8 @@
 
 auto led = Led();
 auto sem = Semaphore(0);
-auto sla = Task([] { sem.wait(); led.tick(); });
-auto mas = Task([] { ThisTask::sleepFor(SEC); sem.give(); });
+auto sla = Task([]{ sem.wait(); led.tick(); });
+auto mas = Task([]{ ThisTask::sleepFor(SEC); sem.give(); });
 
 int main()
 {
