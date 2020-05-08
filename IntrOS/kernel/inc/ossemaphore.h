@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossemaphore.h
     @author  Rajmund Szymanski
-    @date    07.05.2020
+    @date    08.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -38,6 +38,7 @@
 
 #define semBinary    ( 1U )   // binary semaphore
 #define semCounting  ( 0U-1 ) // counting semaphore
+#define semDefault     semCounting
 
 /******************************************************************************
  *
@@ -88,7 +89,7 @@ extern "C" {
  *
  ******************************************************************************/
 
-#define               _VA_SEM( _limit ) ( (_limit + 0) ? (_limit + 0) : (semCounting) )
+#define               _VA_SEM( _limit ) ( (_limit + 0) ? (_limit + 0) : (semDefault) )
 
 /******************************************************************************
  *
@@ -317,7 +318,7 @@ unsigned sem_getValue( sem_t *sem );
 
 struct Semaphore : public __sem
 {
-	Semaphore( const unsigned _init, const unsigned _limit = semCounting ): __sem _SEM_INIT(_init, _limit) {}
+	Semaphore( const unsigned _init, const unsigned _limit = semDefault ): __sem _SEM_INIT(_init, _limit) {}
 
 	Semaphore( Semaphore&& ) = default;
 	Semaphore( const Semaphore& ) = delete;
