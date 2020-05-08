@@ -973,6 +973,38 @@ struct TaskT : public baseTask, public baseStack<size_>
 
 /******************************************************************************
  *
+ * Name              : TaskT<>::Make
+ *
+ * Description       : create and initialize task object
+ *
+ * Parameters
+ *   size            : size of task private stack (in bytes)
+ *   state           : task state (initial task function) doesn't have to be noreturn-type
+ *                     it will be executed into an infinite system-implemented loop
+ *   args            : arguments for state function
+ *
+ * Return            : TaskT<> object
+ *
+ ******************************************************************************/
+
+	template<class T>
+	static
+	TaskT<size_> Make( const T _state )
+	{
+		return { _state };
+	}
+
+#if OS_FUNCTIONAL
+	template<typename F, typename... A>
+	static
+	TaskT<size_> Make( F&& _state, A&&... _args )
+	{
+		return { std::bind(std::forward<F>(_state), std::forward<A>(_args)...) };
+	}
+#endif
+
+/******************************************************************************
+ *
  * Name              : TaskT<>::Start
  *
  * Description       : create, initialize and start task object
@@ -981,6 +1013,7 @@ struct TaskT : public baseTask, public baseStack<size_>
  *   size            : size of task private stack (in bytes)
  *   state           : task state (initial task function) doesn't have to be noreturn-type
  *                     it will be executed into an infinite system-implemented loop
+ *   args            : arguments for state function
  *
  * Return            : TaskT<> object
  *
@@ -994,6 +1027,17 @@ struct TaskT : public baseTask, public baseStack<size_>
 		tsk.start();
 		return tsk;
 	}
+
+#if OS_FUNCTIONAL
+	template<typename F, typename... A>
+	static
+	TaskT<size_> Start( F&& _state, A&&... _args )
+	{
+		TaskT<size_> tsk { std::bind(std::forward<F>(_state), std::forward<A>(_args)...) };
+		tsk.start();
+		return tsk;
+	}
+#endif
 };
 
 /* -------------------------------------------------------------------------- */
