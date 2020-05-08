@@ -977,7 +977,7 @@ struct TaskT : public baseTask, public baseStack<size_>
  *
  * Description       : create, initialize and start task object
  *
- * Constructor parameters
+ * Parameters
  *   size            : size of task private stack (in bytes)
  *   state           : task state (initial task function) doesn't have to be noreturn-type
  *                     it will be executed into an infinite system-implemented loop

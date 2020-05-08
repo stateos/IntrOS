@@ -728,7 +728,7 @@ struct Timer : public baseTimer
  *                     and start one-shot timer until given timepoint
  *                     when the timer has finished the countdown, the callback procedure is launched
  *
- * Constructor parameters
+ * Parameters
  *   time            : timepoint value
  *   state           : callback procedure
  *                     none / nullptr: no callback
