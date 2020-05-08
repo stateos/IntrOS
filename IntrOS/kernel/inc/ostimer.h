@@ -609,6 +609,43 @@ struct Timer : public baseTimer
 
 /******************************************************************************
  *
+ * Name              : Timer::Make
+ *
+ * Description       : create and initialize timer object
+ *
+ * Parameters
+ *   state           : callback procedure
+ *                     none / nullptr: no callback
+ *   args            : arguments for callback procedure
+ *
+ * Return            : Timer object
+ *
+ ******************************************************************************/
+
+	static
+	Timer Make( void )
+	{
+		return {};
+	}
+	
+	template<class T>
+	static
+	Timer Make( const T _state )
+	{
+		return { _state };
+	}
+
+#if OS_FUNCTIONAL
+	template<typename F, typename... A>
+	static
+	Timer Make( F&& _state, A&&... _args )
+	{
+		return { std::bind(std::forward<F>(_state), std::forward<A>(_args)...) };
+	}
+#endif
+
+/******************************************************************************
+ *
  * Name              : Timer::Start
  *
  * Description       : create and initialize timer object
@@ -625,6 +662,7 @@ struct Timer : public baseTimer
  *                     INFINITE:  countdown indefinitely
  *   state           : callback procedure
  *                     none / nullptr: no callback
+ *   args            : arguments for callback procedure
  *
  * Return            : Timer object
  *
@@ -647,6 +685,17 @@ struct Timer : public baseTimer
 		return tmr;
 	}
 
+#if OS_FUNCTIONAL
+	template<typename F, typename... A>
+	static
+	Timer Start( const cnt_t _delay, const cnt_t _period, F&& _state, A&&... _args )
+	{
+		Timer tmr { std::bind(std::forward<F>(_state), std::forward<A>(_args)...) };
+		tmr.start(_delay, _period);
+		return tmr;
+	}
+#endif
+
 /******************************************************************************
  *
  * Name              : Timer::StartFor
@@ -661,6 +710,7 @@ struct Timer : public baseTimer
  *                     INFINITE:  countdown indefinitely
  *   state           : callback procedure
  *                     none / nullptr: no callback
+ *   args            : arguments for callback procedure
  *
  * Return            : Timer object
  *
@@ -683,6 +733,17 @@ struct Timer : public baseTimer
 		return tmr;
 	}
 
+#if OS_FUNCTIONAL
+	template<typename F, typename... A>
+	static
+	Timer StartFor( const cnt_t _delay, F&& _state, A&&... _args )
+	{
+		Timer tmr { std::bind(std::forward<F>(_state), std::forward<A>(_args)...) };
+		tmr.startFor(_delay);
+		return tmr;
+	}
+#endif
+
 /******************************************************************************
  *
  * Name              : Timer::StartPeriodic
@@ -698,6 +759,7 @@ struct Timer : public baseTimer
  *                     INFINITE:  countdown indefinitely
  *   state           : callback procedure
  *                     none / nullptr: no callback
+ *   args            : arguments for callback procedure
  *
  * Return            : Timer object
  *
@@ -720,6 +782,17 @@ struct Timer : public baseTimer
 		return tmr;
 	}
 
+#if OS_FUNCTIONAL
+	template<typename F, typename... A>
+	static
+	Timer StartPeriodic( const cnt_t _period, F&& _state, A&&... _args )
+	{
+		Timer tmr { std::bind(std::forward<F>(_state), std::forward<A>(_args)...) };
+		tmr.startPeriodic(_period);
+		return tmr;
+	}
+#endif
+
 /******************************************************************************
  *
  * Name              : Timer::StartUntil
@@ -732,6 +805,7 @@ struct Timer : public baseTimer
  *   time            : timepoint value
  *   state           : callback procedure
  *                     none / nullptr: no callback
+ *   args            : arguments for callback procedure
  *
  * Return            : Timer object
  *
@@ -753,6 +827,17 @@ struct Timer : public baseTimer
 		tmr.startUntil(_time);
 		return tmr;
 	}
+
+#if OS_FUNCTIONAL
+	template<typename F, typename... A>
+	static
+	Timer StartUntil( const cnt_t _time, F&& _state, A&&... _args )
+	{
+		Timer tmr { std::bind(std::forward<F>(_state), std::forward<A>(_args)...) };
+		tmr.startUntil(_time);
+		return tmr;
+	}
+#endif
 };
 
 /******************************************************************************
