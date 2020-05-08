@@ -1,0 +1,14 @@
+#include <stm32f4_discovery.h>
+#include <os.h>
+
+int main()
+{
+	auto led = Led();
+	auto sem = Semaphore::Binary();
+	auto sla = Task::Start([&] { sem.wait(); led.tick(); });
+	auto mas = Task::Start([&] { ThisTask::sleepFor(SEC); sem.give(); });
+	mas.reset();
+	auto tmp = std::move(mas);
+	tmp.start();
+	ThisTask::exit();
+}
