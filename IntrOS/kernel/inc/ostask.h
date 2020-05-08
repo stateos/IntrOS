@@ -936,10 +936,10 @@ struct baseTask : public __tsk
 
 #if OS_FUNCTIONAL
 	static
-	void     fun_     ( void )             {        reinterpret_cast<baseTask *>(tsk_this())->fun(); }
+	void     fun_     ( void )             {        static_cast<baseTask *>(tsk_this())->fun(); }
 	Fun_t    fun;
 	static
-	void     act_     ( unsigned _signo )  {        reinterpret_cast<baseTask *>(tsk_this())->act(_signo); }
+	void     act_     ( unsigned _signo )  {        static_cast<baseTask *>(tsk_this())->act(_signo); }
 	Act_t    act;
 #endif
 };
@@ -968,6 +968,7 @@ struct TaskT : public baseTask, public baseStack<size_>
 	TaskT<size_>& operator=( TaskT<size_>&& ) = delete;
 	TaskT<size_>& operator=( const TaskT<size_>& ) = delete;
 
+	virtual
 	~TaskT( void ) { assert(__tsk::hdr.id == ID_STOPPED); }
 
 /******************************************************************************
@@ -1009,33 +1010,35 @@ using Task = TaskT<OS_STACK_SIZE>;
 
 namespace ThisTask
 {
-	static inline void     stop      ( void )             { tsk_stop      ();        }
-	static inline void     exit      ( void )             { tsk_exit      ();        }
-	static inline void     reset     ( void )             { cur_reset     ();        }
-	static inline void     kill      ( void )             { cur_kill      ();        }
-	static inline void     yield     ( void )             { tsk_yield     ();        }
-	static inline void     pass      ( void )             { tsk_pass      ();        }
+	template<class T = baseTask>
+	static inline T  *     current   ( void )             { return static_cast<T *>(tsk_this()); }
+	static inline void     stop      ( void )             {        tsk_stop      ();        }
+	static inline void     exit      ( void )             {        tsk_exit      ();        }
+	static inline void     reset     ( void )             {        cur_reset     ();        }
+	static inline void     kill      ( void )             {        cur_kill      ();        }
+	static inline void     yield     ( void )             {        tsk_yield     ();        }
+	static inline void     pass      ( void )             {        tsk_pass      ();        }
 #if OS_FUNCTIONAL
 	template<class T>
-	static inline void     flip      ( const T  _state )  { new (&reinterpret_cast<baseTask *>(tsk_this())->fun) Fun_t(_state);
-	                                                        tsk_flip      (baseTask::fun_); }
+	static inline void     flip      ( const T  _state )  {        new (&ThisTask::current()->fun) Fun_t(_state);
+	                                                               tsk_flip      (baseTask::fun_); }
 #else
-	static inline void     flip      ( fun_t *  _state )  { tsk_flip      (_state);  }
+	static inline void     flip      ( fun_t *  _state )  {        tsk_flip      (_state);  }
 #endif
-	static inline void     sleepFor  ( cnt_t    _delay )  { tsk_sleepFor  (_delay);  }
-	static inline void     sleepNext ( cnt_t    _delay )  { tsk_sleepNext (_delay);  }
-	static inline void     sleepUntil( cnt_t    _time )   { tsk_sleepUntil(_time);   }
-	static inline void     sleep     ( void )             { tsk_sleep     ();        }
-	static inline void     delay     ( cnt_t    _delay )  { tsk_delay     (_delay);  }
-	static inline void     suspend   ( void )             { cur_suspend   ();        }
-	static inline void     give      ( unsigned _signo )  { cur_give      (_signo);  }
-	static inline void     signal    ( unsigned _signo )  { cur_signal    (_signo);  }
+	static inline void     sleepFor  ( cnt_t    _delay )  {        tsk_sleepFor  (_delay);  }
+	static inline void     sleepNext ( cnt_t    _delay )  {        tsk_sleepNext (_delay);  }
+	static inline void     sleepUntil( cnt_t    _time )   {        tsk_sleepUntil(_time);   }
+	static inline void     sleep     ( void )             {        tsk_sleep     ();        }
+	static inline void     delay     ( cnt_t    _delay )  {        tsk_delay     (_delay);  }
+	static inline void     suspend   ( void )             {        cur_suspend   ();        }
+	static inline void     give      ( unsigned _signo )  {        cur_give      (_signo);  }
+	static inline void     signal    ( unsigned _signo )  {        cur_signal    (_signo);  }
 #if OS_FUNCTIONAL
 	template<class T>
-	static inline void     action    ( const T  _action ) { new (&reinterpret_cast<baseTask *>(tsk_this())->act) Act_t(_action);
-	                                                        cur_action    (baseTask::act_); }
+	static inline void     action    ( const T  _action ) {        new (&ThisTask::current()->act) Act_t(_action);
+	                                                               cur_action    (baseTask::act_); }
 #else
-	static inline void     action    ( act_t *  _action ) { cur_action    (_action); }
+	static inline void     action    ( act_t *  _action ) {        cur_action    (_action); }
 #endif
 }
 

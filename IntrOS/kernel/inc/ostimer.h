@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.h
     @author  Rajmund Szymanski
-    @date    07.05.2020
+    @date    08.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -576,7 +576,7 @@ struct baseTimer : public __tmr
 
 #if OS_FUNCTIONAL
 	static
-	void     fun_     ( void )                                        {        reinterpret_cast<baseTimer *>(tmr_this())->fun(); }
+	void     fun_     ( void )                                        {        static_cast<baseTimer *>(tmr_this())->fun(); }
 	Fun_t    fun;
 #endif
 };
@@ -604,6 +604,7 @@ struct Timer : public baseTimer
 	Timer& operator=( Timer&& ) = delete;
 	Timer& operator=( const Timer& ) = delete;
 
+	virtual
 	~Timer( void ) { assert(__tmr::hdr.id == ID_STOPPED); }
 
 /******************************************************************************
@@ -764,15 +765,17 @@ struct Timer : public baseTimer
 
 namespace ThisTimer
 {
+	template<class T = baseTimer>
+	static inline T  * current ( void )           { return static_cast<T *>(tmr_this()); }
 #if OS_FUNCTIONAL
-	static inline void flip ( std::nullptr_t ) { tmr_flip (NULL);   }
+	static inline void flip    ( std::nullptr_t ) { tmr_flip (NULL);   }
 	template<class T>
-	static inline void flip ( const T _state ) { new (&reinterpret_cast<baseTimer *>(tmr_this())->fun) Fun_t(_state);
-	                                             tmr_flip (baseTimer::fun_); }
+	static inline void flip    ( const T _state ) { new (&ThisTimer::current()->fun) Fun_t(_state);
+	                                                tmr_flip (baseTimer::fun_); }
 #else
-	static inline void flip ( fun_t * _state ) { tmr_flip (_state); }
+	static inline void flip    ( fun_t * _state ) { tmr_flip (_state); }
 #endif
-	static inline void delay( cnt_t   _delay ) { tmr_delay(_delay); }
+	static inline void delay  ( cnt_t   _delay )  { tmr_delay(_delay); }
 }
 
 #endif//__cplusplus
