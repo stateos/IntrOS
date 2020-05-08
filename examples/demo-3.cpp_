@@ -1,0 +1,26 @@
+#include <stm32f4_discovery.h>
+#include <os.h>
+
+void proc( unsigned &led, cnt_t timePoint )
+{
+	ThisTask::sleepUntil(timePoint);
+	for (;;)
+	{
+		ThisTask::sleepNext(SEC/2);
+		led++;
+	}
+}
+
+int main()
+{
+	auto led = Led();
+	auto grn = GreenLed();
+
+	auto t1 = Task::Start(proc, std::ref(led[0]), SEC/8*0);
+	auto t2 = Task::Start(proc, std::ref(led[1]), SEC/8*1);
+	auto t3 = Task::Start(proc, std::ref(led[2]), SEC/8*2);
+	auto t4 = Task::Start(proc, std::ref(led[3]), SEC/8*3);
+	auto t5 = Task::Start(proc, std::ref(grn),    SEC/8*4);
+
+	ThisTask::stop();
+}
