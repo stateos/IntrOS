@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    08.05.2020
+    @date    09.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -905,7 +905,7 @@ struct baseTask : public __tsk
 {
 #if OS_FUNCTIONAL
 	template<class T>
-	baseTask( const T _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_INIT(fun_, _stack, _size), fun(_state) {}
+	baseTask( const T _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_INIT(fun_, _stack, _size), fun{_state} {}
 #else
 	baseTask( fun_t * _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_INIT(_state, _stack, _size) {}
 #endif
@@ -961,10 +961,10 @@ template<size_t size_ = OS_STACK_SIZE>
 struct TaskT : public baseTask, public baseStack<size_>
 {
 	template<class T>
-	TaskT( const T _state ):           baseTask(_state, baseStack<size_>::stack_, size_) {}
+	TaskT( const T _state ):           baseTask{_state, baseStack<size_>::stack_, size_} {}
 #if OS_FUNCTIONAL
 	template<typename F, typename... A>
-	TaskT( F&& _state, A&&... _args ): baseTask(std::bind(std::forward<F>(_state), std::forward<A>(_args)...), baseStack<size_>::stack_, size_) {}
+	TaskT( F&& _state, A&&... _args ): baseTask{std::bind(std::forward<F>(_state), std::forward<A>(_args)...), baseStack<size_>::stack_, size_} {}
 #endif
 
 	TaskT( TaskT<size_>&& ) = default;
