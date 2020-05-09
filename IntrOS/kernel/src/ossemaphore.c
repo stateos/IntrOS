@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossemaphore.c
     @author  Rajmund Szymanski
-    @date    29.03.2020
+    @date    09.05.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -85,6 +85,7 @@ unsigned sem_give( sem_t *sem )
 	unsigned event = E_FAILURE;
 
 	assert(sem);
+	assert(sem->limit);
 
 	sys_lock();
 	{
