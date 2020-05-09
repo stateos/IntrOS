@@ -2,7 +2,7 @@
 
     @file    IntrOS: osconditionvariable.h
     @author  Rajmund Szymanski
-    @date    21.04.2020
+    @date    09.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
