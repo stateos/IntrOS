@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossemaphore.h
     @author  Rajmund Szymanski
-    @date    08.05.2020
+    @date    10.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -264,22 +264,6 @@ unsigned sem_post( sem_t *sem ) { return sem_give(sem); }
 
 /******************************************************************************
  *
- * Name              : sem_send
- *
- * Description       : try to unlock the semaphore object,
- *                     wait indefinitely if the semaphore object can't be unlocked immediately
- *
- * Parameters
- *   sem             : pointer to semaphore object
- *
- * Return            : none
- *
- ******************************************************************************/
-
-void sem_send( sem_t *sem );
-
-/******************************************************************************
- *
  * Name              : sem_getValue
  *
  * Description       : return current value of semaphore
@@ -318,7 +302,7 @@ unsigned sem_getValue( sem_t *sem );
 
 struct Semaphore : public __sem
 {
-	Semaphore( const unsigned _init, const unsigned _limit = semDefault ): __sem _SEM_INIT(_init, _limit) {}
+	Semaphore( const unsigned _init, const unsigned _limit = semDefault ): __sem _SEM_INIT(_init, _limit) { assert(_init<=_limit); }
 
 	Semaphore( Semaphore&& ) = default;
 	Semaphore( const Semaphore& ) = delete;
@@ -370,7 +354,6 @@ struct Semaphore : public __sem
 	void     wait    ( void ) {        sem_wait    (this); }
 	unsigned give    ( void ) { return sem_give    (this); }
 	unsigned post    ( void ) { return sem_post    (this); }
-	void     send    ( void ) {        sem_send    (this); }
 	unsigned getValue( void ) { return sem_getValue(this); }
 };
 
