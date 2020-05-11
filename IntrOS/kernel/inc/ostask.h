@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    09.05.2020
+    @date    11.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -972,7 +972,7 @@ struct TaskT : public baseTask, public baseStack<size_>
 	TaskT<size_>& operator=( TaskT<size_>&& ) = delete;
 	TaskT<size_>& operator=( const TaskT<size_>& ) = delete;
 
-	virtual
+	__VIRTUAL
 	~TaskT( void ) { assert(__tsk::hdr.id == ID_STOPPED); }
 
 /******************************************************************************
