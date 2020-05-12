@@ -2,7 +2,7 @@
 #include <os.h>
 
 Led       led;
-Semaphore sem(0);
+Semaphore sem{0};
 
 void slave()
 {
@@ -22,8 +22,8 @@ void master()
 	}
 }
 
-TaskT<256> sla(slave);
-TaskT<256> mas(master);
+TaskT<256> sla{slave };
+TaskT<256> mas{master};
 
 int main()
 {
