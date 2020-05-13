@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    12.05.2020
+    @date    13.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -879,7 +879,7 @@ void cur_action( act_t *action ) { tsk_action(System.cur, action); }
  *
  ******************************************************************************/
 
-template<size_t size_ = OS_STACK_SIZE>
+template<size_t size_>
 struct baseStack
 {
 	stk_t stack_[ STK_SIZE(size_) ];
@@ -957,7 +957,7 @@ struct baseTask : public __tsk
  *
  ******************************************************************************/
 
-template<size_t size_ = OS_STACK_SIZE>
+template<size_t size_>
 struct TaskT : public baseTask, public baseStack<size_>
 {
 	template<class T>
@@ -1043,7 +1043,13 @@ struct TaskT : public baseTask, public baseStack<size_>
 #endif
 };
 
-/* -------------------------------------------------------------------------- */
+/******************************************************************************
+ *
+ * Class             : Task
+ *
+ * Description       : create and initialize complete work area for task object
+ *
+ ******************************************************************************/
 
 using Task = TaskT<OS_STACK_SIZE>;
 
