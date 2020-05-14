@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.h
     @author  Rajmund Szymanski
-    @date    12.05.2020
+    @date    14.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -548,7 +548,7 @@ void tmr_delay( cnt_t delay ) { tmr_this()->delay = delay; }
 struct baseTimer : public __tmr
 {
 	baseTimer( void ):           __tmr _TMR_INIT(NULL) {}
-#if OS_FUNCTIONAL
+#if __cplusplus >= 201402
 	baseTimer( std::nullptr_t ): __tmr _TMR_INIT(NULL) {}
 	template<class T>
 	baseTimer( const T _state ): __tmr _TMR_INIT(fun_), fun{_state} {}
@@ -561,7 +561,7 @@ struct baseTimer : public __tmr
 	void startPeriodic( cnt_t _period )                               {        tmr_startPeriodic(this,         _period); }
 	void startNext    ( cnt_t _delay )                                {        tmr_startNext    (this, _delay);          }
 	void startUntil   ( cnt_t _time )                                 {        tmr_startUntil   (this, _time);           }
-#if OS_FUNCTIONAL
+#if __cplusplus >= 201402
 	void startFrom    ( cnt_t _delay, cnt_t _period, std::nullptr_t ) {        tmr_startFrom    (this, _delay, _period, NULL); }
 	template<class T>
 	void startFrom    ( cnt_t _delay, cnt_t _period, const T _state ) {        new (&fun) Fun_t(_state);
@@ -574,7 +574,7 @@ struct baseTimer : public __tmr
 	void     wait     ( void )                                        {        tmr_wait         (this);                  }
 	bool     operator!( void )                                        { return __tmr::hdr.id == ID_STOPPED;              }
 
-#if OS_FUNCTIONAL
+#if __cplusplus >= 201402
 	static
 	void     fun_     ( void )                                        {        static_cast<baseTimer *>(tmr_this())->fun(); }
 	Fun_t    fun;
@@ -598,7 +598,7 @@ struct Timer : public baseTimer
 	Timer( void ):                     baseTimer{} {}
 	template<class T>
 	Timer( const T _state ):           baseTimer{_state} {}
-#if OS_FUNCTIONAL
+#if __cplusplus >= 201402
 	template<typename F, typename... A>
 	Timer( F&& _state, A&&... _args ): baseTimer{std::bind(std::forward<F>(_state), std::forward<A>(_args)...)} {}
 #endif
@@ -638,7 +638,7 @@ struct Timer : public baseTimer
 		return { _state };
 	}
 
-#if OS_FUNCTIONAL
+#if __cplusplus >= 201402
 	template<typename F, typename... A>
 	static
 	Timer Make( F&& _state, A&&... _args )
@@ -688,7 +688,7 @@ struct Timer : public baseTimer
 		return tmr;
 	}
 
-#if OS_FUNCTIONAL
+#if __cplusplus >= 201402
 	template<typename F, typename... A>
 	static
 	Timer Start( const cnt_t _delay, const cnt_t _period, F&& _state, A&&... _args )
@@ -736,7 +736,7 @@ struct Timer : public baseTimer
 		return tmr;
 	}
 
-#if OS_FUNCTIONAL
+#if __cplusplus >= 201402
 	template<typename F, typename... A>
 	static
 	Timer StartFor( const cnt_t _delay, F&& _state, A&&... _args )
@@ -785,7 +785,7 @@ struct Timer : public baseTimer
 		return tmr;
 	}
 
-#if OS_FUNCTIONAL
+#if __cplusplus >= 201402
 	template<typename F, typename... A>
 	static
 	Timer StartPeriodic( const cnt_t _period, F&& _state, A&&... _args )
@@ -831,7 +831,7 @@ struct Timer : public baseTimer
 		return tmr;
 	}
 
-#if OS_FUNCTIONAL
+#if __cplusplus >= 201402
 	template<typename F, typename... A>
 	static
 	Timer StartUntil( const cnt_t _time, F&& _state, A&&... _args )
@@ -855,7 +855,7 @@ namespace ThisTimer
 {
 	template<class T = baseTimer>
 	static inline T  * current ( void )           { return static_cast<T *>(tmr_this()); }
-#if OS_FUNCTIONAL
+#if __cplusplus >= 201402
 	static inline void flip    ( std::nullptr_t ) { tmr_flip (NULL);   }
 	template<class T>
 	static inline void flip    ( const T _state ) { new (&ThisTimer::current()->fun) Fun_t(_state);
@@ -863,7 +863,7 @@ namespace ThisTimer
 #else
 	static inline void flip    ( fun_t * _state ) { tmr_flip (_state); }
 #endif
-	static inline void delay  ( cnt_t   _delay )  { tmr_delay(_delay); }
+	static inline void delay   ( cnt_t   _delay ) { tmr_delay(_delay); }
 }
 
 #endif//__cplusplus

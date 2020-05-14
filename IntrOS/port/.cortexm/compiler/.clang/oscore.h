@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    02.05.2020
+    @date    14.05.2020
     @brief   IntrOS port file for ARM Cotrex-M uC.
 
  ******************************************************************************
@@ -43,14 +43,6 @@ extern "C" {
 #ifndef OS_STACK_SIZE
 #define OS_STACK_SIZE       256 /* default task stack size in bytes           */
 #endif
-
-/* -------------------------------------------------------------------------- */
-
-#ifndef OS_FUNCTIONAL
-#define OS_FUNCTIONAL         1 /* included c++ functional library header     */
-#elif   OS_FUNCTIONAL
-#error  OS_FUNCTIONAL is an internal port definition!
-#endif//OS_FUNCTIONAL
 
 /* -------------------------------------------------------------------------- */
 

@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    29.03.2020
+    @date    14.05.2020
     @brief   IntrOS port file for AVR8 uC.
 
  ******************************************************************************
@@ -43,14 +43,6 @@ extern "C" {
 #ifndef OS_STACK_SIZE
 #define OS_STACK_SIZE        64 /* default task stack size in bytes           */
 #endif
-
-/* -------------------------------------------------------------------------- */
-
-#ifndef OS_FUNCTIONAL
-#define OS_FUNCTIONAL         0 /* c++ functional library header not included */
-#elif   OS_FUNCTIONAL
-#error  OS_FUNCTIONAL is an internal port definition!
-#endif//OS_FUNCTIONAL
 
 /* -------------------------------------------------------------------------- */
 
