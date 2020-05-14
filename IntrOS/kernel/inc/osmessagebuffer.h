@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.h
     @author  Rajmund Szymanski
-    @date    26.04.2020
+    @date    14.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -399,10 +399,10 @@ struct MessageBufferT : public __msg
 	unsigned give   ( const void *_data, unsigned _size ) { return msg_give   (this, _data, _size); }
 	unsigned send   ( const void *_data, unsigned _size ) { return msg_send   (this, _data, _size); }
 	unsigned push   ( const void *_data, unsigned _size ) { return msg_push   (this, _data, _size); }
-	unsigned count  ( void )                              { return msg_count  (this);               }
-	unsigned space  ( void )                              { return msg_space  (this);               }
-	unsigned limit  ( void )                              { return msg_limit  (this);               }
-	unsigned size   ( void )                              { return msg_size   (this);               }
+	unsigned count  ( void )                              { return msg_count  (this); }
+	unsigned space  ( void )                              { return msg_space  (this); }
+	unsigned limit  ( void )                              { return msg_limit  (this); }
+	unsigned size   ( void )                              { return msg_size   (this); }
 
 	private:
 	char data_[limit_];

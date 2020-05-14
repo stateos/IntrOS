@@ -385,9 +385,9 @@ struct StreamBufferT : public __stm
 	unsigned give   ( const void *_data, unsigned _size ) { return stm_give   (this, _data, _size); }
 	unsigned send   ( const void *_data, unsigned _size ) { return stm_send   (this, _data, _size); }
 	unsigned push   ( const void *_data, unsigned _size ) { return stm_push   (this, _data, _size); }
-	unsigned count  ( void )                              { return stm_count  (this);               }
-	unsigned space  ( void )                              { return stm_space  (this);               }
-	unsigned limit  ( void )                              { return stm_limit  (this);               }
+	unsigned count  ( void )                              { return stm_count  (this); }
+	unsigned space  ( void )                              { return stm_space  (this); }
+	unsigned limit  ( void )                              { return stm_limit  (this); }
 
 	private:
 	char data_[limit_];

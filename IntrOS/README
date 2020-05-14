@@ -34,6 +34,9 @@ Features:
 4.7
 - updated os version
 - implementation of steady clock
+- updated Timer class
+- updated Task class
+- updated other classes
 - removed unused OS_FUNCTIONAL definition
 ---------
 4.6

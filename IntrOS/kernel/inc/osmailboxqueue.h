@@ -354,9 +354,9 @@ struct MailBoxQueueT : public __box
 	unsigned give   ( const void *_data ) { return box_give   (this, _data); }
 	void     send   ( const void *_data ) {        box_send   (this, _data); }
 	void     push   ( const void *_data ) {        box_push   (this, _data); }
-	unsigned count  (       void )        { return box_count  (this);        }
-	unsigned space  (       void )        { return box_space  (this);        }
-	unsigned limit  (       void )        { return box_limit  (this);        }
+	unsigned count  (       void )        { return box_count  (this); }
+	unsigned space  (       void )        { return box_space  (this); }
+	unsigned limit  (       void )        { return box_limit  (this); }
 
 	private:
 	char data_[limit_ * size_];

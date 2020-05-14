@@ -33,6 +33,7 @@
 #define __INTROS_TSK_H
 
 #include "oskernel.h"
+#include "osclock.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -910,29 +911,29 @@ struct baseTask : public __tsk
 	baseTask( fun_t * _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_INIT(_state, _stack, _size) {}
 #endif
 
-	void     start    ( void )             {        tsk_start    (this);          }
+	void     start    ( void )             {        tsk_start    (this); }
 #if __cplusplus >= 201402
 	template<class F>
 	void     startFrom( const F  _state )  {        new (&fun) Fun_t(_state);
-	                                                tsk_startFrom(this, fun_);    }
+	                                                tsk_startFrom(this, fun_); }
 #else
-	void     startFrom( fun_t *  _state )  {        tsk_startFrom(this, _state);  }
+	void     startFrom( fun_t *  _state )  {        tsk_startFrom(this, _state); }
 #endif
-	void     join     ( void )             {        tsk_join     (this);          }
-	void     reset    ( void )             {        tsk_reset    (this);          }
-	void     kill     ( void )             {        tsk_kill     (this);          }
-	unsigned suspend  ( void )             { return tsk_suspend  (this);          }
-	unsigned resume   ( void )             { return tsk_resume   (this);          }
-	void     give     ( unsigned _signo )  {        tsk_give     (this, _signo);  }
-	void     signal   ( unsigned _signo )  {        tsk_signal   (this, _signo);  }
+	void     join     ( void )             {        tsk_join     (this); }
+	void     reset    ( void )             {        tsk_reset    (this); }
+	void     kill     ( void )             {        tsk_kill     (this); }
+	unsigned suspend  ( void )             { return tsk_suspend  (this); }
+	unsigned resume   ( void )             { return tsk_resume   (this); }
+	void     give     ( unsigned _signo )  {        tsk_give     (this, _signo); }
+	void     signal   ( unsigned _signo )  {        tsk_signal   (this, _signo); }
 #if __cplusplus >= 201402
 	template<class F>
 	void     action   ( const F  _action ) {        new (&act) Act_t(_action);
-	                                                tsk_action   (this, act_);    }
+	                                                tsk_action   (this, act_); }
 #else
 	void     action   ( act_t *  _action ) {        tsk_action   (this, _action); }
 #endif
-	bool     operator!( void )             { return __tsk::hdr.id == ID_STOPPED;  }
+	bool     operator!( void )             { return __tsk::hdr.id == ID_STOPPED; }
 
 #if __cplusplus >= 201402
 	static
@@ -1061,27 +1062,31 @@ namespace ThisTask
 {
 	template<class T = baseTask>
 	static inline T  *     current   ( void )             { return static_cast<T *>(tsk_this()); }
-	static inline void     stop      ( void )             {        tsk_stop      ();        }
-	static inline void     exit      ( void )             {        tsk_exit      ();        }
-	static inline void     reset     ( void )             {        cur_reset     ();        }
-	static inline void     kill      ( void )             {        cur_kill      ();        }
-	static inline void     yield     ( void )             {        tsk_yield     ();        }
-	static inline void     pass      ( void )             {        tsk_pass      ();        }
+	static inline void     stop      ( void )             {        tsk_stop      (); }
+	static inline void     exit      ( void )             {        tsk_exit      (); }
+	static inline void     reset     ( void )             {        cur_reset     (); }
+	static inline void     kill      ( void )             {        cur_kill      (); }
+	static inline void     yield     ( void )             {        tsk_yield     (); }
+	static inline void     pass      ( void )             {        tsk_pass      (); }
 #if __cplusplus >= 201402
 	template<class F>
 	static inline void     flip      ( const F  _state )  {        new (&ThisTask::current()->fun) Fun_t(_state);
 	                                                               tsk_flip      (baseTask::fun_); }
 #else
-	static inline void     flip      ( fun_t *  _state )  {        tsk_flip      (_state);  }
+	static inline void     flip      ( fun_t *  _state )  {        tsk_flip      (_state); }
 #endif
-	static inline void     sleepFor  ( cnt_t    _delay )  {        tsk_sleepFor  (_delay);  }
-	static inline void     sleepNext ( cnt_t    _delay )  {        tsk_sleepNext (_delay);  }
-	static inline void     sleepUntil( cnt_t    _time )   {        tsk_sleepUntil(_time);   }
-	static inline void     sleep     ( void )             {        tsk_sleep     ();        }
-	static inline void     delay     ( cnt_t    _delay )  {        tsk_delay     (_delay);  }
-	static inline void     suspend   ( void )             {        cur_suspend   ();        }
-	static inline void     give      ( unsigned _signo )  {        cur_give      (_signo);  }
-	static inline void     signal    ( unsigned _signo )  {        cur_signal    (_signo);  }
+	template<typename T>
+	static inline void     sleepFor  ( const T  _delay )  {        tsk_sleepFor  (Clock::count(_delay)); }
+	template<typename T>
+	static inline void     sleepNext ( const T  _delay )  {        tsk_sleepNext (Clock::count(_delay)); }
+	template<typename T>
+	static inline void     sleepUntil( const T  _time )   {        tsk_sleepUntil(Clock::count(_time)); }
+	static inline void     sleep     ( void )             {        tsk_sleep     (); }
+	template<typename T>
+	static inline void     delay     ( const T  _delay )  {        tsk_delay     (Clock::count(_delay)); }
+	static inline void     suspend   ( void )             {        cur_suspend   (); }
+	static inline void     give      ( unsigned _signo )  {        cur_give      (_signo); }
+	static inline void     signal    ( unsigned _signo )  {        cur_signal    (_signo); }
 #if __cplusplus >= 201402
 	template<class F>
 	static inline void     action    ( const F  _action ) {        new (&ThisTask::current()->act) Act_t(_action);

@@ -2,7 +2,7 @@
 
     @file    IntrOS: osconditionvariable.h
     @author  Rajmund Szymanski
-    @date    09.05.2020
+    @date    14.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -220,8 +220,8 @@ struct ConditionVariable : public __cnd
 
 	void wait     ( mtx_t *_mtx ) { cnd_wait     (this, _mtx); }
 	void wait     ( mtx_t &_mtx ) { cnd_wait     (this,&_mtx); }
-	void give     ( void )        { cnd_give     (this);       }
-	void notifyAll( void )        { cnd_notifyAll(this);       }
+	void give     ( void )        { cnd_give     (this); }
+	void notifyAll( void )        { cnd_notifyAll(this); }
 };
 
 #endif//__cplusplus

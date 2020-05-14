@@ -2,7 +2,7 @@
 
     @file    IntrOS: osflag.h
     @author  Rajmund Szymanski
-    @date    21.04.2020
+    @date    14.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -301,10 +301,10 @@ struct Flag : public __flg
 	unsigned take   ( unsigned _flags, bool _all = true ) { return flg_take   (this, _flags, _all); }
 	unsigned tryWait( unsigned _flags, bool _all = true ) { return flg_tryWait(this, _flags, _all); }
 	void     wait   ( unsigned _flags, bool _all = true ) {        flg_wait   (this, _flags, _all); }
-	unsigned give   ( unsigned _flags )                   { return flg_give   (this, _flags);       }
-	unsigned set    ( unsigned _flags )                   { return flg_set    (this, _flags);       }
-	unsigned clear  ( unsigned _flags )                   { return flg_clear  (this, _flags);       }
-	unsigned get    ( void )                              { return flg_get    (this);               }
+	unsigned give   ( unsigned _flags )                   { return flg_give   (this, _flags); }
+	unsigned set    ( unsigned _flags )                   { return flg_set    (this, _flags); }
+	unsigned clear  ( unsigned _flags )                   { return flg_clear  (this, _flags); }
+	unsigned get    ( void )                              { return flg_get    (this); }
 };
 
 #endif//__cplusplus
