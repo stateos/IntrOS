@@ -33,6 +33,7 @@ Features:
 ---------
 4.7
 - updated os version
+- implementation of steady clock
 - removed unused OS_FUNCTIONAL definition
 ---------
 4.6

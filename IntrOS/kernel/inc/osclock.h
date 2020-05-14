@@ -1,9 +1,9 @@
 /******************************************************************************
 
-    @file    IntrOS: os.h
+    @file    IntrOS: osclock.h
     @author  Rajmund Szymanski
     @date    14.05.2020
-    @brief   This file contains definitions for IntrOS.
+    @brief   This file implements steady clock for IntrOS.
 
  ******************************************************************************
 
@@ -29,42 +29,10 @@
 
  ******************************************************************************/
 
-#ifndef __INTROS
-
-#define __INTROS_MAJOR        4
-#define __INTROS_MINOR        7
-#define __INTROS_BUILD        0
-
-#define __INTROS        ((((__INTROS_MAJOR)&0xFFUL)<<24)|(((__INTROS_MINOR)&0xFFUL)<<16)|((__INTROS_BUILD)&0xFFFFUL))
-
-#define __INTROS__           "IntrOS v" STRINGIZE(__INTROS_MAJOR) "." STRINGIZE(__INTROS_MINOR) "." STRINGIZE(__INTROS_BUILD)
-
-#define STRINGIZE(n) STRINGIZE_HELPER(n)
-#define STRINGIZE_HELPER(n) #n
-
-/* -------------------------------------------------------------------------- */
+#ifndef __INTROS_CLK_H
+#define __INTROS_CLK_H
 
 #include "oskernel.h"
-#include "inc/osclock.h"
-#include "inc/oscriticalsection.h"
-#include "inc/osspinlock.h"
-#include "inc/osonceflag.h"
-#include "inc/osevent.h"
-#include "inc/ossignal.h"
-#include "inc/osflag.h"
-#include "inc/osbarrier.h"
-#include "inc/ossemaphore.h"
-#include "inc/osmutex.h"
-#include "inc/osconditionvariable.h"
-#include "inc/oslist.h"
-#include "inc/osmemorypool.h"
-#include "inc/osstreambuffer.h"
-#include "inc/osmessagebuffer.h"
-#include "inc/osmailboxqueue.h"
-#include "inc/oseventqueue.h"
-#include "inc/osjobqueue.h"
-#include "inc/ostimer.h"
-#include "inc/ostask.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -72,24 +40,68 @@ extern "C" {
 
 /******************************************************************************
  *
- * Name              : sys_init
+ * Name              : sys_time
  *
- * Description       : initialize system timer and enable services
+ * Description       : return current value of system counter
  *
  * Parameters        : none
  *
- * Return            : none
- *
- * Note              : function port_sys_init should be invoked as a constructor
- *                   : otherwise, call sys_init as the first instruction in function main
+ * Return            : current value of system counter
  *
  ******************************************************************************/
 
-__STATIC_INLINE
-void sys_init( void ) { port_sys_init(); }
+cnt_t sys_time( void );
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif//__INTROS
+/* -------------------------------------------------------------------------- */
+
+#ifdef __cplusplus
+
+#if __cplusplus >= 201402
+#include <chrono>
+#endif
+
+/******************************************************************************
+ *
+ * Class             : Clock
+ *
+ * Description       : steady clock
+ *
+ ******************************************************************************/
+
+struct Clock
+{
+#if __cplusplus >= 201402
+	using rep        = cnt_t;
+	using period     = std::ratio<1, OS_FREQUENCY>;
+	using duration   = std::chrono::duration<rep, period>;
+	using time_point = std::chrono::time_point<Clock>;
+
+	static constexpr
+	bool is_steady   = true;
+
+	static
+	time_point now() { return time_point(duration(sys_time())); }
+
+	static constexpr
+	rep count( const rep t )                         { return t; }
+	static constexpr
+	rep count( const duration t )                    { return t.count(); }
+	static constexpr
+	rep count( const time_point t )                  { return t.time_since_epoch().count(); }
+	template<typename R, typename P> static constexpr
+	rep count( const std::chrono::duration<R, P> t ) { return std::chrono::duration_cast<duration>(t).count(); }
+#else
+	static constexpr
+	cnt_t count( const cnt_t t )                     { return t; }
+#endif
+};
+
+#endif//__cplusplus
+
+/* -------------------------------------------------------------------------- */
+
+#endif//__INTROS_CLK_H
