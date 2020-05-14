@@ -550,8 +550,8 @@ struct baseTimer : public __tmr
 	baseTimer( void ):           __tmr _TMR_INIT(NULL) {}
 #if __cplusplus >= 201402
 	baseTimer( std::nullptr_t ): __tmr _TMR_INIT(NULL) {}
-	template<class T>
-	baseTimer( const T _state ): __tmr _TMR_INIT(fun_), fun{_state} {}
+	template<class F>
+	baseTimer( const F _state ): __tmr _TMR_INIT(fun_), fun{_state} {}
 #else
 	baseTimer( fun_t * _state ): __tmr _TMR_INIT(_state) {}
 #endif
@@ -563,8 +563,8 @@ struct baseTimer : public __tmr
 	void startUntil   ( cnt_t _time )                                 {        tmr_startUntil   (this, _time);           }
 #if __cplusplus >= 201402
 	void startFrom    ( cnt_t _delay, cnt_t _period, std::nullptr_t ) {        tmr_startFrom    (this, _delay, _period, NULL); }
-	template<class T>
-	void startFrom    ( cnt_t _delay, cnt_t _period, const T _state ) {        new (&fun) Fun_t(_state);
+	template<class F>
+	void startFrom    ( cnt_t _delay, cnt_t _period, const F _state ) {        new (&fun) Fun_t(_state);
 	                                                                           tmr_startFrom    (this, _delay, _period, fun_); }
 #else
 	void startFrom    ( cnt_t _delay, cnt_t _period, fun_t * _state ) {        tmr_startFrom    (this, _delay, _period, _state); }
@@ -596,8 +596,8 @@ struct baseTimer : public __tmr
 struct Timer : public baseTimer
 {
 	Timer( void ):                     baseTimer{} {}
-	template<class T>
-	Timer( const T _state ):           baseTimer{_state} {}
+	template<class F>
+	Timer( const F _state ):           baseTimer{_state} {}
 #if __cplusplus >= 201402
 	template<typename F, typename... A>
 	Timer( F&& _state, A&&... _args ): baseTimer{std::bind(std::forward<F>(_state), std::forward<A>(_args)...)} {}
@@ -631,16 +631,14 @@ struct Timer : public baseTimer
 		return {};
 	}
 	
-	template<class T>
-	static
-	Timer Make( const T _state )
+	template<class F> static
+	Timer Make( const F _state )
 	{
 		return { _state };
 	}
 
 #if __cplusplus >= 201402
-	template<typename F, typename... A>
-	static
+	template<typename F, typename... A> static
 	Timer Make( F&& _state, A&&... _args )
 	{
 		return { std::bind(std::forward<F>(_state), std::forward<A>(_args)...) };
@@ -679,9 +677,8 @@ struct Timer : public baseTimer
 		return tmr;
 	}
 	
-	template<class T>
-	static
-	Timer Start( const cnt_t _delay, const cnt_t _period, const T _state )
+	template<class F> static
+	Timer Start( const cnt_t _delay, const cnt_t _period, const F _state )
 	{
 		Timer tmr { _state };
 		tmr.start(_delay, _period);
@@ -689,8 +686,7 @@ struct Timer : public baseTimer
 	}
 
 #if __cplusplus >= 201402
-	template<typename F, typename... A>
-	static
+	template<typename F, typename... A> static
 	Timer Start( const cnt_t _delay, const cnt_t _period, F&& _state, A&&... _args )
 	{
 		Timer tmr { std::bind(std::forward<F>(_state), std::forward<A>(_args)...) };
@@ -727,9 +723,8 @@ struct Timer : public baseTimer
 		return tmr;
 	}
 	
-	template<class T>
-	static
-	Timer StartFor( const cnt_t _delay, const T _state )
+	template<class F> static
+	Timer StartFor( const cnt_t _delay, const F _state )
 	{
 		Timer tmr { _state };
 		tmr.startFor(_delay);
@@ -737,8 +732,7 @@ struct Timer : public baseTimer
 	}
 
 #if __cplusplus >= 201402
-	template<typename F, typename... A>
-	static
+	template<typename F, typename... A> static
 	Timer StartFor( const cnt_t _delay, F&& _state, A&&... _args )
 	{
 		Timer tmr { std::bind(std::forward<F>(_state), std::forward<A>(_args)...) };
@@ -776,9 +770,8 @@ struct Timer : public baseTimer
 		return tmr;
 	}
 	
-	template<class T>
-	static
-	Timer StartPeriodic( const cnt_t _period, const T _state )
+	template<class F> static
+	Timer StartPeriodic( const cnt_t _period, const F _state )
 	{
 		Timer tmr { _state };
 		tmr.startPeriodic(_period);
@@ -786,8 +779,7 @@ struct Timer : public baseTimer
 	}
 
 #if __cplusplus >= 201402
-	template<typename F, typename... A>
-	static
+	template<typename F, typename... A> static
 	Timer StartPeriodic( const cnt_t _period, F&& _state, A&&... _args )
 	{
 		Timer tmr { std::bind(std::forward<F>(_state), std::forward<A>(_args)...) };
@@ -822,9 +814,8 @@ struct Timer : public baseTimer
 		return tmr;
 	}
 	
-	template<class T>
-	static
-	Timer StartUntil( const cnt_t _time, const T _state )
+	template<class F> static
+	Timer StartUntil( const cnt_t _time, const F _state )
 	{
 		Timer tmr { _state };
 		tmr.startUntil(_time);
@@ -832,8 +823,7 @@ struct Timer : public baseTimer
 	}
 
 #if __cplusplus >= 201402
-	template<typename F, typename... A>
-	static
+	template<typename F, typename... A> static
 	Timer StartUntil( const cnt_t _time, F&& _state, A&&... _args )
 	{
 		Timer tmr { std::bind(std::forward<F>(_state), std::forward<A>(_args)...) };
@@ -857,8 +847,8 @@ namespace ThisTimer
 	static inline T  * current ( void )           { return static_cast<T *>(tmr_this()); }
 #if __cplusplus >= 201402
 	static inline void flip    ( std::nullptr_t ) { tmr_flip (NULL);   }
-	template<class T>
-	static inline void flip    ( const T _state ) { new (&ThisTimer::current()->fun) Fun_t(_state);
+	template<class F>
+	static inline void flip    ( const F _state ) { new (&ThisTimer::current()->fun) Fun_t(_state);
 	                                                tmr_flip (baseTimer::fun_); }
 #else
 	static inline void flip    ( fun_t * _state ) { tmr_flip (_state); }

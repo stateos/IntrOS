@@ -416,21 +416,21 @@ struct MessageBufferT : public __msg
  *
  * Constructor parameters
  *   limit           : size of a buffer (max number of stored objects)
- *   T               : class of an object
+ *   C               : class of an object
  *
  ******************************************************************************/
 
-template<unsigned limit_, class T>
-struct MessageBufferTT : public MessageBufferT<limit_*(sizeof(unsigned)+sizeof(T))>
+template<unsigned limit_, class C>
+struct MessageBufferTT : public MessageBufferT<limit_*(sizeof(unsigned)+sizeof(C))>
 {
-	MessageBufferTT( void ): MessageBufferT<limit_*(sizeof(unsigned)+sizeof(T))>() {}
+	MessageBufferTT( void ): MessageBufferT<limit_*(sizeof(unsigned)+sizeof(C))>() {}
 
-	unsigned take   (       T *_data ) { return msg_take   (this, _data, sizeof(T)); }
-	unsigned tryWait(       T *_data ) { return msg_tryWait(this, _data, sizeof(T)); }
-	unsigned wait   (       T *_data ) { return msg_wait   (this, _data, sizeof(T)); }
-	unsigned give   ( const T *_data ) { return msg_give   (this, _data, sizeof(T)); }
-	unsigned send   ( const T *_data ) { return msg_send   (this, _data, sizeof(T)); }
-	unsigned push   ( const T *_data ) { return msg_push   (this, _data, sizeof(T)); }
+	unsigned take   (       C *_data ) { return msg_take   (this, _data, sizeof(C)); }
+	unsigned tryWait(       C *_data ) { return msg_tryWait(this, _data, sizeof(C)); }
+	unsigned wait   (       C *_data ) { return msg_wait   (this, _data, sizeof(C)); }
+	unsigned give   ( const C *_data ) { return msg_give   (this, _data, sizeof(C)); }
+	unsigned send   ( const C *_data ) { return msg_send   (this, _data, sizeof(C)); }
+	unsigned push   ( const C *_data ) { return msg_push   (this, _data, sizeof(C)); }
 };
 
 #endif//__cplusplus

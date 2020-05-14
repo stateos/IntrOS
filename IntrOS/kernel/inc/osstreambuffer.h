@@ -2,7 +2,7 @@
 
     @file    IntrOS: osstreambuffer.h
     @author  Rajmund Szymanski
-    @date    26.04.2020
+    @date    14.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -401,21 +401,21 @@ struct StreamBufferT : public __stm
  *
  * Constructor parameters
  *   limit           : size of a buffer (max number of stored objects)
- *   T               : class of an object
+ *   C               : class of an object
  *
  ******************************************************************************/
 
-template<unsigned limit_, class T>
-struct StreamBufferTT : public StreamBufferT<limit_*sizeof(T)>
+template<unsigned limit_, class C>
+struct StreamBufferTT : public StreamBufferT<limit_*sizeof(C)>
 {
-	StreamBufferTT( void ): StreamBufferT<limit_*sizeof(T)>() {}
+	StreamBufferTT( void ): StreamBufferT<limit_*sizeof(C)>() {}
 
-	unsigned take   (       T *_data ) { return stm_take   (this, _data, sizeof(T)); }
-	unsigned tryWait(       T *_data ) { return stm_tryWait(this, _data, sizeof(T)); }
-	unsigned wait   (       T *_data ) { return stm_wait   (this, _data, sizeof(T)); }
-	unsigned give   ( const T *_data ) { return stm_give   (this, _data, sizeof(T)); }
-	unsigned send   ( const T *_data ) { return stm_send   (this, _data, sizeof(T)); }
-	unsigned push   ( const T *_data ) { return stm_push   (this, _data, sizeof(T)); }
+	unsigned take   (       C *_data ) { return stm_take   (this, _data, sizeof(C)); }
+	unsigned tryWait(       C *_data ) { return stm_tryWait(this, _data, sizeof(C)); }
+	unsigned wait   (       C *_data ) { return stm_wait   (this, _data, sizeof(C)); }
+	unsigned give   ( const C *_data ) { return stm_give   (this, _data, sizeof(C)); }
+	unsigned send   ( const C *_data ) { return stm_send   (this, _data, sizeof(C)); }
+	unsigned push   ( const C *_data ) { return stm_push   (this, _data, sizeof(C)); }
 };
 
 #endif//__cplusplus

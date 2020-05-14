@@ -2,7 +2,7 @@
 
     @file    IntrOS: oslist.h
     @author  Rajmund Szymanski
-    @date    22.04.2020
+    @date    14.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -253,11 +253,11 @@ void lst_give( lst_t *lst, const void *data );
  * Description       : create and initialize a list object
  *
  * Constructor parameters
- *   T               : class of a list object
+ *   C               : class of a list object
  *
  ******************************************************************************/
 
-template<class T>
+template<class C>
 struct ListTT : public __lst
 {
 	ListTT( void ): __lst _LST_INIT() {}
@@ -267,9 +267,9 @@ struct ListTT : public __lst
 	ListTT& operator=( ListTT&& ) = delete;
 	ListTT& operator=( const ListTT& ) = delete;
 
-	unsigned take   (       T   **_data ) { return lst_take   (this, reinterpret_cast<void **>(_data)); }
-	unsigned tryWait(       T   **_data ) { return lst_tryWait(this, reinterpret_cast<void **>(_data)); }
-	void     wait   (       T   **_data ) {        lst_wait   (this, reinterpret_cast<void **>(_data)); }
+	unsigned take   (       C   **_data ) { return lst_take   (this, reinterpret_cast<void **>(_data)); }
+	unsigned tryWait(       C   **_data ) { return lst_tryWait(this, reinterpret_cast<void **>(_data)); }
+	void     wait   (       C   **_data ) {        lst_wait   (this, reinterpret_cast<void **>(_data)); }
 	void     give   ( const void *_data ) {        lst_give   (this,                           _data);  }
 };
 

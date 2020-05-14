@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmemorypool.h
     @author  Rajmund Szymanski
-    @date    26.04.2020
+    @date    14.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -320,18 +320,18 @@ struct MemoryPoolT : public __mem
  *
  * Constructor parameters
  *   limit           : size of a buffer (max number of objects)
- *   T               : class of a memory object
+ *   C               : class of a memory object
  *
  ******************************************************************************/
 
-template<unsigned limit_, class T>
-struct MemoryPoolTT : public MemoryPoolT<limit_, sizeof(T)>
+template<unsigned limit_, class C>
+struct MemoryPoolTT : public MemoryPoolT<limit_, sizeof(C)>
 {
-	MemoryPoolTT( void ): MemoryPoolT<limit_, sizeof(T)>() {}
+	MemoryPoolTT( void ): MemoryPoolT<limit_, sizeof(C)>() {}
 
-	unsigned take   ( T **_data ) { return mem_take   (this, reinterpret_cast<void **>(_data)); }
-	unsigned tryWait( T **_data ) { return mem_tryWait(this, reinterpret_cast<void **>(_data)); }
-	void     wait   ( T **_data ) {        mem_wait   (this, reinterpret_cast<void **>(_data)); }
+	unsigned take   ( C **_data ) { return mem_take   (this, reinterpret_cast<void **>(_data)); }
+	unsigned tryWait( C **_data ) { return mem_tryWait(this, reinterpret_cast<void **>(_data)); }
+	void     wait   ( C **_data ) {        mem_wait   (this, reinterpret_cast<void **>(_data)); }
 };
 
 #endif//__cplusplus

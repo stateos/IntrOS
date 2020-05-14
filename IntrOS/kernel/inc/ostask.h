@@ -904,16 +904,16 @@ struct baseStack
 struct baseTask : public __tsk
 {
 #if __cplusplus >= 201402
-	template<class T>
-	baseTask( const T _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_INIT(fun_, _stack, _size), fun{_state} {}
+	template<class F>
+	baseTask( const F _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_INIT(fun_, _stack, _size), fun{_state} {}
 #else
 	baseTask( fun_t * _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_INIT(_state, _stack, _size) {}
 #endif
 
 	void     start    ( void )             {        tsk_start    (this);          }
 #if __cplusplus >= 201402
-	template<class T>
-	void     startFrom( const T  _state )  {        new (&fun) Fun_t(_state);
+	template<class F>
+	void     startFrom( const F  _state )  {        new (&fun) Fun_t(_state);
 	                                                tsk_startFrom(this, fun_);    }
 #else
 	void     startFrom( fun_t *  _state )  {        tsk_startFrom(this, _state);  }
@@ -926,8 +926,8 @@ struct baseTask : public __tsk
 	void     give     ( unsigned _signo )  {        tsk_give     (this, _signo);  }
 	void     signal   ( unsigned _signo )  {        tsk_signal   (this, _signo);  }
 #if __cplusplus >= 201402
-	template<class T>
-	void     action   ( const T  _action ) {        new (&act) Act_t(_action);
+	template<class F>
+	void     action   ( const F  _action ) {        new (&act) Act_t(_action);
 	                                                tsk_action   (this, act_);    }
 #else
 	void     action   ( act_t *  _action ) {        tsk_action   (this, _action); }
@@ -960,8 +960,8 @@ struct baseTask : public __tsk
 template<size_t size_>
 struct TaskT : public baseTask, public baseStack<size_>
 {
-	template<class T>
-	TaskT( const T _state ):           baseTask{_state, baseStack<size_>::stack_, size_} {}
+	template<class F>
+	TaskT( const F _state ):           baseTask{_state, baseStack<size_>::stack_, size_} {}
 #if __cplusplus >= 201402
 	template<typename F, typename... A>
 	TaskT( F&& _state, A&&... _args ): baseTask{std::bind(std::forward<F>(_state), std::forward<A>(_args)...), baseStack<size_>::stack_, size_} {}
@@ -990,16 +990,14 @@ struct TaskT : public baseTask, public baseStack<size_>
  *
  ******************************************************************************/
 
-	template<class T>
-	static
-	TaskT<size_> Make( const T _state )
+	template<class F> static
+	TaskT<size_> Make( const F _state )
 	{
 		return { _state };
 	}
 
 #if __cplusplus >= 201402
-	template<typename F, typename... A>
-	static
+	template<typename F, typename... A> static
 	TaskT<size_> Make( F&& _state, A&&... _args )
 	{
 		return { std::bind(std::forward<F>(_state), std::forward<A>(_args)...) };
@@ -1022,9 +1020,8 @@ struct TaskT : public baseTask, public baseStack<size_>
  *
  ******************************************************************************/
 
-	template<class T>
-	static
-	TaskT<size_> Start( const T _state )
+	template<class F> static
+	TaskT<size_> Start( const F _state )
 	{
 		TaskT<size_> tsk { _state };
 		tsk.start();
@@ -1032,8 +1029,7 @@ struct TaskT : public baseTask, public baseStack<size_>
 	}
 
 #if __cplusplus >= 201402
-	template<typename F, typename... A>
-	static
+	template<typename F, typename... A> static
 	TaskT<size_> Start( F&& _state, A&&... _args )
 	{
 		TaskT<size_> tsk { std::bind(std::forward<F>(_state), std::forward<A>(_args)...) };
@@ -1072,8 +1068,8 @@ namespace ThisTask
 	static inline void     yield     ( void )             {        tsk_yield     ();        }
 	static inline void     pass      ( void )             {        tsk_pass      ();        }
 #if __cplusplus >= 201402
-	template<class T>
-	static inline void     flip      ( const T  _state )  {        new (&ThisTask::current()->fun) Fun_t(_state);
+	template<class F>
+	static inline void     flip      ( const F  _state )  {        new (&ThisTask::current()->fun) Fun_t(_state);
 	                                                               tsk_flip      (baseTask::fun_); }
 #else
 	static inline void     flip      ( fun_t *  _state )  {        tsk_flip      (_state);  }
@@ -1087,8 +1083,8 @@ namespace ThisTask
 	static inline void     give      ( unsigned _signo )  {        cur_give      (_signo);  }
 	static inline void     signal    ( unsigned _signo )  {        cur_signal    (_signo);  }
 #if __cplusplus >= 201402
-	template<class T>
-	static inline void     action    ( const T  _action ) {        new (&ThisTask::current()->act) Act_t(_action);
+	template<class F>
+	static inline void     action    ( const F  _action ) {        new (&ThisTask::current()->act) Act_t(_action);
 	                                                               cur_action    (baseTask::act_); }
 #else
 	static inline void     action    ( act_t *  _action ) {        cur_action    (_action); }

@@ -212,8 +212,8 @@ struct OnceFlag
 	OnceFlag& operator=( const OnceFlag& ) = delete;
 
 #if __cplusplus >= 201402
-	template<class T>
-	void call( const T _fun )
+	template<class F>
+	void call( const F _fun )
 	{
 		one_t flag;
 
