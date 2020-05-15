@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmailboxqueue.h
     @author  Rajmund Szymanski
-    @date    14.05.2020
+    @date    15.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -317,6 +317,21 @@ unsigned box_count( box_t *box );
  ******************************************************************************/
 
 unsigned box_space( box_t *box );
+
+/******************************************************************************
+ *
+ * Name              : box_limit
+ *
+ * Description       : return the size of the mailbox queue
+ *
+ * Parameters
+ *   box             : pointer to mailbox queue object
+ *
+ * Return            : size of the mailbox queue
+ *
+ ******************************************************************************/
+
+unsigned box_limit( box_t *box );
 
 #ifdef __cplusplus
 }

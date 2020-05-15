@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.h
     @author  Rajmund Szymanski
-    @date    14.05.2020
+    @date    15.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -277,6 +277,51 @@ void job_send( job_t *job, fun_t *fun );
  ******************************************************************************/
 
 void job_push( job_t *job, fun_t *fun );
+
+/******************************************************************************
+ *
+ * Name              : job_count
+ *
+ * Description       : return the amount of data contained in the job queue
+ *
+ * Parameters
+ *   job             : pointer to job queue object
+ *
+ * Return            : amount of data contained in the job queue
+ *
+ ******************************************************************************/
+
+unsigned job_count( job_t *job );
+
+/******************************************************************************
+ *
+ * Name              : job_space
+ *
+ * Description       : return the amount of free space in the job queue
+ *
+ * Parameters
+ *   job             : pointer to job queue object
+ *
+ * Return            : amount of free space in the job queue
+ *
+ ******************************************************************************/
+
+unsigned job_space( job_t *job );
+
+/******************************************************************************
+ *
+ * Name              : job_limit
+ *
+ * Description       : return the size of the job queue
+ *
+ * Parameters
+ *   job             : pointer to job queue object
+ *
+ * Return            : size of the job queue
+ *
+ ******************************************************************************/
+
+unsigned job_limit( job_t *job );
 
 #ifdef __cplusplus
 }

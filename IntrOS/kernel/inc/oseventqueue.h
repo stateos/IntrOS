@@ -2,7 +2,7 @@
 
     @file    IntrOS: oseventqueue.h
     @author  Rajmund Szymanski
-    @date    14.05.2020
+    @date    15.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -279,6 +279,51 @@ void evq_send( evq_t *evq, unsigned data );
  ******************************************************************************/
 
 void evq_push( evq_t *evq, unsigned data );
+
+/******************************************************************************
+ *
+ * Name              : evq_count
+ *
+ * Description       : return the amount of data contained in the event queue
+ *
+ * Parameters
+ *   evq             : pointer to event queue object
+ *
+ * Return            : amount of data contained in the event queue
+ *
+ ******************************************************************************/
+
+unsigned evq_count( evq_t *evq );
+
+/******************************************************************************
+ *
+ * Name              : evq_space
+ *
+ * Description       : return the amount of free space in the event queue
+ *
+ * Parameters
+ *   evq             : pointer to event queue object
+ *
+ * Return            : amount of free space in the event queue
+ *
+ ******************************************************************************/
+
+unsigned evq_space( evq_t *evq );
+
+/******************************************************************************
+ *
+ * Name              : evq_limit
+ *
+ * Description       : return the size of the event queue
+ *
+ * Parameters
+ *   evq             : pointer to event queue object
+ *
+ * Return            : size of the event queue
+ *
+ ******************************************************************************/
+
+unsigned evq_limit( evq_t *evq );
 
 #ifdef __cplusplus
 }

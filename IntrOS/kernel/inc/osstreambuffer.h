@@ -2,7 +2,7 @@
 
     @file    IntrOS: osstreambuffer.h
     @author  Rajmund Szymanski
-    @date    14.05.2020
+    @date    15.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -333,7 +333,6 @@ unsigned stm_count( stm_t *stm );
  ******************************************************************************/
 
 unsigned stm_space( stm_t *stm );
-
 
 /******************************************************************************
  *
