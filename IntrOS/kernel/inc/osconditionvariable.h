@@ -2,7 +2,7 @@
 
     @file    IntrOS: osconditionvariable.h
     @author  Rajmund Szymanski
-    @date    14.05.2020
+    @date    15.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -176,7 +176,7 @@ void cnd_wait( cnd_t *cnd, mtx_t *mtx );
  * Name              : cnd_give
  * Alias             : cnd_notifyAll
  *
- * Description       : signal one or all tasks that are waiting on the condition variable
+ * Description       : signal all tasks that are waiting on the condition variable
  *
  * Parameters
  *   cnd             : pointer to condition variable object
