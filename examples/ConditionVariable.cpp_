@@ -8,15 +8,17 @@ auto cnd = ConditionVariable();
 void slave()
 {
 	mtx.wait();
-	cnd.wait(mtx);
-	mtx.give();
-	led.tick();
+	for (;;)
+	{
+		cnd.wait(mtx);
+		led.tick();
+	}
 }
 
 void master()
 {
-	ThisTask::delay(SEC);
 	mtx.wait();
+	ThisTask::delay(SEC);
 	cnd.give();
 	mtx.give();
 }
