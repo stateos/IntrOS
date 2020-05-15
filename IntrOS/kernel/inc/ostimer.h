@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.h
     @author  Rajmund Szymanski
-    @date    14.05.2020
+    @date    15.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -548,9 +548,9 @@ void tmr_delay( cnt_t delay ) { tmr_this()->delay = delay; }
 
 struct baseTimer : public __tmr
 {
-	baseTimer( void ):           __tmr _TMR_INIT(NULL) {}
+	baseTimer( void ):           __tmr _TMR_INIT(nullptr) {}
 #if __cplusplus >= 201402
-	baseTimer( std::nullptr_t ): __tmr _TMR_INIT(NULL) {}
+	baseTimer( std::nullptr_t ): __tmr _TMR_INIT(nullptr) {}
 	template<class F>
 	baseTimer( const F _state ): __tmr _TMR_INIT(fun_), fun{_state} {}
 #else
@@ -569,7 +569,7 @@ struct baseTimer : public __tmr
 	void startUntil   ( const T _time )                                   {        tmr_startUntil   (this, Clock::count(_time)); }
 #if __cplusplus >= 201402
 	template<typename T>
-	void startFrom    ( const T _delay, const T _period, std::nullptr_t ) {        tmr_startFrom    (this, Clock::count(_delay), Clock::count(_period), NULL); }
+	void startFrom    ( const T _delay, const T _period, std::nullptr_t ) {        tmr_startFrom    (this, Clock::count(_delay), Clock::count(_period), nullptr); }
 	template<typename T, class F>
 	void startFrom    ( const T _delay, const T _period, const F _state ) {        new (&fun) Fun_t(_state);
 	                                                                               tmr_startFrom    (this, Clock::count(_delay), Clock::count(_period), fun_); }
@@ -854,7 +854,7 @@ namespace ThisTimer
 	template<class T = baseTimer>
 	static inline T  * current ( void )           { return static_cast<T *>(tmr_this()); }
 #if __cplusplus >= 201402
-	static inline void flip    ( std::nullptr_t ) { tmr_flip (NULL); }
+	static inline void flip    ( std::nullptr_t ) { tmr_flip (nullptr); }
 	template<class F>
 	static inline void flip    ( const F _state ) { new (&ThisTimer::current()->fun) Fun_t(_state);
 	                                                tmr_flip (baseTimer::fun_); }
