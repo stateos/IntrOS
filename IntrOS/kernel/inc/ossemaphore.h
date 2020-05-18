@@ -349,12 +349,12 @@ struct Semaphore : public __sem
 
 /* -------------------------------------------------------------------------- */
 
-	auto take    ( void ) { return sem_take    (this); }
-	auto tryWait ( void ) { return sem_tryWait (this); }
+	uint take    ( void ) { return sem_take    (this); }
+	uint tryWait ( void ) { return sem_tryWait (this); }
 	void wait    ( void ) {        sem_wait    (this); }
-	auto give    ( void ) { return sem_give    (this); }
-	auto post    ( void ) { return sem_post    (this); }
-	auto getValue( void ) { return sem_getValue(this); }
+	uint give    ( void ) { return sem_give    (this); }
+	uint post    ( void ) { return sem_post    (this); }
+	uint getValue( void ) { return sem_getValue(this); }
 };
 
 #endif//__cplusplus

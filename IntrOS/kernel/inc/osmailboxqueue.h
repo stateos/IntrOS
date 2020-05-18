@@ -363,15 +363,15 @@ struct MailBoxQueueT : public __box
 	MailBoxQueueT& operator=( MailBoxQueueT&& ) = delete;
 	MailBoxQueueT& operator=( const MailBoxQueueT& ) = delete;
 
-	auto take   (       void *_data ) { return box_take   (this, _data); }
-	auto tryWait(       void *_data ) { return box_tryWait(this, _data); }
+	uint take   (       void *_data ) { return box_take   (this, _data); }
+	uint tryWait(       void *_data ) { return box_tryWait(this, _data); }
 	void wait   (       void *_data ) {        box_wait   (this, _data); }
-	auto give   ( const void *_data ) { return box_give   (this, _data); }
+	uint give   ( const void *_data ) { return box_give   (this, _data); }
 	void send   ( const void *_data ) {        box_send   (this, _data); }
 	void push   ( const void *_data ) {        box_push   (this, _data); }
-	auto count  (       void )        { return box_count  (this); }
-	auto space  (       void )        { return box_space  (this); }
-	auto limit  (       void )        { return box_limit  (this); }
+	uint count  (       void )        { return box_count  (this); }
+	uint space  (       void )        { return box_space  (this); }
+	uint limit  (       void )        { return box_limit  (this); }
 
 	private:
 	char data_[limit_ * size_];

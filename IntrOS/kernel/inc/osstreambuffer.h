@@ -378,15 +378,15 @@ struct StreamBufferT : public __stm
 	StreamBufferT& operator=( StreamBufferT&& ) = delete;
 	StreamBufferT& operator=( const StreamBufferT& ) = delete;
 
-	auto take   (       void *_data, unsigned _size ) { return stm_take   (this, _data, _size); }
-	auto tryWait(       void *_data, unsigned _size ) { return stm_tryWait(this, _data, _size); }
-	auto wait   (       void *_data, unsigned _size ) { return stm_wait   (this, _data, _size); }
-	auto give   ( const void *_data, unsigned _size ) { return stm_give   (this, _data, _size); }
-	auto send   ( const void *_data, unsigned _size ) { return stm_send   (this, _data, _size); }
-	auto push   ( const void *_data, unsigned _size ) { return stm_push   (this, _data, _size); }
-	auto count  ( void )                              { return stm_count  (this); }
-	auto space  ( void )                              { return stm_space  (this); }
-	auto limit  ( void )                              { return stm_limit  (this); }
+	uint take   (       void *_data, unsigned _size ) { return stm_take   (this, _data, _size); }
+	uint tryWait(       void *_data, unsigned _size ) { return stm_tryWait(this, _data, _size); }
+	uint wait   (       void *_data, unsigned _size ) { return stm_wait   (this, _data, _size); }
+	uint give   ( const void *_data, unsigned _size ) { return stm_give   (this, _data, _size); }
+	uint send   ( const void *_data, unsigned _size ) { return stm_send   (this, _data, _size); }
+	uint push   ( const void *_data, unsigned _size ) { return stm_push   (this, _data, _size); }
+	uint count  ( void )                              { return stm_count  (this); }
+	uint space  ( void )                              { return stm_space  (this); }
+	uint limit  ( void )                              { return stm_limit  (this); }
 
 	private:
 	char data_[limit_];
@@ -409,12 +409,12 @@ struct StreamBufferTT : public StreamBufferT<limit_*sizeof(C)>
 {
 	StreamBufferTT( void ): StreamBufferT<limit_*sizeof(C)>() {}
 
-	auto take   (       C *_data ) { return stm_take   (this, _data, sizeof(C)); }
-	auto tryWait(       C *_data ) { return stm_tryWait(this, _data, sizeof(C)); }
-	auto wait   (       C *_data ) { return stm_wait   (this, _data, sizeof(C)); }
-	auto give   ( const C *_data ) { return stm_give   (this, _data, sizeof(C)); }
-	auto send   ( const C *_data ) { return stm_send   (this, _data, sizeof(C)); }
-	auto push   ( const C *_data ) { return stm_push   (this, _data, sizeof(C)); }
+	uint take   (       C *_data ) { return stm_take   (this, _data, sizeof(C)); }
+	uint tryWait(       C *_data ) { return stm_tryWait(this, _data, sizeof(C)); }
+	uint wait   (       C *_data ) { return stm_wait   (this, _data, sizeof(C)); }
+	uint give   ( const C *_data ) { return stm_give   (this, _data, sizeof(C)); }
+	uint send   ( const C *_data ) { return stm_send   (this, _data, sizeof(C)); }
+	uint push   ( const C *_data ) { return stm_push   (this, _data, sizeof(C)); }
 };
 
 #endif//__cplusplus

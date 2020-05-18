@@ -303,8 +303,8 @@ struct MemoryPoolT : public __mem
 	MemoryPoolT& operator=( MemoryPoolT&& ) = delete;
 	MemoryPoolT& operator=( const MemoryPoolT& ) = delete;
 
-	auto take   (       void **_data ) { return mem_take   (this, _data); }
-	auto tryWait(       void **_data ) { return mem_tryWait(this, _data); }
+	uint take   (       void **_data ) { return mem_take   (this, _data); }
+	uint tryWait(       void **_data ) { return mem_tryWait(this, _data); }
 	void wait   (       void **_data ) {        mem_wait   (this, _data); }
 	void give   ( const void  *_data ) {        mem_give   (this, _data); }
 
@@ -329,8 +329,8 @@ struct MemoryPoolTT : public MemoryPoolT<limit_, sizeof(C)>
 {
 	MemoryPoolTT( void ): MemoryPoolT<limit_, sizeof(C)>() {}
 
-	auto take   ( C **_data ) { return mem_take   (this, reinterpret_cast<void **>(_data)); }
-	auto tryWait( C **_data ) { return mem_tryWait(this, reinterpret_cast<void **>(_data)); }
+	uint take   ( C **_data ) { return mem_take   (this, reinterpret_cast<void **>(_data)); }
+	uint tryWait( C **_data ) { return mem_tryWait(this, reinterpret_cast<void **>(_data)); }
 	void wait   ( C **_data ) {        mem_wait   (this, reinterpret_cast<void **>(_data)); }
 };
 

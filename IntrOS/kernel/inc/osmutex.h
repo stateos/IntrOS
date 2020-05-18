@@ -247,12 +247,12 @@ struct Mutex : public __mtx
 
 	~Mutex( void ) { assert(__mtx::owner == nullptr); }
 
-	auto take   ( void ) { return mtx_take   (this); }
-	auto tryLock( void ) { return mtx_tryLock(this); }
+	uint take   ( void ) { return mtx_take   (this); }
+	uint tryLock( void ) { return mtx_tryLock(this); }
 	void wait   ( void ) {        mtx_wait   (this); }
 	void lock   ( void ) {        mtx_lock   (this); }
-	auto give   ( void ) { return mtx_give   (this); }
-	auto unlock ( void ) { return mtx_unlock (this); }
+	uint give   ( void ) { return mtx_give   (this); }
+	uint unlock ( void ) { return mtx_unlock (this); }
 };
 
 #endif//__cplusplus

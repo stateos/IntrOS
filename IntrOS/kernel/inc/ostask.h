@@ -922,8 +922,8 @@ struct baseTask : public __tsk
 	void join     ( void )             {        tsk_join     (this); }
 	void reset    ( void )             {        tsk_reset    (this); }
 	void kill     ( void )             {        tsk_kill     (this); }
-	auto suspend  ( void )             { return tsk_suspend  (this); }
-	auto resume   ( void )             { return tsk_resume   (this); }
+	uint suspend  ( void )             { return tsk_suspend  (this); }
+	uint resume   ( void )             { return tsk_resume   (this); }
 	void give     ( unsigned _signo )  {        tsk_give     (this, _signo); }
 	void signal   ( unsigned _signo )  {        tsk_signal   (this, _signo); }
 #if __cplusplus >= 201402
@@ -936,7 +936,7 @@ struct baseTask : public __tsk
 	bool operator!( void )             { return __tsk::hdr.id == ID_STOPPED; }
 
 	template<class T = baseTask> static
-	auto current  ( void )             { return static_cast<T *>(tsk_this()); }
+	T *  current  ( void )             { return static_cast<T *>(tsk_this()); }
 
 #if __cplusplus >= 201402
 	static

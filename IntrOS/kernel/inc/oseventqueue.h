@@ -354,18 +354,18 @@ struct EventQueueT : public __evq
 	EventQueueT& operator=( EventQueueT&& ) = delete;
 	EventQueueT& operator=( const EventQueueT& ) = delete;
 
-	auto take   ( unsigned *_data ) { return evq_take   (this,  _data); }
-	auto take   ( unsigned &_data ) { return evq_take   (this, &_data); }
-	auto tryWait( unsigned *_data ) { return evq_tryWait(this,  _data); }
-	auto tryWait( unsigned &_data ) { return evq_tryWait(this, &_data); }
+	uint take   ( unsigned *_data ) { return evq_take   (this,  _data); }
+	uint take   ( unsigned &_data ) { return evq_take   (this, &_data); }
+	uint tryWait( unsigned *_data ) { return evq_tryWait(this,  _data); }
+	uint tryWait( unsigned &_data ) { return evq_tryWait(this, &_data); }
 	void wait   ( unsigned *_data ) {        evq_wait   (this,  _data); }
 	void wait   ( unsigned &_data ) {        evq_wait   (this, &_data); }
-	auto give   ( unsigned  _data ) { return evq_give   (this,  _data); }
+	uint give   ( unsigned  _data ) { return evq_give   (this,  _data); }
 	void send   ( unsigned  _data ) {        evq_send   (this,  _data); }
 	void push   ( unsigned  _data ) {        evq_push   (this,  _data); }
-	auto count  ( void )            { return evq_count  (this); }
-	auto space  ( void )            { return evq_space  (this); }
-	auto limit  ( void )            { return evq_limit  (this); }
+	uint count  ( void )            { return evq_count  (this); }
+	uint space  ( void )            { return evq_space  (this); }
+	uint limit  ( void )            { return evq_limit  (this); }
 
 	private:
 	unsigned data_[limit_];

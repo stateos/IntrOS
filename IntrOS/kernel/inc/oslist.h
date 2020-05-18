@@ -267,8 +267,8 @@ struct ListTT : public __lst
 	ListTT& operator=( ListTT&& ) = delete;
 	ListTT& operator=( const ListTT& ) = delete;
 
-	auto take   (       C   **_data ) { return lst_take   (this, reinterpret_cast<void **>(_data)); }
-	auto tryWait(       C   **_data ) { return lst_tryWait(this, reinterpret_cast<void **>(_data)); }
+	uint take   (       C   **_data ) { return lst_take   (this, reinterpret_cast<void **>(_data)); }
+	uint tryWait(       C   **_data ) { return lst_tryWait(this, reinterpret_cast<void **>(_data)); }
 	void wait   (       C   **_data ) {        lst_wait   (this, reinterpret_cast<void **>(_data)); }
 	void give   ( const void *_data ) {        lst_give   (this,                           _data); }
 };

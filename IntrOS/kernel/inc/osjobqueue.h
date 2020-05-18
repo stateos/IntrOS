@@ -352,15 +352,15 @@ struct JobQueueT : public __job
 	JobQueueT& operator=( JobQueueT&& ) = delete;
 	JobQueueT& operator=( const JobQueueT& ) = delete;
 
-	auto take   ( void )        { return job_take   (this); }
-	auto tryWait( void )        { return job_tryWait(this); }
+	uint take   ( void )        { return job_take   (this); }
+	uint tryWait( void )        { return job_tryWait(this); }
 	void wait   ( void )        {        job_wait   (this); }
-	auto give   ( fun_t *_fun ) { return job_give   (this, _fun); }
+	uint give   ( fun_t *_fun ) { return job_give   (this, _fun); }
 	void send   ( fun_t *_fun ) {        job_send   (this, _fun); }
 	void push   ( fun_t *_fun ) {        job_push   (this, _fun); }
-	auto count  ( void )        { return job_count  (this); }
-	auto space  ( void )        { return job_space  (this); }
-	auto limit  ( void )        { return job_limit  (this); }
+	uint count  ( void )        { return job_count  (this); }
+	uint space  ( void )        { return job_space  (this); }
+	uint limit  ( void )        { return job_limit  (this); }
 
 	private:
 	fun_t *data_[limit_];

@@ -393,16 +393,16 @@ struct MessageBufferT : public __msg
 	MessageBufferT& operator=( MessageBufferT&& ) = delete;
 	MessageBufferT& operator=( const MessageBufferT& ) = delete;
 
-	auto take   (       void *_data, unsigned _size ) { return msg_take   (this, _data, _size); }
-	auto tryWait(       void *_data, unsigned _size ) { return msg_tryWait(this, _data, _size); }
-	auto wait   (       void *_data, unsigned _size ) { return msg_wait   (this, _data, _size); }
-	auto give   ( const void *_data, unsigned _size ) { return msg_give   (this, _data, _size); }
-	auto send   ( const void *_data, unsigned _size ) { return msg_send   (this, _data, _size); }
-	auto push   ( const void *_data, unsigned _size ) { return msg_push   (this, _data, _size); }
-	auto count  ( void )                              { return msg_count  (this); }
-	auto space  ( void )                              { return msg_space  (this); }
-	auto limit  ( void )                              { return msg_limit  (this); }
-	auto size   ( void )                              { return msg_size   (this); }
+	uint take   (       void *_data, unsigned _size ) { return msg_take   (this, _data, _size); }
+	uint tryWait(       void *_data, unsigned _size ) { return msg_tryWait(this, _data, _size); }
+	uint wait   (       void *_data, unsigned _size ) { return msg_wait   (this, _data, _size); }
+	uint give   ( const void *_data, unsigned _size ) { return msg_give   (this, _data, _size); }
+	uint send   ( const void *_data, unsigned _size ) { return msg_send   (this, _data, _size); }
+	uint push   ( const void *_data, unsigned _size ) { return msg_push   (this, _data, _size); }
+	uint count  ( void )                              { return msg_count  (this); }
+	uint space  ( void )                              { return msg_space  (this); }
+	uint limit  ( void )                              { return msg_limit  (this); }
+	uint size   ( void )                              { return msg_size   (this); }
 
 	private:
 	char data_[limit_];
@@ -425,12 +425,12 @@ struct MessageBufferTT : public MessageBufferT<limit_*(sizeof(unsigned)+sizeof(C
 {
 	MessageBufferTT( void ): MessageBufferT<limit_*(sizeof(unsigned)+sizeof(C))>() {}
 
-	auto take   (       C *_data ) { return msg_take   (this, _data, sizeof(C)); }
-	auto tryWait(       C *_data ) { return msg_tryWait(this, _data, sizeof(C)); }
-	auto wait   (       C *_data ) { return msg_wait   (this, _data, sizeof(C)); }
-	auto give   ( const C *_data ) { return msg_give   (this, _data, sizeof(C)); }
-	auto send   ( const C *_data ) { return msg_send   (this, _data, sizeof(C)); }
-	auto push   ( const C *_data ) { return msg_push   (this, _data, sizeof(C)); }
+	uint take   (       C *_data ) { return msg_take   (this, _data, sizeof(C)); }
+	uint tryWait(       C *_data ) { return msg_tryWait(this, _data, sizeof(C)); }
+	uint wait   (       C *_data ) { return msg_wait   (this, _data, sizeof(C)); }
+	uint give   ( const C *_data ) { return msg_give   (this, _data, sizeof(C)); }
+	uint send   ( const C *_data ) { return msg_send   (this, _data, sizeof(C)); }
+	uint push   ( const C *_data ) { return msg_push   (this, _data, sizeof(C)); }
 };
 
 #endif//__cplusplus

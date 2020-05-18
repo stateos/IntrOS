@@ -280,9 +280,9 @@ struct Signal : public __sig
 	Signal& operator=( Signal&& ) = delete;
 	Signal& operator=( const Signal& ) = delete;
 
-	auto take   ( unsigned _sigset ) { return sig_take   (this, _sigset); }
-	auto tryWait( unsigned _sigset ) { return sig_tryWait(this, _sigset); }
-	auto wait   ( unsigned _sigset ) { return sig_wait   (this, _sigset); }
+	uint take   ( unsigned _sigset ) { return sig_take   (this, _sigset); }
+	uint tryWait( unsigned _sigset ) { return sig_tryWait(this, _sigset); }
+	uint wait   ( unsigned _sigset ) { return sig_wait   (this, _sigset); }
 	void give   ( unsigned _signo )  {        sig_give   (this, _signo); }
 	void set    ( unsigned _signo )  {        sig_set    (this, _signo); }
 	void clear  ( unsigned _signo )  {        sig_clear  (this, _signo); }
