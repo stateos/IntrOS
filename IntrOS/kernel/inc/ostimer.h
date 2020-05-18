@@ -606,7 +606,7 @@ struct baseTimer : public __tmr
 		void flip ( std::nullptr_t ) { tmr_flip (nullptr); }
 		template<class F> static
 		void flip ( const F _state ) { new (&current()->fun) Fun_t(_state);
-		                               tmr_flip (baseTimer::fun_); }
+		                               tmr_flip (fun_); }
 #else
 		static
 		void flip ( fun_t * _state ) { tmr_flip (_state); }

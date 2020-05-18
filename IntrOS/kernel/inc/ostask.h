@@ -972,7 +972,7 @@ struct baseTask : public __tsk
 #if __cplusplus >= 201402
 		template<class F> static
 		void     flip      ( const F  _state )  {        new (&current()->fun) Fun_t(_state);
-		                                                 tsk_flip      (baseTask::fun_); }
+		                                                 tsk_flip      (fun_); }
 #else
 		static
 		void     flip      ( fun_t *  _state )  {        tsk_flip      (_state); }
@@ -996,7 +996,7 @@ struct baseTask : public __tsk
 #if __cplusplus >= 201402
 		template<class F> static
 		void     action    ( const F  _action ) {        new (&current()->act) Act_t(_action);
-		                                                 cur_action    (baseTask::act_); }
+		                                                 cur_action    (act_); }
 #else
 		static
 		void     action    ( act_t *  _action ) {        cur_action    (_action); }
