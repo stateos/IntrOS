@@ -2,7 +2,7 @@
 
     @file    IntrOS: osstreambuffer.h
     @author  Rajmund Szymanski
-    @date    15.05.2020
+    @date    18.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -378,15 +378,15 @@ struct StreamBufferT : public __stm
 	StreamBufferT& operator=( StreamBufferT&& ) = delete;
 	StreamBufferT& operator=( const StreamBufferT& ) = delete;
 
-	unsigned take   (       void *_data, unsigned _size ) { return stm_take   (this, _data, _size); }
-	unsigned tryWait(       void *_data, unsigned _size ) { return stm_tryWait(this, _data, _size); }
-	unsigned wait   (       void *_data, unsigned _size ) { return stm_wait   (this, _data, _size); }
-	unsigned give   ( const void *_data, unsigned _size ) { return stm_give   (this, _data, _size); }
-	unsigned send   ( const void *_data, unsigned _size ) { return stm_send   (this, _data, _size); }
-	unsigned push   ( const void *_data, unsigned _size ) { return stm_push   (this, _data, _size); }
-	unsigned count  ( void )                              { return stm_count  (this); }
-	unsigned space  ( void )                              { return stm_space  (this); }
-	unsigned limit  ( void )                              { return stm_limit  (this); }
+	auto take   (       void *_data, unsigned _size ) { return stm_take   (this, _data, _size); }
+	auto tryWait(       void *_data, unsigned _size ) { return stm_tryWait(this, _data, _size); }
+	auto wait   (       void *_data, unsigned _size ) { return stm_wait   (this, _data, _size); }
+	auto give   ( const void *_data, unsigned _size ) { return stm_give   (this, _data, _size); }
+	auto send   ( const void *_data, unsigned _size ) { return stm_send   (this, _data, _size); }
+	auto push   ( const void *_data, unsigned _size ) { return stm_push   (this, _data, _size); }
+	auto count  ( void )                              { return stm_count  (this); }
+	auto space  ( void )                              { return stm_space  (this); }
+	auto limit  ( void )                              { return stm_limit  (this); }
 
 	private:
 	char data_[limit_];
@@ -409,12 +409,12 @@ struct StreamBufferTT : public StreamBufferT<limit_*sizeof(C)>
 {
 	StreamBufferTT( void ): StreamBufferT<limit_*sizeof(C)>() {}
 
-	unsigned take   (       C *_data ) { return stm_take   (this, _data, sizeof(C)); }
-	unsigned tryWait(       C *_data ) { return stm_tryWait(this, _data, sizeof(C)); }
-	unsigned wait   (       C *_data ) { return stm_wait   (this, _data, sizeof(C)); }
-	unsigned give   ( const C *_data ) { return stm_give   (this, _data, sizeof(C)); }
-	unsigned send   ( const C *_data ) { return stm_send   (this, _data, sizeof(C)); }
-	unsigned push   ( const C *_data ) { return stm_push   (this, _data, sizeof(C)); }
+	auto take   (       C *_data ) { return stm_take   (this, _data, sizeof(C)); }
+	auto tryWait(       C *_data ) { return stm_tryWait(this, _data, sizeof(C)); }
+	auto wait   (       C *_data ) { return stm_wait   (this, _data, sizeof(C)); }
+	auto give   ( const C *_data ) { return stm_give   (this, _data, sizeof(C)); }
+	auto send   ( const C *_data ) { return stm_send   (this, _data, sizeof(C)); }
+	auto push   ( const C *_data ) { return stm_push   (this, _data, sizeof(C)); }
 };
 
 #endif//__cplusplus

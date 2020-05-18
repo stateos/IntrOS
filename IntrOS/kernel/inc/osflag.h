@@ -2,7 +2,7 @@
 
     @file    IntrOS: osflag.h
     @author  Rajmund Szymanski
-    @date    14.05.2020
+    @date    18.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -298,13 +298,13 @@ struct Flag : public __flg
 	Flag& operator=( Flag&& ) = delete;
 	Flag& operator=( const Flag& ) = delete;
 
-	unsigned take   ( unsigned _flags, bool _all = true ) { return flg_take   (this, _flags, _all); }
-	unsigned tryWait( unsigned _flags, bool _all = true ) { return flg_tryWait(this, _flags, _all); }
-	void     wait   ( unsigned _flags, bool _all = true ) {        flg_wait   (this, _flags, _all); }
-	unsigned give   ( unsigned _flags )                   { return flg_give   (this, _flags); }
-	unsigned set    ( unsigned _flags )                   { return flg_set    (this, _flags); }
-	unsigned clear  ( unsigned _flags )                   { return flg_clear  (this, _flags); }
-	unsigned get    ( void )                              { return flg_get    (this); }
+	auto take   ( unsigned _flags, bool _all = true ) { return flg_take   (this, _flags, _all); }
+	auto tryWait( unsigned _flags, bool _all = true ) { return flg_tryWait(this, _flags, _all); }
+	void wait   ( unsigned _flags, bool _all = true ) {        flg_wait   (this, _flags, _all); }
+	auto give   ( unsigned _flags )                   { return flg_give   (this, _flags); }
+	auto set    ( unsigned _flags )                   { return flg_set    (this, _flags); }
+	auto clear  ( unsigned _flags )                   { return flg_clear  (this, _flags); }
+	auto get    ( void )                              { return flg_get    (this); }
 };
 
 #endif//__cplusplus

@@ -911,40 +911,40 @@ struct baseTask : public __tsk
 	baseTask( fun_t * _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_INIT(_state, _stack, _size) {}
 #endif
 
-	void     start    ( void )             {        tsk_start    (this); }
+	void start    ( void )             {        tsk_start    (this); }
 #if __cplusplus >= 201402
 	template<class F>
-	void     startFrom( const F  _state )  {        new (&fun) Fun_t(_state);
-	                                                tsk_startFrom(this, fun_); }
+	void startFrom( const F  _state )  {        new (&fun) Fun_t(_state);
+	                                            tsk_startFrom(this, fun_); }
 #else
-	void     startFrom( fun_t *  _state )  {        tsk_startFrom(this, _state); }
+	void startFrom( fun_t *  _state )  {        tsk_startFrom(this, _state); }
 #endif
-	void     join     ( void )             {        tsk_join     (this); }
-	void     reset    ( void )             {        tsk_reset    (this); }
-	void     kill     ( void )             {        tsk_kill     (this); }
-	unsigned suspend  ( void )             { return tsk_suspend  (this); }
-	unsigned resume   ( void )             { return tsk_resume   (this); }
-	void     give     ( unsigned _signo )  {        tsk_give     (this, _signo); }
-	void     signal   ( unsigned _signo )  {        tsk_signal   (this, _signo); }
+	void join     ( void )             {        tsk_join     (this); }
+	void reset    ( void )             {        tsk_reset    (this); }
+	void kill     ( void )             {        tsk_kill     (this); }
+	auto suspend  ( void )             { return tsk_suspend  (this); }
+	auto resume   ( void )             { return tsk_resume   (this); }
+	void give     ( unsigned _signo )  {        tsk_give     (this, _signo); }
+	void signal   ( unsigned _signo )  {        tsk_signal   (this, _signo); }
 #if __cplusplus >= 201402
 	template<class F>
-	void     action   ( const F  _action ) {        new (&act) Act_t(_action);
-	                                                tsk_action   (this, act_); }
+	void action   ( const F  _action ) {        new (&act) Act_t(_action);
+	                                            tsk_action   (this, act_); }
 #else
-	void     action   ( act_t *  _action ) {        tsk_action   (this, _action); }
+	void action   ( act_t *  _action ) {        tsk_action   (this, _action); }
 #endif
-	bool     operator!( void )             { return __tsk::hdr.id == ID_STOPPED; }
+	bool operator!( void )             { return __tsk::hdr.id == ID_STOPPED; }
 
 	template<class T = baseTask> static
-	T      * current  ( void )             { return static_cast<T *>(tsk_this()); }
+	auto current  ( void )             { return static_cast<T *>(tsk_this()); }
 
 #if __cplusplus >= 201402
 	static
-	void     fun_     ( void )             {        current()->fun(); }
-	Fun_t    fun;
+	void fun_     ( void )             {        current()->fun(); }
+	Fun_t fun;
 	static
-	void     act_     ( unsigned _signo )  {        current()->act(_signo); }
-	Act_t    act;
+	void act_     ( unsigned _signo )  {        current()->act(_signo); }
+	Act_t act;
 #endif
 
 /******************************************************************************
@@ -958,48 +958,48 @@ struct baseTask : public __tsk
 	struct Current
 	{
 		static
-		void     stop      ( void )             {        tsk_stop      (); }
+		void stop      ( void )             {        tsk_stop      (); }
 		static
-		void     exit      ( void )             {        tsk_exit      (); }
+		void exit      ( void )             {        tsk_exit      (); }
 		static
-		void     reset     ( void )             {        cur_reset     (); }
+		void reset     ( void )             {        cur_reset     (); }
 		static
-		void     kill      ( void )             {        cur_kill      (); }
+		void kill      ( void )             {        cur_kill      (); }
 		static
-		void     yield     ( void )             {        tsk_yield     (); }
+		void yield     ( void )             {        tsk_yield     (); }
 		static
-		void     pass      ( void )             {        tsk_pass      (); }
+		void pass      ( void )             {        tsk_pass      (); }
 #if __cplusplus >= 201402
 		template<class F> static
-		void     flip      ( const F  _state )  {        new (&current()->fun) Fun_t(_state);
-		                                                 tsk_flip      (fun_); }
+		void flip      ( const F  _state )  {        new (&current()->fun) Fun_t(_state);
+		                                             tsk_flip      (fun_); }
 #else
 		static
-		void     flip      ( fun_t *  _state )  {        tsk_flip      (_state); }
+		void flip      ( fun_t *  _state )  {        tsk_flip      (_state); }
 #endif
 		template<typename T> static
-		void     sleepFor  ( const T  _delay )  {        tsk_sleepFor  (Clock::count(_delay)); }
+		void sleepFor  ( const T  _delay )  {        tsk_sleepFor  (Clock::count(_delay)); }
 		template<typename T> static
-		void     sleepNext ( const T  _delay )  {        tsk_sleepNext (Clock::count(_delay)); }
+		void sleepNext ( const T  _delay )  {        tsk_sleepNext (Clock::count(_delay)); }
 		template<typename T> static
-		void     sleepUntil( const T  _time )   {        tsk_sleepUntil(Clock::until(_time)); }
+		void sleepUntil( const T  _time )   {        tsk_sleepUntil(Clock::until(_time)); }
 		static
-		void     sleep     ( void )             {        tsk_sleep     (); }
+		void sleep     ( void )             {        tsk_sleep     (); }
 		template<typename T> static
-		void     delay     ( const T  _delay )  {        tsk_delay     (Clock::count(_delay)); }
+		void delay     ( const T  _delay )  {        tsk_delay     (Clock::count(_delay)); }
 		static
-		void     suspend   ( void )             {        cur_suspend   (); }
+		void suspend   ( void )             {        cur_suspend   (); }
 		static
-		void     give      ( unsigned _signo )  {        cur_give      (_signo); }
+		void give      ( unsigned _signo )  {        cur_give      (_signo); }
 		static
-		void     signal    ( unsigned _signo )  {        cur_signal    (_signo); }
+		void signal    ( unsigned _signo )  {        cur_signal    (_signo); }
 #if __cplusplus >= 201402
 		template<class F> static
-		void     action    ( const F  _action ) {        new (&current()->act) Act_t(_action);
-		                                                 cur_action    (act_); }
+		void action    ( const F  _action ) {        new (&current()->act) Act_t(_action);
+		                                             cur_action    (act_); }
 #else
 		static
-		void     action    ( act_t *  _action ) {        cur_action    (_action); }
+		void action    ( act_t *  _action ) {        cur_action    (_action); }
 #endif
 	};
 };

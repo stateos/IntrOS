@@ -577,18 +577,18 @@ struct baseTimer : public __tmr
 	template<typename T>
 	void startFrom    ( const T _delay, const T _period, fun_t * _state ) {        tmr_startFrom    (this, Clock::count(_delay), Clock::count(_period), _state); }
 #endif
-	unsigned take     ( void )                                            { return tmr_take         (this); }
-	unsigned tryWait  ( void )                                            { return tmr_tryWait      (this); }
-	void     wait     ( void )                                            {        tmr_wait         (this); }
-	bool     operator!( void )                                            { return __tmr::hdr.id == ID_STOPPED; }
+	auto take         ( void )                                            { return tmr_take         (this); }
+	auto tryWait      ( void )                                            { return tmr_tryWait      (this); }
+	void wait         ( void )                                            {        tmr_wait         (this); }
+	bool operator!    ( void )                                            { return __tmr::hdr.id == ID_STOPPED; }
 
 	template<class T = baseTimer> static
-	T      * current  ( void )                                            { return static_cast<T *>(tmr_this()); }
+	auto current      ( void )                                            { return static_cast<T *>(tmr_this()); }
 
 #if __cplusplus >= 201402
 	static
-	void     fun_     ( void )                                            {        current()->fun(); }
-	Fun_t    fun;
+	void fun_         ( void )                                            {        current()->fun(); }
+	Fun_t fun;
 #endif
 
 /******************************************************************************
