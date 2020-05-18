@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.h
     @author  Rajmund Szymanski
-    @date    16.05.2020
+    @date    18.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -582,9 +582,12 @@ struct baseTimer : public __tmr
 	void     wait     ( void )                                            {        tmr_wait         (this); }
 	bool     operator!( void )                                            { return __tmr::hdr.id == ID_STOPPED; }
 
+	template<class T = baseTimer> static
+	T      * current  ( void )                                            { return static_cast<T *>(tmr_this()); }
+
 #if __cplusplus >= 201402
 	static
-	void     fun_     ( void )                                            {        static_cast<baseTimer *>(tmr_this())->fun(); }
+	void     fun_     ( void )                                            {        current()->fun(); }
 	Fun_t    fun;
 #endif
 };
@@ -851,12 +854,10 @@ struct Timer : public baseTimer
 
 namespace ThisTimer
 {
-	template<class T = baseTimer>
-	static inline T  * current ( void )           { return static_cast<T *>(tmr_this()); }
 #if __cplusplus >= 201402
 	static inline void flip    ( std::nullptr_t ) { tmr_flip (nullptr); }
 	template<class F>
-	static inline void flip    ( const F _state ) { new (&ThisTimer::current()->fun) Fun_t(_state);
+	static inline void flip    ( const F _state ) { new (&baseTimer::current()->fun) Fun_t(_state);
 	                                                tmr_flip (baseTimer::fun_); }
 #else
 	static inline void flip    ( fun_t * _state ) { tmr_flip (_state); }
