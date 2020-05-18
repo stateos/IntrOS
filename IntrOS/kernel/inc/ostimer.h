@@ -590,7 +590,33 @@ struct baseTimer : public __tmr
 	void     fun_     ( void )                                            {        current()->fun(); }
 	Fun_t    fun;
 #endif
+
+/******************************************************************************
+ *
+ * Class             : [base]Timer::This
+ *
+ * Description       : provide set of functions for current timer
+ *
+ ******************************************************************************/
+
+	struct This
+	{
+#if __cplusplus >= 201402
+		static
+		void flip ( std::nullptr_t ) { tmr_flip (nullptr); }
+		template<class F> static
+		void flip ( const F _state ) { new (&current()->fun) Fun_t(_state);
+		                               tmr_flip (baseTimer::fun_); }
+#else
+		static
+		void flip ( fun_t * _state ) { tmr_flip (_state); }
+#endif
+		template<typename T> static
+		void delay( const T _delay ) { tmr_delay(Clock::count(_delay)); }
+	};
 };
+
+using ThisTimer = baseTimer::This;
 
 /******************************************************************************
  *
@@ -843,28 +869,6 @@ struct Timer : public baseTimer
 	}
 #endif
 };
-
-/******************************************************************************
- *
- * Namespace         : ThisTimer
- *
- * Description       : provide set of functions for current timer
- *
- ******************************************************************************/
-
-namespace ThisTimer
-{
-#if __cplusplus >= 201402
-	static inline void flip    ( std::nullptr_t ) { tmr_flip (nullptr); }
-	template<class F>
-	static inline void flip    ( const F _state ) { new (&baseTimer::current()->fun) Fun_t(_state);
-	                                                tmr_flip (baseTimer::fun_); }
-#else
-	static inline void flip    ( fun_t * _state ) { tmr_flip (_state); }
-#endif
-	template<typename T>
-	static inline void delay   ( const T _delay ) { tmr_delay(Clock::count(_delay)); }
-}
 
 #endif//__cplusplus
 
