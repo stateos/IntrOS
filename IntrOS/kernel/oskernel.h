@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.h
     @author  Rajmund Szymanski
-    @date    18.05.2020
+    @date    20.05.2020
     @brief   This file defines set of kernel functions for IntrOS.
 
  ******************************************************************************
@@ -83,11 +83,17 @@ extern sys_t System; // system data
 
 /* -------------------------------------------------------------------------- */
 
+#ifndef OS_GUARD_SIZE
+#define OS_GUARD_SIZE     0
+#endif
+
+/* -------------------------------------------------------------------------- */
+
 #define assert_ctx_integrity(tsk) \
-        assert(((tsk) == &MAIN) || ((uintptr_t)(tsk)->stack < (uintptr_t)(tsk)->ctx.reg.sp))
+        assert(((tsk) == &MAIN) || ((uintptr_t)(tsk)->stack + OS_GUARD_SIZE < (uintptr_t)(tsk)->ctx.reg.sp))
 
 #define assert_stk_integrity() \
-        assert((System.cur == &MAIN) || ((uintptr_t)System.cur->stack < (uintptr_t)port_get_sp()))
+        assert((System.cur == &MAIN) || ((uintptr_t)System.cur->stack + OS_GUARD_SIZE < (uintptr_t)port_get_sp()))
 
 /* -------------------------------------------------------------------------- */
 

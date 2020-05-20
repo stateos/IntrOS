@@ -2,7 +2,7 @@
 
     @file    IntrOS: osconfig.h
     @author  Rajmund Szymanski
-    @date    24.01.2018
+    @date    20.05.2020
     @brief   IntrOS config file for STM32F4 uC.
 
  ******************************************************************************
@@ -44,7 +44,12 @@
 // ----------------------------
 // default task stack size in bytes
 // default value: 256
-#define OS_STACK_SIZE       256
+#define OS_STACK_SIZE      1024
+
+// ----------------------------
+// default task stack guard size in bytes
+// default value: 0
+#define OS_GUARD_SIZE        16
 
 // ----------------------------
 // bit size of system timer counter
