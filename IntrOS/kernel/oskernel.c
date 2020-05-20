@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    29.03.2020
+    @date    20.05.2020
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -116,6 +116,18 @@ void core_ctx_init( tsk_t *tsk )
 
 /* -------------------------------------------------------------------------- */
 
+#ifdef DEBUG
+size_t core_stk_space( void )
+{
+	void *stk = System.cur->stack;
+	char *ptr = stk;
+	while (*ptr == 0xFF) ptr++;
+	return (uintptr_t)ptr - (uintptr_t)stk;
+}
+#endif
+
+/* -------------------------------------------------------------------------- */
+
 void core_ctx_switch( void )
 {
 	sys_lock();
@@ -166,6 +178,7 @@ void core_tsk_switch( void )
 	tsk_t *cur;
 	tmr_t *tmr;
 
+	assert_stk_integrity();
 	assert_ctx_integrity(System.cur);
 
 	for (;;)
@@ -204,6 +217,7 @@ void core_tsk_switch( void )
 	}
 
 	assert_ctx_integrity(System.cur);
+	assert_stk_integrity();
 
 	longjmp(cur->ctx.buf, 1);
 }
