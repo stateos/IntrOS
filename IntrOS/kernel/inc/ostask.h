@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    18.05.2020
+    @date    21.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -39,6 +39,9 @@
 
 #define STK_SIZE( size ) \
     ALIGNED_SIZE( size, stk_t )
+
+#define STK_OVER( size ) \
+         ALIGNED( size, stk_t )
 
 #define STK_CROP( base, size ) \
          LIMITED( (intptr_t)base + (intptr_t)size, stk_t )

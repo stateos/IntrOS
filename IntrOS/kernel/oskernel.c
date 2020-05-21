@@ -115,8 +115,8 @@ void core_ctx_init( tsk_t *tsk )
 }
 
 /* -------------------------------------------------------------------------- */
-
 #ifdef DEBUG
+
 size_t core_stk_space( void )
 {
 	void *stk = System.cur->stack;
@@ -124,8 +124,28 @@ size_t core_stk_space( void )
 	while (*ptr == 0xFF) ptr++;
 	return (uintptr_t)ptr - (uintptr_t)stk;
 }
-#endif
 
+bool core_ctx_integrity( tsk_t *tsk )
+{
+	void *tp = tsk->stack + STK_SIZE(OS_GUARD_SIZE);
+	void *sp = tsk->ctx.reg.sp;
+	if (tsk == &MAIN) return true;
+	if (tp < sp) return true;
+	return false;
+}
+
+bool core_stk_integrity( void )
+{
+	tsk_t *tsk = System.cur;
+	void *tp = tsk->stack + STK_SIZE(OS_GUARD_SIZE);
+	void *sp = port_get_sp();
+	if (tsk == &MAIN) return true;
+	if (core_stk_space() < STK_OVER(OS_GUARD_SIZE)) return false;
+	if (tp < sp) return true;
+	return false;
+}
+
+#endif
 /* -------------------------------------------------------------------------- */
 
 void core_ctx_switch( void )
