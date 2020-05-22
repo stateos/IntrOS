@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    21.05.2020
+    @date    22.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -862,6 +862,29 @@ void tsk_action( tsk_t *tsk, act_t *action );
 __STATIC_INLINE
 void cur_action( act_t *action ) { tsk_action(System.cur, action); }
 
+/******************************************************************************
+ *
+ * Name              : tsk_stackSpace
+ *
+ * Description       : chack water mark of the stack of the current task
+ *
+ * Parameters        : none
+ *
+ * Return            : high water mark of the stack of the current task
+ *   0               : DEBUG not defined
+ *
+ ******************************************************************************/
+
+__STATIC_INLINE
+size_t tsk_stackSpace( void )
+{
+#ifdef DEBUG
+	return core_stk_space(System.cur);
+#else
+	return 0;
+#endif
+}
+
 #ifdef __cplusplus
 }
 #endif
@@ -886,6 +909,7 @@ void cur_action( act_t *action ) { tsk_action(System.cur, action); }
 template<size_t size_>
 struct baseStack
 {
+	static_assert(size_>STK_OVER((OS_GUARD_SIZE)), "incorrect stack size");
 	stk_t stack_[ STK_SIZE(size_) ];
 };
 
