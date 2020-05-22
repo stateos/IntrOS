@@ -2,7 +2,7 @@
 
     @file    IntrOS: oslibc.c
     @author  Rajmund Szymanski
-    @date    29.03.2020
+    @date    22.05.2020
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -86,11 +86,11 @@ int   _kill_r( struct _reent *reent, int pid, int sig )                      __a
 /* -------------------------------------------------------------------------- */
 
 #include <stdlib.h>
+#include <stdio.h>
 
 void __assert_func(const char* const file, const int line, const char* const func, const char* const expr)
 {
-	(void) expr; (void) file; (void) line; (void) func;
-
+	printf("\nassert error at %s:%d:%s:%s\n", file, line, expr, func);
 	abort();
 }
 

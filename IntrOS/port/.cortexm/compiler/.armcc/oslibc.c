@@ -2,7 +2,7 @@
 
     @file    IntrOS: oslibc.c
     @author  Rajmund Szymanski
-    @date    29.03.2020
+    @date    22.05.2020
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -48,11 +48,11 @@ char *_sys_command_string( char *cmd, int len )
 /* -------------------------------------------------------------------------- */
 
 #include <stdlib.h>
+#include <stdio.h>
 
 void __aeabi_assert(const char* expr, const char* file, int line)
 {
-	(void) expr; (void) file; (void) line;
-
+	printf("\nassert error at %s:%d:%s\n", file, line, expr);
 	abort();
 }
 

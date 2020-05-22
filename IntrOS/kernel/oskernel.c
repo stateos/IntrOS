@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    21.05.2020
+    @date    22.05.2020
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -106,43 +106,46 @@ void core_tsk_remove( tsk_t *tsk )
 
 void core_ctx_init( tsk_t *tsk )
 {
+	assert(tsk->size>STK_OVER(OS_GUARD_SIZE));
 #ifdef DEBUG
 	if (tsk != System.cur)
 		memset(tsk->stack, 0xFF, tsk->size);
 #endif
 	port_ctx_init(&tsk->ctx.reg, (stk_t *)STK_CROP(tsk->stack, tsk->size), core_tsk_loop);
-	assert_ctx_integrity(tsk);
 }
 
 /* -------------------------------------------------------------------------- */
 #ifdef DEBUG
 
-size_t core_stk_space( void )
+size_t core_stk_space( tsk_t *tsk )
 {
-	void *stk = System.cur->stack;
+	void *stk = tsk->stack;
 	char *ptr = stk;
 	while (*ptr == 0xFF) ptr++;
 	return (uintptr_t)ptr - (uintptr_t)stk;
 }
 
-bool core_ctx_integrity( tsk_t *tsk )
+static
+bool priv_stk_integrity( tsk_t *tsk, void *sp )
 {
 	void *tp = tsk->stack + STK_SIZE(OS_GUARD_SIZE);
-	void *sp = tsk->ctx.reg.sp;
 	if (tsk == &MAIN) return true;
-	if (tp < sp) return true;
-	return false;
+	if (sp < tp) return false;
+	if (core_stk_space(tsk) < STK_OVER(OS_GUARD_SIZE)) return false;
+	return true;
+}
+
+bool core_ctx_integrity( tsk_t *tsk )
+{
+	void *sp = tsk->ctx.reg.sp;
+	return priv_stk_integrity(tsk, sp);
 }
 
 bool core_stk_integrity( void )
 {
 	tsk_t *tsk = System.cur;
-	void *tp = tsk->stack + STK_SIZE(OS_GUARD_SIZE);
 	void *sp = port_get_sp();
-	if (tsk == &MAIN) return true;
-	if (core_stk_space() < STK_OVER(OS_GUARD_SIZE)) return false;
-	if (tp < sp) return true;
-	return false;
+	return priv_stk_integrity(tsk, sp);
 }
 
 #endif
