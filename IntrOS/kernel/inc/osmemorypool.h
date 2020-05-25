@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmemorypool.h
     @author  Rajmund Szymanski
-    @date    18.05.2020
+    @date    25.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -212,7 +212,7 @@ void mem_bind( mem_t *mem );
  *
  ******************************************************************************/
 
-void mem_init( mem_t *mem, unsigned size, que_t *data, unsigned bufsize );
+void mem_init( mem_t *mem, size_t size, que_t *data, size_t bufsize );
 
 /******************************************************************************
  *
@@ -293,7 +293,7 @@ void mem_give( mem_t *mem, const void *data ) { lst_give(&mem->lst, data); }
  *
  ******************************************************************************/
 
-template<unsigned limit_, unsigned size_>
+template<unsigned limit_, size_t size_>
 struct MemoryPoolT : public __mem
 {
 	MemoryPoolT( void ): __mem _MEM_INIT(limit_, MEM_SIZE(size_), data_) { mem_bind(this); }
