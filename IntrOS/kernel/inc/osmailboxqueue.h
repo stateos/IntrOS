@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmailboxqueue.h
     @author  Rajmund Szymanski
-    @date    18.05.2020
+    @date    25.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -44,12 +44,12 @@ typedef struct __box box_t, * const box_id;
 
 struct __box
 {
-	unsigned count; // inherited from semaphore
-	unsigned limit; // inherited from semaphore
-	unsigned size;  // size of a single mail (in bytes)
+	size_t   count; // size of used memory in the mailbox buffer (in bytes)
+	size_t   limit; // size of the mailbox buffer (in bytes)
+	size_t   size;  // size of a single mail (in bytes)
 
-	unsigned head;  // first element to read from data buffer
-	unsigned tail;  // first element to write into data buffer
+	size_t   head;  // first element to read from data buffer
+	size_t   tail;  // first element to write into data buffer
 	char   * data;  // data buffer
 };
 
@@ -193,7 +193,7 @@ extern "C" {
  *
  ******************************************************************************/
 
-void box_init( box_t *box, unsigned size, void *data, unsigned bufsize );
+void box_init( box_t *box, size_t size, void *data, size_t bufsize );
 
 /******************************************************************************
  *
@@ -353,7 +353,7 @@ unsigned box_limit( box_t *box );
  *
  ******************************************************************************/
 
-template<unsigned limit_, unsigned size_>
+template<unsigned limit_, size_t size_>
 struct MailBoxQueueT : public __box
 {
 	MailBoxQueueT( void ): __box _BOX_INIT(limit_, size_, data_) {}
