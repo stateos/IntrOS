@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.h
     @author  Rajmund Szymanski
-    @date    22.05.2020
+    @date    26.05.2020
     @brief   This file defines set of kernel functions for IntrOS.
 
  ******************************************************************************
@@ -40,15 +40,14 @@
  *                              FOR INTERNAL USE                              *
  * -------------------------------------------------------------------------- */
 
-#ifdef  __cplusplus
-
-#if __cplusplus < 201103
+#ifdef __cplusplus
+#if    __cplusplus < 201103L
 #error This version of c++ compiler is unsupported!
 #endif
 
 using uint = unsigned int;
 
-#if __cplusplus >= 201402
+#if    __cplusplus >= 201402
 #include <functional>
 using Fun_t = std::function<void( void )>;
 using Act_t = std::function<void( unsigned )>;
