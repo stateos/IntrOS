@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossemaphore.c
     @author  Rajmund Szymanski
-    @date    10.05.2020
+    @date    27.05.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -45,7 +45,7 @@ void sem_init( sem_t *sem, unsigned init, unsigned limit )
 		memset(sem, 0, sizeof(sem_t));
 
 		sem->count = init;
-		sem->limit = limit;
+		sem->limit = init < limit ? init : limit;
 	}
 	sys_unlock();
 }
