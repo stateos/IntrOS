@@ -2,7 +2,7 @@
 
     @file    IntrOS: osstreambuffer.h
     @author  Rajmund Szymanski
-    @date    18.05.2020
+    @date    27.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -371,6 +371,7 @@ unsigned stm_limit( stm_t *stm );
 template<unsigned limit_>
 struct StreamBufferT : public __stm
 {
+	constexpr
 	StreamBufferT( void ): __stm _STM_INIT(limit_, data_) {}
 
 	StreamBufferT( StreamBufferT&& ) = default;
@@ -407,6 +408,7 @@ struct StreamBufferT : public __stm
 template<unsigned limit_, class C>
 struct StreamBufferTT : public StreamBufferT<limit_*sizeof(C)>
 {
+	constexpr
 	StreamBufferTT( void ): StreamBufferT<limit_*sizeof(C)>() {}
 
 	uint take   (       C *_data ) { return stm_take   (this, _data, sizeof(C)); }

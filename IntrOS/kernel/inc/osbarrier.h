@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbarrier.h
     @author  Rajmund Szymanski
-    @date    21.04.2020
+    @date    27.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -198,6 +198,7 @@ void bar_wait( bar_t *bar );
 
 struct Barrier : public __bar
 {
+	constexpr
 	Barrier( const unsigned _limit ): __bar _BAR_INIT(_limit) {}
 
 	Barrier( Barrier&& ) = default;

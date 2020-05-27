@@ -2,7 +2,7 @@
 
     @file    IntrOS: oslist.h
     @author  Rajmund Szymanski
-    @date    18.05.2020
+    @date    27.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -260,6 +260,7 @@ void lst_give( lst_t *lst, const void *data );
 template<class C>
 struct ListTT : public __lst
 {
+	constexpr
 	ListTT( void ): __lst _LST_INIT() {}
 
 	ListTT( ListTT&& ) = default;

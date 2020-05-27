@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.h
     @author  Rajmund Szymanski
-    @date    18.05.2020
+    @date    27.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -386,6 +386,7 @@ unsigned msg_size( msg_t *msg );
 template<unsigned limit_>
 struct MessageBufferT : public __msg
 {
+	constexpr
 	MessageBufferT( void ): __msg _MSG_INIT(limit_, data_) {}
 
 	MessageBufferT( MessageBufferT&& ) = default;
@@ -423,6 +424,7 @@ struct MessageBufferT : public __msg
 template<unsigned limit_, class C>
 struct MessageBufferTT : public MessageBufferT<limit_*(sizeof(unsigned)+sizeof(C))>
 {
+	constexpr
 	MessageBufferTT( void ): MessageBufferT<limit_*(sizeof(unsigned)+sizeof(C))>() {}
 
 	uint take   (       C *_data ) { return msg_take   (this, _data, sizeof(C)); }

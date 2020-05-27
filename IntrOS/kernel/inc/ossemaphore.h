@@ -302,6 +302,7 @@ unsigned sem_getValue( sem_t *sem );
 
 struct Semaphore : public __sem
 {
+	constexpr
 	Semaphore( const unsigned _init, const unsigned _limit = semDefault ): __sem _SEM_INIT(_init, _limit) {}
 
 	Semaphore( Semaphore&& ) = default;
@@ -322,7 +323,7 @@ struct Semaphore : public __sem
  *
  ******************************************************************************/
 
-	static
+	static constexpr
 	Semaphore Binary( const unsigned _init = 0 )
 	{
 		return { _init, semBinary };
@@ -341,7 +342,7 @@ struct Semaphore : public __sem
  *
  ******************************************************************************/
 
-	static
+	static constexpr
 	Semaphore Counting( const unsigned _init = 0 )
 	{
 		return { _init, semCounting };

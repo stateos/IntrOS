@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmutex.h
     @author  Rajmund Szymanski
-    @date    18.05.2020
+    @date    27.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -238,6 +238,7 @@ unsigned mtx_unlock( mtx_t *mtx ) { return mtx_give(mtx); }
 
 struct Mutex : public __mtx
 {
+	constexpr
 	Mutex( void ): __mtx _MTX_INIT() {}
 
 	Mutex( Mutex&& ) = default;

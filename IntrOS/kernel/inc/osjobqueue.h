@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.h
     @author  Rajmund Szymanski
-    @date    18.05.2020
+    @date    27.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -345,6 +345,7 @@ unsigned job_limit( job_t *job );
 template<unsigned limit_>
 struct JobQueueT : public __job
 {
+	constexpr
 	JobQueueT( void ): __job _JOB_INIT(limit_, data_) {}
 
 	JobQueueT( JobQueueT&& ) = default;
