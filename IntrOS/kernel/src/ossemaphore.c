@@ -44,8 +44,8 @@ void sem_init( sem_t *sem, unsigned init, unsigned limit )
 	{
 		memset(sem, 0, sizeof(sem_t));
 
-		sem->count = init;
-		sem->limit = init < limit ? init : limit;
+		sem->count = init < limit ? init : limit;
+		sem->limit = limit;
 	}
 	sys_unlock();
 }

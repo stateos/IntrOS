@@ -77,7 +77,7 @@ extern "C" {
  *
  ******************************************************************************/
 
-#define               _SEM_INIT( _init, _limit ) { _init, _init < _limit ? _init : _limit }
+#define               _SEM_INIT( _init, _limit ) { _init < _limit ? _init : _limit, _limit }
 
 /******************************************************************************
  *
