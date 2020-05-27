@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.h
     @author  Rajmund Szymanski
-    @date    18.05.2020
+    @date    27.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -580,7 +580,8 @@ struct baseTimer : public __tmr
 	uint take         ( void )                                            { return tmr_take         (this); }
 	uint tryWait      ( void )                                            { return tmr_tryWait      (this); }
 	void wait         ( void )                                            {        tmr_wait         (this); }
-	bool operator!    ( void )                                            { return __tmr::hdr.id == ID_STOPPED; }
+	explicit
+	operator bool     () const                                            { return __tmr::hdr.id != ID_STOPPED; }
 
 	template<class T = baseTimer> static
 	T *  current      ( void )                                            { return static_cast<T *>(tmr_this()); }
