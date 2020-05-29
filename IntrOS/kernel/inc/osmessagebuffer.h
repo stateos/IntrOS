@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.h
     @author  Rajmund Szymanski
-    @date    27.05.2020
+    @date    29.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -44,8 +44,8 @@ typedef struct __msg msg_t, * const msg_id;
 
 struct __msg
 {
-	unsigned count; // inherited from stream buffer
-	unsigned limit; // inherited from stream buffer
+	size_t   count; // inherited from stream buffer
+	size_t   limit; // inherited from stream buffer
 
 	unsigned head;  // inherited from stream buffer
 	unsigned tail;  // inherited from stream buffer
@@ -201,7 +201,7 @@ extern "C" {
  *
  ******************************************************************************/
 
-void msg_init( msg_t *msg, void *data, unsigned bufsize );
+void msg_init( msg_t *msg, void *data, size_t bufsize );
 
 /******************************************************************************
  *
@@ -308,16 +308,16 @@ unsigned msg_push( msg_t *msg, const void *data, unsigned size );
  *
  * Name              : msg_count
  *
- * Description       : return the size of the first message in the buffer
+ * Description       : return the amount of data contained in the message buffer
  *
  * Parameters
  *   msg             : pointer to message buffer object
  *
- * Return            : amount of data contained in the first message
+ * Return            : amount of data contained in the message buffer
  *
  ******************************************************************************/
 
-unsigned msg_count( msg_t *msg );
+size_t msg_count( msg_t *msg );
 
 /******************************************************************************
  *
@@ -332,7 +332,7 @@ unsigned msg_count( msg_t *msg );
  *
  ******************************************************************************/
 
-unsigned msg_space( msg_t *msg );
+size_t msg_space( msg_t *msg );
 
 /******************************************************************************
  *
@@ -347,7 +347,7 @@ unsigned msg_space( msg_t *msg );
  *
  ******************************************************************************/
 
-unsigned msg_limit( msg_t *msg );
+size_t msg_limit( msg_t *msg );
 
 /******************************************************************************
  *
@@ -383,7 +383,7 @@ unsigned msg_size( msg_t *msg );
  *
  ******************************************************************************/
 
-template<unsigned limit_>
+template<size_t limit_>
 struct MessageBufferT : public __msg
 {
 	constexpr
@@ -400,9 +400,9 @@ struct MessageBufferT : public __msg
 	uint give   ( const void *_data, unsigned _size ) { return msg_give   (this, _data, _size); }
 	uint send   ( const void *_data, unsigned _size ) { return msg_send   (this, _data, _size); }
 	uint push   ( const void *_data, unsigned _size ) { return msg_push   (this, _data, _size); }
-	uint count  ( void )                              { return msg_count  (this); }
-	uint space  ( void )                              { return msg_space  (this); }
-	uint limit  ( void )                              { return msg_limit  (this); }
+	size_t count( void )                              { return msg_count  (this); }
+	size_t space( void )                              { return msg_space  (this); }
+	size_t limit( void )                              { return msg_limit  (this); }
 	uint size   ( void )                              { return msg_size   (this); }
 
 	private:
@@ -421,7 +421,7 @@ struct MessageBufferT : public __msg
  *
  ******************************************************************************/
 
-template<unsigned limit_, class C>
+template<size_t limit_, class C>
 struct MessageBufferTT : public MessageBufferT<limit_*(sizeof(unsigned)+sizeof(C))>
 {
 	constexpr

@@ -33,7 +33,7 @@
 #include "inc/oscriticalsection.h"
 
 /* -------------------------------------------------------------------------- */
-void msg_init( msg_t *msg, void *data, unsigned bufsize )
+void msg_init( msg_t *msg, void *data, size_t bufsize )
 /* -------------------------------------------------------------------------- */
 {
 	assert(msg);
@@ -269,10 +269,10 @@ unsigned msg_push( msg_t *msg, const void *data, unsigned size )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned msg_count( msg_t *msg )
+size_t msg_count( msg_t *msg )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned count;
+	size_t count;
 
 	assert(msg);
 
@@ -286,10 +286,10 @@ unsigned msg_count( msg_t *msg )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned msg_space( msg_t *msg )
+size_t msg_space( msg_t *msg )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned space;
+	size_t space;
 
 	assert(msg);
 
@@ -303,10 +303,10 @@ unsigned msg_space( msg_t *msg )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned msg_limit( msg_t *msg )
+size_t msg_limit( msg_t *msg )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned limit;
+	size_t limit;
 
 	assert(msg);
 
