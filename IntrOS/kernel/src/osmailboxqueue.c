@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmailboxqueue.c
     @author  Rajmund Szymanski
-    @date    25.05.2020
+    @date    29.05.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -33,7 +33,7 @@
 #include "inc/oscriticalsection.h"
 
 /* -------------------------------------------------------------------------- */
-void box_init( box_t *box, size_t size, void *data, size_t bufsize )
+void box_init( box_t *box, unsigned size, void *data, size_t bufsize )
 /* -------------------------------------------------------------------------- */
 {
 	assert(box);
@@ -57,8 +57,8 @@ static
 void priv_box_get( box_t *box, char *data )
 /* -------------------------------------------------------------------------- */
 {
-	size_t i = box->head;
-	size_t j = 0;
+	unsigned i = box->head;
+	unsigned j = 0;
 
 	do data[j++] = box->data[i++]; while (j < box->size);
 
@@ -71,8 +71,8 @@ static
 void priv_box_put( box_t *box, const char *data )
 /* -------------------------------------------------------------------------- */
 {
-	size_t i = box->tail;
-	size_t j = 0;
+	unsigned i = box->tail;
+	unsigned j = 0;
 
 	do box->data[i++] = data[j++]; while (j < box->size);
 
