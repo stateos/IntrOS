@@ -2,7 +2,7 @@
 
     @file    IntrOS: osstreambuffer.h
     @author  Rajmund Szymanski
-    @date    27.05.2020
+    @date    29.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -44,8 +44,8 @@ typedef struct __stm stm_t, * const stm_id;
 
 struct __stm
 {
-	unsigned count; // inherited from semaphore
-	unsigned limit; // inherited from semaphore
+	size_t   count; // size of used memory in the stream buffer (in bytes)
+	size_t   limit; // size of the stream buffer (in bytes)
 
 	unsigned head;  // first element to read from data buffer
 	unsigned tail;  // first element to write into data buffer
@@ -201,7 +201,7 @@ extern "C" {
  *
  ******************************************************************************/
 
-void stm_init( stm_t *stm, void *data, unsigned bufsize );
+void stm_init( stm_t *stm, void *data, size_t bufsize );
 
 /******************************************************************************
  *
@@ -317,7 +317,7 @@ unsigned stm_push( stm_t *stm, const void *data, unsigned size );
  *
  ******************************************************************************/
 
-unsigned stm_count( stm_t *stm );
+size_t stm_count( stm_t *stm );
 
 /******************************************************************************
  *
@@ -332,7 +332,7 @@ unsigned stm_count( stm_t *stm );
  *
  ******************************************************************************/
 
-unsigned stm_space( stm_t *stm );
+size_t stm_space( stm_t *stm );
 
 /******************************************************************************
  *
@@ -347,7 +347,7 @@ unsigned stm_space( stm_t *stm );
  *
  ******************************************************************************/
 
-unsigned stm_limit( stm_t *stm );
+size_t stm_limit( stm_t *stm );
 
 #ifdef __cplusplus
 }
@@ -368,7 +368,7 @@ unsigned stm_limit( stm_t *stm );
  *
  ******************************************************************************/
 
-template<unsigned limit_>
+template<size_t limit_>
 struct StreamBufferT : public __stm
 {
 	constexpr
@@ -385,9 +385,9 @@ struct StreamBufferT : public __stm
 	uint give   ( const void *_data, unsigned _size ) { return stm_give   (this, _data, _size); }
 	uint send   ( const void *_data, unsigned _size ) { return stm_send   (this, _data, _size); }
 	uint push   ( const void *_data, unsigned _size ) { return stm_push   (this, _data, _size); }
-	uint count  ( void )                              { return stm_count  (this); }
-	uint space  ( void )                              { return stm_space  (this); }
-	uint limit  ( void )                              { return stm_limit  (this); }
+	size_t count( void )                              { return stm_count  (this); }
+	size_t space( void )                              { return stm_space  (this); }
+	size_t limit( void )                              { return stm_limit  (this); }
 
 	private:
 	char data_[limit_];
@@ -405,7 +405,7 @@ struct StreamBufferT : public __stm
  *
  ******************************************************************************/
 
-template<unsigned limit_, class C>
+template<size_t limit_, class C>
 struct StreamBufferTT : public StreamBufferT<limit_*sizeof(C)>
 {
 	constexpr
