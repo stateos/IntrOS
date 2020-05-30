@@ -2,7 +2,7 @@
 
     @file    IntrOS: osdefs.h
     @author  Rajmund Szymanski
-    @date    29.03.2020
+    @date    30.05.2020
     @brief   IntrOS port file for ARM Cotrex-M uC.
 
  ******************************************************************************
@@ -31,13 +31,6 @@
 
 #ifndef __INTROSDEFS_H
 #define __INTROSDEFS_H
-
-/* -------------------------------------------------------------------------- */
-
-#ifndef __CONSTRUCTOR
-#define __CONSTRUCTOR
-#warning No compiler specific solution for __CONSTRUCTOR. __CONSTRUCTOR is ignored.
-#endif
 
 /* -------------------------------------------------------------------------- */
 

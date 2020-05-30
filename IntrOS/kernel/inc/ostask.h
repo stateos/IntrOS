@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    27.05.2020
+    @date    30.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -243,11 +243,13 @@ extern "C" {
  *
  ******************************************************************************/
 
+#ifdef __CONSTRUCTOR
 #define             OS_WRK_START( tsk, size )                     \
                        void tsk##__fun( void );                    \
                     OS_WRK( tsk, tsk##__fun, size );                \
          __CONSTRUCTOR void tsk##__start( void ) { tsk_start(tsk); } \
                        void tsk##__fun( void )
+#endif
 
 /******************************************************************************
  *
@@ -264,8 +266,10 @@ extern "C" {
  *
  ******************************************************************************/
 
+#ifdef __CONSTRUCTOR
 #define             OS_TSK_START( tsk, ... ) \
                     OS_WRK_START( tsk, _VA_STK(__VA_ARGS__) )
+#endif
 
 /******************************************************************************
  *
@@ -352,11 +356,13 @@ extern "C" {
  *
  ******************************************************************************/
 
+#ifdef __CONSTRUCTOR
 #define         static_WRK_START( tsk, size )                     \
                 static void tsk##__fun( void );                    \
                 static_WRK( tsk, tsk##__fun, size );                \
   __CONSTRUCTOR static void tsk##__start( void ) { tsk_start(tsk); } \
                 static void tsk##__fun( void )
+#endif
 
 /******************************************************************************
  *
@@ -373,8 +379,10 @@ extern "C" {
  *
  ******************************************************************************/
 
+#ifdef __CONSTRUCTOR
 #define         static_TSK_START( tsk, ... ) \
                 static_WRK_START( tsk, _VA_STK(__VA_ARGS__) )
+#endif
 
 /******************************************************************************
  *

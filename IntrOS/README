@@ -41,6 +41,7 @@ Features:
 - added CNT_LIMIT definition
 - check task stack watermark
 - added tsk_stackSpace function
+- removed empty __CONSTRUCTOR definitions
 ---------
 4.6
 - updated os version

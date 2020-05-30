@@ -2,7 +2,7 @@
 
     @file    IntrOS: osdefs.h
     @author  Rajmund Szymanski
-    @date    29.03.2020
+    @date    30.05.2020
     @brief   IntrOS port file for STM8 uC.
 
  ******************************************************************************
@@ -34,9 +34,6 @@
 
 /* -------------------------------------------------------------------------- */
 
-#ifndef __CONSTRUCTOR
-#define __CONSTRUCTOR
-#endif
 #ifndef __NO_RETURN
 #define __NO_RETURN          _Noreturn
 #endif
