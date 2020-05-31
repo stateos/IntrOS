@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.h
     @author  Rajmund Szymanski
-    @date    30.05.2020
+    @date    31.05.2020
     @brief   This file defines set of kernel functions for IntrOS.
 
  ******************************************************************************
@@ -79,12 +79,6 @@ extern "C" {
 
 extern tsk_t MAIN;   // main task
 extern sys_t System; // system data
-
-/* -------------------------------------------------------------------------- */
-
-#ifndef OS_GUARD_SIZE
-#define OS_GUARD_SIZE   0
-#endif
 
 /* -------------------------------------------------------------------------- */
 #ifdef DEBUG

@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    30.05.2020
+    @date    31.05.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -143,7 +143,7 @@ extern "C" {
  ******************************************************************************/
 
 #ifndef __cplusplus
-#define               _TSK_STACK( _size ) (stk_t[STK_SIZE(_size)]){ 0 }
+#define               _TSK_STACK( _size ) (stk_t __STKALIGN [STK_SIZE(_size)]) { 0 }
 #endif
 
 /******************************************************************************
@@ -172,9 +172,9 @@ extern "C" {
  *
  ******************************************************************************/
 
-#define             OS_WRK( tsk, state, size )                                        \
-                       struct { tsk_t tsk; stk_t stk[STK_SIZE( size )]; } tsk##__wrk = \
-                       { _TSK_INIT( state, tsk##__wrk.stk, size ), { 0 } };             \
+#define             OS_WRK( tsk, state, size )                                                   \
+                       struct { tsk_t tsk; stk_t stk[STK_SIZE( size )] __STKALIGN; } tsk##__wrk = \
+                       { _TSK_INIT( state, tsk##__wrk.stk, size ), { 0 } };                        \
                        tsk_id tsk = & tsk##__wrk.tsk
 
 /******************************************************************************
@@ -285,9 +285,9 @@ extern "C" {
  *
  ******************************************************************************/
 
-#define         static_WRK( tsk, state, size )                                  \
-                static struct { tsk_t tsk; stk_t stk[STK_SIZE( size )]; } tsk##__wrk = \
-                       { _TSK_INIT( state, tsk##__wrk.stk, size ), { 0 } };       \
+#define         static_WRK( tsk, state, size )                                                   \
+                static struct { tsk_t tsk; stk_t stk[STK_SIZE( size )] __STKALIGN; } tsk##__wrk = \
+                       { _TSK_INIT( state, tsk##__wrk.stk, size ), { 0 } };                        \
                 static tsk_id tsk = & tsk##__wrk.tsk
 
 /******************************************************************************
@@ -918,7 +918,11 @@ template<size_t size_>
 struct baseStack
 {
 	static_assert(size_>STK_OVER((OS_GUARD_SIZE)), "incorrect stack size");
+#if __cplusplus >= 201703
+	stk_t stack_[ STK_SIZE(size_) ] __STKALIGN;
+#else
 	stk_t stack_[ STK_SIZE(size_) ];
+#endif
 };
 
 /******************************************************************************

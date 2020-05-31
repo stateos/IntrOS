@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    22.05.2020
+    @date    31.05.2020
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -35,15 +35,7 @@
 #include "inc/oscriticalsection.h"
 
 /* -------------------------------------------------------------------------- */
-
-#ifndef MAIN_TOP
-static  stk_t     MAIN_STK[STK_SIZE(OS_STACK_SIZE)];
-#define MAIN_TOP (MAIN_STK+STK_SIZE(OS_STACK_SIZE))
-#endif
-
-tsk_t MAIN = { .hdr={ .prev=&MAIN, .next=&MAIN, .id=ID_READY }, .stack=MAIN_TOP }; // main task
-sys_t System = { .cur=&MAIN };
-
+// SYSTEM INTERNAL SERVICES
 /* -------------------------------------------------------------------------- */
 
 static
@@ -63,13 +55,15 @@ void priv_rdy_insert( hdr_t *hdr )
 static
 void priv_rdy_remove( hdr_t *hdr )
 {
-	hdr_t *nxt = hdr->next;
 	hdr_t *prv = hdr->prev;
+	hdr_t *nxt = hdr->next;
 
 	nxt->prev = prv;
 	prv->next = nxt;
 }
 
+/* -------------------------------------------------------------------------- */
+// SYSTEM TIMER SERVICES
 /* -------------------------------------------------------------------------- */
 
 void core_tmr_insert( tmr_t *tmr )
@@ -85,6 +79,18 @@ void core_tmr_remove( tmr_t *tmr )
 	tmr->hdr.id = ID_STOPPED;
 	priv_rdy_remove(&tmr->hdr);
 }
+
+/* -------------------------------------------------------------------------- */
+// SYSTEM TASK SERVICES
+/* -------------------------------------------------------------------------- */
+
+#ifndef MAIN_TOP
+static  stk_t     MAIN_STK[STK_SIZE(OS_STACK_SIZE)] __STKALIGN;
+#define MAIN_TOP (MAIN_STK+STK_SIZE(OS_STACK_SIZE))
+#endif
+
+tsk_t MAIN = { .hdr={ .prev=&MAIN, .next=&MAIN, .id=ID_READY }, .stack=MAIN_TOP }; // main task
+sys_t System = { .cur=&MAIN };
 
 /* -------------------------------------------------------------------------- */
 
@@ -131,7 +137,9 @@ bool priv_stk_integrity( tsk_t *tsk, void *sp )
 	void *tp = tsk->stack + STK_SIZE(OS_GUARD_SIZE);
 	if (tsk == &MAIN) return true;
 	if (sp < tp) return false;
+#if (__MPU_USED == 0) && (OS_GUARD_SIZE > 0)
 	if (core_stk_space(tsk) < STK_OVER(OS_GUARD_SIZE)) return false;
+#endif
 	return true;
 }
 
@@ -237,6 +245,12 @@ void core_tsk_switch( void )
 			port_clr_lock();
 		}
 	}
+
+#if __MPU_USED == 1
+//	port_mpu_disable();
+	port_mpu_stackUpdate(cur == &MAIN ? NULL : cur->stack);
+//	port_mpu_enable();
+#endif
 
 	assert_ctx_integrity(System.cur);
 

@@ -11,6 +11,7 @@ Features:
 - kernel can operate in cooperative (non-preemptive) mode only
 - kernel can operate with 16, 32 or 64-bit timer counter
 - kernel can operate in tick-less mode
+- implemented basic protection using MPU (use nullptr, stack overflow)
 - spin locks
 - once flags
 - events
@@ -41,6 +42,8 @@ Features:
 - added CNT_LIMIT definition
 - check task stack watermark
 - added tsk_stackSpace function
+- added MPU for prevention the use of the NULL / nullptr
+- added MPU for prevention the stack overflow
 - removed empty __CONSTRUCTOR definitions
 ---------
 4.6

@@ -2,7 +2,7 @@
 
     @file    IntrOS: osport.h
     @author  Rajmund Szymanski
-    @date    29.03.2020
+    @date    31.05.2020
     @brief   IntrOS port definitions for STM32F7 uC.
 
  ******************************************************************************
@@ -37,6 +37,11 @@
 #include "osconfig.h"
 #endif
 #include "osdefs.h"
+#include "osmpu.h"
+
+#if     __MPU_USED == 1
+#define __STKALIGN          __ALIGNED(OS_GUARD_SIZE)
+#endif
 
 #ifdef __cplusplus
 extern "C" {
