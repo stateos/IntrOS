@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.h
     @author  Rajmund Szymanski
-    @date    30.05.2020
+    @date    01.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -558,9 +558,8 @@ struct baseTimer : public __tmr
 {
 	baseTimer( void ):           __tmr _TMR_INIT(nullptr) {}
 #if __cplusplus >= 201402
-	baseTimer( std::nullptr_t ): __tmr _TMR_INIT(nullptr) {}
 	template<class F>
-	baseTimer( const F _state ): __tmr _TMR_INIT(fun_), fun{_state} {}
+	baseTimer( F&&     _state ): __tmr _TMR_INIT(fun_), fun{_state} {}
 #else
 	baseTimer( fun_t * _state ): __tmr _TMR_INIT(_state) {}
 #endif
@@ -579,7 +578,7 @@ struct baseTimer : public __tmr
 	template<typename T>
 	void startFrom    ( const T _delay, const T _period, std::nullptr_t ) {        tmr_startFrom    (this, Clock::count(_delay), Clock::count(_period), nullptr); }
 	template<typename T, class F>
-	void startFrom    ( const T _delay, const T _period, const F _state ) {        new (&fun) Fun_t(_state);
+	void startFrom    ( const T _delay, const T _period, F&&     _state ) {        new (&fun) Fun_t(_state);
 	                                                                               tmr_startFrom    (this, Clock::count(_delay), Clock::count(_period), fun_); }
 #else
 	template<typename T>
@@ -612,16 +611,18 @@ struct baseTimer : public __tmr
 	{
 #if __cplusplus >= 201402
 		static
-		void flip ( std::nullptr_t ) { tmr_flip (nullptr); }
+		void flip ( std::nullptr_t )           { tmr_flip (nullptr); }
 		template<class F> static
-		void flip ( const F _state ) { new (&current()->fun) Fun_t(_state);
-		                               tmr_flip (fun_); }
+		void flip ( F&& _state )               { new (&current()->fun) Fun_t(_state);
+		                                         tmr_flip (fun_); }
+		template<typename F, typename... A> static
+		void flip ( F&& _state, A&&... _args ) { flip(std::bind(std::forward<F>(_state), std::forward<A>(_args)...)); }
 #else
 		static
-		void flip ( fun_t * _state ) { tmr_flip (_state); }
+		void flip ( fun_t * _state )           { tmr_flip (_state); }
 #endif
 		template<typename T> static
-		void delay( const T _delay ) { tmr_delay(Clock::count(_delay)); }
+		void delay( const T _delay )           { tmr_delay(Clock::count(_delay)); }
 	};
 };
 
@@ -644,8 +645,9 @@ struct Timer : public baseTimer
 {
 	Timer( void ):                     baseTimer{} {}
 	template<class F>
-	Timer( const F _state ):           baseTimer{_state} {}
+	Timer( F&& _state ):               baseTimer{_state} {}
 #if __cplusplus >= 201402
+	Timer( std::nullptr_t ):           baseTimer{} {}
 	template<typename F, typename... A>
 	Timer( F&& _state, A&&... _args ): baseTimer{std::bind(std::forward<F>(_state), std::forward<A>(_args)...)} {}
 #endif
@@ -677,14 +679,20 @@ struct Timer : public baseTimer
 	{
 		return {};
 	}
-	
+
 	template<class F> static
-	Timer Make( const F _state )
+	Timer Make( F&& _state )
 	{
 		return { _state };
 	}
 
 #if __cplusplus >= 201402
+	static
+	Timer Make( std::nullptr_t )
+	{
+		return {};
+	}
+
 	template<typename F, typename... A> static
 	Timer Make( F&& _state, A&&... _args )
 	{
@@ -720,24 +728,32 @@ struct Timer : public baseTimer
 	Timer Start( const T _delay, const T _period )
 	{
 		Timer tmr {};
-		tmr.start(_delay, _period);
+		tmr.start(Clock::count(_delay), Clock::count(_period));
 		return tmr;
 	}
-	
+
 	template<typename T, class F> static
-	Timer Start( const T _delay, const T _period, const F _state )
+	Timer Start( const T _delay, const T _period, F&& _state )
 	{
 		Timer tmr { _state };
-		tmr.start(_delay, _period);
+		tmr.start(Clock::count(_delay), Clock::count(_period));
 		return tmr;
 	}
 
 #if __cplusplus >= 201402
+	template<typename T> static
+	Timer Start( const T _delay, const T _period, std::nullptr_t )
+	{
+		Timer tmr {};
+		tmr.start(Clock::count(_delay), Clock::count(_period));
+		return tmr;
+	}
+
 	template<typename T, typename F, typename... A> static
 	Timer Start( const T _delay, const T _period, F&& _state, A&&... _args )
 	{
 		Timer tmr { std::bind(std::forward<F>(_state), std::forward<A>(_args)...) };
-		tmr.start(_delay, _period);
+		tmr.start(Clock::count(_delay), Clock::count(_period));
 		return tmr;
 	}
 #endif
@@ -766,24 +782,32 @@ struct Timer : public baseTimer
 	Timer StartFor( const T _delay )
 	{
 		Timer tmr {};
-		tmr.startFor(_delay);
+		tmr.startFor(Clock::count(_delay));
 		return tmr;
 	}
-	
+
 	template<typename T, class F> static
-	Timer StartFor( const T _delay, const F _state )
+	Timer StartFor( const T _delay, F&& _state )
 	{
 		Timer tmr { _state };
-		tmr.startFor(_delay);
+		tmr.startFor(Clock::count(_delay));
 		return tmr;
 	}
 
 #if __cplusplus >= 201402
+	template<typename T> static
+	Timer StartFor( const T _delay, std::nullptr_t )
+	{
+		Timer tmr {};
+		tmr.startFor(Clock::count(_delay));
+		return tmr;
+	}
+
 	template<typename T, typename F, typename... A> static
 	Timer StartFor( const T _delay, F&& _state, A&&... _args )
 	{
 		Timer tmr { std::bind(std::forward<F>(_state), std::forward<A>(_args)...) };
-		tmr.startFor(_delay);
+		tmr.startFor(Clock::count(_delay));
 		return tmr;
 	}
 #endif
@@ -813,24 +837,32 @@ struct Timer : public baseTimer
 	Timer StartPeriodic( const T _period )
 	{
 		Timer tmr {};
-		tmr.startPeriodic(_period);
+		tmr.startPeriodic(Clock::count(_period));
 		return tmr;
 	}
-	
+
 	template<typename T, class F> static
-	Timer StartPeriodic( const T _period, const F _state )
+	Timer StartPeriodic( const T _period, F&& _state )
 	{
 		Timer tmr { _state };
-		tmr.startPeriodic(_period);
+		tmr.startPeriodic(Clock::count(_period));
 		return tmr;
 	}
 
 #if __cplusplus >= 201402
+	template<typename T> static
+	Timer StartPeriodic( const T _period, std::nullptr_t )
+	{
+		Timer tmr {};
+		tmr.startPeriodic(Clock::count(_period));
+		return tmr;
+	}
+
 	template<typename T, typename F, typename... A> static
 	Timer StartPeriodic( const T _period, F&& _state, A&&... _args )
 	{
 		Timer tmr { std::bind(std::forward<F>(_state), std::forward<A>(_args)...) };
-		tmr.startPeriodic(_period);
+		tmr.startPeriodic(Clock::count(_period));
 		return tmr;
 	}
 #endif
@@ -857,24 +889,32 @@ struct Timer : public baseTimer
 	Timer StartUntil( const T _time )
 	{
 		Timer tmr {};
-		tmr.startUntil(_time);
+		tmr.startUntil(Clock::until(_time));
 		return tmr;
 	}
-	
+
 	template<typename T, class F> static
-	Timer StartUntil( const T _time, const F _state )
+	Timer StartUntil( const T _time, F&& _state )
 	{
 		Timer tmr { _state };
-		tmr.startUntil(_time);
+		tmr.startUntil(Clock::until(_time));
 		return tmr;
 	}
 
 #if __cplusplus >= 201402
+	template<typename T> static
+	Timer StartUntil( const T _time, std::nullptr_t )
+	{
+		Timer tmr {};
+		tmr.startUntil(Clock::until(_time));
+		return tmr;
+	}
+
 	template<typename T, typename F, typename... A> static
 	Timer StartUntil( const T _time, F&& _state, A&&... _args )
 	{
 		Timer tmr { std::bind(std::forward<F>(_state), std::forward<A>(_args)...) };
-		tmr.startUntil(_time);
+		tmr.startUntil(Clock::until(_time));
 		return tmr;
 	}
 #endif
