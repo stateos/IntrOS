@@ -38,13 +38,13 @@
 /* -------------------------------------------------------------------------- */
 
 #define STK_SIZE( size ) \
-    ALIGNED_SIZE( size, stk_t )
+    ALIGNED_SIZE( size, sizeof( stk_t ))
 
 #define STK_OVER( size ) \
-         ALIGNED( size, stk_t )
+         ALIGNED( size, sizeof( stk_t ))
 
 #define STK_CROP( base, size ) \
-         LIMITED( (intptr_t)base + (intptr_t)size, stk_t )
+         LIMITED((uintptr_t)( base ) + (size_t)( size ), sizeof( stk_t ))
 
 /******************************************************************************
  *
@@ -918,10 +918,10 @@ template<size_t size_>
 struct baseStack
 {
 	static_assert(size_>STK_OVER((OS_GUARD_SIZE)), "incorrect stack size");
-#if __cplusplus >= 201703
-	stk_t stack_[ STK_SIZE(size_) ] __STKALIGN;
+#if __MPU_USED && __cplusplus >= 201703
+	typename std::aligned_storage<sizeof(stk_t), OS_GUARD_SIZE>::type stack_[STK_SIZE(size_)];
 #else
-	stk_t stack_[ STK_SIZE(size_) ];
+	stk_t stack_[STK_SIZE(size_)];
 #endif
 };
 
@@ -1064,10 +1064,12 @@ template<size_t size_>
 struct TaskT : public baseTask, public baseStack<size_>
 {
 	template<class F>
-	TaskT( const F _state ):           baseTask{_state, baseStack<size_>::stack_, size_} {}
+	TaskT( F&& _state ):
+	baseTask{_state, reinterpret_cast<stk_t *>(baseStack<size_>::stack_), size_} {}
 #if __cplusplus >= 201402
 	template<typename F, typename... A>
-	TaskT( F&& _state, A&&... _args ): baseTask{std::bind(std::forward<F>(_state), std::forward<A>(_args)...), baseStack<size_>::stack_, size_} {}
+	TaskT( F&& _state, A&&... _args ):
+	baseTask{std::bind(std::forward<F>(_state), std::forward<A>(_args)...), reinterpret_cast<stk_t *>(baseStack<size_>::stack_), size_} {}
 #endif
 
 	TaskT( TaskT<size_>&& ) = default;

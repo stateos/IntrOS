@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmemorypool.h
     @author  Rajmund Szymanski
-    @date    25.05.2020
+    @date    01.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -38,7 +38,7 @@
 /* -------------------------------------------------------------------------- */
 
 #define MEM_SIZE( size ) \
-    ALIGNED_SIZE( size, que_t )
+    ALIGNED_SIZE( size, sizeof( que_t ))
 
 /******************************************************************************
  *
