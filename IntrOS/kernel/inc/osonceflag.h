@@ -2,7 +2,7 @@
 
     @file    IntrOS: osonceflag.h
     @author  Rajmund Szymanski
-    @date    27.05.2020
+    @date    01.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -214,7 +214,7 @@ struct OnceFlag
 
 #if __cplusplus >= 201402
 	template<class F>
-	void call( const F _fun )
+	void call( F&& _fun )
 	{
 		one_t flag;
 
