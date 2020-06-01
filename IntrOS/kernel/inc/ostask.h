@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    31.05.2020
+    @date    01.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -945,7 +945,7 @@ struct baseTask : public __tsk
 {
 #if __cplusplus >= 201402
 	template<class F>
-	baseTask( const F _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_INIT(fun_, _stack, _size), fun{_state} {}
+	baseTask( F&&     _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_INIT(fun_, _stack, _size), fun{_state} {}
 #else
 	baseTask( fun_t * _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_INIT(_state, _stack, _size) {}
 #endif
@@ -953,7 +953,7 @@ struct baseTask : public __tsk
 	void start    ( void )             {        tsk_start    (this); }
 #if __cplusplus >= 201402
 	template<class F>
-	void startFrom( const F  _state )  {        new (&fun) Fun_t(_state);
+	void startFrom( F&&      _state )  {        new (&fun) Fun_t(_state);
 	                                            tsk_startFrom(this, fun_); }
 #else
 	void startFrom( fun_t *  _state )  {        tsk_startFrom(this, _state); }
@@ -967,7 +967,7 @@ struct baseTask : public __tsk
 	void signal   ( unsigned _signo )  {        tsk_signal   (this, _signo); }
 #if __cplusplus >= 201402
 	template<class F>
-	void action   ( const F  _action ) {        new (&act) Act_t(_action);
+	void action   ( F&&      _action ) {        new (&act) Act_t(_action);
 	                                            tsk_action   (this, act_); }
 #else
 	void action   ( act_t *  _action ) {        tsk_action   (this, _action); }
@@ -1011,7 +1011,7 @@ struct baseTask : public __tsk
 		void pass      ( void )             {        tsk_pass      (); }
 #if __cplusplus >= 201402
 		template<class F> static
-		void flip      ( const F  _state )  {        new (&current()->fun) Fun_t(_state);
+		void flip      ( F&&      _state )  {        new (&current()->fun) Fun_t(_state);
 		                                             tsk_flip      (fun_); }
 #else
 		static
@@ -1035,7 +1035,7 @@ struct baseTask : public __tsk
 		void signal    ( unsigned _signo )  {        cur_signal    (_signo); }
 #if __cplusplus >= 201402
 		template<class F> static
-		void action    ( const F  _action ) {        new (&current()->act) Act_t(_action);
+		void action    ( F&&      _action ) {        new (&current()->act) Act_t(_action);
 		                                             cur_action    (act_); }
 #else
 		static
@@ -1094,7 +1094,7 @@ struct TaskT : public baseTask, public baseStack<size_>
  ******************************************************************************/
 
 	template<class F> static
-	TaskT<size_> Make( const F _state )
+	TaskT<size_> Make( F&& _state )
 	{
 		return { _state };
 	}
@@ -1124,7 +1124,7 @@ struct TaskT : public baseTask, public baseStack<size_>
  ******************************************************************************/
 
 	template<class F> static
-	TaskT<size_> Start( const F _state )
+	TaskT<size_> Start( F&& _state )
 	{
 		TaskT<size_> tsk { _state };
 		tsk.start();
