@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    31.05.2020
+    @date    03.06.2020
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -85,8 +85,8 @@ void core_tmr_remove( tmr_t *tmr )
 /* -------------------------------------------------------------------------- */
 
 #ifndef MAIN_TOP
-static  stk_t     MAIN_STK[STK_SIZE(OS_STACK_SIZE)] __STKALIGN;
-#define MAIN_TOP (MAIN_STK+STK_SIZE(OS_STACK_SIZE))
+static  stk_t     MAIN_STK[STK_SIZE((OS_STACK_SIZE)+(OS_GUARD_SIZE))];
+#define MAIN_TOP (MAIN_STK+STK_SIZE((OS_STACK_SIZE)+(OS_GUARD_SIZE)))
 #endif
 
 tsk_t MAIN = { .hdr={ .prev=&MAIN, .next=&MAIN, .id=ID_READY }, .stack=MAIN_TOP }; // main task
@@ -137,7 +137,7 @@ bool priv_stk_integrity( tsk_t *tsk, void *sp )
 	void *tp = tsk->stack + STK_SIZE(OS_GUARD_SIZE);
 	if (tsk == &MAIN) return true;
 	if (sp < tp) return false;
-#if (__MPU_USED == 0) && (OS_GUARD_SIZE > 0)
+#if (__MPU_USED == 0) && ((OS_GUARD_SIZE) > 0)
 	if (core_stk_space(tsk) < STK_OVER(OS_GUARD_SIZE)) return false;
 #endif
 	return true;

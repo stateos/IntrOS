@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    31.05.2020
+    @date    03.06.2020
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -53,10 +53,6 @@
 
 #ifndef __MPU_USED
 #define __MPU_USED        0
-#endif
-
-#if     __MPU_USED == 0
-#define __STKALIGN
 #endif
 
 /* -------------------------------------------------------------------------- *
