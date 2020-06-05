@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    14.05.2020
+    @date    05.06.2020
     @brief   IntrOS port file for X86.
 
  ******************************************************************************
@@ -59,31 +59,7 @@ typedef struct __ctx ctx_t;
 struct __ctx
 {
 #ifdef __x86_64
-#ifdef __linux__
-	long long int Rbx;
-	long long int Rbp;
-	long long int R12;
-	long long int R13;
-	long long int R14;
-	long long int R15;
-	void        * sp;
-	fun_t       * pc;
-#define _CTX_INIT() { 0, 0, 0, 0, 0, 0, NULL, NULL }
-#else
-	long long int Frame;
-	long long int Rbx;
-	void        * sp;
-	long long int Rbp;
-	long long int Rsi;
-	long long int Rdi;
-	long long int R12;
-	long long int R13;
-	long long int R14;
-	long long int R15;
-	fun_t       * pc;
-	long long int Spare;
-#define _CTX_INIT() { 0, 0, NULL, 0, 0, 0, 0, 0, 0, 0, NULL, 0 }
-#endif
+#error Unsupported cpu architecture!
 #else
 #ifdef __linux__
 	unsigned long Ebx;
