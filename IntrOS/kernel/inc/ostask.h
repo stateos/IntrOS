@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    03.06.2020
+    @date    07.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -917,8 +917,8 @@ size_t tsk_stackSpace( void )
 template<size_t size_>
 struct baseStack
 {
-	static_assert(size_>STK_OVER(OS_GUARD_SIZE), "incorrect stack size");
-	stk_t stack_[STK_SIZE(size_)];
+	static_assert(size_>0, "incorrect stack size");
+	stk_t stack_[STK_SIZE(size_ + (OS_GUARD_SIZE))];
 };
 
 /******************************************************************************
@@ -1057,15 +1057,15 @@ using This     = baseTask::Current;
  ******************************************************************************/
 
 template<size_t size_>
-struct TaskT : public baseTask, public baseStack<size_+(OS_GUARD_SIZE)>
+struct TaskT : public baseTask, public baseStack<size_>
 {
 	template<class F>
 	TaskT( F&& _state ):
-	baseTask{_state, baseStack<size_+(OS_GUARD_SIZE)>::stack_, size_+(OS_GUARD_SIZE)} {}
+	baseTask{_state, baseStack<size_>::stack_, sizeof(baseStack<size_>::stack_)} {}
 #if __cplusplus >= 201402
 	template<typename F, typename... A>
 	TaskT( F&& _state, A&&... _args ):
-	baseTask{std::bind(std::forward<F>(_state), std::forward<A>(_args)...), baseStack<size_+(OS_GUARD_SIZE)>::stack_, size_+(OS_GUARD_SIZE)} {}
+	baseTask{std::bind(std::forward<F>(_state), std::forward<A>(_args)...), baseStack<size_>::stack_, sizeof(baseStack<size_>::stack_)} {}
 #endif
 
 	TaskT( TaskT<size_>&& ) = default;
