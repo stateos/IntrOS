@@ -1101,7 +1101,7 @@ struct TaskT : public baseTask, public baseStack<size_>
 	template<typename F, typename... A> static
 	TaskT<size_> Make( F&& _state, A&&... _args )
 	{
-		return { std::bind(std::forward<F>(_state), std::forward<A>(_args)...) };
+		return Make(std::bind(std::forward<F>(_state), std::forward<A>(_args)...));
 	}
 #endif
 
@@ -1133,9 +1133,7 @@ struct TaskT : public baseTask, public baseStack<size_>
 	template<typename F, typename... A> static
 	TaskT<size_> Start( F&& _state, A&&... _args )
 	{
-		TaskT<size_> tsk { std::bind(std::forward<F>(_state), std::forward<A>(_args)...) };
-		tsk.start();
-		return tsk;
+		return Start(std::bind(std::forward<F>(_state), std::forward<A>(_args)...));
 	}
 #endif
 };
