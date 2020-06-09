@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    03.06.2020
+    @date    09.06.2020
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -85,8 +85,8 @@ void core_tmr_remove( tmr_t *tmr )
 /* -------------------------------------------------------------------------- */
 
 #ifndef MAIN_TOP
-static  stk_t     MAIN_STK[STK_SIZE((OS_STACK_SIZE)+(OS_GUARD_SIZE))];
-#define MAIN_TOP (MAIN_STK+STK_SIZE((OS_STACK_SIZE)+(OS_GUARD_SIZE)))
+static  stk_t     MAIN_STK[STK_SIZE(OS_STACK_SIZE)];
+#define MAIN_TOP (MAIN_STK+STK_SIZE(OS_STACK_SIZE))
 #endif
 
 tsk_t MAIN = { .hdr={ .prev=&MAIN, .next=&MAIN, .id=ID_READY }, .stack=MAIN_TOP }; // main task
@@ -112,7 +112,7 @@ void core_tsk_remove( tsk_t *tsk )
 
 void core_ctx_init( tsk_t *tsk )
 {
-	assert(tsk->size>STK_OVER(OS_GUARD_SIZE));
+	assert(tsk->size>STK_OVER(0));
 #ifdef DEBUG
 	if (tsk != System.cur)
 		memset(tsk->stack, 0xFF, tsk->size);
@@ -134,11 +134,11 @@ size_t core_stk_space( tsk_t *tsk )
 static
 bool priv_stk_integrity( tsk_t *tsk, void *sp )
 {
-	void *tp = tsk->stack + STK_SIZE(OS_GUARD_SIZE);
+	void *tp = tsk->stack + STK_SIZE(0);
 	if (tsk == &MAIN) return true;
 	if (sp < tp) return false;
 #if (__MPU_USED == 0) && ((OS_GUARD_SIZE) > 0)
-	if (core_stk_space(tsk) < STK_OVER(OS_GUARD_SIZE)) return false;
+	if (core_stk_space(tsk) < STK_OVER(0)) return false;
 #endif
 	return true;
 }

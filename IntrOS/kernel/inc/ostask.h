@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    07.06.2020
+    @date    09.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -38,10 +38,10 @@
 /* -------------------------------------------------------------------------- */
 
 #define STK_SIZE( size ) \
-    ALIGNED_SIZE( size, sizeof( stk_t ))
+    ALIGNED_SIZE(( size ) + (OS_GUARD_SIZE), sizeof( stk_t ))
 
 #define STK_OVER( size ) \
-         ALIGNED( size, sizeof( stk_t ))
+         ALIGNED(( size ) + (OS_GUARD_SIZE), sizeof( stk_t ))
 
 #define STK_CROP( base, size ) \
          LIMITED((uintptr_t)( base ) + (size_t)( size ), sizeof( stk_t ))
@@ -143,7 +143,7 @@ extern "C" {
  ******************************************************************************/
 
 #ifndef __cplusplus
-#define               _TSK_STACK( _size ) (stk_t [STK_SIZE(_size)]) { 0 }
+#define               _TSK_STACK( _size ) (stk_t [STK_SIZE( _size )]) { 0 }
 #endif
 
 /******************************************************************************
@@ -172,9 +172,9 @@ extern "C" {
  *
  ******************************************************************************/
 
-#define             OS_WRK( tsk, state, size )                                                          \
-                       struct { tsk_t tsk; stk_t stk[STK_SIZE( size + (OS_GUARD_SIZE) )]; } tsk##__wrk = \
-                       { _TSK_INIT( state, tsk##__wrk.stk, size + (OS_GUARD_SIZE) ), { 0 } };             \
+#define             OS_WRK( tsk, state, size )                                        \
+                       struct { tsk_t tsk; stk_t stk[STK_SIZE( size )]; } tsk##__wrk = \
+                       { _TSK_INIT( state, tsk##__wrk.stk, STK_OVER( size ) ), { 0 } }; \
                        tsk_id tsk = & tsk##__wrk.tsk
 
 /******************************************************************************
@@ -244,10 +244,10 @@ extern "C" {
  ******************************************************************************/
 
 #ifdef __CONSTRUCTOR
-#define             OS_WRK_START( tsk, size )                     \
-                       void tsk##__fun( void );                    \
-                    OS_WRK( tsk, tsk##__fun, size );                \
-         __CONSTRUCTOR void tsk##__start( void ) { tsk_start(tsk); } \
+#define             OS_WRK_START( tsk, size )                   \
+                       void tsk##__fun( void );                  \
+                    OS_WRK( tsk, tsk##__fun, size );              \
+         __CONSTRUCTOR void tsk##__run( void ) { tsk_start(tsk); } \
                        void tsk##__fun( void )
 #endif
 
@@ -285,9 +285,9 @@ extern "C" {
  *
  ******************************************************************************/
 
-#define         static_WRK( tsk, state, size )                                                          \
-                static struct { tsk_t tsk; stk_t stk[STK_SIZE( size + (OS_GUARD_SIZE) )]; } tsk##__wrk = \
-                       { _TSK_INIT( state, tsk##__wrk.stk, size + (OS_GUARD_SIZE) ), { 0 } };             \
+#define         static_WRK( tsk, state, size )                                        \
+                static struct { tsk_t tsk; stk_t stk[STK_SIZE( size )]; } tsk##__wrk = \
+                       { _TSK_INIT( state, tsk##__wrk.stk, STK_OVER( size ) ), { 0 } }; \
                 static tsk_id tsk = & tsk##__wrk.tsk
 
 /******************************************************************************
@@ -357,10 +357,10 @@ extern "C" {
  ******************************************************************************/
 
 #ifdef __CONSTRUCTOR
-#define         static_WRK_START( tsk, size )                     \
-                static void tsk##__fun( void );                    \
-                static_WRK( tsk, tsk##__fun, size );                \
-  __CONSTRUCTOR static void tsk##__start( void ) { tsk_start(tsk); } \
+#define         static_WRK_START( tsk, size )                   \
+                static void tsk##__fun( void );                  \
+                static_WRK( tsk, tsk##__fun, size );              \
+  __CONSTRUCTOR static void tsk##__run( void ) { tsk_start(tsk); } \
                 static void tsk##__fun( void )
 #endif
 
@@ -403,7 +403,7 @@ extern "C" {
 
 #ifndef __cplusplus
 #define                WRK_INIT( state, size ) \
-                      _TSK_INIT( state, _TSK_STACK( size + (OS_GUARD_SIZE) ), size + (OS_GUARD_SIZE) )
+                      _TSK_INIT( state, _TSK_STACK( size ), STK_OVER( size ) )
 #endif
 
 /******************************************************************************
@@ -918,7 +918,7 @@ template<size_t size_>
 struct baseStack
 {
 	static_assert(size_>0, "incorrect stack size");
-	stk_t stack_[STK_SIZE(size_ + (OS_GUARD_SIZE))];
+	stk_t stack_[STK_SIZE(size_)];
 };
 
 /******************************************************************************
