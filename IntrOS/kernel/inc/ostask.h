@@ -918,7 +918,11 @@ template<size_t size_>
 struct baseStack
 {
 	static_assert(size_>0, "incorrect stack size");
+#if __cplusplus >= 201703
+	stk_t stack_[STK_SIZE(size_)] __STKALIGN;
+#else
 	stk_t stack_[STK_SIZE(size_)];
+#endif
 };
 
 /******************************************************************************
