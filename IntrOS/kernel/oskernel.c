@@ -85,7 +85,7 @@ void core_tmr_remove( tmr_t *tmr )
 /* -------------------------------------------------------------------------- */
 
 #ifndef MAIN_TOP
-static  stk_t     MAIN_STK[STK_SIZE(OS_STACK_SIZE)];
+static  stk_t     MAIN_STK[STK_SIZE(OS_STACK_SIZE)] __STKALIGN;
 #define MAIN_TOP (MAIN_STK+STK_SIZE(OS_STACK_SIZE))
 #endif
 
