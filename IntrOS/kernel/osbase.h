@@ -63,6 +63,10 @@ extern "C" {
 #define __MPU_USED        0
 #endif
 
+#ifndef __ALIGNED
+#define __ALIGNED(x)
+#endif
+
 /* -------------------------------------------------------------------------- */
 
 #ifndef OS_TIMER_SIZE
