@@ -3,7 +3,7 @@
 
 OS_STM(stm, sizeof(unsigned));
 
-OS_TSK_DEF(sla)
+OS_TSK_DEF(cons)
 {
 	unsigned x;
 
@@ -14,7 +14,7 @@ OS_TSK_DEF(sla)
 	}
 }
 
-OS_TSK_DEF(mas)
+OS_TSK_DEF(prod)
 {
 	unsigned x = 1;
 
@@ -30,7 +30,7 @@ int main()
 {
 	LED_Init();
 
-	tsk_start(sla);
-	tsk_start(mas);
+	tsk_start(cons);
+	tsk_start(prod);
 	tsk_sleep();
 }

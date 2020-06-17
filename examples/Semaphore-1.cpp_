@@ -4,7 +4,7 @@
 Led       led;
 Semaphore sem{0};
 
-void slave()
+void consumer()
 {
 	for (;;)
 	{
@@ -13,7 +13,7 @@ void slave()
 	}
 }
 
-void master()
+void producer()
 {
 	for (;;)
 	{
@@ -22,13 +22,13 @@ void master()
 	}
 }
 
-TaskT<256> sla{slave };
-TaskT<256> mas{master};
+TaskT<256> cons{consumer};
+TaskT<256> prod{producer};
 
 int main()
 {
-	sla.start();
-	mas.start();
+	cons.start();
+	prod.start();
 
 	ThisTask::stop();
 }

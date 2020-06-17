@@ -8,28 +8,28 @@ void action( unsigned signo )
 	LED_Tick();
 }
 
-void slave()
+void consumer()
 {
 	cur_action(action);
 	for (;;)
 		tsk_yield();
 }
 
-OS_TSK(sla, slave);
+OS_TSK(cons, consumer);
 
-void master()
+void producer()
 {
 	tsk_delay(SEC);
-	tsk_give(sla, 1);
+	tsk_give(cons, 1);
 }
 
-OS_TSK(mas, master);
+OS_TSK(prod, producer);
 
 int main()
 {
 	LED_Init();
 
-	tsk_start(sla);
-	tsk_start(mas);
+	tsk_start(cons);
+	tsk_start(prod);
 	tsk_stop();
 }

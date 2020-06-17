@@ -5,7 +5,7 @@ auto led = Led();
 auto mtx = Mutex();
 auto cnd = ConditionVariable();
 
-void slave()
+void consumer()
 {
 	mtx.wait();
 	for (;;)
@@ -15,7 +15,7 @@ void slave()
 	}
 }
 
-void master()
+void producer()
 {
 	mtx.wait();
 	ThisTask::delay(SEC);
@@ -23,13 +23,13 @@ void master()
 	mtx.give();
 }
 
-auto sla = Task(slave);
-auto mas = Task(master);
+auto cons = Task(consumer);
+auto prod = Task(producer);
 
 int main()
 {
-	sla.start();
-	mas.start();
+	cons.start();
+	prod.start();
 
 	ThisTask::stop();
 }

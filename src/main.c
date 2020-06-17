@@ -3,13 +3,13 @@
 
 OS_SEM(sem, 0, semBinary);
 
-OS_TSK_DEF(sla)
+OS_TSK_DEF(cons)
 {
 	sem_wait(sem);
 	LED_Tick();
 }
 
-OS_TSK_DEF(mas)
+OS_TSK_DEF(prod)
 {
 	tsk_delay(SEC);
 	sem_give(sem);
@@ -19,7 +19,7 @@ int main()
 {
 	LED_Init();
 
-	tsk_start(sla);
-	tsk_start(mas);
+	tsk_start(cons);
+	tsk_start(prod);
 	tsk_sleep();
 }

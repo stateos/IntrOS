@@ -4,7 +4,7 @@
 auto led = Led();
 auto sig = Signal();
 
-void slave()
+void consumer()
 {
 	unsigned x;
 
@@ -15,7 +15,7 @@ void slave()
 	}
 }
 
-void master()
+void producer()
 {
 	unsigned x = 0;
 
@@ -29,8 +29,8 @@ void master()
 
 int main()
 {
-	auto sla = Task::Start(slave);
-	auto mas = Task::Start(master);
+	auto cons = Task::Start(consumer);
+	auto prod = Task::Start(producer);
 
 	ThisTask::sleep();
 }

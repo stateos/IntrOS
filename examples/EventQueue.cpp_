@@ -4,7 +4,7 @@
 auto led = Led();
 auto evq = EventQueueT<1>();
 
-void slave()
+void consumer()
 {
 	unsigned x;
 
@@ -15,7 +15,7 @@ void slave()
 	}
 }
 
-void master()
+void producer()
 {
 	unsigned x = 1;
 
@@ -27,13 +27,13 @@ void master()
 	}
 }
 
-auto sla = Task(slave);
-auto mas = Task(master);
+auto cons = Task(consumer);
+auto prod = Task(producer);
 
 int main()
 {
-	sla.start();
-	mas.start();
+	cons.start();
+	prod.start();
 
 	ThisTask::stop();
 }
