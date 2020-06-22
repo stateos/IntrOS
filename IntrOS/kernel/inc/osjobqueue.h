@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.h
     @author  Rajmund Szymanski
-    @date    09.06.2020
+    @date    22.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -185,7 +185,7 @@ extern "C" {
  *
  ******************************************************************************/
 
-void job_init( job_t *job, fun_t **data, unsigned bufsize );
+void job_init( job_t *job, fun_t **data, size_t bufsize );
 
 /******************************************************************************
  *
