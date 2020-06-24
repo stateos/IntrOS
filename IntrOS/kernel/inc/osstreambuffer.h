@@ -2,7 +2,7 @@
 
     @file    IntrOS: osstreambuffer.h
     @author  Rajmund Szymanski
-    @date    09.06.2020
+    @date    24.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -213,18 +213,20 @@ void stm_init( stm_t *stm, void *data, size_t bufsize );
  *
  * Parameters
  *   stm             : pointer to stream buffer object
- *   data            : pointer to write buffer
- *   size            : size of write buffer
+ *   data            : pointer to the buffer
+ *   size            : size of the buffer
+ *   read            : pointer to the variable getting number of read bytes
  *
- * Return            : number of bytes read from the stream buffer or
+ * Return
+ *   E_SUCCESS       : variable 'read' contains the number of bytes read from the stream buffer
  *   E_FAILURE       : stream buffer object is empty
  *
  ******************************************************************************/
 
-unsigned stm_take( stm_t *stm, void *data, unsigned size );
+unsigned stm_take( stm_t *stm, void *data, unsigned size, unsigned *read );
 
 __STATIC_INLINE
-unsigned stm_tryWait( stm_t *stm, void *data, unsigned size ) { return stm_take(stm, data, size); }
+unsigned stm_tryWait( stm_t *stm, void *data, unsigned size, unsigned *read ) { return stm_take(stm, data, size, read); }
 
 /******************************************************************************
  *
@@ -235,14 +237,17 @@ unsigned stm_tryWait( stm_t *stm, void *data, unsigned size ) { return stm_take(
  *
  * Parameters
  *   stm             : pointer to stream buffer object
- *   data            : pointer to write buffer
- *   size            : size of write buffer
+ *   data            : pointer to the buffer
+ *   size            : size of the buffer
+ *   read            : pointer to the variable getting number of read bytes
  *
- * Return            : number of bytes read from the stream buffer
+ * Return            : none
+ *                     variable 'read' contains the number of bytes read from the stream buffer
+
  *
  ******************************************************************************/
 
-unsigned stm_wait( stm_t *stm, void *data, unsigned size );
+void stm_wait( stm_t *stm, void *data, unsigned size, unsigned *read );
 
 /******************************************************************************
  *
@@ -253,8 +258,8 @@ unsigned stm_wait( stm_t *stm, void *data, unsigned size );
  *
  * Parameters
  *   stm             : pointer to stream buffer object
- *   data            : pointer to read buffer
- *   size            : size of read buffer
+ *   data            : pointer to the buffer
+ *   size            : size of the buffer
  *
  * Return
  *   E_SUCCESS       : stream data was successfully transferred to the stream buffer object
@@ -273,8 +278,8 @@ unsigned stm_give( stm_t *stm, const void *data, unsigned size );
  *
  * Parameters
  *   stm             : pointer to stream buffer object
- *   data            : pointer to read buffer
- *   size            : size of read buffer
+ *   data            : pointer to the buffer
+ *   size            : size of the buffer
  *
  * Return
  *   E_SUCCESS       : stream data was successfully transferred to the stream buffer object
@@ -293,8 +298,8 @@ unsigned stm_send( stm_t *stm, const void *data, unsigned size );
  *
  * Parameters
  *   stm             : pointer to stream buffer object
- *   data            : pointer to read buffer
- *   size            : size of read buffer
+ *   data            : pointer to the buffer
+ *   size            : size of the buffer
  *
  * Return
  *   E_SUCCESS       : stream data was successfully transferred to the stream buffer object
@@ -379,15 +384,15 @@ struct StreamBufferT : public __stm
 	StreamBufferT& operator=( StreamBufferT&& ) = delete;
 	StreamBufferT& operator=( const StreamBufferT& ) = delete;
 
-	uint take   (       void *_data, unsigned _size ) { return stm_take   (this, _data, _size); }
-	uint tryWait(       void *_data, unsigned _size ) { return stm_tryWait(this, _data, _size); }
-	uint wait   (       void *_data, unsigned _size ) { return stm_wait   (this, _data, _size); }
-	uint give   ( const void *_data, unsigned _size ) { return stm_give   (this, _data, _size); }
-	uint send   ( const void *_data, unsigned _size ) { return stm_send   (this, _data, _size); }
-	uint push   ( const void *_data, unsigned _size ) { return stm_push   (this, _data, _size); }
-	size_t count( void )                              { return stm_count  (this); }
-	size_t space( void )                              { return stm_space  (this); }
-	size_t limit( void )                              { return stm_limit  (this); }
+	uint take   (       void *_data, unsigned _size, unsigned *_read = nullptr ) { return stm_take   (this, _data, _size, _read); }
+	uint tryWait(       void *_data, unsigned _size, unsigned *_read = nullptr ) { return stm_tryWait(this, _data, _size, _read); }
+	void wait   (       void *_data, unsigned _size, unsigned *_read = nullptr ) {        stm_wait   (this, _data, _size, _read); }
+	uint give   ( const void *_data, unsigned _size )                            { return stm_give   (this, _data, _size); }
+	uint send   ( const void *_data, unsigned _size )                            { return stm_send   (this, _data, _size); }
+	uint push   ( const void *_data, unsigned _size )                            { return stm_push   (this, _data, _size); }
+	size_t count( void )                                                         { return stm_count  (this); }
+	size_t space( void )                                                         { return stm_space  (this); }
+	size_t limit( void )                                                         { return stm_limit  (this); }
 
 	private:
 	char data_[limit_];
@@ -411,9 +416,9 @@ struct StreamBufferTT : public StreamBufferT<limit_*sizeof(C)>
 	constexpr
 	StreamBufferTT( void ): StreamBufferT<limit_*sizeof(C)>() {}
 
-	uint take   (       C *_data ) { return stm_take   (this, _data, sizeof(C)); }
-	uint tryWait(       C *_data ) { return stm_tryWait(this, _data, sizeof(C)); }
-	uint wait   (       C *_data ) { return stm_wait   (this, _data, sizeof(C)); }
+	uint take   (       C *_data ) { return stm_take   (this, _data, sizeof(C), nullptr); }
+	uint tryWait(       C *_data ) { return stm_tryWait(this, _data, sizeof(C), nullptr); }
+	void wait   (       C *_data ) {        stm_wait   (this, _data, sizeof(C), nullptr); }
 	uint give   ( const C *_data ) { return stm_give   (this, _data, sizeof(C)); }
 	uint send   ( const C *_data ) { return stm_send   (this, _data, sizeof(C)); }
 	uint push   ( const C *_data ) { return stm_push   (this, _data, sizeof(C)); }

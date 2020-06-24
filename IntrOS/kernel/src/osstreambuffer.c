@@ -2,7 +2,7 @@
 
     @file    IntrOS: osstreambuffer.c
     @author  Rajmund Szymanski
-    @date    29.05.2020
+    @date    24.06.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -94,14 +94,12 @@ void priv_stm_skip( stm_t *stm, unsigned size )
 
 /* -------------------------------------------------------------------------- */
 static
-unsigned priv_stm_getUpdate( stm_t *stm, char *data, unsigned size )
+void priv_stm_getUpdate( stm_t *stm, char *data, unsigned size, unsigned *read )
 /* -------------------------------------------------------------------------- */
 {
-	if (size > stm->count)
-		size = stm->count;
+	if (size > stm->count) size = stm->count;
+	if (read != NULL) *read = size;
 	priv_stm_get(stm, data, size);
-
-	return size;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -122,37 +120,35 @@ void priv_stm_skipUpdate( stm_t *stm, unsigned size )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned stm_take( stm_t *stm, void *data, unsigned size )
+unsigned stm_take( stm_t *stm, void *data, unsigned size, unsigned *read )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned len = E_FAILURE;
+	unsigned event = E_FAILURE;
 
 	assert(stm);
 	assert(stm->data);
 	assert(stm->limit);
 	assert(data);
+	assert(size);
 
 	sys_lock();
 	{
 		if (stm->count > 0)
 		{
-			len = priv_stm_getUpdate(stm, data, size);
+			priv_stm_getUpdate(stm, data, size, read);
+			event = E_SUCCESS;
 		}
 	}
 	sys_unlock();
 
-	return len;
+	return event;
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned stm_wait( stm_t *stm, void *data, unsigned size )
+void stm_wait( stm_t *stm, void *data, unsigned size, unsigned *read )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned len;
-
-	while ((len = stm_take(stm, data, size)) == E_FAILURE) core_ctx_switch();
-
-	return len;
+	while (stm_take(stm, data, size, read) != E_SUCCESS) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -165,6 +161,7 @@ unsigned stm_give( stm_t *stm, const void *data, unsigned size )
 	assert(stm->data);
 	assert(stm->limit);
 	assert(data);
+	assert(size);
 
 	sys_lock();
 	{
@@ -201,6 +198,7 @@ unsigned stm_push( stm_t *stm, const void *data, unsigned size )
 	assert(stm->data);
 	assert(stm->limit);
 	assert(data);
+	assert(size);
 
 	sys_lock();
 	{
