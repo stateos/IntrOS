@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.h
     @author  Rajmund Szymanski
-    @date    09.06.2020
+    @date    24.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -213,18 +213,20 @@ void msg_init( msg_t *msg, void *data, size_t bufsize );
  *
  * Parameters
  *   msg             : pointer to message buffer object
- *   data            : pointer to write buffer
- *   size            : size of write buffer
+ *   data            : pointer to the buffer
+ *   size            : size of the buffer
+ *   read            : pointer to the variable getting number of read bytes
  *
- * Return            : number of bytes read from the message buffer or
- *   E_FAILURE       : message buffer object is empty or not enough space in the write buffer
+ * Return
+ *   E_SUCCESS       : variable 'read' contains the number of bytes read from the message buffer
+ *   E_FAILURE       : message buffer object is empty or not enough space in the buffer
  *
  ******************************************************************************/
 
-unsigned msg_take( msg_t *msg, void *data, unsigned size );
+unsigned msg_take( msg_t *msg, void *data, unsigned size, unsigned *read );
 
 __STATIC_INLINE
-unsigned msg_tryWait( msg_t *msg, void *data, unsigned size ) { return msg_take(msg, data, size); }
+unsigned msg_tryWait( msg_t *msg, void *data, unsigned size, unsigned *read ) { return msg_take(msg, data, size, read); }
 
 /******************************************************************************
  *
@@ -235,14 +237,16 @@ unsigned msg_tryWait( msg_t *msg, void *data, unsigned size ) { return msg_take(
  *
  * Parameters
  *   msg             : pointer to message buffer object
- *   data            : pointer to write buffer
- *   size            : size of write buffer
+ *   data            : pointer to the buffer
+ *   size            : size of the buffer
+ *   read            : pointer to the variable getting number of read bytes
  *
- * Return            : number of bytes read from the message buffer
+ * Return            : none
+ *                     variable 'read' contains the number of bytes read from the message buffer
  *
  ******************************************************************************/
 
-unsigned msg_wait( msg_t *msg, void *data, unsigned size );
+void msg_wait( msg_t *msg, void *data, unsigned size, unsigned *read );
 
 /******************************************************************************
  *
@@ -253,8 +257,8 @@ unsigned msg_wait( msg_t *msg, void *data, unsigned size );
  *
  * Parameters
  *   msg             : pointer to message buffer object
- *   data            : pointer to read buffer
- *   size            : size of read buffer
+ *   data            : pointer to the buffer
+ *   size            : size of the buffer
  *
  * Return
  *   E_SUCCESS       : message data was successfully transferred to the message buffer object
@@ -273,8 +277,8 @@ unsigned msg_give( msg_t *msg, const void *data, unsigned size );
  *
  * Parameters
  *   msg             : pointer to message buffer object
- *   data            : pointer to read buffer
- *   size            : size of read buffer
+ *   data            : pointer to the buffer
+ *   size            : size of the buffer
  *
  * Return
  *   E_SUCCESS       : message data was successfully transferred to the message buffer object
@@ -293,8 +297,8 @@ unsigned msg_send( msg_t *msg, const void *data, unsigned size );
  *
  * Parameters
  *   msg             : pointer to message buffer object
- *   data            : pointer to read buffer
- *   size            : size of read buffer
+ *   data            : pointer to the buffer
+ *   size            : size of the buffer
  *
  * Return
  *   E_SUCCESS       : message data was successfully transferred to the message buffer object
@@ -394,16 +398,16 @@ struct MessageBufferT : public __msg
 	MessageBufferT& operator=( MessageBufferT&& ) = delete;
 	MessageBufferT& operator=( const MessageBufferT& ) = delete;
 
-	uint take   (       void *_data, unsigned _size ) { return msg_take   (this, _data, _size); }
-	uint tryWait(       void *_data, unsigned _size ) { return msg_tryWait(this, _data, _size); }
-	uint wait   (       void *_data, unsigned _size ) { return msg_wait   (this, _data, _size); }
-	uint give   ( const void *_data, unsigned _size ) { return msg_give   (this, _data, _size); }
-	uint send   ( const void *_data, unsigned _size ) { return msg_send   (this, _data, _size); }
-	uint push   ( const void *_data, unsigned _size ) { return msg_push   (this, _data, _size); }
-	size_t count( void )                              { return msg_count  (this); }
-	size_t space( void )                              { return msg_space  (this); }
-	size_t limit( void )                              { return msg_limit  (this); }
-	uint size   ( void )                              { return msg_size   (this); }
+	uint take   (       void *_data, unsigned _size, unsigned *_read = nullptr ) { return msg_take   (this, _data, _size, _read ); }
+	uint tryWait(       void *_data, unsigned _size, unsigned *_read = nullptr ) { return msg_tryWait(this, _data, _size, _read ); }
+	void wait   (       void *_data, unsigned _size, unsigned *_read = nullptr ) {        msg_wait   (this, _data, _size, _read ); }
+	uint give   ( const void *_data, unsigned _size )                            { return msg_give   (this, _data, _size); }
+	uint send   ( const void *_data, unsigned _size )                            { return msg_send   (this, _data, _size); }
+	uint push   ( const void *_data, unsigned _size )                            { return msg_push   (this, _data, _size); }
+	size_t count( void )                                                         { return msg_count  (this); }
+	size_t space( void )                                                         { return msg_space  (this); }
+	size_t limit( void )                                                         { return msg_limit  (this); }
+	uint size   ( void )                                                         { return msg_size   (this); }
 
 	private:
 	char data_[limit_];
@@ -427,9 +431,9 @@ struct MessageBufferTT : public MessageBufferT<limit_*(sizeof(unsigned)+sizeof(C
 	constexpr
 	MessageBufferTT( void ): MessageBufferT<limit_*(sizeof(unsigned)+sizeof(C))>() {}
 
-	uint take   (       C *_data ) { return msg_take   (this, _data, sizeof(C)); }
-	uint tryWait(       C *_data ) { return msg_tryWait(this, _data, sizeof(C)); }
-	uint wait   (       C *_data ) { return msg_wait   (this, _data, sizeof(C)); }
+	uint take   (       C *_data ) { return msg_take   (this, _data, sizeof(C), nullptr); }
+	uint tryWait(       C *_data ) { return msg_tryWait(this, _data, sizeof(C), nullptr); }
+	void wait   (       C *_data ) {        msg_wait   (this, _data, sizeof(C), nullptr); }
 	uint give   ( const C *_data ) { return msg_give   (this, _data, sizeof(C)); }
 	uint send   ( const C *_data ) { return msg_send   (this, _data, sizeof(C)); }
 	uint push   ( const C *_data ) { return msg_push   (this, _data, sizeof(C)); }

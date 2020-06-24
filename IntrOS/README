@@ -46,6 +46,7 @@ Features:
 - added MPU for prevention the stack overflow
 - removed empty __CONSTRUCTOR definitions
 - updated signal functions
+- updated message buffer functions
 ---------
 4.6
 - updated os version

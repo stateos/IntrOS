@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.c
     @author  Rajmund Szymanski
-    @date    29.03.2020
+    @date    24.06.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -144,13 +144,12 @@ void priv_msg_putSize( msg_t *msg, unsigned size )
 
 /* -------------------------------------------------------------------------- */
 static
-unsigned priv_msg_getUpdate( msg_t *msg, char *data, unsigned size )
+void priv_msg_getUpdate( msg_t *msg, char *data, unsigned size, unsigned *read )
 /* -------------------------------------------------------------------------- */
 {
 	size = priv_msg_getSize(msg);
+	if (read != NULL) *read = size;
 	priv_msg_get(msg, data, size);
-
-	return size;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -174,37 +173,34 @@ void priv_msg_skipUpdate( msg_t *msg, unsigned size )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned msg_take( msg_t *msg, void *data, unsigned size )
+unsigned msg_take( msg_t *msg, void *data, unsigned size, unsigned *read )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned len = E_FAILURE;
+	unsigned event = E_FAILURE;
 
 	assert(msg);
 	assert(msg->data);
 	assert(msg->limit);
-	assert(data);
+	assert(data||size==0);
 
 	sys_lock();
 	{
 		if (msg->count > 0 && size >= priv_msg_size(msg))
 		{
-			len = priv_msg_getUpdate(msg, data, size);
+			priv_msg_getUpdate(msg, data, size, read);
+			event = E_SUCCESS;
 		}
 	}
 	sys_unlock();
 
-	return len;
+	return event;
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned msg_wait( msg_t *msg, void *data, unsigned size )
+void msg_wait( msg_t *msg, void *data, unsigned size, unsigned *read )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned len;
-
-	while ((len = msg_take(msg, data, size)) == E_FAILURE) core_ctx_switch();
-
-	return len;
+	while (msg_take(msg, data, size, read) != E_SUCCESS) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -216,7 +212,7 @@ unsigned msg_give( msg_t *msg, const void *data, unsigned size )
 	assert(msg);
 	assert(msg->data);
 	assert(msg->limit);
-	assert(data);
+	assert(data||size==0);
 
 	sys_lock();
 	{
@@ -252,7 +248,7 @@ unsigned msg_push( msg_t *msg, const void *data, unsigned size )
 	assert(msg);
 	assert(msg->data);
 	assert(msg->limit);
-	assert(data);
+	assert(data||size==0);
 
 	sys_lock();
 	{
