@@ -63,8 +63,7 @@ void priv_box_get( box_t *box, char *data )
 	box->count -= size;
 	while (size--)
 		*data++ = box->data[i++];
-	if (i == box->limit) i = 0;
-	box->head = i;
+	box->head = (i < box->limit) ? i : 0;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -78,8 +77,7 @@ void priv_box_put( box_t *box, const char *data )
 	box->count += size;
 	while (size--)
 		box->data[i++] = *data++;
-	if (i == box->limit) i = 0;
-	box->tail = i;
+	box->tail = (i < box->limit) ? i : 0;
 }
 
 /* -------------------------------------------------------------------------- */
