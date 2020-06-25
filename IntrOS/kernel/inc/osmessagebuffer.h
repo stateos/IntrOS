@@ -103,7 +103,7 @@ extern "C" {
  *
  ******************************************************************************/
 
-#define               _VA_MSG( _limit, _size ) ( (_size + 0) ? ((_limit) * (sizeof(unsigned) + (_size + 0))) : (_limit) )
+#define               _VA_MSG( _limit, _size ) ( (_size + 0) ? ((_limit) * (sizeof(size_t) + (_size + 0))) : (_limit) )
 
 /******************************************************************************
  *
@@ -223,10 +223,10 @@ void msg_init( msg_t *msg, void *data, size_t bufsize );
  *
  ******************************************************************************/
 
-unsigned msg_take( msg_t *msg, void *data, unsigned size, unsigned *read );
+unsigned msg_take( msg_t *msg, void *data, size_t size, size_t *read );
 
 __STATIC_INLINE
-unsigned msg_tryWait( msg_t *msg, void *data, unsigned size, unsigned *read ) { return msg_take(msg, data, size, read); }
+unsigned msg_tryWait( msg_t *msg, void *data, size_t size, size_t *read ) { return msg_take(msg, data, size, read); }
 
 /******************************************************************************
  *
@@ -246,7 +246,7 @@ unsigned msg_tryWait( msg_t *msg, void *data, unsigned size, unsigned *read ) { 
  *
  ******************************************************************************/
 
-void msg_wait( msg_t *msg, void *data, unsigned size, unsigned *read );
+void msg_wait( msg_t *msg, void *data, size_t size, size_t *read );
 
 /******************************************************************************
  *
@@ -266,7 +266,7 @@ void msg_wait( msg_t *msg, void *data, unsigned size, unsigned *read );
  *
  ******************************************************************************/
 
-unsigned msg_give( msg_t *msg, const void *data, unsigned size );
+unsigned msg_give( msg_t *msg, const void *data, size_t size );
 
 /******************************************************************************
  *
@@ -286,7 +286,7 @@ unsigned msg_give( msg_t *msg, const void *data, unsigned size );
  *
  ******************************************************************************/
 
-unsigned msg_send( msg_t *msg, const void *data, unsigned size );
+unsigned msg_send( msg_t *msg, const void *data, size_t size );
 
 /******************************************************************************
  *
@@ -306,7 +306,7 @@ unsigned msg_send( msg_t *msg, const void *data, unsigned size );
  *
  ******************************************************************************/
 
-unsigned msg_push( msg_t *msg, const void *data, unsigned size );
+unsigned msg_push( msg_t *msg, const void *data, size_t size );
 
 /******************************************************************************
  *
@@ -366,7 +366,7 @@ size_t msg_limit( msg_t *msg );
  *
  ******************************************************************************/
 
-unsigned msg_size( msg_t *msg );
+size_t msg_size( msg_t *msg );
 
 #ifdef __cplusplus
 }
@@ -398,16 +398,16 @@ struct MessageBufferT : public __msg
 	MessageBufferT& operator=( MessageBufferT&& ) = delete;
 	MessageBufferT& operator=( const MessageBufferT& ) = delete;
 
-	unsigned take   (       void *_data, unsigned _size, unsigned *_read = nullptr ) { return msg_take   (this, _data, _size, _read ); }
-	unsigned tryWait(       void *_data, unsigned _size, unsigned *_read = nullptr ) { return msg_tryWait(this, _data, _size, _read ); }
-	void     wait   (       void *_data, unsigned _size, unsigned *_read = nullptr ) {        msg_wait   (this, _data, _size, _read ); }
-	unsigned give   ( const void *_data, unsigned _size )                            { return msg_give   (this, _data, _size); }
-	unsigned send   ( const void *_data, unsigned _size )                            { return msg_send   (this, _data, _size); }
-	unsigned push   ( const void *_data, unsigned _size )                            { return msg_push   (this, _data, _size); }
-	size_t   count  ( void )                                                         { return msg_count  (this); }
-	size_t   space  ( void )                                                         { return msg_space  (this); }
-	size_t   limit  ( void )                                                         { return msg_limit  (this); }
-	unsigned size   ( void )                                                         { return msg_size   (this); }
+	unsigned take   (       void *_data, size_t _size, size_t *_read = nullptr ) { return msg_take   (this, _data, _size, _read ); }
+	unsigned tryWait(       void *_data, size_t _size, size_t *_read = nullptr ) { return msg_tryWait(this, _data, _size, _read ); }
+	void     wait   (       void *_data, size_t _size, size_t *_read = nullptr ) {        msg_wait   (this, _data, _size, _read ); }
+	unsigned give   ( const void *_data, size_t _size )                          { return msg_give   (this, _data, _size); }
+	unsigned send   ( const void *_data, size_t _size )                          { return msg_send   (this, _data, _size); }
+	unsigned push   ( const void *_data, size_t _size )                          { return msg_push   (this, _data, _size); }
+	size_t   count  ( void )                                                     { return msg_count  (this); }
+	size_t   space  ( void )                                                     { return msg_space  (this); }
+	size_t   limit  ( void )                                                     { return msg_limit  (this); }
+	size_t   size   ( void )                                                     { return msg_size   (this); }
 
 	private:
 	char data_[limit_];
@@ -426,10 +426,10 @@ struct MessageBufferT : public __msg
  ******************************************************************************/
 
 template<unsigned limit_, class C>
-struct MessageBufferTT : public MessageBufferT<limit_*(sizeof(unsigned)+sizeof(C))>
+struct MessageBufferTT : public MessageBufferT<limit_*(sizeof(size_t)+sizeof(C))>
 {
 	constexpr
-	MessageBufferTT( void ): MessageBufferT<limit_*(sizeof(unsigned)+sizeof(C))>() {}
+	MessageBufferTT( void ): MessageBufferT<limit_*(sizeof(size_t)+sizeof(C))>() {}
 
 	unsigned take   (       C *_data ) { return msg_take   (this, _data, sizeof(C), nullptr); }
 	unsigned tryWait(       C *_data ) { return msg_tryWait(this, _data, sizeof(C), nullptr); }
