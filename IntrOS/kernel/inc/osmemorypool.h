@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmemorypool.h
     @author  Rajmund Szymanski
-    @date    18.06.2020
+    @date    25.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -303,10 +303,10 @@ struct MemoryPoolT : public __mem
 	MemoryPoolT& operator=( MemoryPoolT&& ) = delete;
 	MemoryPoolT& operator=( const MemoryPoolT& ) = delete;
 
-	uint take   (       void **_data ) { return mem_take   (this, _data); }
-	uint tryWait(       void **_data ) { return mem_tryWait(this, _data); }
-	void wait   (       void **_data ) {        mem_wait   (this, _data); }
-	void give   ( const void  *_data ) {        mem_give   (this, _data); }
+	unsigned take   (       void **_data ) { return mem_take   (this, _data); }
+	unsigned tryWait(       void **_data ) { return mem_tryWait(this, _data); }
+	void     wait   (       void **_data ) {        mem_wait   (this, _data); }
+	void     give   ( const void  *_data ) {        mem_give   (this, _data); }
 
 	private:
 	que_t data_[limit_ * (1 + MEM_SIZE(size_))];
@@ -329,9 +329,9 @@ struct MemoryPoolTT : public MemoryPoolT<limit_, sizeof(C)>
 {
 	MemoryPoolTT( void ): MemoryPoolT<limit_, sizeof(C)>() {}
 
-	uint take   ( C **_data ) { return mem_take   (this, reinterpret_cast<void **>(_data)); }
-	uint tryWait( C **_data ) { return mem_tryWait(this, reinterpret_cast<void **>(_data)); }
-	void wait   ( C **_data ) {        mem_wait   (this, reinterpret_cast<void **>(_data)); }
+	unsigned take   ( C **_data ) { return mem_take   (this, reinterpret_cast<void **>(_data)); }
+	unsigned tryWait( C **_data ) { return mem_tryWait(this, reinterpret_cast<void **>(_data)); }
+	void     wait   ( C **_data ) {        mem_wait   (this, reinterpret_cast<void **>(_data)); }
 };
 
 #endif//__cplusplus

@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmutex.h
     @author  Rajmund Szymanski
-    @date    27.05.2020
+    @date    25.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -248,12 +248,12 @@ struct Mutex : public __mtx
 
 	~Mutex( void ) { assert(__mtx::owner == nullptr); }
 
-	uint take   ( void ) { return mtx_take   (this); }
-	uint tryLock( void ) { return mtx_tryLock(this); }
-	void wait   ( void ) {        mtx_wait   (this); }
-	void lock   ( void ) {        mtx_lock   (this); }
-	uint give   ( void ) { return mtx_give   (this); }
-	uint unlock ( void ) { return mtx_unlock (this); }
+	unsigned take   ( void ) { return mtx_take   (this); }
+	unsigned tryLock( void ) { return mtx_tryLock(this); }
+	void     wait   ( void ) {        mtx_wait   (this); }
+	void     lock   ( void ) {        mtx_lock   (this); }
+	unsigned give   ( void ) { return mtx_give   (this); }
+	unsigned unlock ( void ) { return mtx_unlock (this); }
 };
 
 #endif//__cplusplus

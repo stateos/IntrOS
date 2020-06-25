@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.h
     @author  Rajmund Szymanski
-    @date    22.06.2020
+    @date    25.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -353,15 +353,15 @@ struct JobQueueT : public __job
 	JobQueueT& operator=( JobQueueT&& ) = delete;
 	JobQueueT& operator=( const JobQueueT& ) = delete;
 
-	uint take   ( void )        { return job_take   (this); }
-	uint tryWait( void )        { return job_tryWait(this); }
-	void wait   ( void )        {        job_wait   (this); }
-	uint give   ( fun_t *_fun ) { return job_give   (this, _fun); }
-	void send   ( fun_t *_fun ) {        job_send   (this, _fun); }
-	void push   ( fun_t *_fun ) {        job_push   (this, _fun); }
-	uint count  ( void )        { return job_count  (this); }
-	uint space  ( void )        { return job_space  (this); }
-	uint limit  ( void )        { return job_limit  (this); }
+	unsigned take   ( void )        { return job_take   (this); }
+	unsigned tryWait( void )        { return job_tryWait(this); }
+	void     wait   ( void )        {        job_wait   (this); }
+	unsigned give   ( fun_t *_fun ) { return job_give   (this, _fun); }
+	void     send   ( fun_t *_fun ) {        job_send   (this, _fun); }
+	void     push   ( fun_t *_fun ) {        job_push   (this, _fun); }
+	unsigned count  ( void )        { return job_count  (this); }
+	unsigned space  ( void )        { return job_space  (this); }
+	unsigned limit  ( void )        { return job_limit  (this); }
 
 	private:
 	fun_t *data_[limit_];

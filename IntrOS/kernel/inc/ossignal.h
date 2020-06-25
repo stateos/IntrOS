@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossignal.h
     @author  Rajmund Szymanski
-    @date    24.06.2020
+    @date    25.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -287,12 +287,12 @@ struct Signal : public __sig
 	Signal& operator=( Signal&& ) = delete;
 	Signal& operator=( const Signal& ) = delete;
 
-	uint take   ( unsigned _sigset, unsigned *_signo = nullptr ) { return sig_take   (this, _sigset, _signo); }
-	uint tryWait( unsigned _sigset, unsigned *_signo = nullptr ) { return sig_tryWait(this, _sigset, _signo); }
-	void wait   ( unsigned _sigset, unsigned *_signo = nullptr ) {        sig_wait   (this, _sigset, _signo); }
-	void give   ( unsigned _signo )                              {        sig_give   (this, _signo); }
-	void set    ( unsigned _signo )                              {        sig_set    (this, _signo); }
-	void clear  ( unsigned _signo )                              {        sig_clear  (this, _signo); }
+	unsigned take   ( unsigned _sigset, unsigned *_signo = nullptr ) { return sig_take   (this, _sigset, _signo); }
+	unsigned tryWait( unsigned _sigset, unsigned *_signo = nullptr ) { return sig_tryWait(this, _sigset, _signo); }
+	void     wait   ( unsigned _sigset, unsigned *_signo = nullptr ) {        sig_wait   (this, _sigset, _signo); }
+	void     give   ( unsigned _signo )                              {        sig_give   (this, _signo); }
+	void     set    ( unsigned _signo )                              {        sig_set    (this, _signo); }
+	void     clear  ( unsigned _signo )                              {        sig_clear  (this, _signo); }
 };
 
 #endif//__cplusplus

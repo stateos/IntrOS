@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmailboxqueue.h
     @author  Rajmund Szymanski
-    @date    24.06.2020
+    @date    25.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -364,15 +364,15 @@ struct MailBoxQueueT : public __box
 	MailBoxQueueT& operator=( MailBoxQueueT&& ) = delete;
 	MailBoxQueueT& operator=( const MailBoxQueueT& ) = delete;
 
-	uint take   (       void *_data ) { return box_take   (this, _data); }
-	uint tryWait(       void *_data ) { return box_tryWait(this, _data); }
-	void wait   (       void *_data ) {        box_wait   (this, _data); }
-	uint give   ( const void *_data ) { return box_give   (this, _data); }
-	void send   ( const void *_data ) {        box_send   (this, _data); }
-	void push   ( const void *_data ) {        box_push   (this, _data); }
-	uint count  (       void )        { return box_count  (this); }
-	uint space  (       void )        { return box_space  (this); }
-	uint limit  (       void )        { return box_limit  (this); }
+	unsigned take   (       void *_data ) { return box_take   (this, _data); }
+	unsigned tryWait(       void *_data ) { return box_tryWait(this, _data); }
+	void     wait   (       void *_data ) {        box_wait   (this, _data); }
+	unsigned give   ( const void *_data ) { return box_give   (this, _data); }
+	void     send   ( const void *_data ) {        box_send   (this, _data); }
+	void     push   ( const void *_data ) {        box_push   (this, _data); }
+	unsigned count  (       void )        { return box_count  (this); }
+	unsigned space  (       void )        { return box_space  (this); }
+	unsigned limit  (       void )        { return box_limit  (this); }
 
 	private:
 	char data_[limit_ * size_];

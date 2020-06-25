@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossemaphore.h
     @author  Rajmund Szymanski
-    @date    27.05.2020
+    @date    25.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -350,12 +350,12 @@ struct Semaphore : public __sem
 
 /* -------------------------------------------------------------------------- */
 
-	uint take    ( void ) { return sem_take    (this); }
-	uint tryWait ( void ) { return sem_tryWait (this); }
-	void wait    ( void ) {        sem_wait    (this); }
-	uint give    ( void ) { return sem_give    (this); }
-	uint post    ( void ) { return sem_post    (this); }
-	uint getValue( void ) { return sem_getValue(this); }
+	unsigned take    ( void ) { return sem_take    (this); }
+	unsigned tryWait ( void ) { return sem_tryWait (this); }
+	void     wait    ( void ) {        sem_wait    (this); }
+	unsigned give    ( void ) { return sem_give    (this); }
+	unsigned post    ( void ) { return sem_post    (this); }
+	unsigned getValue( void ) { return sem_getValue(this); }
 };
 
 #endif//__cplusplus

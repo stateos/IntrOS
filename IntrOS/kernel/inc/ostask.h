@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    18.06.2020
+    @date    25.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -980,41 +980,41 @@ struct baseTask : public __tsk
 	baseTask( fun_t * _state, stk_t * const _stack, const size_t _size ): __tsk _TSK_INIT(_state, _stack, _size) {}
 #endif
 
-	void start    ( void )             {        tsk_start    (this); }
+	void     start    ( void )             {        tsk_start    (this); }
 #if __cplusplus >= 201402
 	template<class F>
-	void startFrom( F&&      _state )  {        new (&fun) Fun_t(_state);
-	                                            tsk_startFrom(this, fun_); }
+	void     startFrom( F&&      _state )  {        new (&fun) Fun_t(_state);
+	                                                tsk_startFrom(this, fun_); }
 #else
-	void startFrom( fun_t *  _state )  {        tsk_startFrom(this, _state); }
+	void     startFrom( fun_t *  _state )  {        tsk_startFrom(this, _state); }
 #endif
-	void join     ( void )             {        tsk_join     (this); }
-	void reset    ( void )             {        tsk_reset    (this); }
-	void kill     ( void )             {        tsk_kill     (this); }
-	uint suspend  ( void )             { return tsk_suspend  (this); }
-	uint resume   ( void )             { return tsk_resume   (this); }
-	void give     ( unsigned _signo )  {        tsk_give     (this, _signo); }
-	void signal   ( unsigned _signo )  {        tsk_signal   (this, _signo); }
+	void     join     ( void )             {        tsk_join     (this); }
+	void     reset    ( void )             {        tsk_reset    (this); }
+	void     kill     ( void )             {        tsk_kill     (this); }
+	unsigned suspend  ( void )             { return tsk_suspend  (this); }
+	unsigned resume   ( void )             { return tsk_resume   (this); }
+	void     give     ( unsigned _signo )  {        tsk_give     (this, _signo); }
+	void     signal   ( unsigned _signo )  {        tsk_signal   (this, _signo); }
 #if __cplusplus >= 201402
 	template<class F>
-	void action   ( F&&      _action ) {        new (&act) Act_t(_action);
-	                                            tsk_action   (this, act_); }
+	void     action   ( F&&      _action ) {        new (&act) Act_t(_action);
+	                                                tsk_action   (this, act_); }
 #else
-	void action   ( act_t *  _action ) {        tsk_action   (this, _action); }
+	void     action   ( act_t *  _action ) {        tsk_action   (this, _action); }
 #endif
 	explicit
-	operator bool () const             { return __tsk::hdr.id != ID_STOPPED; }
+	operator bool     () const             { return __tsk::hdr.id != ID_STOPPED; }
 
 	template<class T = baseTask> static
-	T *  current  ( void )             { return static_cast<T *>(tsk_this()); }
+	T *      current  ( void )             { return static_cast<T *>(tsk_this()); }
 
 #if __cplusplus >= 201402
 	static
-	void fun_     ( void )             {        current()->fun(); }
-	Fun_t fun;
+	void     fun_     ( void )             {        current()->fun(); }
+	Fun_t    fun;
 	static
-	void act_     ( unsigned _signo )  {        current()->act(_signo); }
-	Act_t act;
+	void     act_     ( unsigned _signo )  {        current()->act(_signo); }
+	Act_t    act;
 #endif
 
 /******************************************************************************

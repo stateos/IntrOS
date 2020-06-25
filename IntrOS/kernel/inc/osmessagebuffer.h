@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.h
     @author  Rajmund Szymanski
-    @date    24.06.2020
+    @date    25.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -398,16 +398,16 @@ struct MessageBufferT : public __msg
 	MessageBufferT& operator=( MessageBufferT&& ) = delete;
 	MessageBufferT& operator=( const MessageBufferT& ) = delete;
 
-	uint take   (       void *_data, unsigned _size, unsigned *_read = nullptr ) { return msg_take   (this, _data, _size, _read ); }
-	uint tryWait(       void *_data, unsigned _size, unsigned *_read = nullptr ) { return msg_tryWait(this, _data, _size, _read ); }
-	void wait   (       void *_data, unsigned _size, unsigned *_read = nullptr ) {        msg_wait   (this, _data, _size, _read ); }
-	uint give   ( const void *_data, unsigned _size )                            { return msg_give   (this, _data, _size); }
-	uint send   ( const void *_data, unsigned _size )                            { return msg_send   (this, _data, _size); }
-	uint push   ( const void *_data, unsigned _size )                            { return msg_push   (this, _data, _size); }
-	size_t count( void )                                                         { return msg_count  (this); }
-	size_t space( void )                                                         { return msg_space  (this); }
-	size_t limit( void )                                                         { return msg_limit  (this); }
-	uint size   ( void )                                                         { return msg_size   (this); }
+	unsigned take   (       void *_data, unsigned _size, unsigned *_read = nullptr ) { return msg_take   (this, _data, _size, _read ); }
+	unsigned tryWait(       void *_data, unsigned _size, unsigned *_read = nullptr ) { return msg_tryWait(this, _data, _size, _read ); }
+	void     wait   (       void *_data, unsigned _size, unsigned *_read = nullptr ) {        msg_wait   (this, _data, _size, _read ); }
+	unsigned give   ( const void *_data, unsigned _size )                            { return msg_give   (this, _data, _size); }
+	unsigned send   ( const void *_data, unsigned _size )                            { return msg_send   (this, _data, _size); }
+	unsigned push   ( const void *_data, unsigned _size )                            { return msg_push   (this, _data, _size); }
+	size_t   count  ( void )                                                         { return msg_count  (this); }
+	size_t   space  ( void )                                                         { return msg_space  (this); }
+	size_t   limit  ( void )                                                         { return msg_limit  (this); }
+	unsigned size   ( void )                                                         { return msg_size   (this); }
 
 	private:
 	char data_[limit_];
@@ -431,12 +431,12 @@ struct MessageBufferTT : public MessageBufferT<limit_*(sizeof(unsigned)+sizeof(C
 	constexpr
 	MessageBufferTT( void ): MessageBufferT<limit_*(sizeof(unsigned)+sizeof(C))>() {}
 
-	uint take   (       C *_data ) { return msg_take   (this, _data, sizeof(C), nullptr); }
-	uint tryWait(       C *_data ) { return msg_tryWait(this, _data, sizeof(C), nullptr); }
-	void wait   (       C *_data ) {        msg_wait   (this, _data, sizeof(C), nullptr); }
-	uint give   ( const C *_data ) { return msg_give   (this, _data, sizeof(C)); }
-	uint send   ( const C *_data ) { return msg_send   (this, _data, sizeof(C)); }
-	uint push   ( const C *_data ) { return msg_push   (this, _data, sizeof(C)); }
+	unsigned take   (       C *_data ) { return msg_take   (this, _data, sizeof(C), nullptr); }
+	unsigned tryWait(       C *_data ) { return msg_tryWait(this, _data, sizeof(C), nullptr); }
+	void     wait   (       C *_data ) {        msg_wait   (this, _data, sizeof(C), nullptr); }
+	unsigned give   ( const C *_data ) { return msg_give   (this, _data, sizeof(C)); }
+	unsigned send   ( const C *_data ) { return msg_send   (this, _data, sizeof(C)); }
+	unsigned push   ( const C *_data ) { return msg_push   (this, _data, sizeof(C)); }
 };
 
 #endif//__cplusplus
