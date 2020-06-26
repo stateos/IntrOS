@@ -223,10 +223,10 @@ void stm_init( stm_t *stm, void *data, size_t bufsize );
  *
  ******************************************************************************/
 
-unsigned stm_take( stm_t *stm, void *data, size_t size, size_t *read );
+int stm_take( stm_t *stm, void *data, size_t size, size_t *read );
 
 __STATIC_INLINE
-unsigned stm_tryWait( stm_t *stm, void *data, size_t size, size_t *read ) { return stm_take(stm, data, size, read); }
+int stm_tryWait( stm_t *stm, void *data, size_t size, size_t *read ) { return stm_take(stm, data, size, read); }
 
 /******************************************************************************
  *
@@ -267,7 +267,7 @@ void stm_wait( stm_t *stm, void *data, size_t size, size_t *read );
  *
  ******************************************************************************/
 
-unsigned stm_give( stm_t *stm, const void *data, size_t size );
+int stm_give( stm_t *stm, const void *data, size_t size );
 
 /******************************************************************************
  *
@@ -287,7 +287,7 @@ unsigned stm_give( stm_t *stm, const void *data, size_t size );
  *
  ******************************************************************************/
 
-unsigned stm_send( stm_t *stm, const void *data, size_t size );
+int stm_send( stm_t *stm, const void *data, size_t size );
 
 /******************************************************************************
  *
@@ -307,7 +307,7 @@ unsigned stm_send( stm_t *stm, const void *data, size_t size );
  *
  ******************************************************************************/
 
-unsigned stm_push( stm_t *stm, const void *data, size_t size );
+int stm_push( stm_t *stm, const void *data, size_t size );
 
 /******************************************************************************
  *
@@ -384,15 +384,15 @@ struct StreamBufferT : public __stm
 	StreamBufferT& operator=( StreamBufferT&& ) = delete;
 	StreamBufferT& operator=( const StreamBufferT& ) = delete;
 
-	unsigned take   (       void *_data, size_t _size, size_t *_read = nullptr ) { return stm_take   (this, _data, _size, _read); }
-	unsigned tryWait(       void *_data, size_t _size, size_t *_read = nullptr ) { return stm_tryWait(this, _data, _size, _read); }
-	void     wait   (       void *_data, size_t _size, size_t *_read = nullptr ) {        stm_wait   (this, _data, _size, _read); }
-	unsigned give   ( const void *_data, size_t _size )                          { return stm_give   (this, _data, _size); }
-	unsigned send   ( const void *_data, size_t _size )                          { return stm_send   (this, _data, _size); }
-	unsigned push   ( const void *_data, size_t _size )                          { return stm_push   (this, _data, _size); }
-	size_t   count  ( void )                                                     { return stm_count  (this); }
-	size_t   space  ( void )                                                     { return stm_space  (this); }
-	size_t   limit  ( void )                                                     { return stm_limit  (this); }
+	int    take   (       void *_data, size_t _size, size_t *_read = nullptr ) { return stm_take   (this, _data, _size, _read); }
+	int    tryWait(       void *_data, size_t _size, size_t *_read = nullptr ) { return stm_tryWait(this, _data, _size, _read); }
+	void   wait   (       void *_data, size_t _size, size_t *_read = nullptr ) {        stm_wait   (this, _data, _size, _read); }
+	int    give   ( const void *_data, size_t _size )                          { return stm_give   (this, _data, _size); }
+	int    send   ( const void *_data, size_t _size )                          { return stm_send   (this, _data, _size); }
+	int    push   ( const void *_data, size_t _size )                          { return stm_push   (this, _data, _size); }
+	size_t count  ( void )                                                     { return stm_count  (this); }
+	size_t space  ( void )                                                     { return stm_space  (this); }
+	size_t limit  ( void )                                                     { return stm_limit  (this); }
 
 	private:
 	char data_[limit_];
@@ -416,12 +416,12 @@ struct StreamBufferTT : public StreamBufferT<limit_*sizeof(C)>
 	constexpr
 	StreamBufferTT( void ): StreamBufferT<limit_*sizeof(C)>() {}
 
-	unsigned take   (       C *_data ) { return stm_take   (this, _data, sizeof(C), nullptr); }
-	unsigned tryWait(       C *_data ) { return stm_tryWait(this, _data, sizeof(C), nullptr); }
-	void     wait   (       C *_data ) {        stm_wait   (this, _data, sizeof(C), nullptr); }
-	unsigned give   ( const C *_data ) { return stm_give   (this, _data, sizeof(C)); }
-	unsigned send   ( const C *_data ) { return stm_send   (this, _data, sizeof(C)); }
-	unsigned push   ( const C *_data ) { return stm_push   (this, _data, sizeof(C)); }
+	int  take   (       C *_data ) { return stm_take   (this, _data, sizeof(C), nullptr); }
+	int  tryWait(       C *_data ) { return stm_tryWait(this, _data, sizeof(C), nullptr); }
+	void wait   (       C *_data ) {        stm_wait   (this, _data, sizeof(C), nullptr); }
+	int  give   ( const C *_data ) { return stm_give   (this, _data, sizeof(C)); }
+	int  send   ( const C *_data ) { return stm_send   (this, _data, sizeof(C)); }
+	int  push   ( const C *_data ) { return stm_push   (this, _data, sizeof(C)); }
 };
 
 #endif//__cplusplus

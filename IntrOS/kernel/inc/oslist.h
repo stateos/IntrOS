@@ -200,10 +200,10 @@ void lst_init( lst_t *lst );
  *
  ******************************************************************************/
 
-unsigned lst_take( lst_t *lst, void **data );
+int lst_take( lst_t *lst, void **data );
 
 __STATIC_INLINE
-unsigned lst_tryWait( lst_t *lst, void **data ) { return lst_take(lst, data); }
+int lst_tryWait( lst_t *lst, void **data ) { return lst_take(lst, data); }
 
 /******************************************************************************
  *
@@ -268,10 +268,10 @@ struct ListTT : public __lst
 	ListTT& operator=( ListTT&& ) = delete;
 	ListTT& operator=( const ListTT& ) = delete;
 
-	unsigned take   (       C   **_data ) { return lst_take   (this, reinterpret_cast<void **>(_data)); }
-	unsigned tryWait(       C   **_data ) { return lst_tryWait(this, reinterpret_cast<void **>(_data)); }
-	void     wait   (       C   **_data ) {        lst_wait   (this, reinterpret_cast<void **>(_data)); }
-	void     give   ( const void *_data ) {        lst_give   (this,                           _data); }
+	int  take   (       C   **_data ) { return lst_take   (this, reinterpret_cast<void **>(_data)); }
+	int  tryWait(       C   **_data ) { return lst_tryWait(this, reinterpret_cast<void **>(_data)); }
+	void wait   (       C   **_data ) {        lst_wait   (this, reinterpret_cast<void **>(_data)); }
+	void give   ( const void *_data ) {        lst_give   (this,                           _data); }
 };
 
 /******************************************************************************

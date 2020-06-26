@@ -2,7 +2,7 @@
 
     @file    IntrOS: oseventqueue.c
     @author  Rajmund Szymanski
-    @date    22.06.2020
+    @date    24.06.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -87,10 +87,10 @@ void priv_evq_skip( evq_t *evq )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned evq_take( evq_t *evq, unsigned *data )
+int evq_take( evq_t *evq, unsigned *data )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event = E_FAILURE;
+	int result = E_FAILURE;
 
 	assert(evq);
 	assert(evq->data);
@@ -102,12 +102,12 @@ unsigned evq_take( evq_t *evq, unsigned *data )
 		if (evq->count > 0)
 		{
 			priv_evq_get(evq, data);
-			event = E_SUCCESS;
+			result = E_SUCCESS;
 		}
 	}
 	sys_unlock();
 
-	return event;
+	return result;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -118,10 +118,10 @@ void evq_wait( evq_t *evq, unsigned *data )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned evq_give( evq_t *evq, unsigned data )
+int evq_give( evq_t *evq, unsigned data )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event = E_FAILURE;
+	int result = E_FAILURE;
 
 	assert(evq);
 	assert(evq->data);
@@ -132,12 +132,12 @@ unsigned evq_give( evq_t *evq, unsigned data )
 		if (evq->count < evq->limit)
 		{
 			priv_evq_put(evq, data);
-			event = E_SUCCESS;
+			result = E_SUCCESS;
 		}
 	}
 	sys_unlock();
 
-	return event;
+	return result;
 }
 
 /* -------------------------------------------------------------------------- */

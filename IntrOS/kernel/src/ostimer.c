@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.c
     @author  Rajmund Szymanski
-    @date    17.05.2020
+    @date    25.06.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -128,7 +128,7 @@ void tmr_startUntil( tmr_t *tmr, cnt_t time )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned tmr_take( tmr_t *tmr )
+int tmr_take( tmr_t *tmr )
 /* -------------------------------------------------------------------------- */
 {
 	assert(tmr);

@@ -48,10 +48,10 @@ void sig_init( sig_t *sig, unsigned mask )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned sig_take( sig_t *sig, unsigned sigset, unsigned *signo )
+int sig_take( sig_t *sig, unsigned sigset, unsigned *signo )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event = E_FAILURE;
+	int result = E_FAILURE;
 
 	assert(sig);
 	assert(sigset);
@@ -65,12 +65,12 @@ unsigned sig_take( sig_t *sig, unsigned sigset, unsigned *signo )
 			sig->sigset &= ~sigset | sig->mask;
 			if (signo != NULL)
 				for (*signo = 0; sigset >>= 1; *signo += 1);
-			event = E_SUCCESS;
+			result = E_SUCCESS;
 		}
 	}
 	sys_unlock();
 
-	return event;
+	return result;
 }
 
 /* -------------------------------------------------------------------------- */

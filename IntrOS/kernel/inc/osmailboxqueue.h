@@ -213,10 +213,10 @@ void box_init( box_t *box, size_t size, void *data, size_t bufsize );
  *
  ******************************************************************************/
 
-unsigned box_take( box_t *box, void *data );
+int box_take( box_t *box, void *data );
 
 __STATIC_INLINE
-unsigned box_tryWait( box_t *box, void *data ) { return box_take(box, data); }
+int box_tryWait( box_t *box, void *data ) { return box_take(box, data); }
 
 /******************************************************************************
  *
@@ -252,7 +252,7 @@ void box_wait( box_t *box, void *data );
  *
  ******************************************************************************/
 
-unsigned box_give( box_t *box, const void *data );
+int box_give( box_t *box, const void *data );
 
 /******************************************************************************
  *
@@ -364,10 +364,10 @@ struct MailBoxQueueT : public __box
 	MailBoxQueueT& operator=( MailBoxQueueT&& ) = delete;
 	MailBoxQueueT& operator=( const MailBoxQueueT& ) = delete;
 
-	unsigned take   (       void *_data ) { return box_take   (this, _data); }
-	unsigned tryWait(       void *_data ) { return box_tryWait(this, _data); }
+	int      take   (       void *_data ) { return box_take   (this, _data); }
+	int      tryWait(       void *_data ) { return box_tryWait(this, _data); }
 	void     wait   (       void *_data ) {        box_wait   (this, _data); }
-	unsigned give   ( const void *_data ) { return box_give   (this, _data); }
+	int      give   ( const void *_data ) { return box_give   (this, _data); }
 	void     send   ( const void *_data ) {        box_send   (this, _data); }
 	void     push   ( const void *_data ) {        box_push   (this, _data); }
 	unsigned count  (       void )        { return box_count  (this); }

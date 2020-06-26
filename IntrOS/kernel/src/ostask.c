@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.c
     @author  Rajmund Szymanski
-    @date    17.05.2020
+    @date    24.06.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -229,7 +229,7 @@ void tsk_sleepUntil( cnt_t time )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned tsk_suspend( tsk_t *tsk )
+int tsk_suspend( tsk_t *tsk )
 /* -------------------------------------------------------------------------- */
 {
 	assert(tsk);
@@ -244,7 +244,7 @@ unsigned tsk_suspend( tsk_t *tsk )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned tsk_resume( tsk_t *tsk )
+int tsk_resume( tsk_t *tsk )
 /* -------------------------------------------------------------------------- */
 {
 	assert(tsk);

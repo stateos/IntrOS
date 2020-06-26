@@ -219,10 +219,10 @@ void sem_init( sem_t *sem, unsigned init, unsigned limit );
  *
  ******************************************************************************/
 
-unsigned sem_take( sem_t *sem );
+int sem_take( sem_t *sem );
 
 __STATIC_INLINE
-unsigned sem_tryWait( sem_t *sem ) { return sem_take(sem); }
+int sem_tryWait( sem_t *sem ) { return sem_take(sem); }
 
 /******************************************************************************
  *
@@ -257,10 +257,10 @@ void sem_wait( sem_t *sem );
  *
  ******************************************************************************/
 
-unsigned sem_give( sem_t *sem );
+int sem_give( sem_t *sem );
 
 __STATIC_INLINE
-unsigned sem_post( sem_t *sem ) { return sem_give(sem); }
+int sem_post( sem_t *sem ) { return sem_give(sem); }
 
 /******************************************************************************
  *
@@ -350,11 +350,11 @@ struct Semaphore : public __sem
 
 /* -------------------------------------------------------------------------- */
 
-	unsigned take    ( void ) { return sem_take    (this); }
-	unsigned tryWait ( void ) { return sem_tryWait (this); }
+	int      take    ( void ) { return sem_take    (this); }
+	int      tryWait ( void ) { return sem_tryWait (this); }
 	void     wait    ( void ) {        sem_wait    (this); }
-	unsigned give    ( void ) { return sem_give    (this); }
-	unsigned post    ( void ) { return sem_post    (this); }
+	int      give    ( void ) { return sem_give    (this); }
+	int      post    ( void ) { return sem_post    (this); }
 	unsigned getValue( void ) { return sem_getValue(this); }
 };
 

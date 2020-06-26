@@ -205,10 +205,10 @@ void evq_init( evq_t *evq, unsigned *data, size_t bufsize );
  *
  ******************************************************************************/
 
-unsigned evq_take( evq_t *evq, unsigned *data );
+int evq_take( evq_t *evq, unsigned *data );
 
 __STATIC_INLINE
-unsigned evq_tryWait( evq_t *evq, unsigned *data ) { return evq_take(evq, data); }
+int evq_tryWait( evq_t *evq, unsigned *data ) { return evq_take(evq, data); }
 
 /******************************************************************************
  *
@@ -244,7 +244,7 @@ void evq_wait( evq_t *evq, unsigned *data );
  *
  ******************************************************************************/
 
-unsigned evq_give( evq_t *evq, unsigned data );
+int evq_give( evq_t *evq, unsigned data );
 
 /******************************************************************************
  *
@@ -355,13 +355,13 @@ struct EventQueueT : public __evq
 	EventQueueT& operator=( EventQueueT&& ) = delete;
 	EventQueueT& operator=( const EventQueueT& ) = delete;
 
-	unsigned take   ( unsigned *_data ) { return evq_take   (this,  _data); }
-	unsigned take   ( unsigned &_data ) { return evq_take   (this, &_data); }
-	unsigned tryWait( unsigned *_data ) { return evq_tryWait(this,  _data); }
-	unsigned tryWait( unsigned &_data ) { return evq_tryWait(this, &_data); }
+	int      take   ( unsigned *_data ) { return evq_take   (this,  _data); }
+	int      take   ( unsigned &_data ) { return evq_take   (this, &_data); }
+	int      tryWait( unsigned *_data ) { return evq_tryWait(this,  _data); }
+	int      tryWait( unsigned &_data ) { return evq_tryWait(this, &_data); }
 	void     wait   ( unsigned *_data ) {        evq_wait   (this,  _data); }
 	void     wait   ( unsigned &_data ) {        evq_wait   (this, &_data); }
-	unsigned give   ( unsigned  _data ) { return evq_give   (this,  _data); }
+	int      give   ( unsigned  _data ) { return evq_give   (this,  _data); }
 	void     send   ( unsigned  _data ) {        evq_send   (this,  _data); }
 	void     push   ( unsigned  _data ) {        evq_push   (this,  _data); }
 	unsigned count  ( void )            { return evq_count  (this); }

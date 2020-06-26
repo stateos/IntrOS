@@ -91,10 +91,10 @@ void priv_box_skip( box_t *box )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned box_take( box_t *box, void *data )
+int box_take( box_t *box, void *data )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event = E_FAILURE;
+	int result = E_FAILURE;
 
 	assert(box);
 	assert(box->data);
@@ -106,12 +106,12 @@ unsigned box_take( box_t *box, void *data )
 		if (box->count > 0)
 		{
 			priv_box_get(box, data);
-			event = E_SUCCESS;
+			result = E_SUCCESS;
 		}
 	}
 	sys_unlock();
 
-	return event;
+	return result;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -122,10 +122,10 @@ void box_wait( box_t *box, void *data )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned box_give( box_t *box, const void *data )
+int box_give( box_t *box, const void *data )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event = E_FAILURE;
+	int result = E_FAILURE;
 
 	assert(box);
 	assert(box->data);
@@ -137,12 +137,12 @@ unsigned box_give( box_t *box, const void *data )
 		if (box->count < box->limit)
 		{
 			priv_box_put(box, data);
-			event = E_SUCCESS;
+			result = E_SUCCESS;
 		}
 	}
 	sys_unlock();
 
-	return event;
+	return result;
 }
 
 /* -------------------------------------------------------------------------- */

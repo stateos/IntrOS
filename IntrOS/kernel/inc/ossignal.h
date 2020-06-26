@@ -198,10 +198,10 @@ void sig_init( sig_t *sig, unsigned mask );
  *
  ******************************************************************************/
 
-unsigned sig_take( sig_t *sig, unsigned sigset, unsigned *signo );
+int sig_take( sig_t *sig, unsigned sigset, unsigned *signo );
 
 __STATIC_INLINE
-unsigned sig_tryWait( sig_t *sig, unsigned sigset, unsigned *signo ) { return sig_take(sig, sigset, signo); }
+int sig_tryWait( sig_t *sig, unsigned sigset, unsigned *signo ) { return sig_take(sig, sigset, signo); }
 
 /******************************************************************************
  *
@@ -287,12 +287,12 @@ struct Signal : public __sig
 	Signal& operator=( Signal&& ) = delete;
 	Signal& operator=( const Signal& ) = delete;
 
-	unsigned take   ( unsigned _sigset, unsigned *_signo = nullptr ) { return sig_take   (this, _sigset, _signo); }
-	unsigned tryWait( unsigned _sigset, unsigned *_signo = nullptr ) { return sig_tryWait(this, _sigset, _signo); }
-	void     wait   ( unsigned _sigset, unsigned *_signo = nullptr ) {        sig_wait   (this, _sigset, _signo); }
-	void     give   ( unsigned _signo )                              {        sig_give   (this, _signo); }
-	void     set    ( unsigned _signo )                              {        sig_set    (this, _signo); }
-	void     clear  ( unsigned _signo )                              {        sig_clear  (this, _signo); }
+	int  take   ( unsigned _sigset, unsigned *_signo = nullptr ) { return sig_take   (this, _sigset, _signo); }
+	int  tryWait( unsigned _sigset, unsigned *_signo = nullptr ) { return sig_tryWait(this, _sigset, _signo); }
+	void wait   ( unsigned _sigset, unsigned *_signo = nullptr ) {        sig_wait   (this, _sigset, _signo); }
+	void give   ( unsigned _signo )                              {        sig_give   (this, _signo); }
+	void set    ( unsigned _signo )                              {        sig_set    (this, _signo); }
+	void clear  ( unsigned _signo )                              {        sig_clear  (this, _signo); }
 };
 
 #endif//__cplusplus

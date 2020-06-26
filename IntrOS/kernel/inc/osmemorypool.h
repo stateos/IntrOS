@@ -233,10 +233,10 @@ void mem_init( mem_t *mem, size_t size, que_t *data, size_t bufsize );
  ******************************************************************************/
 
 __STATIC_INLINE
-unsigned mem_take( mem_t *mem, void **data ) { return lst_take(&mem->lst, data); }
+int mem_take( mem_t *mem, void **data ) { return lst_take(&mem->lst, data); }
 
 __STATIC_INLINE
-unsigned mem_tryWait( mem_t *mem, void **data ) { return mem_take(mem, data); }
+int mem_tryWait( mem_t *mem, void **data ) { return mem_take(mem, data); }
 
 /******************************************************************************
  *
@@ -303,10 +303,10 @@ struct MemoryPoolT : public __mem
 	MemoryPoolT& operator=( MemoryPoolT&& ) = delete;
 	MemoryPoolT& operator=( const MemoryPoolT& ) = delete;
 
-	unsigned take   (       void **_data ) { return mem_take   (this, _data); }
-	unsigned tryWait(       void **_data ) { return mem_tryWait(this, _data); }
-	void     wait   (       void **_data ) {        mem_wait   (this, _data); }
-	void     give   ( const void  *_data ) {        mem_give   (this, _data); }
+	int  take   (       void **_data ) { return mem_take   (this, _data); }
+	int  tryWait(       void **_data ) { return mem_tryWait(this, _data); }
+	void wait   (       void **_data ) {        mem_wait   (this, _data); }
+	void give   ( const void  *_data ) {        mem_give   (this, _data); }
 
 	private:
 	que_t data_[limit_ * (1 + MEM_SIZE(size_))];
@@ -329,9 +329,9 @@ struct MemoryPoolTT : public MemoryPoolT<limit_, sizeof(C)>
 {
 	MemoryPoolTT( void ): MemoryPoolT<limit_, sizeof(C)>() {}
 
-	unsigned take   ( C **_data ) { return mem_take   (this, reinterpret_cast<void **>(_data)); }
-	unsigned tryWait( C **_data ) { return mem_tryWait(this, reinterpret_cast<void **>(_data)); }
-	void     wait   ( C **_data ) {        mem_wait   (this, reinterpret_cast<void **>(_data)); }
+	int  take   ( C **_data ) { return mem_take   (this, reinterpret_cast<void **>(_data)); }
+	int  tryWait( C **_data ) { return mem_tryWait(this, reinterpret_cast<void **>(_data)); }
+	void wait   ( C **_data ) {        mem_wait   (this, reinterpret_cast<void **>(_data)); }
 };
 
 #endif//__cplusplus

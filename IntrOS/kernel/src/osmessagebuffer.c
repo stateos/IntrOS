@@ -173,10 +173,10 @@ void priv_msg_skipUpdate( msg_t *msg, size_t size )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned msg_take( msg_t *msg, void *data, size_t size, size_t *read )
+int msg_take( msg_t *msg, void *data, size_t size, size_t *read )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event = E_FAILURE;
+	int result = E_FAILURE;
 
 	assert(msg);
 	assert(msg->data);
@@ -188,12 +188,12 @@ unsigned msg_take( msg_t *msg, void *data, size_t size, size_t *read )
 		if (msg->count > 0 && size >= priv_msg_size(msg))
 		{
 			priv_msg_getUpdate(msg, data, size, read);
-			event = E_SUCCESS;
+			result = E_SUCCESS;
 		}
 	}
 	sys_unlock();
 
-	return event;
+	return result;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -204,10 +204,10 @@ void msg_wait( msg_t *msg, void *data, size_t size, size_t *read )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned msg_give( msg_t *msg, const void *data, size_t size )
+int msg_give( msg_t *msg, const void *data, size_t size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event = E_FAILURE;
+	int result = E_FAILURE;
 
 	assert(msg);
 	assert(msg->data);
@@ -219,16 +219,16 @@ unsigned msg_give( msg_t *msg, const void *data, size_t size )
 		if (msg->count + sizeof(size_t) + size <= msg->limit)
 		{
 			priv_msg_putUpdate(msg, data, size);
-			event = E_SUCCESS;
+			result = E_SUCCESS;
 		}
 	}
 	sys_unlock();
 
-	return event;
+	return result;
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned msg_send( msg_t *msg, const void *data, size_t size )
+int msg_send( msg_t *msg, const void *data, size_t size )
 /* -------------------------------------------------------------------------- */
 {
 	if (sizeof(size_t) + size > msg->limit)
@@ -240,10 +240,10 @@ unsigned msg_send( msg_t *msg, const void *data, size_t size )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned msg_push( msg_t *msg, const void *data, size_t size )
+int msg_push( msg_t *msg, const void *data, size_t size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event = E_FAILURE;
+	int result = E_FAILURE;
 
 	assert(msg);
 	assert(msg->data);
@@ -256,12 +256,12 @@ unsigned msg_push( msg_t *msg, const void *data, size_t size )
 		{
 			priv_msg_skipUpdate(msg, size);
 			priv_msg_putUpdate(msg, data, size);
-			event = E_SUCCESS;
+			result = E_SUCCESS;
 		}
 	}
 	sys_unlock();
 
-	return event;
+	return result;
 }
 
 /* -------------------------------------------------------------------------- */

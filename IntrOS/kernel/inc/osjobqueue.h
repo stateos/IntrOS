@@ -204,10 +204,10 @@ void job_init( job_t *job, fun_t **data, size_t bufsize );
  *
  ******************************************************************************/
 
-unsigned job_take( job_t *job );
+int job_take( job_t *job );
 
 __STATIC_INLINE
-unsigned job_tryWait( job_t *job ) { return job_take(job); }
+int job_tryWait( job_t *job ) { return job_take(job); }
 
 /******************************************************************************
  *
@@ -242,7 +242,7 @@ void job_wait( job_t *job );
  *
  ******************************************************************************/
 
-unsigned job_give( job_t *job, fun_t *fun );
+int job_give( job_t *job, fun_t *fun );
 
 /******************************************************************************
  *
@@ -353,10 +353,10 @@ struct JobQueueT : public __job
 	JobQueueT& operator=( JobQueueT&& ) = delete;
 	JobQueueT& operator=( const JobQueueT& ) = delete;
 
-	unsigned take   ( void )        { return job_take   (this); }
-	unsigned tryWait( void )        { return job_tryWait(this); }
+	int      take   ( void )        { return job_take   (this); }
+	int      tryWait( void )        { return job_tryWait(this); }
 	void     wait   ( void )        {        job_wait   (this); }
-	unsigned give   ( fun_t *_fun ) { return job_give   (this, _fun); }
+	int      give   ( fun_t *_fun ) { return job_give   (this, _fun); }
 	void     send   ( fun_t *_fun ) {        job_send   (this, _fun); }
 	void     push   ( fun_t *_fun ) {        job_push   (this, _fun); }
 	unsigned count  ( void )        { return job_count  (this); }

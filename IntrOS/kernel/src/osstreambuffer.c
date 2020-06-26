@@ -120,10 +120,10 @@ void priv_stm_skipUpdate( stm_t *stm, size_t size )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned stm_take( stm_t *stm, void *data, size_t size, size_t *read )
+int stm_take( stm_t *stm, void *data, size_t size, size_t *read )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event = E_FAILURE;
+	int result = E_FAILURE;
 
 	assert(stm);
 	assert(stm->data);
@@ -136,12 +136,12 @@ unsigned stm_take( stm_t *stm, void *data, size_t size, size_t *read )
 		if (stm->count > 0)
 		{
 			priv_stm_getUpdate(stm, data, size, read);
-			event = E_SUCCESS;
+			result = E_SUCCESS;
 		}
 	}
 	sys_unlock();
 
-	return event;
+	return result;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -152,10 +152,10 @@ void stm_wait( stm_t *stm, void *data, size_t size, size_t *read )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned stm_give( stm_t *stm, const void *data, size_t size )
+int stm_give( stm_t *stm, const void *data, size_t size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event = E_FAILURE;
+	int result = E_FAILURE;
 
 	assert(stm);
 	assert(stm->data);
@@ -168,16 +168,16 @@ unsigned stm_give( stm_t *stm, const void *data, size_t size )
 		if (stm->count + size <= stm->limit)
 		{
 			priv_stm_putUpdate(stm, data, size);
-			event = E_SUCCESS;
+			result = E_SUCCESS;
 		}
 	}
 	sys_unlock();
 
-	return event;
+	return result;
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned stm_send( stm_t *stm, const void *data, size_t size )
+int stm_send( stm_t *stm, const void *data, size_t size )
 /* -------------------------------------------------------------------------- */
 {
 	if (size > stm->limit)
@@ -189,10 +189,10 @@ unsigned stm_send( stm_t *stm, const void *data, size_t size )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned stm_push( stm_t *stm, const void *data, size_t size )
+int stm_push( stm_t *stm, const void *data, size_t size )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned event = E_FAILURE;
+	int result = E_FAILURE;
 
 	assert(stm);
 	assert(stm->data);
@@ -206,12 +206,12 @@ unsigned stm_push( stm_t *stm, const void *data, size_t size )
 		{
 			priv_stm_skipUpdate(stm, size);
 			priv_stm_putUpdate(stm, data, size);
-			event = E_SUCCESS;
+			result = E_SUCCESS;
 		}
 	}
 	sys_unlock();
 
-	return event;
+	return result;
 }
 
 /* -------------------------------------------------------------------------- */
