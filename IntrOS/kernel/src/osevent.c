@@ -2,7 +2,7 @@
 
     @file    IntrOS: osevent.c
     @author  Rajmund Szymanski
-    @date    29.03.2020
+    @date    27.06.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -46,32 +46,32 @@ void evt_init( evt_t *evt )
 }
 
 /* -------------------------------------------------------------------------- */
-void evt_wait( evt_t *evt, unsigned *data )
+void evt_wait( evt_t *evt, unsigned *event )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned signal;
 
 	assert(evt);
-	assert(data);
 
 	sys_lock();
 	{
 		signal = evt->signal;
 		while (evt->signal == signal) core_ctx_switch();
-		*data = evt->event;
+		if (event != NULL)
+			*event = evt->event;
 	}
 	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
-void evt_give( evt_t *evt, unsigned data )
+void evt_give( evt_t *evt, unsigned event )
 /* -------------------------------------------------------------------------- */
 {
 	assert(evt);
 
 	sys_lock();
 	{
-		evt->event = data;
+		evt->event = event;
 		evt->signal++;
 	}
 	sys_unlock();
