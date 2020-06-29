@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmemorypool.h
     @author  Rajmund Szymanski
-    @date    25.06.2020
+    @date    27.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -271,7 +271,7 @@ void mem_wait( mem_t *mem, void **data ) { lst_wait(&mem->lst, data); }
  ******************************************************************************/
 
 __STATIC_INLINE
-void mem_give( mem_t *mem, const void *data ) { lst_give(&mem->lst, data); }
+void mem_give( mem_t *mem, void *data ) { lst_give(&mem->lst, data); }
 
 #ifdef __cplusplus
 }
@@ -303,10 +303,10 @@ struct MemoryPoolT : public __mem
 	MemoryPoolT& operator=( MemoryPoolT&& ) = delete;
 	MemoryPoolT& operator=( const MemoryPoolT& ) = delete;
 
-	int  take   (       void **_data ) { return mem_take   (this, _data); }
-	int  tryWait(       void **_data ) { return mem_tryWait(this, _data); }
-	void wait   (       void **_data ) {        mem_wait   (this, _data); }
-	void give   ( const void  *_data ) {        mem_give   (this, _data); }
+	int  take   ( void **_data ) { return mem_take   (this, _data); }
+	int  tryWait( void **_data ) { return mem_tryWait(this, _data); }
+	void wait   ( void **_data ) {        mem_wait   (this, _data); }
+	void give   ( void  *_data ) {        mem_give   (this, _data); }
 
 	private:
 	que_t data_[limit_ * (1 + MEM_SIZE(size_))];
