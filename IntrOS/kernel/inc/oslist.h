@@ -2,7 +2,7 @@
 
     @file    IntrOS: oslist.h
     @author  Rajmund Szymanski
-    @date    25.06.2020
+    @date    27.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -236,7 +236,7 @@ void lst_wait( lst_t *lst, void **data );
  *
  ******************************************************************************/
 
-void lst_give( lst_t *lst, const void *data );
+void lst_give( lst_t *lst, void *data );
 
 #ifdef __cplusplus
 }
@@ -268,10 +268,10 @@ struct ListTT : public __lst
 	ListTT& operator=( ListTT&& ) = delete;
 	ListTT& operator=( const ListTT& ) = delete;
 
-	int  take   (       C   **_data ) { return lst_take   (this, reinterpret_cast<void **>(_data)); }
-	int  tryWait(       C   **_data ) { return lst_tryWait(this, reinterpret_cast<void **>(_data)); }
-	void wait   (       C   **_data ) {        lst_wait   (this, reinterpret_cast<void **>(_data)); }
-	void give   ( const void *_data ) {        lst_give   (this,                           _data); }
+	int  take   ( C   **_data ) { return lst_take   (this, reinterpret_cast<void **>(_data)); }
+	int  tryWait( C   **_data ) { return lst_tryWait(this, reinterpret_cast<void **>(_data)); }
+	void wait   ( C   **_data ) {        lst_wait   (this, reinterpret_cast<void **>(_data)); }
+	void give   ( void *_data ) {        lst_give   (this,                           _data); }
 };
 
 /******************************************************************************
