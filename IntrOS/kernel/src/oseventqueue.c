@@ -2,7 +2,7 @@
 
     @file    IntrOS: oseventqueue.c
     @author  Rajmund Szymanski
-    @date    24.06.2020
+    @date    27.06.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -52,25 +52,26 @@ void evq_init( evq_t *evq, unsigned *data, size_t bufsize )
 
 /* -------------------------------------------------------------------------- */
 static
-void priv_evq_get( evq_t *evq, unsigned *data )
+unsigned priv_evq_get( evq_t *evq )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned i = evq->head;
-
-	*data = evq->data[i++];
+	unsigned event = evq->data[i++];
 
 	evq->head = (i < evq->limit) ? i : 0;
 	evq->count--;
+
+	return event;
 }
 
 /* -------------------------------------------------------------------------- */
 static
-void priv_evq_put( evq_t *evq, const unsigned data )
+void priv_evq_put( evq_t *evq, const unsigned event )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned i = evq->tail;
 
-	evq->data[i++] = data;
+	evq->data[i++] = event;
 
 	evq->tail = (i < evq->limit) ? i : 0;
 	evq->count++;
@@ -87,21 +88,23 @@ void priv_evq_skip( evq_t *evq )
 }
 
 /* -------------------------------------------------------------------------- */
-int evq_take( evq_t *evq, unsigned *data )
+int evq_take( evq_t *evq, unsigned *event )
 /* -------------------------------------------------------------------------- */
 {
+	unsigned temp;
 	int result = E_FAILURE;
 
 	assert(evq);
 	assert(evq->data);
 	assert(evq->limit);
-	assert(data);
 
 	sys_lock();
 	{
 		if (evq->count > 0)
 		{
-			priv_evq_get(evq, data);
+			temp = priv_evq_get(evq);
+			if (event != NULL)
+				*event = temp;
 			result = E_SUCCESS;
 		}
 	}
@@ -111,14 +114,14 @@ int evq_take( evq_t *evq, unsigned *data )
 }
 
 /* -------------------------------------------------------------------------- */
-void evq_wait( evq_t *evq, unsigned *data )
+void evq_wait( evq_t *evq, unsigned *event )
 /* -------------------------------------------------------------------------- */
 {
-	while (evq_take(evq, data) != E_SUCCESS) core_ctx_switch();
+	while (evq_take(evq, event) != E_SUCCESS) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */
-int evq_give( evq_t *evq, unsigned data )
+int evq_give( evq_t *evq, unsigned event )
 /* -------------------------------------------------------------------------- */
 {
 	int result = E_FAILURE;
@@ -131,7 +134,7 @@ int evq_give( evq_t *evq, unsigned data )
 	{
 		if (evq->count < evq->limit)
 		{
-			priv_evq_put(evq, data);
+			priv_evq_put(evq, event);
 			result = E_SUCCESS;
 		}
 	}
@@ -141,14 +144,14 @@ int evq_give( evq_t *evq, unsigned data )
 }
 
 /* -------------------------------------------------------------------------- */
-void evq_send( evq_t *evq, unsigned data )
+void evq_send( evq_t *evq, unsigned event )
 /* -------------------------------------------------------------------------- */
 {
-	while (evq_give(evq, data) != E_SUCCESS) core_ctx_switch();
+	while (evq_give(evq, event) != E_SUCCESS) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */
-void evq_push( evq_t *evq, unsigned data )
+void evq_push( evq_t *evq, unsigned event )
 /* -------------------------------------------------------------------------- */
 {
 	assert(evq);
@@ -159,7 +162,7 @@ void evq_push( evq_t *evq, unsigned data )
 	{
 		if (evq->count == evq->limit)
 			priv_evq_skip(evq);
-		priv_evq_put(evq, data);
+		priv_evq_put(evq, event);
 	}
 	sys_unlock();
 }

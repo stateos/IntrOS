@@ -2,7 +2,7 @@
 
     @file    IntrOS: oseventqueue.h
     @author  Rajmund Szymanski
-    @date    25.06.2020
+    @date    27.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -192,93 +192,93 @@ void evq_init( evq_t *evq, unsigned *data, size_t bufsize );
  * Name              : evq_take
  * Alias             : evq_tryWait
  *
- * Description       : try to transfer event data from the event queue object,
+ * Description       : try to transfer event value from the event queue object,
  *                     don't wait if the event queue object is empty
  *
  * Parameters
  *   evq             : pointer to event queue object
- *   data            : pointer to store event data
+ *   event           : pointer to store event value
  *
  * Return
- *   E_SUCCESS       : event data was successfully transferred from the event queue object
+ *   E_SUCCESS       : event value was successfully transferred from the event queue object
  *   E_FAILURE       : event queue object is empty
  *
  ******************************************************************************/
 
-int evq_take( evq_t *evq, unsigned *data );
+int evq_take( evq_t *evq, unsigned *event );
 
 __STATIC_INLINE
-int evq_tryWait( evq_t *evq, unsigned *data ) { return evq_take(evq, data); }
+int evq_tryWait( evq_t *evq, unsigned *event ) { return evq_take(evq, event); }
 
 /******************************************************************************
  *
  * Name              : evq_wait
  *
- * Description       : try to transfer event data from the event queue object,
+ * Description       : try to transfer event value from the event queue object,
  *                     wait indefinitely while the event queue object is empty
  *
  * Parameters
  *   evq             : pointer to event queue object
- *   data            : pointer to store event data
+ *   event           : pointer to store event value
  *
  * Return            : none
  *
  ******************************************************************************/
 
-void evq_wait( evq_t *evq, unsigned *data );
+void evq_wait( evq_t *evq, unsigned *event );
 
 /******************************************************************************
  *
  * Name              : evq_give
  *
- * Description       : try to transfer event data to the event queue object,
+ * Description       : try to transfer event value to the event queue object,
  *                     don't wait if the event queue object is full
  *
  * Parameters
  *   evq             : pointer to event queue object
- *   data            : event value
+ *   event           : event value
  *
  * Return
- *   E_SUCCESS       : event data was successfully transferred to the event queue object
+ *   E_SUCCESS       : event value was successfully transferred to the event queue object
  *   E_FAILURE       : event queue object is full
  *
  ******************************************************************************/
 
-int evq_give( evq_t *evq, unsigned data );
+int evq_give( evq_t *evq, unsigned event );
 
 /******************************************************************************
  *
  * Name              : evq_send
  *
- * Description       : try to transfer event data to the event queue object,
+ * Description       : try to transfer event value to the event queue object,
  *                     wait indefinitely while the event queue object is full
  *
  * Parameters
  *   evq             : pointer to event queue object
- *   data            : event value
+ *   event           : event value
  *
  * Return            : none
  *
  ******************************************************************************/
 
-void evq_send( evq_t *evq, unsigned data );
+void evq_send( evq_t *evq, unsigned event );
 
 /******************************************************************************
  *
  * Name              : evq_push
  *
- * Description       : transfer event data to the event queue object,
- *                     remove the oldest event data if the event queue object is full
+ * Description       : transfer event value to the event queue object,
+ *                     remove the oldest event value if the event queue object is full
  *
  * Parameters
  *   evq             : pointer to event queue object
- *   data            : event value
+ *   event           : event value
  *
  * Return            : none
  *
  ******************************************************************************/
 
-void evq_push( evq_t *evq, unsigned data );
+void evq_push( evq_t *evq, unsigned event );
 
 /******************************************************************************
  *
@@ -355,18 +355,15 @@ struct EventQueueT : public __evq
 	EventQueueT& operator=( EventQueueT&& ) = delete;
 	EventQueueT& operator=( const EventQueueT& ) = delete;
 
-	int      take   ( unsigned *_data ) { return evq_take   (this,  _data); }
-	int      take   ( unsigned &_data ) { return evq_take   (this, &_data); }
-	int      tryWait( unsigned *_data ) { return evq_tryWait(this,  _data); }
-	int      tryWait( unsigned &_data ) { return evq_tryWait(this, &_data); }
-	void     wait   ( unsigned *_data ) {        evq_wait   (this,  _data); }
-	void     wait   ( unsigned &_data ) {        evq_wait   (this, &_data); }
-	int      give   ( unsigned  _data ) { return evq_give   (this,  _data); }
-	void     send   ( unsigned  _data ) {        evq_send   (this,  _data); }
-	void     push   ( unsigned  _data ) {        evq_push   (this,  _data); }
-	unsigned count  ( void )            { return evq_count  (this); }
-	unsigned space  ( void )            { return evq_space  (this); }
-	unsigned limit  ( void )            { return evq_limit  (this); }
+	int      take   ( unsigned *_event ) { return evq_take   (this, _event); }
+	int      tryWait( unsigned *_event ) { return evq_tryWait(this, _event); }
+	void     wait   ( unsigned *_event ) {        evq_wait   (this, _event); }
+	int      give   ( unsigned  _event ) { return evq_give   (this, _event); }
+	void     send   ( unsigned  _event ) {        evq_send   (this, _event); }
+	void     push   ( unsigned  _event ) {        evq_push   (this, _event); }
+	unsigned count  ( void )             { return evq_count  (this); }
+	unsigned space  ( void )             { return evq_space  (this); }
+	unsigned limit  ( void )             { return evq_limit  (this); }
 
 	private:
 	unsigned data_[limit_];
