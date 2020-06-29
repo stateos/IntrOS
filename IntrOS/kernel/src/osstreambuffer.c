@@ -2,7 +2,7 @@
 
     @file    IntrOS: osstreambuffer.c
     @author  Rajmund Szymanski
-    @date    25.06.2020
+    @date    27.06.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -94,12 +94,12 @@ void priv_stm_skip( stm_t *stm, size_t size )
 
 /* -------------------------------------------------------------------------- */
 static
-void priv_stm_getUpdate( stm_t *stm, char *data, size_t size, size_t *read )
+size_t priv_stm_getUpdate( stm_t *stm, char *data, size_t size )
 /* -------------------------------------------------------------------------- */
 {
 	if (size > stm->count) size = stm->count;
-	if (read != NULL) *read = size;
 	priv_stm_get(stm, data, size);
+	return size;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -123,6 +123,7 @@ void priv_stm_skipUpdate( stm_t *stm, size_t size )
 int stm_take( stm_t *stm, void *data, size_t size, size_t *read )
 /* -------------------------------------------------------------------------- */
 {
+	size_t temp;
 	int result = E_FAILURE;
 
 	assert(stm);
@@ -135,7 +136,9 @@ int stm_take( stm_t *stm, void *data, size_t size, size_t *read )
 	{
 		if (stm->count > 0)
 		{
-			priv_stm_getUpdate(stm, data, size, read);
+			temp = priv_stm_getUpdate(stm, data, size);
+			if (read != NULL)
+				*read = temp;
 			result = E_SUCCESS;
 		}
 	}
