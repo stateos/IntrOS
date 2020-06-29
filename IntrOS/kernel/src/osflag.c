@@ -2,7 +2,7 @@
 
     @file    IntrOS: osflag.c
     @author  Rajmund Szymanski
-    @date    29.03.2020
+    @date    29.06.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -48,37 +48,47 @@ void flg_init( flg_t *flg, unsigned init )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned flg_take( flg_t *flg, unsigned flags, bool all )
+int flg_take( flg_t *flg, unsigned flags, bool all, unsigned *remain )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned value = flags;
+	unsigned temp;
+	int result = E_FAILURE;
 
 	assert(flg);
 
 	sys_lock();
 	{
-		if (flags & flg->flags)
-		{
-			if (!all)
-				flags = 0;
-			flags &= ~flg->flags;
-			flg->flags &= ~value;
-		}
+		temp = flags;
+		flags &= ~flg->flags;
+		flg->flags &= ~temp;
+
+		if (flags == 0 || (flags != temp && !all))
+			result = E_SUCCESS;
+
+		if (remain != NULL)
+			*remain = flags;
 	}
 	sys_unlock();
 
-	return flags;
+	return result;
 }
 
 /* -------------------------------------------------------------------------- */
-void flg_wait( flg_t *flg, unsigned flags, bool all )
+void flg_wait( flg_t *flg, unsigned flags, bool all, unsigned *remain )
 /* -------------------------------------------------------------------------- */
 {
-	while ((flags = flg_take(flg, flags, all)) != 0) core_ctx_switch();
+	while (flg_take(flg, flags, all, &flags) != E_SUCCESS) core_ctx_switch();
+
+	sys_lock();
+	{
+		if (remain != NULL)
+			*remain = flags;
+	}
+	sys_unlock();
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned flg_give( flg_t *flg, unsigned flags )
+void flg_give( flg_t *flg, unsigned flags, unsigned *after )
 /* -------------------------------------------------------------------------- */
 {
 	assert(flg);
@@ -86,30 +96,25 @@ unsigned flg_give( flg_t *flg, unsigned flags )
 	sys_lock();
 	{
 		flg->flags |= flags;
-		flags = flg->flags;
+		if (after != NULL)
+			*after = flg->flags;
 	}
 	sys_unlock();
-
-	return flags;
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned flg_clear( flg_t *flg, unsigned flags )
+void flg_clear( flg_t *flg, unsigned flags, unsigned *before )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned temp;
-
 	assert(flg);
 
 	sys_lock();
 	{
-		temp = flg->flags;
+		if (before != NULL)
+			*before = flg->flags;
 		flg->flags &= ~flags;
-		flags = temp;
 	}
 	sys_unlock();
-
-	return flags;
 }
 
 /* -------------------------------------------------------------------------- */
