@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.c
     @author  Rajmund Szymanski
-    @date    24.06.2020
+    @date    27.06.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -52,14 +52,14 @@ void job_init( job_t *job, fun_t **data, size_t bufsize )
 
 /* -------------------------------------------------------------------------- */
 static
-void priv_job_get( job_t *job, fun_t **fun )
+fun_t *priv_job_get( job_t *job )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned i = job->head;
-
-	*fun = job->data[i++];
+	fun_t *fun = job->data[i++];
 	job->head = (i < job->limit) ? i : 0;
 	job->count--;
+	return fun;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -89,8 +89,8 @@ void priv_job_skip( job_t *job )
 int job_take( job_t *job )
 /* -------------------------------------------------------------------------- */
 {
+	fun_t *fun;
 	int result = E_FAILURE;
-	fun_t  * fun;
 
 	assert(job);
 	assert(job->data);
@@ -100,15 +100,14 @@ int job_take( job_t *job )
 	{
 		if (job->count > 0)
 		{
-			priv_job_get(job, &fun);
-
-			port_clr_lock();
-			fun();
-
+			fun = priv_job_get(job);
 			result = E_SUCCESS;
 		}
 	}
 	sys_unlock();
+
+	if (result == E_SUCCESS)
+		fun();
 
 	return result;
 }
