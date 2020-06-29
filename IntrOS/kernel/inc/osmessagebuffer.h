@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.h
     @author  Rajmund Szymanski
-    @date    25.06.2020
+    @date    29.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -398,9 +398,9 @@ struct MessageBufferT : public __msg
 	MessageBufferT& operator=( MessageBufferT&& ) = delete;
 	MessageBufferT& operator=( const MessageBufferT& ) = delete;
 
-	int    take   (       void *_data, size_t _size, size_t *_read = nullptr ) { return msg_take   (this, _data, _size, _read ); }
-	int    tryWait(       void *_data, size_t _size, size_t *_read = nullptr ) { return msg_tryWait(this, _data, _size, _read ); }
-	void   wait   (       void *_data, size_t _size, size_t *_read = nullptr ) {        msg_wait   (this, _data, _size, _read ); }
+	int    take   (       void *_data, size_t _size, size_t *_read = nullptr ) { return msg_take   (this, _data, _size, _read); }
+	int    tryWait(       void *_data, size_t _size, size_t *_read = nullptr ) { return msg_tryWait(this, _data, _size, _read); }
+	void   wait   (       void *_data, size_t _size, size_t *_read = nullptr ) {        msg_wait   (this, _data, _size, _read); }
 	int    give   ( const void *_data, size_t _size )                          { return msg_give   (this, _data, _size); }
 	int    send   ( const void *_data, size_t _size )                          { return msg_send   (this, _data, _size); }
 	int    push   ( const void *_data, size_t _size )                          { return msg_push   (this, _data, _size); }
