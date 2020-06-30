@@ -2,7 +2,7 @@
 
     @file    IntrOS: oseventqueue.h
     @author  Rajmund Szymanski
-    @date    27.06.2020
+    @date    30.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -197,18 +197,16 @@ void evq_init( evq_t *evq, unsigned *data, size_t bufsize );
  *
  * Parameters
  *   evq             : pointer to event queue object
- *   event           : pointer to store event value
  *
- * Return
- *   E_SUCCESS       : event value was successfully transferred from the event queue object
- *   E_FAILURE       : event queue object is empty
+ * Return            : event value
+ *   FAILURE         : event queue object is empty
  *
  ******************************************************************************/
 
-int evq_take( evq_t *evq, unsigned *event );
+unsigned evq_take( evq_t *evq );
 
 __STATIC_INLINE
-int evq_tryWait( evq_t *evq, unsigned *event ) { return evq_take(evq, event); }
+unsigned evq_tryWait( evq_t *evq ) { return evq_take(evq); }
 
 /******************************************************************************
  *
@@ -219,13 +217,12 @@ int evq_tryWait( evq_t *evq, unsigned *event ) { return evq_take(evq, event); }
  *
  * Parameters
  *   evq             : pointer to event queue object
- *   event           : pointer to store event value
  *
- * Return            : none
+ * Return            : event value
  *
  ******************************************************************************/
 
-void evq_wait( evq_t *evq, unsigned *event );
+unsigned evq_wait( evq_t *evq );
 
 /******************************************************************************
  *
@@ -239,12 +236,12 @@ void evq_wait( evq_t *evq, unsigned *event );
  *   event           : event value
  *
  * Return
- *   E_SUCCESS       : event value was successfully transferred to the event queue object
- *   E_FAILURE       : event queue object is full
+ *   SUCCESS         : event value was successfully transferred to the event queue object
+ *   FAILURE         : event queue object is full
  *
  ******************************************************************************/
 
-int evq_give( evq_t *evq, unsigned event );
+unsigned evq_give( evq_t *evq, unsigned event );
 
 /******************************************************************************
  *
@@ -355,15 +352,15 @@ struct EventQueueT : public __evq
 	EventQueueT& operator=( EventQueueT&& ) = delete;
 	EventQueueT& operator=( const EventQueueT& ) = delete;
 
-	int      take   ( unsigned *_event ) { return evq_take   (this, _event); }
-	int      tryWait( unsigned *_event ) { return evq_tryWait(this, _event); }
-	void     wait   ( unsigned *_event ) {        evq_wait   (this, _event); }
-	int      give   ( unsigned  _event ) { return evq_give   (this, _event); }
-	void     send   ( unsigned  _event ) {        evq_send   (this, _event); }
-	void     push   ( unsigned  _event ) {        evq_push   (this, _event); }
-	unsigned count  ( void )             { return evq_count  (this); }
-	unsigned space  ( void )             { return evq_space  (this); }
-	unsigned limit  ( void )             { return evq_limit  (this); }
+	unsigned take   ( void )            { return evq_take   (this); }
+	unsigned tryWait( void )            { return evq_tryWait(this); }
+	unsigned wait   ( void )            { return evq_wait   (this); }
+	unsigned give   ( unsigned _event ) { return evq_give   (this, _event); }
+	void     send   ( unsigned _event ) {        evq_send   (this, _event); }
+	void     push   ( unsigned _event ) {        evq_push   (this, _event); }
+	unsigned count  ( void )            { return evq_count  (this); }
+	unsigned space  ( void )            { return evq_space  (this); }
+	unsigned limit  ( void )            { return evq_limit  (this); }
 
 	private:
 	unsigned data_[limit_];

@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmemorypool.h
     @author  Rajmund Szymanski
-    @date    27.06.2020
+    @date    30.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -224,19 +224,17 @@ void mem_init( mem_t *mem, size_t size, que_t *data, size_t bufsize );
  *
  * Parameters
  *   mem             : pointer to memory pool object
- *   data            : pointer to store the pointer to the memory object
  *
- * Return
- *   E_SUCCESS       : pointer to memory object was successfully transferred to the data pointer
- *   E_FAILURE       : memory pool object is empty
+ * Return            : pointer to the memory object
+ *   NULL            : memory pool object is empty
  *
  ******************************************************************************/
 
 __STATIC_INLINE
-int mem_take( mem_t *mem, void **data ) { return lst_take(&mem->lst, data); }
+void *mem_take( mem_t *mem ) { return lst_take(&mem->lst); }
 
 __STATIC_INLINE
-int mem_tryWait( mem_t *mem, void **data ) { return mem_take(mem, data); }
+void *mem_tryWait( mem_t *mem ) { return mem_take(mem); }
 
 /******************************************************************************
  *
@@ -247,14 +245,13 @@ int mem_tryWait( mem_t *mem, void **data ) { return mem_take(mem, data); }
  *
  * Parameters
  *   mem             : pointer to memory pool object
- *   data            : pointer to store the pointer to the memory object
  *
- * Return            : none
+ * Return            : pointer to the memory object
  *
  ******************************************************************************/
 
 __STATIC_INLINE
-void mem_wait( mem_t *mem, void **data ) { lst_wait(&mem->lst, data); }
+void *mem_wait( mem_t *mem ) { return lst_wait(&mem->lst); }
 
 /******************************************************************************
  *
@@ -303,10 +300,10 @@ struct MemoryPoolT : public __mem
 	MemoryPoolT& operator=( MemoryPoolT&& ) = delete;
 	MemoryPoolT& operator=( const MemoryPoolT& ) = delete;
 
-	int  take   ( void **_data ) { return mem_take   (this, _data); }
-	int  tryWait( void **_data ) { return mem_tryWait(this, _data); }
-	void wait   ( void **_data ) {        mem_wait   (this, _data); }
-	void give   ( void  *_data ) {        mem_give   (this, _data); }
+	void *take   ( void )        { return mem_take   (this); }
+	void *tryWait( void )        { return mem_tryWait(this); }
+	void *wait   ( void )        { return mem_wait   (this); }
+	void  give   ( void *_data ) {        mem_give   (this, _data); }
 
 	private:
 	que_t data_[limit_ * (1 + MEM_SIZE(size_))];
@@ -329,9 +326,9 @@ struct MemoryPoolTT : public MemoryPoolT<limit_, sizeof(C)>
 {
 	MemoryPoolTT( void ): MemoryPoolT<limit_, sizeof(C)>() {}
 
-	int  take   ( C **_data ) { return mem_take   (this, reinterpret_cast<void **>(_data)); }
-	int  tryWait( C **_data ) { return mem_tryWait(this, reinterpret_cast<void **>(_data)); }
-	void wait   ( C **_data ) {        mem_wait   (this, reinterpret_cast<void **>(_data)); }
+	C *take   ( void ) { return reinterpret_cast<C *>(mem_take   (this)); }
+	C *tryWait( void ) { return reinterpret_cast<C *>(mem_tryWait(this)); }
+	C *wait   ( void ) { return reinterpret_cast<C *>(mem_wait   (this)); }
 };
 
 #endif//__cplusplus

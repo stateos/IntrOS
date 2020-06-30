@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmutex.h
     @author  Rajmund Szymanski
-    @date    25.06.2020
+    @date    30.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -165,15 +165,15 @@ void mtx_init( mtx_t *mtx );
  *   mtx             : pointer to mutex object
  *
  * Return
- *   E_SUCCESS       : mutex object was successfully locked
- *   E_FAILURE       : mutex object can't be locked immediately
+ *   SUCCESS         : mutex object was successfully locked
+ *   FAILURE         : mutex object can't be locked immediately
  *
  ******************************************************************************/
 
-int mtx_take( mtx_t *mtx );
+unsigned mtx_take( mtx_t *mtx );
 
 __STATIC_INLINE
-int mtx_tryLock( mtx_t *mtx ) { return mtx_take(mtx); }
+unsigned mtx_tryLock( mtx_t *mtx ) { return mtx_take(mtx); }
 
 /******************************************************************************
  *
@@ -207,15 +207,15 @@ void mtx_lock( mtx_t *mtx ) { mtx_wait(mtx); }
  *   mtx             : pointer to mutex object
  *
  * Return
- *   E_SUCCESS       : mutex object was successfully unlocked
- *   E_FAILURE       : mutex object can't be unlocked
+ *   SUCCESS         : mutex object was successfully unlocked
+ *   FAILURE         : mutex object can't be unlocked
  *
  ******************************************************************************/
 
-int mtx_give( mtx_t *mtx );
+unsigned mtx_give( mtx_t *mtx );
 
 __STATIC_INLINE
-int mtx_unlock( mtx_t *mtx ) { return mtx_give(mtx); }
+unsigned mtx_unlock( mtx_t *mtx ) { return mtx_give(mtx); }
 
 #ifdef __cplusplus
 }
@@ -248,12 +248,12 @@ struct Mutex : public __mtx
 
 	~Mutex( void ) { assert(__mtx::owner == nullptr); }
 
-	int  take   ( void ) { return mtx_take   (this); }
-	int  tryLock( void ) { return mtx_tryLock(this); }
-	void wait   ( void ) {        mtx_wait   (this); }
-	void lock   ( void ) {        mtx_lock   (this); }
-	int  give   ( void ) { return mtx_give   (this); }
-	int  unlock ( void ) { return mtx_unlock (this); }
+	unsigned take   ( void ) { return mtx_take   (this); }
+	unsigned tryLock( void ) { return mtx_tryLock(this); }
+	void     wait   ( void ) {        mtx_wait   (this); }
+	void     lock   ( void ) {        mtx_lock   (this); }
+	unsigned give   ( void ) { return mtx_give   (this); }
+	unsigned unlock ( void ) { return mtx_unlock (this); }
 };
 
 #endif//__cplusplus

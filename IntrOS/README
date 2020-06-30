@@ -48,7 +48,7 @@ Features:
 - updated signal functions
 - updated message buffer functions
 - updated stream buffer functions
-- changed type of system functions result (int)
+- totally changed and simplified OS API
 ---------
 4.6
 - updated os version

@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.c
     @author  Rajmund Szymanski
-    @date    27.06.2020
+    @date    30.06.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -86,11 +86,11 @@ void priv_job_skip( job_t *job )
 }
 
 /* -------------------------------------------------------------------------- */
-int job_take( job_t *job )
+unsigned job_take( job_t *job )
 /* -------------------------------------------------------------------------- */
 {
 	fun_t *fun;
-	int result = E_FAILURE;
+	unsigned result = FAILURE;
 
 	assert(job);
 	assert(job->data);
@@ -101,12 +101,12 @@ int job_take( job_t *job )
 		if (job->count > 0)
 		{
 			fun = priv_job_get(job);
-			result = E_SUCCESS;
+			result = SUCCESS;
 		}
 	}
 	sys_unlock();
 
-	if (result == E_SUCCESS)
+	if (result == SUCCESS)
 		fun();
 
 	return result;
@@ -116,14 +116,14 @@ int job_take( job_t *job )
 void job_wait( job_t *job )
 /* -------------------------------------------------------------------------- */
 {
-	while (job_take(job) != E_SUCCESS) core_ctx_switch();
+	while (job_take(job) != SUCCESS) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */
-int job_give( job_t *job, fun_t *fun )
+unsigned job_give( job_t *job, fun_t *fun )
 /* -------------------------------------------------------------------------- */
 {
-	int result = E_FAILURE;
+	unsigned result = FAILURE;
 
 	assert(job);
 	assert(job->data);
@@ -135,7 +135,7 @@ int job_give( job_t *job, fun_t *fun )
 		if (job->count < job->limit)
 		{
 			priv_job_put(job, fun);
-			result = E_SUCCESS;
+			result = SUCCESS;
 		}
 	}
 	sys_unlock();
@@ -147,7 +147,7 @@ int job_give( job_t *job, fun_t *fun )
 void job_send( job_t *job, fun_t *fun )
 /* -------------------------------------------------------------------------- */
 {
-	while (job_give(job, fun) != E_SUCCESS) core_ctx_switch();
+	while (job_give(job, fun) != SUCCESS) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */

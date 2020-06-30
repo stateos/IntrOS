@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.c
     @author  Rajmund Szymanski
-    @date    27.06.2020
+    @date    30.06.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -173,26 +173,21 @@ void priv_msg_skipUpdate( msg_t *msg, size_t size )
 }
 
 /* -------------------------------------------------------------------------- */
-int msg_take( msg_t *msg, void *data, size_t size, size_t *read )
+size_t msg_take( msg_t *msg, void *data, size_t size )
 /* -------------------------------------------------------------------------- */
 {
-	size_t temp;
-	int result = E_FAILURE;
+	size_t result = 0;
 
 	assert(msg);
 	assert(msg->data);
 	assert(msg->limit);
-	assert(data||size==0);
+	assert(data);
+	assert(size);
 
 	sys_lock();
 	{
 		if (msg->count > 0 && size >= priv_msg_size(msg))
-		{
-			temp = priv_msg_getUpdate(msg, data);
-			if (read != NULL)
-				*read = temp;
-			result = E_SUCCESS;
-		}
+			result = priv_msg_getUpdate(msg, data);
 	}
 	sys_unlock();
 
@@ -200,29 +195,34 @@ int msg_take( msg_t *msg, void *data, size_t size, size_t *read )
 }
 
 /* -------------------------------------------------------------------------- */
-void msg_wait( msg_t *msg, void *data, size_t size, size_t *read )
+size_t msg_wait( msg_t *msg, void *data, size_t size )
 /* -------------------------------------------------------------------------- */
 {
-	while (msg_take(msg, data, size, read) != E_SUCCESS) core_ctx_switch();
+	size_t result = 0;
+
+	while (result = msg_take(msg, data, size), result == 0) core_ctx_switch();
+
+	return result;
 }
 
 /* -------------------------------------------------------------------------- */
-int msg_give( msg_t *msg, const void *data, size_t size )
+unsigned msg_give( msg_t *msg, const void *data, size_t size )
 /* -------------------------------------------------------------------------- */
 {
-	int result = E_FAILURE;
+	unsigned result = FAILURE;
 
 	assert(msg);
 	assert(msg->data);
 	assert(msg->limit);
-	assert(data||size==0);
+	assert(data);
+	assert(size);
 
 	sys_lock();
 	{
 		if (msg->count + sizeof(size_t) + size <= msg->limit)
 		{
 			priv_msg_putUpdate(msg, data, size);
-			result = E_SUCCESS;
+			result = SUCCESS;
 		}
 	}
 	sys_unlock();
@@ -231,22 +231,22 @@ int msg_give( msg_t *msg, const void *data, size_t size )
 }
 
 /* -------------------------------------------------------------------------- */
-int msg_send( msg_t *msg, const void *data, size_t size )
+unsigned msg_send( msg_t *msg, const void *data, size_t size )
 /* -------------------------------------------------------------------------- */
 {
 	if (sizeof(size_t) + size > msg->limit)
-		return E_FAILURE;
+		return FAILURE;
 
-	while (msg_give(msg, data, size) != E_SUCCESS) core_ctx_switch();
+	while (msg_give(msg, data, size) != SUCCESS) core_ctx_switch();
 
-	return E_SUCCESS;
+	return SUCCESS;
 }
 
 /* -------------------------------------------------------------------------- */
-int msg_push( msg_t *msg, const void *data, size_t size )
+unsigned msg_push( msg_t *msg, const void *data, size_t size )
 /* -------------------------------------------------------------------------- */
 {
-	int result = E_FAILURE;
+	unsigned result = FAILURE;
 
 	assert(msg);
 	assert(msg->data);
@@ -259,7 +259,7 @@ int msg_push( msg_t *msg, const void *data, size_t size )
 		{
 			priv_msg_skipUpdate(msg, size);
 			priv_msg_putUpdate(msg, data, size);
-			result = E_SUCCESS;
+			result = SUCCESS;
 		}
 	}
 	sys_unlock();

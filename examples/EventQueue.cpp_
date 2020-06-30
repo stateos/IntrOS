@@ -6,12 +6,9 @@ auto evq = EventQueueT<1>();
 
 void consumer()
 {
-	unsigned x;
-
 	for (;;)
 	{
-		evq.wait(&x);
-		led = x;
+		led = evq.wait();
 	}
 }
 

@@ -2,7 +2,7 @@
 
     @file    IntrOS: osflag.h
     @author  Rajmund Szymanski
-    @date    29.06.2020
+    @date    30.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -189,18 +189,15 @@ void flg_init( flg_t *flg, unsigned init );
  *   all             : waiting mode
  *                     flgAny: wait for any flags to be set
  *                     flgAll: wait for all flags to be set
- *   remain          : pointer to remaining flags
  *
- * Return
- *   E_SUCCESS       : required flags have been set
- *   E_FAILURE       : required flags have not been set
+ * Return            : remaining flags
  *
  ******************************************************************************/
 
-int flg_take( flg_t *flg, unsigned flags, bool all, unsigned *remain );
+unsigned flg_take( flg_t *flg, unsigned flags, bool all );
 
 __STATIC_INLINE
-int flg_tryWait( flg_t *flg, unsigned flags, bool all, unsigned *remain ) { return flg_take(flg, flags, all, remain); }
+unsigned flg_tryWait( flg_t *flg, unsigned flags, bool all ) { return flg_take(flg, flags, all); }
 
 /******************************************************************************
  *
@@ -214,13 +211,12 @@ int flg_tryWait( flg_t *flg, unsigned flags, bool all, unsigned *remain ) { retu
  *   all             : waiting mode
  *                     flgAny: wait for any flags to be set
  *                     flgAll: wait for all flags to be set
- *   remain          : pointer to remaining flags
  *
  * Return            : none
  *
  ******************************************************************************/
 
-void flg_wait( flg_t *flg, unsigned flags, bool all, unsigned *remain );
+void flg_wait( flg_t *flg, unsigned flags, bool all );
 
 /******************************************************************************
  *
@@ -232,16 +228,15 @@ void flg_wait( flg_t *flg, unsigned flags, bool all, unsigned *remain );
  * Parameters
  *   flg             : pointer to flag object
  *   flags           : all flags to set
- *   after           : pointer flags after setting
  *
- * Return            : none
+ * Return            : flags after setting
  *
  ******************************************************************************/
 
-void flg_give( flg_t *flg, unsigned flags, unsigned *after );
+unsigned flg_give( flg_t *flg, unsigned flags );
 
 __STATIC_INLINE
-void flg_set( flg_t *flg, unsigned flags, unsigned *after ) { flg_give(flg, flags, after); }
+unsigned flg_set( flg_t *flg, unsigned flags ) { return flg_give(flg, flags); }
 
 /******************************************************************************
  *
@@ -252,13 +247,12 @@ void flg_set( flg_t *flg, unsigned flags, unsigned *after ) { flg_give(flg, flag
  * Parameters
  *   flg             : pointer to flag object
  *   flags           : all flags to clear
- *   before          : pointer to flags before clearing
  *
- * Return            : none
+ * Return            : flags before clearing
  *
  ******************************************************************************/
 
-void flg_clear( flg_t *flg, unsigned flags, unsigned *before );
+unsigned flg_clear( flg_t *flg, unsigned flags );
 
 /******************************************************************************
  *
@@ -304,13 +298,13 @@ struct Flag : public __flg
 	Flag& operator=( Flag&& ) = delete;
 	Flag& operator=( const Flag& ) = delete;
 
-	int      take   ( unsigned _flags, bool _all = true, unsigned *_remain = nullptr ) { return flg_take   (this, _flags, _all, _remain); }
-	int      tryWait( unsigned _flags, bool _all = true, unsigned *_remain = nullptr ) { return flg_tryWait(this, _flags, _all, _remain); }
-	void     wait   ( unsigned _flags, bool _all = true, unsigned *_remain = nullptr ) {        flg_wait   (this, _flags, _all, _remain); }
-	void     give   ( unsigned _flags,                   unsigned *_after  = nullptr ) {        flg_give   (this, _flags,       _after); }
-	void     set    ( unsigned _flags,                   unsigned *_after  = nullptr ) {        flg_set    (this, _flags,       _after); }
-	void     clear  ( unsigned _flags,                   unsigned *_before = nullptr ) {        flg_clear  (this, _flags,       _before); }
-	unsigned get    ( void )                                                           { return flg_get    (this); }
+	unsigned take   ( unsigned _flags, bool _all = true ) { return flg_take   (this, _flags, _all); }
+	unsigned tryWait( unsigned _flags, bool _all = true ) { return flg_tryWait(this, _flags, _all); }
+	void     wait   ( unsigned _flags, bool _all = true ) { return flg_wait   (this, _flags, _all); }
+	unsigned give   ( unsigned _flags )                   { return flg_give   (this, _flags); }
+	unsigned set    ( unsigned _flags )                   { return flg_set    (this, _flags); }
+	unsigned clear  ( unsigned _flags )                   { return flg_clear  (this, _flags); }
+	unsigned get    ( void )                              { return flg_get    (this); }
 };
 
 #endif//__cplusplus

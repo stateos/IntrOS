@@ -2,7 +2,7 @@
 
     @file    IntrOS: osevent.h
     @author  Rajmund Szymanski
-    @date    27.06.2020
+    @date    30.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -157,19 +157,33 @@ void evt_init( evt_t *evt );
 
 /******************************************************************************
  *
+ * Name              : evt_take
+ *
+ * Description       : get last event from the event object
+ *
+ * Parameters
+ *   evt             : pointer to event object
+ *
+ * Return            : event value
+ *
+ ******************************************************************************/
+
+unsigned evt_take( evt_t *evt );
+
+/******************************************************************************
+ *
  * Name              : evt_wait
  *
  * Description       : wait indefinitely until the event object has been released
  *
  * Parameters
  *   evt             : pointer to event object
- *   event           : pointer to store event value
  *
  * Return            : event value
  *
  ******************************************************************************/
 
-void evt_wait( evt_t *evt, unsigned *event );
+unsigned evt_wait( evt_t *evt );
 
 /******************************************************************************
  *
@@ -216,8 +230,9 @@ struct Event : public __evt
 	Event& operator=( Event&& ) = delete;
 	Event& operator=( const Event& ) = delete;
 
-	void wait( unsigned *_event ) { evt_wait(this, _event); }
-	void give( unsigned  _event ) { evt_give(this, _event); }
+	unsigned take( void )            { return evt_take(this); }
+	unsigned wait( void )            { return evt_wait(this); }
+	void     give( unsigned _event ) {        evt_give(this, _event); }
 };
 
 #endif//__cplusplus

@@ -2,7 +2,7 @@
 
     @file    IntrOS: osstreambuffer.c
     @author  Rajmund Szymanski
-    @date    27.06.2020
+    @date    30.06.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -120,11 +120,10 @@ void priv_stm_skipUpdate( stm_t *stm, size_t size )
 }
 
 /* -------------------------------------------------------------------------- */
-int stm_take( stm_t *stm, void *data, size_t size, size_t *read )
+size_t stm_take( stm_t *stm, void *data, size_t size )
 /* -------------------------------------------------------------------------- */
 {
-	size_t temp;
-	int result = E_FAILURE;
+	size_t result = 0;
 
 	assert(stm);
 	assert(stm->data);
@@ -135,12 +134,7 @@ int stm_take( stm_t *stm, void *data, size_t size, size_t *read )
 	sys_lock();
 	{
 		if (stm->count > 0)
-		{
-			temp = priv_stm_getUpdate(stm, data, size);
-			if (read != NULL)
-				*read = temp;
-			result = E_SUCCESS;
-		}
+			result = priv_stm_getUpdate(stm, data, size);
 	}
 	sys_unlock();
 
@@ -148,17 +142,21 @@ int stm_take( stm_t *stm, void *data, size_t size, size_t *read )
 }
 
 /* -------------------------------------------------------------------------- */
-void stm_wait( stm_t *stm, void *data, size_t size, size_t *read )
+size_t stm_wait( stm_t *stm, void *data, size_t size )
 /* -------------------------------------------------------------------------- */
 {
-	while (stm_take(stm, data, size, read) != E_SUCCESS) core_ctx_switch();
+	size_t result;
+
+	while (result = stm_take(stm, data, size), result == 0) core_ctx_switch();
+
+	return result;
 }
 
 /* -------------------------------------------------------------------------- */
-int stm_give( stm_t *stm, const void *data, size_t size )
+unsigned stm_give( stm_t *stm, const void *data, size_t size )
 /* -------------------------------------------------------------------------- */
 {
-	int result = E_FAILURE;
+	unsigned result = FAILURE;
 
 	assert(stm);
 	assert(stm->data);
@@ -171,7 +169,7 @@ int stm_give( stm_t *stm, const void *data, size_t size )
 		if (stm->count + size <= stm->limit)
 		{
 			priv_stm_putUpdate(stm, data, size);
-			result = E_SUCCESS;
+			result = SUCCESS;
 		}
 	}
 	sys_unlock();
@@ -180,22 +178,22 @@ int stm_give( stm_t *stm, const void *data, size_t size )
 }
 
 /* -------------------------------------------------------------------------- */
-int stm_send( stm_t *stm, const void *data, size_t size )
+unsigned stm_send( stm_t *stm, const void *data, size_t size )
 /* -------------------------------------------------------------------------- */
 {
 	if (size > stm->limit)
-		return E_FAILURE;
+		return FAILURE;
 
-	while (stm_give(stm, data, size) != E_SUCCESS) core_ctx_switch();
+	while (stm_give(stm, data, size) != SUCCESS) core_ctx_switch();
 
-	return E_SUCCESS;
+	return SUCCESS;
 }
 
 /* -------------------------------------------------------------------------- */
-int stm_push( stm_t *stm, const void *data, size_t size )
+unsigned stm_push( stm_t *stm, const void *data, size_t size )
 /* -------------------------------------------------------------------------- */
 {
-	int result = E_FAILURE;
+	unsigned result = FAILURE;
 
 	assert(stm);
 	assert(stm->data);
@@ -209,7 +207,7 @@ int stm_push( stm_t *stm, const void *data, size_t size )
 		{
 			priv_stm_skipUpdate(stm, size);
 			priv_stm_putUpdate(stm, data, size);
-			result = E_SUCCESS;
+			result = SUCCESS;
 		}
 	}
 	sys_unlock();

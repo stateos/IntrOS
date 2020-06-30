@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.h
     @author  Rajmund Szymanski
-    @date    29.06.2020
+    @date    30.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -215,18 +215,16 @@ void msg_init( msg_t *msg, void *data, size_t bufsize );
  *   msg             : pointer to message buffer object
  *   data            : pointer to the buffer
  *   size            : size of the buffer
- *   read            : pointer to the variable getting number of read bytes
  *
- * Return
- *   E_SUCCESS       : variable 'read' contains the number of bytes read from the message buffer
- *   E_FAILURE       : message buffer object is empty or not enough space in the buffer
+ * Return            : number of read bytes
+ *   0               : message buffer object is empty or not enough space in the buffer
  *
  ******************************************************************************/
 
-int msg_take( msg_t *msg, void *data, size_t size, size_t *read );
+size_t msg_take( msg_t *msg, void *data, size_t size );
 
 __STATIC_INLINE
-int msg_tryWait( msg_t *msg, void *data, size_t size, size_t *read ) { return msg_take(msg, data, size, read); }
+size_t msg_tryWait( msg_t *msg, void *data, size_t size ) { return msg_take(msg, data, size); }
 
 /******************************************************************************
  *
@@ -239,14 +237,12 @@ int msg_tryWait( msg_t *msg, void *data, size_t size, size_t *read ) { return ms
  *   msg             : pointer to message buffer object
  *   data            : pointer to the buffer
  *   size            : size of the buffer
- *   read            : pointer to the variable getting number of read bytes
  *
- * Return            : none
- *                     variable 'read' contains the number of bytes read from the message buffer
+ * Return            : number of read bytes
  *
  ******************************************************************************/
 
-void msg_wait( msg_t *msg, void *data, size_t size, size_t *read );
+size_t msg_wait( msg_t *msg, void *data, size_t size );
 
 /******************************************************************************
  *
@@ -261,12 +257,12 @@ void msg_wait( msg_t *msg, void *data, size_t size, size_t *read );
  *   size            : size of the buffer
  *
  * Return
- *   E_SUCCESS       : message data was successfully transferred to the message buffer object
- *   E_FAILURE       : not enough space in the message buffer
+ *   SUCCESS         : message data was successfully transferred to the message buffer object
+ *   FAILURE         : not enough space in the message buffer
  *
  ******************************************************************************/
 
-int msg_give( msg_t *msg, const void *data, size_t size );
+unsigned msg_give( msg_t *msg, const void *data, size_t size );
 
 /******************************************************************************
  *
@@ -281,12 +277,12 @@ int msg_give( msg_t *msg, const void *data, size_t size );
  *   size            : size of the buffer
  *
  * Return
- *   E_SUCCESS       : message data was successfully transferred to the message buffer object
- *   E_FAILURE       : size of the message data is out of the limit
+ *   SUCCESS         : message data was successfully transferred to the message buffer object
+ *   FAILURE         : size of the message data is out of the limit
  *
  ******************************************************************************/
 
-int msg_send( msg_t *msg, const void *data, size_t size );
+unsigned msg_send( msg_t *msg, const void *data, size_t size );
 
 /******************************************************************************
  *
@@ -301,12 +297,12 @@ int msg_send( msg_t *msg, const void *data, size_t size );
  *   size            : size of the buffer
  *
  * Return
- *   E_SUCCESS       : message data was successfully transferred to the message buffer object
- *   E_FAILURE       : size of the message data is out of the limit
+ *   SUCCESS         : message data was successfully transferred to the message buffer object
+ *   FAILURE         : size of the message data is out of the limit
  *
  ******************************************************************************/
 
-int msg_push( msg_t *msg, const void *data, size_t size );
+unsigned msg_push( msg_t *msg, const void *data, size_t size );
 
 /******************************************************************************
  *
@@ -398,16 +394,16 @@ struct MessageBufferT : public __msg
 	MessageBufferT& operator=( MessageBufferT&& ) = delete;
 	MessageBufferT& operator=( const MessageBufferT& ) = delete;
 
-	int    take   (       void *_data, size_t _size, size_t *_read = nullptr ) { return msg_take   (this, _data, _size, _read); }
-	int    tryWait(       void *_data, size_t _size, size_t *_read = nullptr ) { return msg_tryWait(this, _data, _size, _read); }
-	void   wait   (       void *_data, size_t _size, size_t *_read = nullptr ) {        msg_wait   (this, _data, _size, _read); }
-	int    give   ( const void *_data, size_t _size )                          { return msg_give   (this, _data, _size); }
-	int    send   ( const void *_data, size_t _size )                          { return msg_send   (this, _data, _size); }
-	int    push   ( const void *_data, size_t _size )                          { return msg_push   (this, _data, _size); }
-	size_t count  ( void )                                                     { return msg_count  (this); }
-	size_t space  ( void )                                                     { return msg_space  (this); }
-	size_t limit  ( void )                                                     { return msg_limit  (this); }
-	size_t size   ( void )                                                     { return msg_size   (this); }
+	size_t   take   (       void *_data, size_t _size ) { return msg_take   (this, _data, _size); }
+	size_t   tryWait(       void *_data, size_t _size ) { return msg_tryWait(this, _data, _size); }
+	size_t   wait   (       void *_data, size_t _size ) { return msg_wait   (this, _data, _size); }
+	unsigned give   ( const void *_data, size_t _size ) { return msg_give   (this, _data, _size); }
+	unsigned send   ( const void *_data, size_t _size ) { return msg_send   (this, _data, _size); }
+	unsigned push   ( const void *_data, size_t _size ) { return msg_push   (this, _data, _size); }
+	size_t   count  ( void )                            { return msg_count  (this); }
+	size_t   space  ( void )                            { return msg_space  (this); }
+	size_t   limit  ( void )                            { return msg_limit  (this); }
+	size_t   size   ( void )                            { return msg_size   (this); }
 
 	private:
 	char data_[limit_];
@@ -431,12 +427,12 @@ struct MessageBufferTT : public MessageBufferT<limit_*(sizeof(size_t)+sizeof(C))
 	constexpr
 	MessageBufferTT( void ): MessageBufferT<limit_*(sizeof(size_t)+sizeof(C))>() {}
 
-	int  take   (       C *_data ) { return msg_take   (this, _data, sizeof(C), nullptr); }
-	int  tryWait(       C *_data ) { return msg_tryWait(this, _data, sizeof(C), nullptr); }
-	void wait   (       C *_data ) {        msg_wait   (this, _data, sizeof(C), nullptr); }
-	int  give   ( const C *_data ) { return msg_give   (this, _data, sizeof(C)); }
-	int  send   ( const C *_data ) { return msg_send   (this, _data, sizeof(C)); }
-	int  push   ( const C *_data ) { return msg_push   (this, _data, sizeof(C)); }
+	unsigned take   (       C *_data ) { return msg_take   (this, _data, sizeof(C)) == 0 ? FAILURE : SUCCESS; }
+	unsigned tryWait(       C *_data ) { return msg_tryWait(this, _data, sizeof(C)) == 0 ? FAILURE : SUCCESS; }
+	void     wait   (       C *_data ) {        msg_wait   (this, _data, sizeof(C)); }
+	unsigned give   ( const C *_data ) { return msg_give   (this, _data, sizeof(C)); }
+	unsigned send   ( const C *_data ) { return msg_send   (this, _data, sizeof(C)); }
+	unsigned push   ( const C *_data ) { return msg_push   (this, _data, sizeof(C)); }
 };
 
 #endif//__cplusplus

@@ -2,7 +2,7 @@
 
     @file    IntrOS: osstreambuffer.h
     @author  Rajmund Szymanski
-    @date    25.06.2020
+    @date    30.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -215,18 +215,16 @@ void stm_init( stm_t *stm, void *data, size_t bufsize );
  *   stm             : pointer to stream buffer object
  *   data            : pointer to the buffer
  *   size            : size of the buffer
- *   read            : pointer to the variable getting number of read bytes
  *
- * Return
- *   E_SUCCESS       : variable 'read' contains the number of bytes read from the stream buffer
- *   E_FAILURE       : stream buffer object is empty
+ * Return            : number of read bytes
+ *   0               : stream buffer object is empty
  *
  ******************************************************************************/
 
-int stm_take( stm_t *stm, void *data, size_t size, size_t *read );
+size_t stm_take( stm_t *stm, void *data, size_t size );
 
 __STATIC_INLINE
-int stm_tryWait( stm_t *stm, void *data, size_t size, size_t *read ) { return stm_take(stm, data, size, read); }
+size_t stm_tryWait( stm_t *stm, void *data, size_t size ) { return stm_take(stm, data, size); }
 
 /******************************************************************************
  *
@@ -239,15 +237,12 @@ int stm_tryWait( stm_t *stm, void *data, size_t size, size_t *read ) { return st
  *   stm             : pointer to stream buffer object
  *   data            : pointer to the buffer
  *   size            : size of the buffer
- *   read            : pointer to the variable getting number of read bytes
  *
- * Return            : none
- *                     variable 'read' contains the number of bytes read from the stream buffer
-
+ * Return            : number of read bytes
  *
  ******************************************************************************/
 
-void stm_wait( stm_t *stm, void *data, size_t size, size_t *read );
+size_t stm_wait( stm_t *stm, void *data, size_t size );
 
 /******************************************************************************
  *
@@ -262,12 +257,12 @@ void stm_wait( stm_t *stm, void *data, size_t size, size_t *read );
  *   size            : size of the buffer
  *
  * Return
- *   E_SUCCESS       : stream data was successfully transferred to the stream buffer object
- *   E_FAILURE       : not enough space in the stream buffer
+ *   SUCCESS         : stream data was successfully transferred to the stream buffer object
+ *   FAILURE         : not enough space in the stream buffer
  *
  ******************************************************************************/
 
-int stm_give( stm_t *stm, const void *data, size_t size );
+unsigned stm_give( stm_t *stm, const void *data, size_t size );
 
 /******************************************************************************
  *
@@ -282,12 +277,12 @@ int stm_give( stm_t *stm, const void *data, size_t size );
  *   size            : size of the buffer
  *
  * Return
- *   E_SUCCESS       : stream data was successfully transferred to the stream buffer object
- *   E_FAILURE       : size of the stream data is out of the limit
+ *   SUCCESS         : stream data was successfully transferred to the stream buffer object
+ *   FAILURE         : size of the stream data is out of the limit
  *
  ******************************************************************************/
 
-int stm_send( stm_t *stm, const void *data, size_t size );
+unsigned stm_send( stm_t *stm, const void *data, size_t size );
 
 /******************************************************************************
  *
@@ -302,12 +297,12 @@ int stm_send( stm_t *stm, const void *data, size_t size );
  *   size            : size of the buffer
  *
  * Return
- *   E_SUCCESS       : stream data was successfully transferred to the stream buffer object
- *   E_FAILURE       : size of the stream data is out of the limit
+ *   SUCCESS         : stream data was successfully transferred to the stream buffer object
+ *   FAILURE         : size of the stream data is out of the limit
  *
  ******************************************************************************/
 
-int stm_push( stm_t *stm, const void *data, size_t size );
+unsigned stm_push( stm_t *stm, const void *data, size_t size );
 
 /******************************************************************************
  *
@@ -384,15 +379,15 @@ struct StreamBufferT : public __stm
 	StreamBufferT& operator=( StreamBufferT&& ) = delete;
 	StreamBufferT& operator=( const StreamBufferT& ) = delete;
 
-	int    take   (       void *_data, size_t _size, size_t *_read = nullptr ) { return stm_take   (this, _data, _size, _read); }
-	int    tryWait(       void *_data, size_t _size, size_t *_read = nullptr ) { return stm_tryWait(this, _data, _size, _read); }
-	void   wait   (       void *_data, size_t _size, size_t *_read = nullptr ) {        stm_wait   (this, _data, _size, _read); }
-	int    give   ( const void *_data, size_t _size )                          { return stm_give   (this, _data, _size); }
-	int    send   ( const void *_data, size_t _size )                          { return stm_send   (this, _data, _size); }
-	int    push   ( const void *_data, size_t _size )                          { return stm_push   (this, _data, _size); }
-	size_t count  ( void )                                                     { return stm_count  (this); }
-	size_t space  ( void )                                                     { return stm_space  (this); }
-	size_t limit  ( void )                                                     { return stm_limit  (this); }
+	size_t   take   (       void *_data, size_t _size ) { return stm_take   (this, _data, _size); }
+	size_t   tryWait(       void *_data, size_t _size ) { return stm_tryWait(this, _data, _size); }
+	size_t   wait   (       void *_data, size_t _size ) { return stm_wait   (this, _data, _size); }
+	unsigned give   ( const void *_data, size_t _size ) { return stm_give   (this, _data, _size); }
+	unsigned send   ( const void *_data, size_t _size ) { return stm_send   (this, _data, _size); }
+	unsigned push   ( const void *_data, size_t _size ) { return stm_push   (this, _data, _size); }
+	size_t   count  ( void )                            { return stm_count  (this); }
+	size_t   space  ( void )                            { return stm_space  (this); }
+	size_t   limit  ( void )                            { return stm_limit  (this); }
 
 	private:
 	char data_[limit_];
@@ -416,12 +411,12 @@ struct StreamBufferTT : public StreamBufferT<limit_*sizeof(C)>
 	constexpr
 	StreamBufferTT( void ): StreamBufferT<limit_*sizeof(C)>() {}
 
-	int  take   (       C *_data ) { return stm_take   (this, _data, sizeof(C), nullptr); }
-	int  tryWait(       C *_data ) { return stm_tryWait(this, _data, sizeof(C), nullptr); }
-	void wait   (       C *_data ) {        stm_wait   (this, _data, sizeof(C), nullptr); }
-	int  give   ( const C *_data ) { return stm_give   (this, _data, sizeof(C)); }
-	int  send   ( const C *_data ) { return stm_send   (this, _data, sizeof(C)); }
-	int  push   ( const C *_data ) { return stm_push   (this, _data, sizeof(C)); }
+	unsigned take   (       C *_data ) { return stm_take   (this, _data, sizeof(C)) == 0 ? FAILURE : SUCCESS; }
+	unsigned tryWait(       C *_data ) { return stm_tryWait(this, _data, sizeof(C)) == 0 ? FAILURE : SUCCESS; }
+	void     wait   (       C *_data ) {        stm_wait   (this, _data, sizeof(C)); }
+	unsigned give   ( const C *_data ) { return stm_give   (this, _data, sizeof(C)); }
+	unsigned send   ( const C *_data ) { return stm_send   (this, _data, sizeof(C)); }
+	unsigned push   ( const C *_data ) { return stm_push   (this, _data, sizeof(C)); }
 };
 
 #endif//__cplusplus

@@ -2,7 +2,7 @@
 
     @file    IntrOS: oslist.h
     @author  Rajmund Szymanski
-    @date    27.06.2020
+    @date    30.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -192,18 +192,16 @@ void lst_init( lst_t *lst );
  *
  * Parameters
  *   lst             : pointer to list object
- *   data            : pointer to store the pointer to the memory object
  *
- * Return
- *   E_SUCCESS       : pointer to memory object was successfully transferred to the data pointer
- *   E_FAILURE       : list object is empty
+ * Return            : pointer to the memory object
+ *   NULL            : list object is empty
  *
  ******************************************************************************/
 
-int lst_take( lst_t *lst, void **data );
+void *lst_take( lst_t *lst );
 
 __STATIC_INLINE
-int lst_tryWait( lst_t *lst, void **data ) { return lst_take(lst, data); }
+void *lst_tryWait( lst_t *lst ) { return lst_take(lst); }
 
 /******************************************************************************
  *
@@ -214,13 +212,12 @@ int lst_tryWait( lst_t *lst, void **data ) { return lst_take(lst, data); }
  *
  * Parameters
  *   lst             : pointer to list object
- *   data            : pointer to store the pointer to the memory object
  *
- * Return            : none
+ * Return            : pointer to the memory object
  *
  ******************************************************************************/
 
-void lst_wait( lst_t *lst, void **data );
+void *lst_wait( lst_t *lst );
 
 /******************************************************************************
  *
@@ -268,10 +265,10 @@ struct ListTT : public __lst
 	ListTT& operator=( ListTT&& ) = delete;
 	ListTT& operator=( const ListTT& ) = delete;
 
-	int  take   ( C   **_data ) { return lst_take   (this, reinterpret_cast<void **>(_data)); }
-	int  tryWait( C   **_data ) { return lst_tryWait(this, reinterpret_cast<void **>(_data)); }
-	void wait   ( C   **_data ) {        lst_wait   (this, reinterpret_cast<void **>(_data)); }
-	void give   ( void *_data ) {        lst_give   (this,                           _data); }
+	C  * take   ( void )     { return reinterpret_cast<C *>(lst_take   (this)); }
+	C  * tryWait( void )     { return reinterpret_cast<C *>(lst_tryWait(this)); }
+	C  * wait   ( void )     { return reinterpret_cast<C *>(lst_wait   (this)); }
+	void give   ( C *_data ) {                              lst_give   (this, _data); }
 };
 
 /******************************************************************************

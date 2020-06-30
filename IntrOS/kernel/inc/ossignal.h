@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossignal.h
     @author  Rajmund Szymanski
-    @date    25.06.2020
+    @date    30.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -190,18 +190,16 @@ void sig_init( sig_t *sig, unsigned mask );
  * Parameters
  *   sig             : pointer to signal object
  *   sigset          : set of expected signals
- *   signo           : pointer to the variable getting signal number
  *
- * Return
- *   E_SUCCESS       : variable 'singno' contains the lowest number of expected signal from the set of all pending signals
- *   E_FAILURE       : no expected signal has been set, try again
+ * Return            : signal number
+ *   FAILURE         : no expected signal has been set, try again
  *
  ******************************************************************************/
 
-int sig_take( sig_t *sig, unsigned sigset, unsigned *signo );
+unsigned sig_take( sig_t *sig, unsigned sigset );
 
 __STATIC_INLINE
-int sig_tryWait( sig_t *sig, unsigned sigset, unsigned *signo ) { return sig_take(sig, sigset, signo); }
+unsigned sig_tryWait( sig_t *sig, unsigned sigset ) { return sig_take(sig, sigset); }
 
 /******************************************************************************
  *
@@ -213,14 +211,12 @@ int sig_tryWait( sig_t *sig, unsigned sigset, unsigned *signo ) { return sig_tak
  * Parameters
  *   sig             : pointer to signal object
  *   sigset          : set of expected signals
- *   signo           : pointer to the variable getting signal number
  *
- * Return            : none
- *                     variable 'singno' contains the lowest number of expected signal from the set of all pending signals
+ * Return            : signal number
  *
  ******************************************************************************/
 
-void sig_wait( sig_t *sig, unsigned sigset, unsigned *signo );
+unsigned sig_wait( sig_t *sig, unsigned sigset );
 
 /******************************************************************************
  *
@@ -287,12 +283,12 @@ struct Signal : public __sig
 	Signal& operator=( Signal&& ) = delete;
 	Signal& operator=( const Signal& ) = delete;
 
-	int  take   ( unsigned _sigset, unsigned *_signo = nullptr ) { return sig_take   (this, _sigset, _signo); }
-	int  tryWait( unsigned _sigset, unsigned *_signo = nullptr ) { return sig_tryWait(this, _sigset, _signo); }
-	void wait   ( unsigned _sigset, unsigned *_signo = nullptr ) {        sig_wait   (this, _sigset, _signo); }
-	void give   ( unsigned _signo )                              {        sig_give   (this, _signo); }
-	void set    ( unsigned _signo )                              {        sig_set    (this, _signo); }
-	void clear  ( unsigned _signo )                              {        sig_clear  (this, _signo); }
+	unsigned take   ( unsigned _sigset ) { return sig_take   (this, _sigset); }
+	unsigned tryWait( unsigned _sigset ) { return sig_tryWait(this, _sigset); }
+	unsigned wait   ( unsigned _sigset ) { return sig_wait   (this, _sigset); }
+	void     give   ( unsigned _signo )  {        sig_give   (this, _signo); }
+	void     set    ( unsigned _signo )  {        sig_set    (this, _signo); }
+	void     clear  ( unsigned _signo )  {        sig_clear  (this, _signo); }
 };
 
 #endif//__cplusplus

@@ -5,12 +5,9 @@ evq_t evq = EVQ_INIT(1);
 
 void consumer()
 {
-	unsigned x;
-
 	for (;;)
 	{
-		evq_wait(&evq, &x);
-		LEDs = x;
+		LEDs = evq_wait(&evq);
 	}
 }
 

@@ -6,10 +6,7 @@ auto evt = Event();
 
 void consumer()
 {
-	unsigned x;
-
-	evt.wait(&x);
-	led = x;
+	led = evt.wait();
 }
 
 void producer()

@@ -6,26 +6,26 @@ OS_LST(lst);
 
 void consumer()
 {
-	void *p;
+	unsigned *p;
 
 	for (;;)
 	{
-		lst_wait(lst, &p);
-		LEDs = *(unsigned *)p;
+		p = lst_wait(lst);
+		LEDs = *p;
 		mem_give(mem, p);
 	}
 }
 
 void producer()
 {
-	void *p;
+	unsigned *p;
 	unsigned x = 1;
 
 	for (;;)
 	{
 		tsk_delay(SEC);
-		mem_wait(mem, &p);
-		*(unsigned *)p = x;
+		p = mem_wait(mem);
+		*p = x;
 		lst_give(lst, p);
 		x = (x << 1) | (x >> 3);
 	}

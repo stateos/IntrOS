@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.h
     @author  Rajmund Szymanski
-    @date    25.06.2020
+    @date    30.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -199,15 +199,15 @@ void job_init( job_t *job, fun_t **data, size_t bufsize );
  *   job             : pointer to job queue object
  *
  * Return
- *   E_SUCCESS       : job data was successfully transferred from the job queue object
- *   E_FAILURE       : job queue object is empty
+ *   SUCCESS         : job data was successfully transferred from the job queue object
+ *   FAILURE         : job queue object is empty
  *
  ******************************************************************************/
 
-int job_take( job_t *job );
+unsigned job_take( job_t *job );
 
 __STATIC_INLINE
-int job_tryWait( job_t *job ) { return job_take(job); }
+unsigned job_tryWait( job_t *job ) { return job_take(job); }
 
 /******************************************************************************
  *
@@ -237,12 +237,12 @@ void job_wait( job_t *job );
  *   fun             : pointer to job procedure
  *
  * Return
- *   E_SUCCESS       : job data was successfully transferred to the job queue object
- *   E_FAILURE       : job queue object is full
+ *   SUCCESS         : job data was successfully transferred to the job queue object
+ *   FAILURE         : job queue object is full
  *
  ******************************************************************************/
 
-int job_give( job_t *job, fun_t *fun );
+unsigned job_give( job_t *job, fun_t *fun );
 
 /******************************************************************************
  *
@@ -353,10 +353,10 @@ struct JobQueueT : public __job
 	JobQueueT& operator=( JobQueueT&& ) = delete;
 	JobQueueT& operator=( const JobQueueT& ) = delete;
 
-	int      take   ( void )        { return job_take   (this); }
-	int      tryWait( void )        { return job_tryWait(this); }
+	unsigned take   ( void )        { return job_take   (this); }
+	unsigned tryWait( void )        { return job_tryWait(this); }
 	void     wait   ( void )        {        job_wait   (this); }
-	int      give   ( fun_t *_fun ) { return job_give   (this, _fun); }
+	unsigned give   ( fun_t *_fun ) { return job_give   (this, _fun); }
 	void     send   ( fun_t *_fun ) {        job_send   (this, _fun); }
 	void     push   ( fun_t *_fun ) {        job_push   (this, _fun); }
 	unsigned count  ( void )        { return job_count  (this); }

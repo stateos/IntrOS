@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossemaphore.h
     @author  Rajmund Szymanski
-    @date    25.06.2020
+    @date    30.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -214,15 +214,15 @@ void sem_init( sem_t *sem, unsigned init, unsigned limit );
  *   sem             : pointer to semaphore object
  *
  * Return
- *   E_SUCCESS       : semaphore object was successfully locked
- *   E_FAILURE       : semaphore object can't be locked immediately
+ *   SUCCESS         : semaphore object was successfully locked
+ *   FAILURE         : semaphore object can't be locked immediately
  *
  ******************************************************************************/
 
-int sem_take( sem_t *sem );
+unsigned sem_take( sem_t *sem );
 
 __STATIC_INLINE
-int sem_tryWait( sem_t *sem ) { return sem_take(sem); }
+unsigned sem_tryWait( sem_t *sem ) { return sem_take(sem); }
 
 /******************************************************************************
  *
@@ -252,15 +252,15 @@ void sem_wait( sem_t *sem );
  *   sem             : pointer to semaphore object
  *
  * Return
- *   E_SUCCESS       : semaphore object was successfully unlocked
- *   E_FAILURE       : semaphore object can't be unlocked immediately
+ *   SUCCESS         : semaphore object was successfully unlocked
+ *   FAILURE         : semaphore object can't be unlocked immediately
  *
  ******************************************************************************/
 
-int sem_give( sem_t *sem );
+unsigned sem_give( sem_t *sem );
 
 __STATIC_INLINE
-int sem_post( sem_t *sem ) { return sem_give(sem); }
+unsigned sem_post( sem_t *sem ) { return sem_give(sem); }
 
 /******************************************************************************
  *
@@ -350,11 +350,11 @@ struct Semaphore : public __sem
 
 /* -------------------------------------------------------------------------- */
 
-	int      take    ( void ) { return sem_take    (this); }
-	int      tryWait ( void ) { return sem_tryWait (this); }
+	unsigned take    ( void ) { return sem_take    (this); }
+	unsigned tryWait ( void ) { return sem_tryWait (this); }
 	void     wait    ( void ) {        sem_wait    (this); }
-	int      give    ( void ) { return sem_give    (this); }
-	int      post    ( void ) { return sem_post    (this); }
+	unsigned give    ( void ) { return sem_give    (this); }
+	unsigned post    ( void ) { return sem_post    (this); }
 	unsigned getValue( void ) { return sem_getValue(this); }
 };
 

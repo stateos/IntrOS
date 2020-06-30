@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmailboxqueue.h
     @author  Rajmund Szymanski
-    @date    25.06.2020
+    @date    30.06.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -208,15 +208,15 @@ void box_init( box_t *box, size_t size, void *data, size_t bufsize );
  *   data            : pointer to store mailbox data
  *
  * Return
- *   E_SUCCESS       : mailbox data was successfully transferred from the mailbox queue object
- *   E_FAILURE       : mailbox queue object is empty
+ *   SUCCESS         : mailbox data was successfully transferred from the mailbox queue object
+ *   FAILURE         : mailbox queue object is empty
  *
  ******************************************************************************/
 
-int box_take( box_t *box, void *data );
+unsigned box_take( box_t *box, void *data );
 
 __STATIC_INLINE
-int box_tryWait( box_t *box, void *data ) { return box_take(box, data); }
+unsigned box_tryWait( box_t *box, void *data ) { return box_take(box, data); }
 
 /******************************************************************************
  *
@@ -247,12 +247,12 @@ void box_wait( box_t *box, void *data );
  *   data            : pointer to mailbox data
  *
  * Return
- *   E_SUCCESS       : mailbox data was successfully transferred to the mailbox queue object
- *   E_FAILURE       : mailbox queue object is full
+ *   SUCCESS         : mailbox data was successfully transferred to the mailbox queue object
+ *   FAILURE         : mailbox queue object is full
  *
  ******************************************************************************/
 
-int box_give( box_t *box, const void *data );
+unsigned box_give( box_t *box, const void *data );
 
 /******************************************************************************
  *
@@ -364,10 +364,10 @@ struct MailBoxQueueT : public __box
 	MailBoxQueueT& operator=( MailBoxQueueT&& ) = delete;
 	MailBoxQueueT& operator=( const MailBoxQueueT& ) = delete;
 
-	int      take   (       void *_data ) { return box_take   (this, _data); }
-	int      tryWait(       void *_data ) { return box_tryWait(this, _data); }
+	unsigned take   (       void *_data ) { return box_take   (this, _data); }
+	unsigned tryWait(       void *_data ) { return box_tryWait(this, _data); }
 	void     wait   (       void *_data ) {        box_wait   (this, _data); }
-	int      give   ( const void *_data ) { return box_give   (this, _data); }
+	unsigned give   ( const void *_data ) { return box_give   (this, _data); }
 	void     send   ( const void *_data ) {        box_send   (this, _data); }
 	void     push   ( const void *_data ) {        box_push   (this, _data); }
 	unsigned count  (       void )        { return box_count  (this); }

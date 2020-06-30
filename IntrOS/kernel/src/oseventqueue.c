@@ -2,7 +2,7 @@
 
     @file    IntrOS: oseventqueue.c
     @author  Rajmund Szymanski
-    @date    27.06.2020
+    @date    30.06.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -88,11 +88,10 @@ void priv_evq_skip( evq_t *evq )
 }
 
 /* -------------------------------------------------------------------------- */
-int evq_take( evq_t *evq, unsigned *event )
+unsigned evq_take( evq_t *evq )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned temp;
-	int result = E_FAILURE;
+	unsigned result = FAILURE;
 
 	assert(evq);
 	assert(evq->data);
@@ -101,12 +100,7 @@ int evq_take( evq_t *evq, unsigned *event )
 	sys_lock();
 	{
 		if (evq->count > 0)
-		{
-			temp = priv_evq_get(evq);
-			if (event != NULL)
-				*event = temp;
-			result = E_SUCCESS;
-		}
+			result = priv_evq_get(evq);
 	}
 	sys_unlock();
 
@@ -114,17 +108,21 @@ int evq_take( evq_t *evq, unsigned *event )
 }
 
 /* -------------------------------------------------------------------------- */
-void evq_wait( evq_t *evq, unsigned *event )
+unsigned evq_wait( evq_t *evq )
 /* -------------------------------------------------------------------------- */
 {
-	while (evq_take(evq, event) != E_SUCCESS) core_ctx_switch();
+	unsigned result;
+
+	while (result = evq_take(evq), result == FAILURE) core_ctx_switch();
+
+	return result;
 }
 
 /* -------------------------------------------------------------------------- */
-int evq_give( evq_t *evq, unsigned event )
+unsigned evq_give( evq_t *evq, unsigned event )
 /* -------------------------------------------------------------------------- */
 {
-	int result = E_FAILURE;
+	unsigned result = FAILURE;
 
 	assert(evq);
 	assert(evq->data);
@@ -135,7 +133,7 @@ int evq_give( evq_t *evq, unsigned event )
 		if (evq->count < evq->limit)
 		{
 			priv_evq_put(evq, event);
-			result = E_SUCCESS;
+			result = SUCCESS;
 		}
 	}
 	sys_unlock();
@@ -147,7 +145,7 @@ int evq_give( evq_t *evq, unsigned event )
 void evq_send( evq_t *evq, unsigned event )
 /* -------------------------------------------------------------------------- */
 {
-	while (evq_give(evq, event) != E_SUCCESS) core_ctx_switch();
+	while (evq_give(evq, event) != SUCCESS) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */

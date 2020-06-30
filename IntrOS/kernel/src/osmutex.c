@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmutex.c
     @author  Rajmund Szymanski
-    @date    24.06.2020
+    @date    30.06.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -46,10 +46,10 @@ void mtx_init( mtx_t *mtx )
 }
 
 /* -------------------------------------------------------------------------- */
-int mtx_take( mtx_t *mtx )
+unsigned mtx_take( mtx_t *mtx )
 /* -------------------------------------------------------------------------- */
 {
-	int result = E_FAILURE;
+	unsigned result = FAILURE;
 
 	assert(mtx);
 	assert(mtx->owner != System.cur);
@@ -59,7 +59,7 @@ int mtx_take( mtx_t *mtx )
 		if (mtx->owner == 0)
 		{
 			mtx->owner = System.cur;
-			result = E_SUCCESS;
+			result = SUCCESS;
 		}
 	}
 	sys_unlock();
@@ -71,14 +71,14 @@ int mtx_take( mtx_t *mtx )
 void mtx_wait( mtx_t *mtx )
 /* -------------------------------------------------------------------------- */
 {
-	while (mtx_take(mtx) != E_SUCCESS) core_ctx_switch();
+	while (mtx_take(mtx) != SUCCESS) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */
-int mtx_give( mtx_t *mtx )
+unsigned mtx_give( mtx_t *mtx )
 /* -------------------------------------------------------------------------- */
 {
-	int result = E_FAILURE;
+	unsigned result = FAILURE;
 
 	assert(mtx);
 
@@ -87,7 +87,7 @@ int mtx_give( mtx_t *mtx )
 		if (mtx->owner == System.cur)
 		{
 		    mtx->owner = 0;
-			result = E_SUCCESS;
+			result = SUCCESS;
 		}
 	}
 	sys_unlock();

@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmailboxqueue.c
     @author  Rajmund Szymanski
-    @date    25.06.2020
+    @date    30.06.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -91,10 +91,10 @@ void priv_box_skip( box_t *box )
 }
 
 /* -------------------------------------------------------------------------- */
-int box_take( box_t *box, void *data )
+unsigned box_take( box_t *box, void *data )
 /* -------------------------------------------------------------------------- */
 {
-	int result = E_FAILURE;
+	unsigned result = FAILURE;
 
 	assert(box);
 	assert(box->data);
@@ -106,7 +106,7 @@ int box_take( box_t *box, void *data )
 		if (box->count > 0)
 		{
 			priv_box_get(box, data);
-			result = E_SUCCESS;
+			result = SUCCESS;
 		}
 	}
 	sys_unlock();
@@ -118,14 +118,14 @@ int box_take( box_t *box, void *data )
 void box_wait( box_t *box, void *data )
 /* -------------------------------------------------------------------------- */
 {
-	while (box_take(box, data) != E_SUCCESS) core_ctx_switch();
+	while (box_take(box, data) != SUCCESS) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */
-int box_give( box_t *box, const void *data )
+unsigned box_give( box_t *box, const void *data )
 /* -------------------------------------------------------------------------- */
 {
-	int result = E_FAILURE;
+	unsigned result = FAILURE;
 
 	assert(box);
 	assert(box->data);
@@ -137,7 +137,7 @@ int box_give( box_t *box, const void *data )
 		if (box->count < box->limit)
 		{
 			priv_box_put(box, data);
-			result = E_SUCCESS;
+			result = SUCCESS;
 		}
 	}
 	sys_unlock();
@@ -149,7 +149,7 @@ int box_give( box_t *box, const void *data )
 void box_send( box_t *box, const void *data )
 /* -------------------------------------------------------------------------- */
 {
-	while (box_give(box, data) != E_SUCCESS) core_ctx_switch();
+	while (box_give(box, data) != SUCCESS) core_ctx_switch();
 }
 
 /* -------------------------------------------------------------------------- */
