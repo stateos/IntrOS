@@ -101,13 +101,12 @@ unsigned job_take( job_t *job )
 		if (job->count > 0)
 		{
 			fun = priv_job_get(job);
+			port_clr_lock();
+			fun();
 			result = SUCCESS;
 		}
 	}
 	sys_unlock();
-
-	if (result == SUCCESS)
-		fun();
 
 	return result;
 }
