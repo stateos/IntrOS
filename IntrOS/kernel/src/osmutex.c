@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmutex.c
     @author  Rajmund Szymanski
-    @date    30.06.2020
+    @date    03.07.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -56,7 +56,7 @@ unsigned mtx_take( mtx_t *mtx )
 
 	sys_lock();
 	{
-		if (mtx->owner == 0)
+		if (mtx->owner == NULL)
 		{
 			mtx->owner = System.cur;
 			result = SUCCESS;
@@ -86,7 +86,7 @@ unsigned mtx_give( mtx_t *mtx )
 	{
 		if (mtx->owner == System.cur)
 		{
-		    mtx->owner = 0;
+		    mtx->owner = NULL;
 			result = SUCCESS;
 		}
 	}
