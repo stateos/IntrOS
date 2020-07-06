@@ -21,6 +21,7 @@ Features:
 - semaphores
 - mutexes
 - condition variables
+- read/write locks
 - memory pools
 - stream buffers
 - message buffers
@@ -49,6 +50,7 @@ Features:
 - updated message buffer functions
 - updated stream buffer functions
 - totally changed and simplified OS API
+- added read/write lock
 ---------
 4.6
 - updated os version

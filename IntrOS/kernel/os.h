@@ -2,7 +2,7 @@
 
     @file    IntrOS: os.h
     @author  Rajmund Szymanski
-    @date    14.05.2020
+    @date    06.07.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -56,6 +56,7 @@
 #include "inc/ossemaphore.h"
 #include "inc/osmutex.h"
 #include "inc/osconditionvariable.h"
+#include "inc/osrwlock.h"
 #include "inc/oslist.h"
 #include "inc/osmemorypool.h"
 #include "inc/osstreambuffer.h"

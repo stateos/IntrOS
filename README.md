@@ -26,6 +26,7 @@ There's a dedicated function for immediate change the task state.
 - semaphores
 - mutexes
 - condition variables
+- read/write locks
 - memory pools
 - stream buffers
 - message buffers
