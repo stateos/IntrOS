@@ -1,0 +1,23 @@
+#include <stm32f4_discovery.h>
+#include <os.h>
+
+void consumer(Mutex &mtx, Led &led)
+{
+	auto lock = Lock(mtx);
+	led.tick();
+}
+
+void producer(Mutex &mtx)
+{
+	auto lock = Lock(mtx);
+	This::sleepFor(SEC);
+}
+
+int main()
+{
+	Led led;
+	Mutex mtx;
+	Task prod = Task::Start([&mtx]      { producer(mtx); });
+	Task cons = Task::Start([&mtx, &led]{ consumer(mtx, led); });
+	This::sleep();
+}

@@ -23,7 +23,7 @@ int main()
 {
 	Led led;
 	Semaphore sem(0);
-	Task::Start([&]{ consumer(sem, led); });
-	Task::Start([&]{ producer(sem); });
+	auto cons = Task::Start([&]{ consumer(sem, led); });
+	auto prod = Task::Start([&]{ producer(sem); });
 	ThisTask::sleep();
 }
