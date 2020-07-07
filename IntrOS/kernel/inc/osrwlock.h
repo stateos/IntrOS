@@ -316,14 +316,14 @@ struct RWLock : public __rwl
 
 	unsigned takeRead    ( void ) { return rwl_takeRead    (this); }
 	unsigned tryLockRead ( void ) { return rwl_tryLockRead (this); }
-	void     waitRead    ( void ) { return rwl_waitRead    (this); }
-	void     lockRead    ( void ) { return rwl_lockRead    (this); }
+	void     waitRead    ( void ) {        rwl_waitRead    (this); }
+	void     lockRead    ( void ) {        rwl_lockRead    (this); }
 	void     giveRead    ( void ) {        rwl_giveRead    (this); }
 	void     unlockRead  ( void ) {        rwl_unlockRead  (this); }
 	unsigned takeWrite   ( void ) { return rwl_takeWrite   (this); }
 	unsigned tryLockWrite( void ) { return rwl_tryLockWrite(this); }
-	void     waitWrite   ( void ) { return rwl_waitWrite   (this); }
-	void     lockWrite   ( void ) { return rwl_lockWrite   (this); }
+	void     waitWrite   ( void ) {        rwl_waitWrite   (this); }
+	void     lockWrite   ( void ) {        rwl_lockWrite   (this); }
 	unsigned giveWrite   ( void ) { return rwl_giveWrite   (this); }
 	unsigned unlockWrite ( void ) { return rwl_unlockWrite (this); }
 };
