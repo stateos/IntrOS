@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscriticalsection.h
     @author  Rajmund Szymanski
-    @date    09.05.2020
+    @date    07.07.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -189,6 +189,32 @@ struct CriticalSection
 
 	private:
 	lck_t lck_;
+};
+
+/******************************************************************************
+ *
+ * Class             : Lock
+ *
+ * Description       : create and initialize a guard object
+ *
+ * Constructor parameters
+ *   T               : guard class
+ *
+ ******************************************************************************/
+
+template<class T>
+struct Lock
+{
+	 Lock( T &_lck ): lck_(_lck) { lck_.lock(); }
+	~Lock( void )                { lck_.unlock(); }
+
+	Lock( Lock&& ) = default;
+	Lock( const Lock& ) = delete;
+	Lock& operator=( Lock&& ) = delete;
+	Lock& operator=( const Lock& ) = delete;
+
+	private:
+	T &lck_;
 };
 
 #endif//__cplusplus
