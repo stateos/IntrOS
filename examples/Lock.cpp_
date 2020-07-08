@@ -3,13 +3,13 @@
 
 void consumer(Mutex &mtx, Led &led)
 {
-	auto lock = Lock(mtx);
+	auto lock = Lock<Mutex>(mtx);
 	led.tick();
 }
 
 void producer(Mutex &mtx)
 {
-	auto lock = Lock(mtx);
+	auto lock = Lock<Mutex>(mtx);
 	This::sleepFor(SEC);
 }
 
