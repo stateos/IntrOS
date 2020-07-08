@@ -2,7 +2,7 @@
 
     @file    IntrOS: osrwlock.h
     @author  Rajmund Szymanski
-    @date    07.07.2020
+    @date    08.07.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -34,6 +34,10 @@
 
 #include "oskernel.h"
 
+/* -------------------------------------------------------------------------- */
+
+#define RDR_LIMIT    ( 0U-1 )
+
 /******************************************************************************
  *
  * Name              : read/write lock (one write, many read)
@@ -44,7 +48,7 @@ typedef struct __rwl rwl_t, * const rwl_id;
 
 struct __rwl
 {
-	tsk_t  * owner; // writer
+	bool     write; // writer is active
 	unsigned count; // number of active readers
 };
 
@@ -66,7 +70,7 @@ extern "C" {
  *
  ******************************************************************************/
 
-#define               _RWL_INIT() { NULL, 0 }
+#define               _RWL_INIT() { false, 0 }
 
 /******************************************************************************
  *
@@ -264,24 +268,21 @@ void rwl_lockWrite( rwl_t *rwl ) { rwl_waitWrite(rwl); }
  * Name              : rwl_giveWrite
  * Alias             : rwl_unlockWrite
  *
- * Description       : try to unlock the writer (only owner task can unlock writer),
- *                     don't wait if the writer can't be unlocked
+ * Description       : unlock the writer
  *
  * Parameters
  *   rwl             : pointer to read/write lock object
  *
- * Return
- *   SUCCESS         : writer was successfully unlocked
- *   FAILURE         : writer can't be unlocked
+ * Return            : none
  *
  * Note              : use only in thread mode
  *
  ******************************************************************************/
 
-unsigned rwl_giveWrite( rwl_t *rwl );
+void rwl_giveWrite( rwl_t *rwl );
 
 __STATIC_INLINE
-unsigned rwl_unlockWrite( rwl_t *rwl ) { return rwl_giveWrite(rwl); }
+void rwl_unlockWrite( rwl_t *rwl ) { rwl_giveWrite(rwl); }
 
 #ifdef __cplusplus
 }
@@ -312,7 +313,7 @@ struct RWLock : public __rwl
 	RWLock& operator=( RWLock&& ) = delete;
 	RWLock& operator=( const RWLock& ) = delete;
 
-	~RWLock( void ) { assert(__rwl::owner == nullptr && __rwl::count == 0); }
+	~RWLock( void ) { assert(__rwl::write == false && __rwl::count == 0); }
 
 	unsigned takeRead    ( void ) { return rwl_takeRead    (this); }
 	unsigned tryLockRead ( void ) { return rwl_tryLockRead (this); }
@@ -324,8 +325,8 @@ struct RWLock : public __rwl
 	unsigned tryLockWrite( void ) { return rwl_tryLockWrite(this); }
 	void     waitWrite   ( void ) {        rwl_waitWrite   (this); }
 	void     lockWrite   ( void ) {        rwl_lockWrite   (this); }
-	unsigned giveWrite   ( void ) { return rwl_giveWrite   (this); }
-	unsigned unlockWrite ( void ) { return rwl_unlockWrite (this); }
+	void     giveWrite   ( void ) {        rwl_giveWrite   (this); }
+	void     unlockWrite ( void ) {        rwl_unlockWrite (this); }
 };
 
 /******************************************************************************

@@ -2,7 +2,7 @@
 
     @file    StateOS: osrwlock.c
     @author  Rajmund Szymanski
-    @date    06.07.2020
+    @date    08.07.2020
     @brief   This file provides set of functions for StateOS.
 
  ******************************************************************************
@@ -55,7 +55,7 @@ unsigned rwl_takeRead( rwl_t *rwl )
 
 	sys_lock();
 	{
-		if (rwl->owner == NULL)
+		if (!rwl->write && rwl->count < RDR_LIMIT)
 		{
 			rwl->count++;
 			result = SUCCESS;
@@ -78,8 +78,8 @@ void rwl_giveRead( rwl_t *rwl )
 /* -------------------------------------------------------------------------- */
 {
 	assert(rwl);
-	assert(rwl->owner == NULL);
-	assert(rwl->count != 0);
+	assert(rwl->write == false);
+	assert(rwl->count > 0);
 
 	sys_lock();
 	{
@@ -95,13 +95,12 @@ unsigned rwl_takeWrite( rwl_t *rwl )
 	unsigned result = FAILURE;
 
 	assert(rwl);
-	assert(rwl->owner != System.cur);
 
 	sys_lock();
 	{
-		if (rwl->owner == NULL && rwl->count == 0)
+		if (!rwl->write && rwl->count == 0)
 		{
-			rwl->owner = System.cur;
+			rwl->write = true;
 			return SUCCESS;
 		}
 	}
@@ -118,24 +117,18 @@ void rwl_waitWrite( rwl_t *rwl )
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned rwl_giveWrite( rwl_t *rwl )
+void rwl_giveWrite( rwl_t *rwl )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned result = FAILURE;
-
 	assert(rwl);
+	assert(rwl->write == true);
+	assert(rwl->count == 0);
 
 	sys_lock();
 	{
-		if (rwl->owner == System.cur)
-		{
-		    rwl->owner = NULL;
-			result = SUCCESS;
-		}
+		rwl->write = false;
 	}
 	sys_unlock();
-
-	return result;
 }
 
 /* -------------------------------------------------------------------------- */
