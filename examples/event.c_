@@ -5,7 +5,7 @@ OS_EVT(evt);
 
 void consumer()
 {
-	LEDs = evt_wait(evt);
+	LEDs = evt_wait(evt) & 0xF;
 }
 
 void producer()
