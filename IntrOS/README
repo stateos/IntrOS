@@ -34,7 +34,7 @@ Features:
 - examples and templates are in separate repositories (https://github.com/stateos)
 ---------
 4.8
-- preventing conversion warnings
+- preventing sign-conversion warnings
 ---------
 4.7
 - updated os version
