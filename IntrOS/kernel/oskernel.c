@@ -190,7 +190,7 @@ bool priv_tmr_countdown( tmr_t *tmr )
 
 	port_set_lock();
 	{
-		if ((cnt_t)(core_sys_time() - tmr->start + 1) > tmr->delay)
+		if (core_sys_time() - tmr->start + 1 > tmr->delay)
 		{
 			tmr->start += tmr->delay;
 			tmr->delay = tmr->period;
