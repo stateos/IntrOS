@@ -10,7 +10,7 @@ OS_TSK_DEF(cons)
 	for (;;)
 	{
 		msg_wait(msg, &x, sizeof(x));
-		LEDs = x & 0xF;
+		LEDs = x;
 	}
 }
 

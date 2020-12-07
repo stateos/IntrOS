@@ -11,7 +11,7 @@ void consumer()
 	for (;;)
 	{
 		p = lst_wait(lst);
-		LEDs = *p & 0xF;
+		LEDs = *p;
 		mem_give(mem, p);
 	}
 }
