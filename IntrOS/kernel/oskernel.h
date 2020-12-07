@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.h
     @author  Rajmund Szymanski
-    @date    25.06.2020
+    @date    07.12.2020
     @brief   This file defines set of kernel functions for IntrOS.
 
  ******************************************************************************
@@ -155,7 +155,7 @@ cnt_t core_sys_time( void )
 #if HW_TIMER_SIZE == 0
 	return System.cnt;
 #else
-	return port_sys_time();
+	return (cnt_t)port_sys_time();
 #endif
 }
 
