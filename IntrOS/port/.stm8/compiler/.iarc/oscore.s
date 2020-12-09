@@ -1,8 +1,8 @@
 ;******************************************************************************
 ;
-;   @file    IntrOS: oscore.c
+;   @file    IntrOS: oscore.s
 ;   @author  Rajmund Szymanski
-;   @date    29.03.2020
+;   @date    09.12.2020
 ;   @brief   IntrOS port file for STM8 uC.
 ;
 ;******************************************************************************
@@ -34,17 +34,13 @@
 
 	public _get_SP
 _get_SP:
-#if __CODE_MODEL__ != __SMALL_CODE_MODEL__
-	pop    a
-#endif
-	popw   y
 	ldw    x, sp
-	pushw  y
-#if __CODE_MODEL__ != __SMALL_CODE_MODEL__
-	push   a
-	retf
-#else
+#if __CODE_MODEL__ == __SMALL_CODE_MODEL__
+	addw   x, #2
 	ret
+#else
+	addw   x, #3
+	retf
 #endif
 
 	end
