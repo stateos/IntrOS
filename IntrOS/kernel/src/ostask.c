@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.c
     @author  Rajmund Szymanski
-    @date    30.06.2020
+    @date    13.12.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -52,7 +52,6 @@ void wrk_init( tsk_t *tsk, fun_t *state, stk_t *stack, size_t size )
 /* -------------------------------------------------------------------------- */
 {
 	assert(tsk);
-	assert(state);
 	assert(stack);
 	assert(size);
 
