@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    07.12.2020
+    @date    14.12.2020
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -117,7 +117,11 @@ void core_ctx_init( tsk_t *tsk )
 	if (tsk != System.cur)
 		memset(tsk->stack, 0xFF, tsk->size);
 #endif
+#if OS_TASK_EXIT == 0
 	port_ctx_init(&tsk->ctx.reg, (stk_t *)STK_CROP(tsk->stack, tsk->size), core_tsk_loop);
+#else
+	port_ctx_init(&tsk->ctx.reg, (stk_t *)STK_CROP(tsk->stack, tsk->size), core_tsk_exec);
+#endif
 }
 
 /* -------------------------------------------------------------------------- */
@@ -179,6 +183,15 @@ void core_tsk_loop( void )
 		System.cur->state();
 		core_ctx_switch();
 	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void core_tsk_exec( void )
+{
+	port_clr_lock();
+	System.cur->state();
+	tsk_stop();
 }
 
 /* -------------------------------------------------------------------------- */
