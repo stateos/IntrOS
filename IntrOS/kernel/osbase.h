@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    14.12.2020
+    @date    15.12.2020
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -54,6 +54,14 @@ extern "C" {
 /* -------------------------------------------------------------------------- *
  *                              FOR INTERNAL USE                              *
  * -------------------------------------------------------------------------- */
+
+#ifndef OS_ATOMIC
+#define OS_ATOMIC         0
+#elif   OS_ATOMIC
+#include <stdatomic.h>
+#endif
+
+/* -------------------------------------------------------------------------- */
 
 #ifndef OS_TASK_EXIT
 #define OS_TASK_EXIT      0

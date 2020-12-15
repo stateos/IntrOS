@@ -37,6 +37,7 @@ Features:
 - preventing sign-conversion warnings
 - added core_tsk_exec procedure as an alternative for core_tsk_loop
 - task behavior on return from the task function is now configurable using the OS_TASK_EXIT config constant
+- used stdatomic for spin lock/unlock
 ---------
 4.7
 - updated os version

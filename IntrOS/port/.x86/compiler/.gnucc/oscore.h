@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    18.06.2020
+    @date    15.12.2020
     @brief   IntrOS port file for X86.
 
  ******************************************************************************
@@ -144,13 +144,6 @@ void __nop( void )
 	__ASM volatile ("nop" ::: "memory");
 }
 
-__STATIC_FORCEINLINE
-unsigned __xchg( volatile unsigned *lock, unsigned value )
-{
-	__ASM volatile ("lock xchg %0, %1" : "+r" (value) : "m" (*lock) : "memory");
-	return value;
-}
-
 /* -------------------------------------------------------------------------- */
 
 __STATIC_INLINE
@@ -174,21 +167,6 @@ __STATIC_INLINE
 void port_clr_lock( void )
 {
 }
-
-/* -------------------------------------------------------------------------- */
-
-#ifndef OS_MULTICORE
-#define OS_MULTICORE
-
-__STATIC_INLINE
-void port_spn_lock( volatile unsigned *lock )
-{
-	while (*lock || __xchg(lock, 1));
-}
-
-#else
-#error  OS_MULTICORE is an internal port definition!
-#endif//OS_MULTICORE
 
 /* -------------------------------------------------------------------------- */
 
