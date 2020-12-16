@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    15.12.2020
+    @date    16.12.2020
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -44,6 +44,19 @@
 #include <assert.h>
 #include <setjmp.h>
 #include "osport.h"
+#ifndef __cplusplus
+#include <stdatomic.h>
+#else
+#include <atomic>
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+#ifndef __cplusplus
+#define __STD
+#else
+#define __STD std::
+#endif
 
 /* -------------------------------------------------------------------------- */
 
@@ -57,8 +70,6 @@ extern "C" {
 
 #ifndef OS_ATOMIC
 #define OS_ATOMIC         0
-#elif   OS_ATOMIC
-#include <stdatomic.h>
 #endif
 
 /* -------------------------------------------------------------------------- */
