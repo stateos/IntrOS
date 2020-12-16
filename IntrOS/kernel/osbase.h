@@ -68,8 +68,8 @@ extern "C" {
  *                              FOR INTERNAL USE                              *
  * -------------------------------------------------------------------------- */
 
-#ifndef OS_ATOMIC
-#define OS_ATOMIC         0
+#ifndef OS_ATOMICS
+#define OS_ATOMICS        0
 #endif
 
 /* -------------------------------------------------------------------------- */
