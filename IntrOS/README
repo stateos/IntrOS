@@ -38,6 +38,7 @@ Features:
 - added core_tsk_exec procedure as an alternative for core_tsk_loop
 - task behavior on return from the task function is now configurable using the OS_TASK_EXIT config constant
 - used stdatomic for spin lock/unlock
+- added OS_LOCK_LEVEL config constant
 ---------
 4.7
 - updated os version

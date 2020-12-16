@@ -2,7 +2,7 @@
 
     @file    IntrOS: osconfig.h
     @author  Rajmund Szymanski
-    @date    14.12.2020
+    @date    16.12.2020
     @brief   IntrOS config file for STM32F4 uC.
 
  ******************************************************************************
@@ -40,6 +40,13 @@
 // os frequency in Hz
 // dafault value: 1000
 #define OS_FREQUENCY       1000
+
+// ----------------------------
+// critical sections protection level
+// OS_LOCK_LEVEL == 0 or  __CORTEX_M <  3 => entrance to a critical section blocks all interrupts
+// OS_LOCK_LEVEL >  0 and __CORTEX_M >= 3 => entrance to a critical section blocks interrupts with urgency lower or equal (the priority value greater or equal) than OS_LOCK_LEVEL
+// default value: 0
+#define OS_LOCK_LEVEL         0
 
 // ----------------------------
 // default task stack size in bytes

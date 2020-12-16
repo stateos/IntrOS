@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    14.05.2020
+    @date    16.12.2020
     @brief   IntrOS port file for STM8 uC.
 
  ******************************************************************************
@@ -46,6 +46,16 @@ extern "C" {
 
 /* -------------------------------------------------------------------------- */
 
+#ifndef OS_LOCK_LEVEL
+#define OS_LOCK_LEVEL         0 /* critical section blocks all interrupts     */
+#endif
+
+#if     OS_LOCK_LEVEL > 0
+#error  osconfig.h: Incorrect OS_LOCK_LEVEL value! Must be 0.
+#endif
+
+/* -------------------------------------------------------------------------- */
+
 typedef uint8_t               lck_t;
 typedef uint8_t               stk_t;
 
@@ -76,7 +86,7 @@ void port_ctx_init( ctx_t *ctx, stk_t *sp, fun_t *pc )
 
 void *_get_SP( void );
 lck_t _get_CC( void );
-void  _set_CC( lck_t _cc );
+void  _set_CC( lck_t lck );
 
 /* -------------------------------------------------------------------------- */
 // get current stack pointer

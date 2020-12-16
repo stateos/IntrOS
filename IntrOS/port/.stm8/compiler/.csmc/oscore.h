@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    14.05.2020
+    @date    16.12.2020
     @brief   IntrOS port file for STM8 uC.
 
  ******************************************************************************
@@ -46,6 +46,16 @@ extern "C" {
 
 /* -------------------------------------------------------------------------- */
 
+#ifndef OS_LOCK_LEVEL
+#define OS_LOCK_LEVEL         0 /* critical section blocks all interrupts     */
+#endif
+
+#if     OS_LOCK_LEVEL > 0
+#error  osconfig.h: Incorrect OS_LOCK_LEVEL value! Must be 0.
+#endif
+
+/* -------------------------------------------------------------------------- */
+
 typedef uint8_t               lck_t;
 typedef uint8_t               stk_t;
 
@@ -78,12 +88,32 @@ void port_ctx_init( ctx_t *ctx, stk_t *sp, fun_t *pc )
 }
 
 /* -------------------------------------------------------------------------- */
+
+__STATIC_INLINE
+void *_get_SP( void )
+{
+	return (void*)_asm("ldw x, sp");
+}
+
+__STATIC_INLINE
+lck_t _get_CC( void )
+{
+	return (lck_t)_asm("push cc""\n""pop a");
+}
+
+__STATIC_INLINE
+void _set_CC( lck_t lck )
+{
+	_asm("push a""\n""pop cc", lck);
+}
+
+/* -------------------------------------------------------------------------- */
 // get current stack pointer
 
 __STATIC_INLINE
 void * port_get_sp( void )
 {
-	return (void*)_asm("ldw x, sp");
+	return _get_SP();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -91,13 +121,13 @@ void * port_get_sp( void )
 __STATIC_INLINE
 lck_t port_get_lock( void )
 {
-	return (lck_t)_asm("push cc""\n""pop a");
+	return _get_CC();
 }
 
 __STATIC_INLINE
 void port_put_lock( lck_t lck )
 {
-	_asm("push a""\n""pop cc", lck);
+	_set_CC(lck);
 }
 
 __STATIC_INLINE

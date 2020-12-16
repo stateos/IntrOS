@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    15.12.2020
+    @date    16.12.2020
     @brief   IntrOS port file for ARM Cotrex-M uC.
 
  ******************************************************************************
@@ -42,6 +42,16 @@ extern "C" {
 
 #ifndef OS_STACK_SIZE
 #define OS_STACK_SIZE       256 /* default task stack size in bytes           */
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+#ifndef OS_LOCK_LEVEL
+#define OS_LOCK_LEVEL         0 /* critical section blocks all interrupts     */
+#endif
+
+#if     OS_LOCK_LEVEL >= (1<<__NVIC_PRIO_BITS)
+#error  osconfig.h: Incorrect OS_LOCK_LEVEL value! Must be less then (1<<__NVIC_PRIO_BITS).
 #endif
 
 /* -------------------------------------------------------------------------- */
@@ -95,6 +105,34 @@ void * port_get_sp( void )
 
 /* -------------------------------------------------------------------------- */
 
+#if OS_LOCK_LEVEL && (__CORTEX_M >= 3)
+
+__STATIC_INLINE
+lck_t port_get_lock( void )
+{
+	return __get_BASEPRI();
+}
+
+__STATIC_INLINE
+void port_put_lock( lck_t lck )
+{
+	__set_BASEPRI(lck);
+}
+
+__STATIC_INLINE
+void port_set_lock( void )
+{
+	__set_BASEPRI((OS_LOCK_LEVEL) << (8 - (__NVIC_PRIO_BITS)));
+}
+
+__STATIC_INLINE
+void port_clr_lock( void )
+{
+	__set_BASEPRI(0);
+}
+
+#else
+
 __STATIC_INLINE
 lck_t port_get_lock( void )
 {
@@ -118,6 +156,8 @@ void port_clr_lock( void )
 {
 	__enable_irq();
 }
+
+#endif
 
 /* -------------------------------------------------------------------------- */
 

@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    14.05.2020
+    @date    16.12.2020
     @brief   IntrOS port file for STM8 uC.
 
  ******************************************************************************
@@ -42,6 +42,16 @@ extern "C" {
 
 #ifndef OS_STACK_SIZE
 #define OS_STACK_SIZE       128 /* default task stack size in bytes           */
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+#ifndef OS_LOCK_LEVEL
+#define OS_LOCK_LEVEL         0 /* critical section blocks all interrupts     */
+#endif
+
+#if     OS_LOCK_LEVEL > 0
+#error  osconfig.h: Incorrect OS_LOCK_LEVEL value! Must be 0.
 #endif
 
 /* -------------------------------------------------------------------------- */
