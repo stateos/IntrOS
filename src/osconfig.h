@@ -72,3 +72,9 @@
 // 1 => while return from the task function, tsk_exit will be executed
 // default value: 0
 #define OS_TASK_EXIT          0
+
+// ----------------------------
+// indicates the use of atomic functions
+// available values: 0, 1
+// default value: 0
+#define OS_ATOMIC             0
