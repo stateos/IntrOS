@@ -39,6 +39,7 @@ Features:
 - task behavior on return from the task function is now configurable using the OS_TASK_EXIT config constant
 - used stdatomic for spin lock/unlock
 - added OS_LOCK_LEVEL config constant
+- updated internal insert / remove functions
 ---------
 4.7
 - updated os version

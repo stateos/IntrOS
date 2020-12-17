@@ -2,7 +2,7 @@
 
     @file    IntrOS: oskernel.c
     @author  Rajmund Szymanski
-    @date    14.12.2020
+    @date    17.12.2020
     @brief   This file provides set of variables and functions for IntrOS.
 
  ******************************************************************************
@@ -35,49 +35,33 @@
 #include "inc/oscriticalsection.h"
 
 /* -------------------------------------------------------------------------- */
-// SYSTEM INTERNAL SERVICES
-/* -------------------------------------------------------------------------- */
-
-static
-void priv_rdy_insert( hdr_t *hdr )
-{
-	hdr_t *nxt = &System.cur->hdr;
-	hdr_t *prv = nxt->prev;
-
-	hdr->prev = prv;
-	hdr->next = nxt;
-	nxt->prev = hdr;
-	prv->next = hdr;
-}
-
-/* -------------------------------------------------------------------------- */
-
-static
-void priv_rdy_remove( hdr_t *hdr )
-{
-	hdr_t *prv = hdr->prev;
-	hdr_t *nxt = hdr->next;
-
-	nxt->prev = prv;
-	prv->next = nxt;
-}
-
-/* -------------------------------------------------------------------------- */
 // SYSTEM TIMER SERVICES
 /* -------------------------------------------------------------------------- */
 
 void core_tmr_insert( tmr_t *tmr )
 {
+	tsk_t *nxt = System.cur;
+	tsk_t *prv = nxt->hdr.prev;
+
 	tmr->hdr.id = ID_TIMER;
-	priv_rdy_insert(&tmr->hdr);
+
+	tmr->hdr.prev = prv;
+	tmr->hdr.next = nxt;
+	nxt->hdr.prev = tmr;
+	prv->hdr.next = tmr;
 }
 
 /* -------------------------------------------------------------------------- */
 
 void core_tmr_remove( tmr_t *tmr )
 {
+	tsk_t *prv = tmr->hdr.prev;
+	tsk_t *nxt = tmr->hdr.next;
+
 	tmr->hdr.id = ID_STOPPED;
-	priv_rdy_remove(&tmr->hdr);
+
+	nxt->hdr.prev = prv;
+	prv->hdr.next = nxt;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -96,16 +80,28 @@ sys_t System = { .cur=&MAIN };
 
 void core_tsk_insert( tsk_t *tsk )
 {
+	tsk_t *nxt = System.cur;
+	tsk_t *prv = nxt->hdr.prev;
+
 	tsk->hdr.id = ID_READY;
-	priv_rdy_insert(&tsk->hdr);
+
+	tsk->hdr.prev = prv;
+	tsk->hdr.next = nxt;
+	nxt->hdr.prev = tsk;
+	prv->hdr.next = tsk;
 }
 
 /* -------------------------------------------------------------------------- */
 
 void core_tsk_remove( tsk_t *tsk )
 {
+	tsk_t *prv = tsk->hdr.prev;
+	tsk_t *nxt = tsk->hdr.next;
+
 	tsk->hdr.id = ID_STOPPED;
-	priv_rdy_remove(&tsk->hdr);
+
+	nxt->hdr.prev = prv;
+	prv->hdr.next = nxt;
 }
 
 /* -------------------------------------------------------------------------- */
