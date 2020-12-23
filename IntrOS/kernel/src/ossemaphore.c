@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossemaphore.c
     @author  Rajmund Szymanski
-    @date    30.06.2020
+    @date    23.12.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -62,11 +62,19 @@ unsigned sem_take( sem_t *sem )
 
 	sys_lock();
 	{
+#if OS_ATOMICS
+		if (atomic_load(&sem->count) > 0U)
+		{
+			atomic_fetch_sub(&sem->count, 1U);
+			result = SUCCESS;
+		}
+#else
 		if (sem->count > 0U)
 		{
 			sem->count--;
 			result = SUCCESS;
 		}
+#endif
 	}
 	sys_unlock();
 
@@ -92,11 +100,19 @@ unsigned sem_give( sem_t *sem )
 
 	sys_lock();
 	{
+#if OS_ATOMICS
+		if (atomic_load(&sem->count) < sem->limit)
+		{
+			atomic_fetch_add(&sem->count, 1U);
+			result = SUCCESS;
+		}
+#else
 		if (sem->count < sem->limit)
 		{
 			sem->count++;
 			result = SUCCESS;
 		}
+#endif
 	}
 	sys_unlock();
 
@@ -111,7 +127,11 @@ unsigned sem_getValue( sem_t *sem )
 
 	sys_lock();
 	{
+#if OS_ATOMICS
+		val = atomic_load(&sem->count);
+#else
 		val = sem->count;
+#endif
 	}
 	sys_unlock();
 

@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.c
     @author  Rajmund Szymanski
-    @date    30.06.2020
+    @date    23.12.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -56,9 +56,15 @@ fun_t *priv_job_get( job_t *job )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned i = job->head;
+
 	fun_t *fun = job->data[i++];
+
 	job->head = (i < job->limit) ? i : 0;
+#if OS_ATOMICS
+	atomic_fetch_sub(&job->count, 1);
+#else
 	job->count--;
+#endif
 	return fun;
 }
 
@@ -72,7 +78,11 @@ void priv_job_put( job_t *job, fun_t *fun )
 	job->data[i++] = fun;
 
 	job->tail = (i < job->limit) ? i : 0;
+#if OS_ATOMICS
+	atomic_fetch_add(&job->count, 1);
+#else
 	job->count++;
+#endif
 }
 
 /* -------------------------------------------------------------------------- */
@@ -80,9 +90,14 @@ static
 void priv_job_skip( job_t *job )
 /* -------------------------------------------------------------------------- */
 {
+	unsigned i = job->head + 1;
+
+	job->head = (i < job->limit) ? i : 0;
+#if OS_ATOMICS
+	atomic_fetch_sub(&job->count, 1);
+#else
 	job->count--;
-	job->head++;
-	if (job->head == job->limit) job->head = 0;
+#endif
 }
 
 /* -------------------------------------------------------------------------- */
@@ -98,15 +113,20 @@ unsigned job_take( job_t *job )
 
 	sys_lock();
 	{
+#if OS_ATOMICS
+		if (atomic_load(&job->count) > 0)
+#else
 		if (job->count > 0)
+#endif
 		{
 			fun = priv_job_get(job);
-			port_clr_lock();
-			fun();
 			result = SUCCESS;
 		}
 	}
 	sys_unlock();
+
+	if (result == SUCCESS)
+		fun();
 
 	return result;
 }
@@ -131,7 +151,11 @@ unsigned job_give( job_t *job, fun_t *fun )
 
 	sys_lock();
 	{
+#if OS_ATOMICS
+		if (atomic_load(&job->count) < job->limit)
+#else
 		if (job->count < job->limit)
+#endif
 		{
 			priv_job_put(job, fun);
 			result = SUCCESS;
@@ -177,7 +201,11 @@ unsigned job_count( job_t *job )
 
 	sys_lock();
 	{
+#if OS_ATOMICS
+		count = atomic_load(&job->count);
+#else
 		count = job->count;
+#endif
 	}
 	sys_unlock();
 
@@ -194,7 +222,11 @@ unsigned job_space( job_t *job )
 
 	sys_lock();
 	{
+#if OS_ATOMICS
+		space = job->limit - atomic_load(&job->count);
+#else
 		space = job->limit - job->count;
+#endif
 	}
 	sys_unlock();
 

@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmailboxqueue.c
     @author  Rajmund Szymanski
-    @date    30.06.2020
+    @date    23.12.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -60,10 +60,14 @@ void priv_box_get( box_t *box, char *data )
 	size_t size = box->size;
 	size_t i = box->head;
 
-	box->count -= size;
 	while (size--)
 		*data++ = box->data[i++];
 	box->head = (i < box->limit) ? i : 0;
+#if OS_ATOMICS
+	atomic_fetch_sub(&box->count, box->size);
+#else
+	box->count -= box->size;
+#endif
 }
 
 /* -------------------------------------------------------------------------- */
@@ -74,10 +78,14 @@ void priv_box_put( box_t *box, const char *data )
 	size_t size = box->size;
 	size_t i = box->tail;
 
-	box->count += size;
 	while (size--)
 		box->data[i++] = *data++;
 	box->tail = (i < box->limit) ? i : 0;
+#if OS_ATOMICS
+	atomic_fetch_add(&box->count, box->size);
+#else
+	box->count += box->size;
+#endif
 }
 
 /* -------------------------------------------------------------------------- */
@@ -85,9 +93,14 @@ static
 void priv_box_skip( box_t *box )
 /* -------------------------------------------------------------------------- */
 {
+	size_t i = box->head + box->size;
+
+	box->head = (i < box->limit) ? i : 0;
+#if OS_ATOMICS
+	atomic_fetch_sub(&box->count, box->size);
+#else
 	box->count -= box->size;
-	box->head  += box->size;
-	if (box->head == box->limit) box->head = 0;
+#endif
 }
 
 /* -------------------------------------------------------------------------- */
@@ -103,7 +116,11 @@ unsigned box_take( box_t *box, void *data )
 
 	sys_lock();
 	{
+#if OS_ATOMICS
+		if (atomic_load(&box->count) > 0)
+#else
 		if (box->count > 0)
+#endif
 		{
 			priv_box_get(box, data);
 			result = SUCCESS;
@@ -134,7 +151,11 @@ unsigned box_give( box_t *box, const void *data )
 
 	sys_lock();
 	{
+#if OS_ATOMICS
+		if (atomic_load(&box->count) < box->limit)
+#else
 		if (box->count < box->limit)
+#endif
 		{
 			priv_box_put(box, data);
 			result = SUCCESS;
@@ -180,7 +201,11 @@ unsigned box_count( box_t *box )
 
 	sys_lock();
 	{
+#if OS_ATOMICS
+		count = atomic_load(&box->count) / box->size;
+#else
 		count = box->count / box->size;
+#endif
 	}
 	sys_unlock();
 
@@ -197,7 +222,11 @@ unsigned box_space( box_t *box )
 
 	sys_lock();
 	{
+#if OS_ATOMICS
+		space = (box->limit - atomic_load(&box->count)) / box->size;
+#else
 		space = (box->limit - box->count) / box->size;
+#endif
 	}
 	sys_unlock();
 

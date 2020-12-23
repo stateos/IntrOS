@@ -41,6 +41,7 @@ Features:
 - added OS_LOCK_LEVEL config constant
 - updated internal insert / remove functions
 - added core_spn_tryLock function
+- implemented functions for asynchronous communication with unblockable interrupt handlers
 ---------
 4.7
 - updated os version

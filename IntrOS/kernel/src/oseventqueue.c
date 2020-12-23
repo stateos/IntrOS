@@ -2,7 +2,7 @@
 
     @file    IntrOS: oseventqueue.c
     @author  Rajmund Szymanski
-    @date    30.06.2020
+    @date    23.12.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -56,11 +56,15 @@ unsigned priv_evq_get( evq_t *evq )
 /* -------------------------------------------------------------------------- */
 {
 	unsigned i = evq->head;
+
 	unsigned event = evq->data[i++];
 
 	evq->head = (i < evq->limit) ? i : 0;
+#if OS_ATOMICS
+	atomic_fetch_sub(&evq->count, 1);
+#else
 	evq->count--;
-
+#endif
 	return event;
 }
 
@@ -74,7 +78,11 @@ void priv_evq_put( evq_t *evq, const unsigned event )
 	evq->data[i++] = event;
 
 	evq->tail = (i < evq->limit) ? i : 0;
+#if OS_ATOMICS
+	atomic_fetch_add(&evq->count, 1);
+#else
 	evq->count++;
+#endif
 }
 
 /* -------------------------------------------------------------------------- */
@@ -82,9 +90,14 @@ static
 void priv_evq_skip( evq_t *evq )
 /* -------------------------------------------------------------------------- */
 {
+	unsigned i = evq->head + 1;
+
+	evq->head = (i < evq->limit) ? i : 0;
+#if OS_ATOMICS
+	atomic_fetch_sub(&evq->count, 1);
+#else
 	evq->count--;
-	evq->head++;
-	if (evq->head == evq->limit) evq->head = 0;
+#endif
 }
 
 /* -------------------------------------------------------------------------- */
@@ -99,7 +112,11 @@ unsigned evq_take( evq_t *evq )
 
 	sys_lock();
 	{
+#if OS_ATOMICS
+		if (atomic_load(&evq->count) > 0)
+#else
 		if (evq->count > 0)
+#endif
 			result = priv_evq_get(evq);
 	}
 	sys_unlock();
@@ -130,7 +147,11 @@ unsigned evq_give( evq_t *evq, unsigned event )
 
 	sys_lock();
 	{
+#if OS_ATOMICS
+		if (atomic_load(&evq->count) < evq->limit)
+#else
 		if (evq->count < evq->limit)
+#endif
 		{
 			priv_evq_put(evq, event);
 			result = SUCCESS;
@@ -175,7 +196,11 @@ unsigned evq_count( evq_t *evq )
 
 	sys_lock();
 	{
+#if OS_ATOMICS
+		count = atomic_load(&evq->count);
+#else
 		count = evq->count;
+#endif
 	}
 	sys_unlock();
 
@@ -192,7 +217,11 @@ unsigned evq_space( evq_t *evq )
 
 	sys_lock();
 	{
+#if OS_ATOMICS
+		space = evq->limit - atomic_load(&evq->count);
+#else
 		space = evq->limit - evq->count;
+#endif
 	}
 	sys_unlock();
 
