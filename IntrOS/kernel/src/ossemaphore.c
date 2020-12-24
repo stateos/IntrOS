@@ -54,6 +54,7 @@ void sem_init( sem_t *sem, unsigned init, unsigned limit )
 unsigned sem_take( sem_t *sem )
 /* -------------------------------------------------------------------------- */
 {
+	unsigned count;
 	unsigned result = FAILURE;
 
 	assert(sem);
@@ -63,15 +64,15 @@ unsigned sem_take( sem_t *sem )
 	sys_lock();
 	{
 #if OS_ATOMICS
-		if (atomic_load(&sem->count) > 0U)
-		{
-			atomic_fetch_sub(&sem->count, 1U);
-			result = SUCCESS;
-		}
+		count = atomic_load(&sem->count);
+		while (count > 0 && result != SUCCESS)
+			if (atomic_compare_exchange_weak(&sem->count, &count, count - 1))
+				result = SUCCESS;
 #else
-		if (sem->count > 0U)
+		count = sem->count;
+		if (count > 0)
 		{
-			sem->count--;
+			sem->count = count - 1;
 			result = SUCCESS;
 		}
 #endif
@@ -92,6 +93,7 @@ void sem_wait( sem_t *sem )
 unsigned sem_give( sem_t *sem )
 /* -------------------------------------------------------------------------- */
 {
+	unsigned count;
 	unsigned result = FAILURE;
 
 	assert(sem);
@@ -101,15 +103,15 @@ unsigned sem_give( sem_t *sem )
 	sys_lock();
 	{
 #if OS_ATOMICS
-		if (atomic_load(&sem->count) < sem->limit)
-		{
-			atomic_fetch_add(&sem->count, 1U);
-			result = SUCCESS;
-		}
+		count = atomic_load(&sem->count);
+		while (count < sem->limit && result != SUCCESS)
+			if (atomic_compare_exchange_weak(&sem->count, &count, count + 1))
+				result = SUCCESS;
 #else
-		if (sem->count < sem->limit)
+		count = sem->count;
+		if (count < sem->limit)
 		{
-			sem->count++;
+			sem->count = count + 1;
 			result = SUCCESS;
 		}
 #endif
