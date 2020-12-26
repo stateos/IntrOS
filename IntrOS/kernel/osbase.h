@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbase.h
     @author  Rajmund Szymanski
-    @date    23.12.2020
+    @date    26.12.2020
     @brief   This file contains basic definitions for IntrOS.
 
  ******************************************************************************
@@ -44,13 +44,6 @@
 #include <assert.h>
 #include <setjmp.h>
 #include "osport.h"
-#if defined(OS_ATOMICS) && (OS_ATOMICS != 0)
-#ifndef __cplusplus
-#include <stdatomic.h>
-#else
-#include <atomic>
-#endif
-#endif
 
 /* -------------------------------------------------------------------------- */
 

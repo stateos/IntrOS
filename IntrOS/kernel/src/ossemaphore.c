@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossemaphore.c
     @author  Rajmund Szymanski
-    @date    23.12.2020
+    @date    26.12.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -51,11 +51,22 @@ void sem_init( sem_t *sem, unsigned init, unsigned limit )
 }
 
 /* -------------------------------------------------------------------------- */
+static
+unsigned priv_sem_take( sem_t *sem )
+/* -------------------------------------------------------------------------- */
+{
+	if (sem->count == 0)
+		return FAILURE;
+
+	sem->count--;
+	return SUCCESS;
+}
+
+/* -------------------------------------------------------------------------- */
 unsigned sem_take( sem_t *sem )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned count;
-	unsigned result = FAILURE;
+	unsigned result;
 
 	assert(sem);
 	assert(sem->limit);
@@ -63,19 +74,7 @@ unsigned sem_take( sem_t *sem )
 
 	sys_lock();
 	{
-#if OS_ATOMICS
-		count = atomic_load(&sem->count);
-		while (count > 0 && result != SUCCESS)
-			if (atomic_compare_exchange_weak(&sem->count, &count, count - 1))
-				result = SUCCESS;
-#else
-		count = sem->count;
-		if (count > 0)
-		{
-			sem->count = count - 1;
-			result = SUCCESS;
-		}
-#endif
+		result = priv_sem_take(sem);
 	}
 	sys_unlock();
 
@@ -90,11 +89,22 @@ void sem_wait( sem_t *sem )
 }
 
 /* -------------------------------------------------------------------------- */
+static
+unsigned priv_sem_give( sem_t *sem )
+/* -------------------------------------------------------------------------- */
+{
+	if (sem->count >= sem->limit)
+		return FAILURE;
+
+	sem->count++;
+	return SUCCESS;
+}
+
+/* -------------------------------------------------------------------------- */
 unsigned sem_give( sem_t *sem )
 /* -------------------------------------------------------------------------- */
 {
-	unsigned count;
-	unsigned result = FAILURE;
+	unsigned result;
 
 	assert(sem);
 	assert(sem->limit);
@@ -102,19 +112,7 @@ unsigned sem_give( sem_t *sem )
 
 	sys_lock();
 	{
-#if OS_ATOMICS
-		count = atomic_load(&sem->count);
-		while (count < sem->limit && result != SUCCESS)
-			if (atomic_compare_exchange_weak(&sem->count, &count, count + 1))
-				result = SUCCESS;
-#else
-		count = sem->count;
-		if (count < sem->limit)
-		{
-			sem->count = count + 1;
-			result = SUCCESS;
-		}
-#endif
+		result = priv_sem_give(sem);
 	}
 	sys_unlock();
 
@@ -127,13 +125,11 @@ unsigned sem_getValue( sem_t *sem )
 {
 	unsigned val;
 
+	assert(sem);
+
 	sys_lock();
 	{
-#if OS_ATOMICS
-		val = atomic_load(&sem->count);
-#else
 		val = sem->count;
-#endif
 	}
 	sys_unlock();
 
@@ -141,3 +137,82 @@ unsigned sem_getValue( sem_t *sem )
 }
 
 /* -------------------------------------------------------------------------- */
+
+#if OS_ATOMICS
+
+/* -------------------------------------------------------------------------- */
+static
+unsigned priv_sem_takeAsync( sem_t *sem )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned count = atomic_load((atomic_uint *)&sem->count);
+
+	while (count > 0)
+		if (atomic_compare_exchange_weak((atomic_uint *)&sem->count, &count, count - 1))
+			return SUCCESS;
+
+	return FAILURE;
+}
+
+/* -------------------------------------------------------------------------- */
+unsigned sem_takeAsync( sem_t *sem )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned result;
+
+	assert(sem);
+	assert(sem->limit);
+	assert(sem->count<=sem->limit);
+
+	sys_lock();
+	{
+		result = priv_sem_takeAsync(sem);
+	}
+	sys_unlock();
+
+	return result;
+}
+
+/* -------------------------------------------------------------------------- */
+void sem_waitAsync( sem_t *sem )
+/* -------------------------------------------------------------------------- */
+{
+	while (sem_takeAsync(sem) != SUCCESS) core_ctx_switch();
+}
+
+/* -------------------------------------------------------------------------- */
+static
+unsigned priv_sem_giveAsync( sem_t *sem )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned count = atomic_load((atomic_uint *)&sem->count);
+
+	while (count < sem->limit)
+		if (atomic_compare_exchange_weak((atomic_uint *)&sem->count, &count, count + 1))
+			return SUCCESS;
+
+	return FAILURE;
+}
+
+/* -------------------------------------------------------------------------- */
+unsigned sem_giveAsync( sem_t *sem )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned result;
+
+	assert(sem);
+	assert(sem->limit);
+	assert(sem->count<=sem->limit);
+
+	sys_lock();
+	{
+		result = priv_sem_giveAsync(sem);
+	}
+	sys_unlock();
+
+	return result;
+}
+
+/* -------------------------------------------------------------------------- */
+
+#endif//OS_ATOMICS

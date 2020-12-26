@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.c
     @author  Rajmund Szymanski
-    @date    23.12.2020
+    @date    26.12.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -60,11 +60,8 @@ fun_t *priv_job_get( job_t *job )
 	fun_t *fun = job->data[i++];
 
 	job->head = (i < job->limit) ? i : 0;
-#if OS_ATOMICS
-	atomic_fetch_sub(&job->count, 1);
-#else
 	job->count--;
-#endif
+
 	return fun;
 }
 
@@ -78,11 +75,7 @@ void priv_job_put( job_t *job, fun_t *fun )
 	job->data[i++] = fun;
 
 	job->tail = (i < job->limit) ? i : 0;
-#if OS_ATOMICS
-	atomic_fetch_add(&job->count, 1);
-#else
 	job->count++;
-#endif
 }
 
 /* -------------------------------------------------------------------------- */
@@ -93,11 +86,7 @@ void priv_job_skip( job_t *job )
 	unsigned i = job->head + 1;
 
 	job->head = (i < job->limit) ? i : 0;
-#if OS_ATOMICS
-	atomic_fetch_sub(&job->count, 1);
-#else
 	job->count--;
-#endif
 }
 
 /* -------------------------------------------------------------------------- */
@@ -113,11 +102,7 @@ unsigned job_take( job_t *job )
 
 	sys_lock();
 	{
-#if OS_ATOMICS
-		if (atomic_load(&job->count) > 0)
-#else
 		if (job->count > 0)
-#endif
 		{
 			fun = priv_job_get(job);
 			result = SUCCESS;
@@ -151,11 +136,7 @@ unsigned job_give( job_t *job, fun_t *fun )
 
 	sys_lock();
 	{
-#if OS_ATOMICS
-		if (atomic_load(&job->count) < job->limit)
-#else
 		if (job->count < job->limit)
-#endif
 		{
 			priv_job_put(job, fun);
 			result = SUCCESS;
@@ -201,11 +182,7 @@ unsigned job_count( job_t *job )
 
 	sys_lock();
 	{
-#if OS_ATOMICS
-		count = atomic_load(&job->count);
-#else
 		count = job->count;
-#endif
 	}
 	sys_unlock();
 
@@ -222,11 +199,7 @@ unsigned job_space( job_t *job )
 
 	sys_lock();
 	{
-#if OS_ATOMICS
-		space = job->limit - atomic_load(&job->count);
-#else
 		space = job->limit - job->count;
-#endif
 	}
 	sys_unlock();
 
@@ -251,3 +224,102 @@ unsigned job_limit( job_t *job )
 }
 
 /* -------------------------------------------------------------------------- */
+
+#if OS_ATOMICS
+
+/* -------------------------------------------------------------------------- */
+static
+fun_t *priv_job_getAsync( job_t *job )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned i = job->head;
+
+	fun_t *fun = job->data[i++];
+
+	job->head = (i < job->limit) ? i : 0;
+	atomic_fetch_sub((atomic_uint *)&job->count, 1);
+
+	return fun;
+}
+
+/* -------------------------------------------------------------------------- */
+unsigned job_takeAsync( job_t *job )
+/* -------------------------------------------------------------------------- */
+{
+	fun_t *fun;
+	unsigned result = FAILURE;
+
+	assert(job);
+	assert(job->data);
+	assert(job->limit);
+
+	sys_lock();
+	{
+		if (atomic_load((atomic_uint *)&job->count) > 0)
+		{
+			fun = priv_job_getAsync(job);
+			result = SUCCESS;
+		}
+	}
+	sys_unlock();
+
+	if (result == SUCCESS)
+		fun();
+
+	return result;
+}
+
+/* -------------------------------------------------------------------------- */
+void job_waitAsync( job_t *job )
+/* -------------------------------------------------------------------------- */
+{
+	while (job_takeAsync(job) != SUCCESS) core_ctx_switch();
+}
+
+/* -------------------------------------------------------------------------- */
+static
+void priv_job_putAsync( job_t *job, fun_t *fun )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned i = job->tail;
+
+	job->data[i++] = fun;
+
+	job->tail = (i < job->limit) ? i : 0;
+	atomic_fetch_add((atomic_uint *)&job->count, 1);
+}
+
+/* -------------------------------------------------------------------------- */
+unsigned job_giveAsync( job_t *job, fun_t *fun )
+/* -------------------------------------------------------------------------- */
+{
+	unsigned result = FAILURE;
+
+	assert(job);
+	assert(job->data);
+	assert(job->limit);
+	assert(fun);
+
+	sys_lock();
+	{
+		if (atomic_load((atomic_uint *)&job->count) < job->limit)
+		{
+			priv_job_putAsync(job, fun);
+			result = SUCCESS;
+		}
+	}
+	sys_unlock();
+
+	return result;
+}
+
+/* -------------------------------------------------------------------------- */
+void job_sendAsync( job_t *job, fun_t *fun )
+/* -------------------------------------------------------------------------- */
+{
+	while (job_giveAsync(job, fun) != SUCCESS) core_ctx_switch();
+}
+
+/* -------------------------------------------------------------------------- */
+
+#endif//OS_ATOMICS

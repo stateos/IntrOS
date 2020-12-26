@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossemaphore.h
     @author  Rajmund Szymanski
-    @date    30.06.2020
+    @date    26.12.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -206,6 +206,7 @@ void sem_init( sem_t *sem, unsigned init, unsigned limit );
  *
  * Name              : sem_take
  * Alias             : sem_tryWait
+ * Async alias       : sem_takeAsync
  *
  * Description       : try to lock the semaphore object,
  *                     don't wait if the semaphore object can't be locked immediately
@@ -224,9 +225,14 @@ unsigned sem_take( sem_t *sem );
 __STATIC_INLINE
 unsigned sem_tryWait( sem_t *sem ) { return sem_take(sem); }
 
+#if OS_ATOMICS
+unsigned sem_takeAsync( sem_t *sem );
+#endif
+
 /******************************************************************************
  *
  * Name              : sem_wait
+ * Async alias       : sem_waitAsync
  *
  * Description       : try to lock the semaphore object,
  *                     wait indefinitely if the semaphore object can't be locked immediately
@@ -240,10 +246,15 @@ unsigned sem_tryWait( sem_t *sem ) { return sem_take(sem); }
 
 void sem_wait( sem_t *sem );
 
+#if OS_ATOMICS
+void sem_waitAsync( sem_t *sem );
+#endif
+
 /******************************************************************************
  *
  * Name              : sem_give
  * Alias             : sem_post
+ * Async alias       : sem_giveAsync
  *
  * Description       : try to unlock the semaphore object,
  *                     don't wait if the semaphore object can't be unlocked immediately
@@ -261,6 +272,10 @@ unsigned sem_give( sem_t *sem );
 
 __STATIC_INLINE
 unsigned sem_post( sem_t *sem ) { return sem_give(sem); }
+
+#if OS_ATOMICS
+unsigned sem_giveAsync( sem_t *sem );
+#endif
 
 /******************************************************************************
  *
@@ -350,12 +365,17 @@ struct Semaphore : public __sem
 
 /* -------------------------------------------------------------------------- */
 
-	unsigned take    ( void ) { return sem_take    (this); }
-	unsigned tryWait ( void ) { return sem_tryWait (this); }
-	void     wait    ( void ) {        sem_wait    (this); }
-	unsigned give    ( void ) { return sem_give    (this); }
-	unsigned post    ( void ) { return sem_post    (this); }
-	unsigned getValue( void ) { return sem_getValue(this); }
+	unsigned take     ( void ) { return sem_take     (this); }
+	unsigned tryWait  ( void ) { return sem_tryWait  (this); }
+	void     wait     ( void ) {        sem_wait     (this); }
+	unsigned give     ( void ) { return sem_give     (this); }
+	unsigned post     ( void ) { return sem_post     (this); }
+	unsigned getValue ( void ) { return sem_getValue (this); }
+#if OS_ATOMICS
+	unsigned takeAsync( void ) { return sem_takeAsync(this); }
+	void     waitAsync( void ) {        sem_waitAsync(this); }
+	unsigned giveAsync( void ) { return sem_giveAsync(this); }
+#endif
 };
 
 #endif//__cplusplus

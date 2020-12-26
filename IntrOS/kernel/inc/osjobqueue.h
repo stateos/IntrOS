@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.h
     @author  Rajmund Szymanski
-    @date    30.06.2020
+    @date    26.12.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -191,6 +191,7 @@ void job_init( job_t *job, fun_t **data, size_t bufsize );
  *
  * Name              : job_take
  * Alias             : job_tryWait
+ * Async alias       : job_takeAsync
  *
  * Description       : try to transfer job data from the job queue object and execute the job procedure,
  *                     don't wait if the job queue object is empty
@@ -209,9 +210,14 @@ unsigned job_take( job_t *job );
 __STATIC_INLINE
 unsigned job_tryWait( job_t *job ) { return job_take(job); }
 
+#if OS_ATOMICS
+unsigned job_takeAsync( job_t *job );
+#endif
+
 /******************************************************************************
  *
  * Name              : job_wait
+ * Async alias       : job_waitAsync
  *
  * Description       : try to transfer job data from the job queue object and execute the job procedure,
  *                     wait indefinitely while the job queue object is empty
@@ -225,9 +231,14 @@ unsigned job_tryWait( job_t *job ) { return job_take(job); }
 
 void job_wait( job_t *job );
 
+#if OS_ATOMICS
+void job_waitAsync( job_t *job );
+#endif
+
 /******************************************************************************
  *
  * Name              : job_give
+ * Async alias       : job_giveAsync
  *
  * Description       : try to transfer job data to the job queue object,
  *                     don't wait if the job queue object is full
@@ -244,9 +255,14 @@ void job_wait( job_t *job );
 
 unsigned job_give( job_t *job, fun_t *fun );
 
+#if OS_ATOMICS
+unsigned job_giveAsync( job_t *job, fun_t *fun );
+#endif
+
 /******************************************************************************
  *
  * Name              : job_send
+ * Async alias       : job_sendAsync
  *
  * Description       : try to transfer job data to the job queue object,
  *                     wait indefinitely while the job queue object is full
@@ -260,6 +276,10 @@ unsigned job_give( job_t *job, fun_t *fun );
  ******************************************************************************/
 
 void job_send( job_t *job, fun_t *fun );
+
+#if OS_ATOMICS
+void job_sendAsync( job_t *job, fun_t *fun );
+#endif
 
 /******************************************************************************
  *
@@ -353,15 +373,21 @@ struct JobQueueT : public __job
 	JobQueueT& operator=( JobQueueT&& ) = delete;
 	JobQueueT& operator=( const JobQueueT& ) = delete;
 
-	unsigned take   ( void )        { return job_take   (this); }
-	unsigned tryWait( void )        { return job_tryWait(this); }
-	void     wait   ( void )        {        job_wait   (this); }
-	unsigned give   ( fun_t *_fun ) { return job_give   (this, _fun); }
-	void     send   ( fun_t *_fun ) {        job_send   (this, _fun); }
-	void     push   ( fun_t *_fun ) {        job_push   (this, _fun); }
-	unsigned count  ( void )        { return job_count  (this); }
-	unsigned space  ( void )        { return job_space  (this); }
-	unsigned limit  ( void )        { return job_limit  (this); }
+	unsigned take     ( void )        { return job_take     (this); }
+	unsigned tryWait  ( void )        { return job_tryWait  (this); }
+	void     wait     ( void )        {        job_wait     (this); }
+	unsigned give     ( fun_t *_fun ) { return job_give     (this, _fun); }
+	void     send     ( fun_t *_fun ) {        job_send     (this, _fun); }
+	void     push     ( fun_t *_fun ) {        job_push     (this, _fun); }
+	unsigned count    ( void )        { return job_count    (this); }
+	unsigned space    ( void )        { return job_space    (this); }
+	unsigned limit    ( void )        { return job_limit    (this); }
+#if OS_ATOMICS
+	unsigned takeAsync( void )        { return job_takeAsync(this); }
+	void     waitAsync( void )        {        job_waitAsync(this); }
+	unsigned giveAsync( fun_t *_fun ) { return job_giveAsync(this, _fun); }
+	void     sendAsync( fun_t *_fun ) {        job_sendAsync(this, _fun); }
+#endif
 
 	private:
 	fun_t *data_[limit_];

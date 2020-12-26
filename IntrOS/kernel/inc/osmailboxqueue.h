@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmailboxqueue.h
     @author  Rajmund Szymanski
-    @date    30.06.2020
+    @date    26.12.2020
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -199,6 +199,7 @@ void box_init( box_t *box, size_t size, void *data, size_t bufsize );
  *
  * Name              : box_take
  * Alias             : box_tryWait
+ * Async alias       : box_takeAsync
  *
  * Description       : try to transfer mailbox data from the mailbox queue object,
  *                     don't wait if the mailbox queue object is empty
@@ -218,9 +219,14 @@ unsigned box_take( box_t *box, void *data );
 __STATIC_INLINE
 unsigned box_tryWait( box_t *box, void *data ) { return box_take(box, data); }
 
+#if OS_ATOMICS
+unsigned box_takeAsync( box_t *box, void *data );
+#endif
+
 /******************************************************************************
  *
  * Name              : box_wait
+ * Async alias       : box_waitAsync
  *
  * Description       : try to transfer mailbox data from the mailbox queue object,
  *                     wait indefinitely while the mailbox queue object is empty
@@ -235,9 +241,14 @@ unsigned box_tryWait( box_t *box, void *data ) { return box_take(box, data); }
 
 void box_wait( box_t *box, void *data );
 
+#if OS_ATOMICS
+void box_waitAsync( box_t *box, void *data );
+#endif
+
 /******************************************************************************
  *
  * Name              : box_give
+ * Async alias       : box_giveAsync
  *
  * Description       : try to transfer mailbox data to the mailbox queue object,
  *                     don't wait if the mailbox queue object is full
@@ -254,9 +265,14 @@ void box_wait( box_t *box, void *data );
 
 unsigned box_give( box_t *box, const void *data );
 
+#if OS_ATOMICS
+unsigned box_giveAsync( box_t *box, const void *data );
+#endif
+
 /******************************************************************************
  *
  * Name              : box_send
+ * Async alias       : box_sendAsync
  *
  * Description       : try to transfer mailbox data to the mailbox queue object,
  *                     wait indefinitely while the mailbox queue object is full
@@ -270,6 +286,10 @@ unsigned box_give( box_t *box, const void *data );
  ******************************************************************************/
 
 void box_send( box_t *box, const void *data );
+
+#if OS_ATOMICS
+void box_sendAsync( box_t *box, const void *data );
+#endif
 
 /******************************************************************************
  *
@@ -364,15 +384,21 @@ struct MailBoxQueueT : public __box
 	MailBoxQueueT& operator=( MailBoxQueueT&& ) = delete;
 	MailBoxQueueT& operator=( const MailBoxQueueT& ) = delete;
 
-	unsigned take   (       void *_data ) { return box_take   (this, _data); }
-	unsigned tryWait(       void *_data ) { return box_tryWait(this, _data); }
-	void     wait   (       void *_data ) {        box_wait   (this, _data); }
-	unsigned give   ( const void *_data ) { return box_give   (this, _data); }
-	void     send   ( const void *_data ) {        box_send   (this, _data); }
-	void     push   ( const void *_data ) {        box_push   (this, _data); }
-	unsigned count  (       void )        { return box_count  (this); }
-	unsigned space  (       void )        { return box_space  (this); }
-	unsigned limit  (       void )        { return box_limit  (this); }
+	unsigned take     (       void *_data ) { return box_take     (this, _data); }
+	unsigned tryWait  (       void *_data ) { return box_tryWait  (this, _data); }
+	void     wait     (       void *_data ) {        box_wait     (this, _data); }
+	unsigned give     ( const void *_data ) { return box_give     (this, _data); }
+	void     send     ( const void *_data ) {        box_send     (this, _data); }
+	void     push     ( const void *_data ) {        box_push     (this, _data); }
+	unsigned count    (       void )        { return box_count    (this); }
+	unsigned space    (       void )        { return box_space    (this); }
+	unsigned limit    (       void )        { return box_limit    (this); }
+#if OS_ATOMICS
+	unsigned takeAsync(       void *_data ) { return box_takeAsync(this, _data); }
+	void     waitAsync(       void *_data ) {        box_waitAsync(this, _data); }
+	unsigned giveAsync( const void *_data ) { return box_giveAsync(this, _data); }
+	void     sendAsync( const void *_data ) {        box_sendAsync(this, _data); }
+#endif
 
 	private:
 	char data_[limit_ * size_];
