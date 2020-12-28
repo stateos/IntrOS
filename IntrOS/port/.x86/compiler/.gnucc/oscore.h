@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscore.h
     @author  Rajmund Szymanski
-    @date    16.12.2020
+    @date    28.12.2020
     @brief   IntrOS port file for X86.
 
  ******************************************************************************
@@ -108,7 +108,7 @@ void port_ctx_init( ctx_t *ctx, stk_t *sp, fun_t *pc )
 /* -------------------------------------------------------------------------- */
 // get current stack pointer
 
-__STATIC_INLINE
+__STATIC_FORCEINLINE
 void * port_get_sp( void )
 {
 	void *sp;

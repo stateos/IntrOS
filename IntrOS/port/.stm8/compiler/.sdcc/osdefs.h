@@ -40,12 +40,6 @@
 #ifndef __STATIC_INLINE
 #define __STATIC_INLINE       static inline
 #endif
-#ifndef __WFI
-#define __WFI                 wfi
-#endif
-#ifndef __ISB
-#define __ISB                 nop
-#endif
 #ifndef __COMPILER_BARRIER
 #define __COMPILER_BARRIER()
 #endif
