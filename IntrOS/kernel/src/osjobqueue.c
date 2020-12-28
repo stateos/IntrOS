@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.c
     @author  Rajmund Szymanski
-    @date    26.12.2020
+    @date    27.12.2020
     @brief   This file provides set of functions for IntrOS.
 
  ******************************************************************************
@@ -93,7 +93,7 @@ void priv_job_skip( job_t *job )
 unsigned job_take( job_t *job )
 /* -------------------------------------------------------------------------- */
 {
-	fun_t *fun;
+	fun_t *fun = NULL;
 	unsigned result = FAILURE;
 
 	assert(job);
@@ -110,7 +110,7 @@ unsigned job_take( job_t *job )
 	}
 	sys_unlock();
 
-	if (result == SUCCESS)
+	if (fun != NULL)
 		fun();
 
 	return result;
@@ -246,7 +246,7 @@ fun_t *priv_job_getAsync( job_t *job )
 unsigned job_takeAsync( job_t *job )
 /* -------------------------------------------------------------------------- */
 {
-	fun_t *fun;
+	fun_t *fun = NULL;
 	unsigned result = FAILURE;
 
 	assert(job);
@@ -263,7 +263,7 @@ unsigned job_takeAsync( job_t *job )
 	}
 	sys_unlock();
 
-	if (result == SUCCESS)
+	if (fun != NULL)
 		fun();
 
 	return result;
