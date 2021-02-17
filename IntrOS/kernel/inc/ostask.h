@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    10.12.2020
+    @date    17.02.2021
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -532,6 +532,7 @@ tsk_t *cur_task( void ) { return System.cur; }
  * Name              : wrk_init
  *
  * Description       : initialize complete work area for task object
+ *                     don't start the task
  *
  * Parameters
  *   tsk             : pointer to task object
