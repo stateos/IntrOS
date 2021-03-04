@@ -1,5 +1,5 @@
 # IntrOS
-  [![Build Status](https://travis-ci.org/stateos/IntrOS.svg)](https://travis-ci.org/stateos/IntrOS)
+  [![CI Status](https://github.com/stateos/IntrOS/workflows/CI/badge.svg)](https://github.com/stateos/IntrOS/actions)
   [![Github Release](https://img.shields.io/github/release/stateos/IntrOS.svg)](https://github.com/stateos/IntrOS/releases)
   [![Software License](https://img.shields.io/github/license/stateos/IntrOS.svg)](https://opensource.org/licenses/MIT)
   [![Software Download](https://img.shields.io/sourceforge/dt/intros.stateos.p.svg)](https://sourceforge.net/projects/intros.stateos.p/files/latest/download)
