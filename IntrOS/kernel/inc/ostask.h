@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostask.h
     @author  Rajmund Szymanski
-    @date    17.02.2021
+    @date    02.03.2021
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -931,6 +931,7 @@ size_t tsk_stackSpace( void )
 /* -------------------------------------------------------------------------- */
 
 #ifdef __cplusplus
+namespace intros {
 
 /******************************************************************************
  *
@@ -1184,6 +1185,7 @@ struct TaskT : public baseTask, public baseStack<size_>
 
 using Task = TaskT<OS_STACK_SIZE>;
 
+}     //  namespace
 #endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */

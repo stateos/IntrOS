@@ -2,7 +2,7 @@
 
     @file    IntrOS: osspinlock.h
     @author  Rajmund Szymanski
-    @date    27.12.2020
+    @date    02.03.2021
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -283,6 +283,7 @@ void spn_init( spn_t *spn )
 /* -------------------------------------------------------------------------- */
 
 #ifdef __cplusplus
+namespace intros {
 
 /******************************************************************************
  *
@@ -310,6 +311,7 @@ struct SpinLock : private CriticalSection
 	spn_t *spn_;
 };
 
+}     //  namespace
 #endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */

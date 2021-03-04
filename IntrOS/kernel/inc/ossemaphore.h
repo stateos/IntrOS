@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossemaphore.h
     @author  Rajmund Szymanski
-    @date    26.12.2020
+    @date    02.03.2021
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -299,6 +299,7 @@ unsigned sem_getValue( sem_t *sem );
 /* -------------------------------------------------------------------------- */
 
 #ifdef __cplusplus
+namespace intros {
 
 /******************************************************************************
  *
@@ -378,6 +379,7 @@ struct Semaphore : public __sem
 #endif
 };
 
+}     //  namespace
 #endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */

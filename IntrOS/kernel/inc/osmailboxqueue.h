@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmailboxqueue.h
     @author  Rajmund Szymanski
-    @date    26.12.2020
+    @date    02.03.2021
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -360,6 +360,7 @@ unsigned box_limit( box_t *box );
 /* -------------------------------------------------------------------------- */
 
 #ifdef __cplusplus
+namespace intros {
 
 /******************************************************************************
  *
@@ -419,6 +420,7 @@ struct MailBoxQueueT : public __box
 template<unsigned limit_, class C>
 using MailBoxQueueTT = MailBoxQueueT<limit_, sizeof(C)>;
 
+}     //  namespace
 #endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */

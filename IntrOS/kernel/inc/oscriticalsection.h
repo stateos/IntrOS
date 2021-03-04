@@ -2,7 +2,7 @@
 
     @file    IntrOS: oscriticalsection.h
     @author  Rajmund Szymanski
-    @date    07.07.2020
+    @date    02.03.2021
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -165,6 +165,7 @@ lck_t core_get_lock( void )
 /* -------------------------------------------------------------------------- */
 
 #ifdef __cplusplus
+namespace intros {
 
 /******************************************************************************
  *
@@ -217,6 +218,7 @@ struct Lock
 	T &lck_;
 };
 
+}     //  namespace
 #endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */

@@ -2,7 +2,7 @@
 
     @file    IntrOS: ostimer.h
     @author  Rajmund Szymanski
-    @date    30.06.2020
+    @date    02.03.2021
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -539,6 +539,7 @@ void tmr_delay( cnt_t delay ) { tmr_this()->delay = delay; }
 /* -------------------------------------------------------------------------- */
 
 #ifdef __cplusplus
+namespace intros {
 
 /******************************************************************************
  *
@@ -904,6 +905,7 @@ struct Timer : public baseTimer
 #endif
 };
 
+}     //  namespace
 #endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */

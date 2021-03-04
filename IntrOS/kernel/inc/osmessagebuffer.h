@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmessagebuffer.h
     @author  Rajmund Szymanski
-    @date    30.06.2020
+    @date    02.03.2021
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -371,6 +371,7 @@ size_t msg_size( msg_t *msg );
 /* -------------------------------------------------------------------------- */
 
 #ifdef __cplusplus
+namespace intros {
 
 /******************************************************************************
  *
@@ -435,6 +436,7 @@ struct MessageBufferTT : public MessageBufferT<limit_*(sizeof(size_t)+sizeof(C))
 	unsigned push   ( const C *_data ) { return msg_push   (this, _data, sizeof(C)); }
 };
 
+}     //  namespace
 #endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */

@@ -2,7 +2,7 @@
 
     @file    IntrOS: osjobqueue.h
     @author  Rajmund Szymanski
-    @date    26.12.2020
+    @date    02.03.2021
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -350,6 +350,7 @@ unsigned job_limit( job_t *job );
 /* -------------------------------------------------------------------------- */
 
 #ifdef __cplusplus
+namespace intros {
 
 /******************************************************************************
  *
@@ -393,6 +394,7 @@ struct JobQueueT : public __job
 	fun_t *data_[limit_];
 };
 
+}     //  namespace
 #endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */

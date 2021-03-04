@@ -2,7 +2,7 @@
 
     @file    IntrOS: osflag.h
     @author  Rajmund Szymanski
-    @date    30.06.2020
+    @date    02.03.2021
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -276,6 +276,7 @@ unsigned flg_get( flg_t *flg );
 /* -------------------------------------------------------------------------- */
 
 #ifdef __cplusplus
+namespace intros {
 
 /******************************************************************************
  *
@@ -307,6 +308,7 @@ struct Flag : public __flg
 	unsigned get    ( void )                              { return flg_get    (this); }
 };
 
+}     //  namespace
 #endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */

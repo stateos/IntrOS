@@ -2,7 +2,7 @@
 
     @file    IntrOS: ossignal.h
     @author  Rajmund Szymanski
-    @date    30.06.2020
+    @date    02.03.2021
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -261,6 +261,7 @@ void sig_clear( sig_t *sig, unsigned signo );
 /* -------------------------------------------------------------------------- */
 
 #ifdef __cplusplus
+namespace intros {
 
 /******************************************************************************
  *
@@ -291,6 +292,7 @@ struct Signal : public __sig
 	void     clear  ( unsigned _signo )  {        sig_clear  (this, _signo); }
 };
 
+}     //  namespace
 #endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */

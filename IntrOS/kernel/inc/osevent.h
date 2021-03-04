@@ -2,7 +2,7 @@
 
     @file    IntrOS: osevent.h
     @author  Rajmund Szymanski
-    @date    30.06.2020
+    @date    02.03.2021
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -208,6 +208,7 @@ void evt_give( evt_t *evt, unsigned event );
 /* -------------------------------------------------------------------------- */
 
 #ifdef __cplusplus
+namespace intros {
 
 /******************************************************************************
  *
@@ -235,6 +236,7 @@ struct Event : public __evt
 	void     give( unsigned _event ) {        evt_give(this, _event); }
 };
 
+}     //  namespace
 #endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */

@@ -2,7 +2,7 @@
 
     @file    IntrOS: osonceflag.h
     @author  Rajmund Szymanski
-    @date    26.02.2021
+    @date    02.03.2021
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -202,6 +202,7 @@ void one_call( one_t *one, fun_t *fun )
 /* -------------------------------------------------------------------------- */
 
 #ifdef __cplusplus
+namespace intros {
 
 /******************************************************************************
  *
@@ -253,6 +254,7 @@ struct OnceFlag
 	one_t flg_;
 };
 
+}     //  namespace
 #endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */

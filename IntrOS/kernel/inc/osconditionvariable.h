@@ -2,7 +2,7 @@
 
     @file    IntrOS: osconditionvariable.h
     @author  Rajmund Szymanski
-    @date    27.05.2020
+    @date    02.03.2021
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -197,6 +197,7 @@ void cnd_notifyAll( cnd_t *cnd ) { cnd_give(cnd); }
 /* -------------------------------------------------------------------------- */
 
 #ifdef __cplusplus
+namespace intros {
 
 /******************************************************************************
  *
@@ -225,6 +226,7 @@ struct ConditionVariable : public __cnd
 	void notifyAll( void )        { cnd_notifyAll(this); }
 };
 
+}     //  namespace
 #endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */

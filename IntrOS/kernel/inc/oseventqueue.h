@@ -2,7 +2,7 @@
 
     @file    IntrOS: oseventqueue.h
     @author  Rajmund Szymanski
-    @date    26.12.2020
+    @date    02.03.2021
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -349,6 +349,7 @@ unsigned evq_limit( evq_t *evq );
 /* -------------------------------------------------------------------------- */
 
 #ifdef __cplusplus
+namespace intros {
 
 /******************************************************************************
  *
@@ -392,6 +393,7 @@ struct EventQueueT : public __evq
 	unsigned data_[limit_];
 };
 
+}     //  namespace
 #endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */

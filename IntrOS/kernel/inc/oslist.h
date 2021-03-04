@@ -2,7 +2,7 @@
 
     @file    IntrOS: oslist.h
     @author  Rajmund Szymanski
-    @date    30.06.2020
+    @date    02.03.2021
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -242,6 +242,7 @@ void lst_give( lst_t *lst, void *data );
 /* -------------------------------------------------------------------------- */
 
 #ifdef __cplusplus
+namespace intros {
 
 /******************************************************************************
  *
@@ -281,6 +282,7 @@ struct ListTT : public __lst
 
 using List = ListTT<void>;
 
+}     //  namespace
 #endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */

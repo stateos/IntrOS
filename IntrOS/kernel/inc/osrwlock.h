@@ -2,7 +2,7 @@
 
     @file    IntrOS: osrwlock.h
     @author  Rajmund Szymanski
-    @date    08.07.2020
+    @date    02.03.2021
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -291,6 +291,7 @@ void rwl_unlockWrite( rwl_t *rwl ) { rwl_giveWrite(rwl); }
 /* -------------------------------------------------------------------------- */
 
 #ifdef __cplusplus
+namespace intros {
 
 /******************************************************************************
  *
@@ -379,6 +380,7 @@ struct WriteLock
 	RWLock &lck_;
 };
 
+}     //  namespace
 #endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */

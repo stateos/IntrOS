@@ -2,7 +2,7 @@
 
     @file    IntrOS: osmemorypool.h
     @author  Rajmund Szymanski
-    @date    30.06.2020
+    @date    02.03.2021
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -277,6 +277,7 @@ void mem_give( mem_t *mem, void *data ) { lst_give(&mem->lst, data); }
 /* -------------------------------------------------------------------------- */
 
 #ifdef __cplusplus
+namespace intros {
 
 /******************************************************************************
  *
@@ -331,6 +332,7 @@ struct MemoryPoolTT : public MemoryPoolT<limit_, sizeof(C)>
 	C *wait   ( void ) { return reinterpret_cast<C *>(mem_wait   (this)); }
 };
 
+}     //  namespace
 #endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */

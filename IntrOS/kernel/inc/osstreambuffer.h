@@ -2,7 +2,7 @@
 
     @file    IntrOS: osstreambuffer.h
     @author  Rajmund Szymanski
-    @date    30.06.2020
+    @date    02.03.2021
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -356,6 +356,7 @@ size_t stm_limit( stm_t *stm );
 /* -------------------------------------------------------------------------- */
 
 #ifdef __cplusplus
+namespace intros {
 
 /******************************************************************************
  *
@@ -419,6 +420,7 @@ struct StreamBufferTT : public StreamBufferT<limit_*sizeof(C)>
 	unsigned push   ( const C *_data ) { return stm_push   (this, _data, sizeof(C)); }
 };
 
+}     //  namespace
 #endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */

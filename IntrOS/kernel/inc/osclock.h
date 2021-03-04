@@ -2,7 +2,7 @@
 
     @file    IntrOS: osclock.h
     @author  Rajmund Szymanski
-    @date    17.05.2020
+    @date    02.03.2021
     @brief   This file implements steady clock for IntrOS.
 
  ******************************************************************************
@@ -64,6 +64,8 @@ cnt_t sys_time( void );
 #include <chrono>
 #endif
 
+namespace intros {
+
 /******************************************************************************
  *
  * Class             : Clock
@@ -99,6 +101,7 @@ struct Clock
 	rep until( const rep _time )        { return _time; }
 };
 
+}     //  namespace
 #endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */

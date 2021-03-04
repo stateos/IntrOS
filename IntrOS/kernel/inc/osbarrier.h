@@ -2,7 +2,7 @@
 
     @file    IntrOS: osbarrier.h
     @author  Rajmund Szymanski
-    @date    27.05.2020
+    @date    02.03.2021
     @brief   This file contains definitions for IntrOS.
 
  ******************************************************************************
@@ -184,6 +184,7 @@ void bar_wait( bar_t *bar );
 /* -------------------------------------------------------------------------- */
 
 #ifdef __cplusplus
+namespace intros {
 
 /******************************************************************************
  *
@@ -209,6 +210,7 @@ struct Barrier : public __bar
 	void wait( void ) { bar_wait(this); }
 };
 
+}     //  namespace
 #endif//__cplusplus
 
 /* -------------------------------------------------------------------------- */
