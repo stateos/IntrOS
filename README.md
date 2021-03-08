@@ -1,5 +1,5 @@
 # IntrOS
-  [![CI Status](https://github.com/stateos/IntrOS/workflows/CI/badge.svg)](https://github.com/stateos/IntrOS/actions)
+  [![CI Status](https://github.com/stateos/DemOS/actions/workflows/test.yml/badge.svg)](https://github.com/stateos/DemOS/actions/workflows/test.yml)
   [![Github Release](https://img.shields.io/github/release/stateos/IntrOS.svg)](https://github.com/stateos/IntrOS/releases)
   [![Software License](https://img.shields.io/github/license/stateos/IntrOS.svg)](https://opensource.org/licenses/MIT)
   [![Software Download](https://img.shields.io/sourceforge/dt/intros.stateos.p.svg)](https://sourceforge.net/projects/intros.stateos.p/files/latest/download)
