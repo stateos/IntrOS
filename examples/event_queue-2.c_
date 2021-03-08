@@ -7,7 +7,7 @@ void consumer()
 {
 	for (;;)
 	{
-		LEDs = evq_wait(evq) & 0x0FUL;
+		LEDs = evq_wait(&evq) & 0x0FUL;
 	}
 }
 
