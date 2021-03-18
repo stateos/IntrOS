@@ -7,10 +7,10 @@ using namespace std::chrono_literals;
 
 void proc( unsigned &led, Clock::duration start )
 {
-	ThisTask::sleepUntil(Clock::time_point(start));
+	this_task::sleepUntil(Clock::time_point(start));
 	for (;;)
 	{
-		ThisTask::sleepNext(500ms);
+		this_task::sleepNext(500ms);
 		led++;
 	}
 }
@@ -26,5 +26,5 @@ int main()
 	auto t4 = Task::Start([&]{ proc(led[3], 375ms); });
 	auto t5 = Task::Start([&]{ proc(grn,    500ms); });
 
-	ThisTask::stop();
+	this_task::stop();
 }

@@ -7,12 +7,12 @@ using namespace intros;
 auto led = Led();
 auto sem = Semaphore(0);
 auto cons = Task([]{ sem.wait(); led.tick(); });
-auto prod = Task([]{ ThisTask::sleepFor(SEC); sem.give(); });
+auto prod = Task([]{ this_task::sleepFor(SEC); sem.give(); });
 
 int main()
 {
 	cons.start();
 	prod.start();
 
-	ThisTask::stop();
+	this_task::stop();
 }

@@ -8,8 +8,8 @@ auto led = Led();
 
 auto cons = Task::Start([]
 {
-	ThisTask::action([](unsigned signo){ led = SIGSET(signo); });
-	ThisTask::suspend();
+	this_task::action([](unsigned signo){ led = SIGSET(signo); });
+	this_task::suspend();
 });
 
 auto prod = Task::Start([]
@@ -18,7 +18,7 @@ auto prod = Task::Start([]
 
 	for (;;)
 	{
-		ThisTask::sleepFor(SEC);
+		this_task::sleepFor(SEC);
 		cons.signal(x);
 		x = (x + 1) % 4;
 	}
@@ -26,5 +26,5 @@ auto prod = Task::Start([]
 
 int main()
 {
-	ThisTask::stop();
+	this_task::stop();
 }

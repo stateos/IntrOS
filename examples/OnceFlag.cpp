@@ -19,5 +19,5 @@ auto tsk = Task::Start([]
 
 int main()
 {
-	ThisTask::stop();
+	this_task::stop();
 }

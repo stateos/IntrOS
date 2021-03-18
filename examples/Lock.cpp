@@ -13,7 +13,7 @@ void consumer(Mutex &mtx, Led &led)
 void producer(Mutex &mtx)
 {
 	auto lock = Lock<Mutex>(mtx);
-	This::sleepFor(SEC);
+	this_task::sleepFor(SEC);
 }
 
 int main()
@@ -22,5 +22,5 @@ int main()
 	Mutex mtx;
 	Task prod = Task::Start([&mtx]      { producer(mtx); });
 	Task cons = Task::Start([&mtx, &led]{ consumer(mtx, led); });
-	This::sleep();
+	this_task::sleep();
 }
