@@ -25,7 +25,7 @@ void producer(Semaphore &sem)
 int main()
 {
 	Led led;
-	Semaphore sem(0);
+	Semaphore sem;
 	auto cons = Task::Start([&]{ consumer(sem, led); });
 	auto prod = Task::Start([&]{ producer(sem); });
 	this_task::sleep();
