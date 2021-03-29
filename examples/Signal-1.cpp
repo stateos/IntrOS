@@ -20,7 +20,7 @@ void producer()
 {
 	for (;;)
 	{
-		this_task::sleepFor(SEC);
+		thisTask::sleepFor(SEC);
 		sig.give(1);
 	}
 }
@@ -30,5 +30,5 @@ int main()
 	auto cons = Task::Start(consumer);
 	auto prod = Task::Start(producer);
 
-	this_task::sleep();
+	thisTask::sleep();
 }

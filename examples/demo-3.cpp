@@ -6,10 +6,10 @@ using namespace intros;
 
 void proc( unsigned &led, Clock::time_point timePoint )
 {
-	this_task::sleepUntil(timePoint);
+	thisTask::sleepUntil(timePoint);
 	for (;;)
 	{
-		this_task::sleepNext(std::chrono::milliseconds{500});
+		thisTask::sleepNext(std::chrono::milliseconds{500});
 		led++;
 	}
 }
@@ -26,5 +26,5 @@ int main()
 	auto t4 = Task::Start(proc, std::ref(led[3]), now + std::chrono::milliseconds{375});
 	auto t5 = Task::Start(proc, std::ref(grn),    now + std::chrono::milliseconds{500});
 
-	this_task::stop();
+	thisTask::stop();
 }
