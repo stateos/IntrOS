@@ -2,7 +2,6 @@
   [![](https://img.shields.io/github/release/stateos/IntrOS.svg?style=flat-square&logo)](https://github.com/stateos/IntrOS/releases)
   [![](https://img.shields.io/github/license/stateos/IntrOS.svg?style=flat-square&logo)](https://opensource.org/licenses/MIT)
   [![](https://github.com/stateos/IntrOS/actions/workflows/test.yml/badge.svg)](https://github.com/stateos/IntrOS/actions/workflows/test.yml)
-  [![](https://github.com/stateos/IntrOS/actions/workflows/example.yml/badge.svg)](https://github.com/stateos/IntrOS/actions/workflows/example.yml)
 
 Free, simple and tiny cooperative operating system (OS) designed for deeply embedded applications.
 Target: ARM Cortex-M, STM8, AVR8.
