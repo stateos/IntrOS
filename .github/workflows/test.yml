@@ -46,4 +46,4 @@ jobs:
     - name: check arm-none-eabi-gcc version
       run: arm-none-eabi-gcc -v
     - name: make test
-      run: bash ./.test.sh
+      run: bash ./.example-test.sh
