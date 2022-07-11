@@ -6,13 +6,13 @@ using namespace intros;
 
 void consumer(Mutex &mtx, Led &led)
 {
-	auto lock = Lock<Mutex>(mtx);
+	auto lock = LockGuard(mtx);
 	led.tick();
 }
 
 void producer(Mutex &mtx)
 {
-	auto lock = Lock<Mutex>(mtx);
+	auto lock = LockGuard(mtx);
 	thisTask::sleepFor(SEC);
 }
 
