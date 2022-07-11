@@ -1,9 +1,9 @@
 /******************************************************************************
 
-    @file    StateOS: osconfig.h
+    @file    IntrOS: osconfig.h
     @author  Rajmund Szymanski
-    @date    03.02.2021
-    @brief   StateOS config file for STM32F4 uC.
+    @date    16.12.2020
+    @brief   IntrOS config file for STM32F4 uC.
 
  ******************************************************************************
 
@@ -42,13 +42,6 @@
 #define OS_FREQUENCY       1000
 
 // ----------------------------
-// system mode, round-robin frequency in Hz
-// OS_ROBIN == 0 => os works in cooperative mode
-// OS_ROBIN >  0 => os works in preemptive mode, OS_ROBIN indicates round-robin frequency
-// default value: 0
-#define OS_ROBIN           1000
-
-// ----------------------------
 // critical sections protection level
 // OS_LOCK_LEVEL == 0 or  __CORTEX_M <  3 => entrance to a critical section blocks all interrupts
 // OS_LOCK_LEVEL >  0 and __CORTEX_M >= 3 => entrance to a critical section blocks interrupts with urgency lower or equal (the priority value greater or equal) than OS_LOCK_LEVEL
@@ -56,26 +49,9 @@
 #define OS_LOCK_LEVEL         0
 
 // ----------------------------
-// priority of main process
-// default value: 0 (the same as priority of idle process)
-#define OS_MAIN_PRIO          0
-
-// ----------------------------
-// os heap size in bytes
-// OS_HEAP_SIZE == 0 => functions 'xxx_create' use 'malloc' provided with the compiler libraries
-// OS_HEAP_SIZE >  0 => functions 'xxx_create' allocate memory on a dedicated system heap, OS_HEAP_SIZE indicates size of the heap
-// default value: 0
-#define OS_HEAP_SIZE          0
-
-// ----------------------------
 // default task stack size in bytes
 // default value: 256
 #define OS_STACK_SIZE      1024
-
-// ----------------------------
-// idle task stack size in bytes
-// default value: 128
-#define OS_IDLE_STACK       256
 
 // ----------------------------
 // task stack guard size in bytes (if MPU is present, indicates the size of the MPU region)
