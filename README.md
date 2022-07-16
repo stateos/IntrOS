@@ -34,6 +34,7 @@ There's a dedicated function for immediate change the task state.
 - event queues
 - job queues
 - timers (one-shot, periodic)
+- hierarchical state machine
 - c++ wrapper
 - all documentation is contained within the source files
 - examples and templates are in separate repositories on [GitHub](https://github.com/stateos)
