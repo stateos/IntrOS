@@ -18,7 +18,7 @@ unsigned StateOffHandler(hsm_t *hsm, unsigned event)
 		LEDs = 0;
 		return hsmOK;
 	case hsmSwitch:
-		hsm_transition(hsm, StateOn, NULL);
+		hsm_transition(hsm, StateOn);
 		return hsmOK;
 	}
 	return event;
@@ -29,7 +29,7 @@ unsigned StateOnHandler(hsm_t *hsm, unsigned event)
 	switch (event)
 	{
 	case hsmSwitch:
-		hsm_transition(hsm, StateOff, NULL);
+		hsm_transition(hsm, StateOff);
 		return hsmOK;
 	case hsmTick:
 		LED_Tick();
