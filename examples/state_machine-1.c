@@ -7,8 +7,8 @@ enum
 	hsmTick,
 };
 
-unsigned StateOffHandler(hsm_t *, unsigned);
-unsigned StateOnHandler (hsm_t *, unsigned);
+hsm_handler_t StateOffHandler;
+hsm_handler_t StateOnHandler;
 
 OS_HSM_STATE(StateOff, NULL, StateOffHandler);
 OS_HSM_STATE(StateOn,  NULL, StateOnHandler);
