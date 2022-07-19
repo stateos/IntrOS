@@ -42,12 +42,13 @@ hsm_state_t *StateOff = HSM_STATE_CREATE(NULL, StateOffHandler);
 hsm_state_t *StateOn  = HSM_STATE_CREATE(NULL, StateOnHandler);
 
 hsm_t *blinker = HSM_CREATE(1);
+tsk_t *dispatcher = TSK_CREATE(NULL);
 
 int main()
 {
 	LED_Init();
 
-	hsm_start(blinker, StateOff);
+	hsm_start(blinker, dispatcher, StateOff);
 	hsm_send(blinker, hsmSwitch, NULL);
 	for (;;)
 	{

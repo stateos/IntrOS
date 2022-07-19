@@ -10,8 +10,9 @@ enum
 hsm_state_t StateOff;
 hsm_state_t StateOn;
 hsm_t       blinker;
-stk_t       blinker_stack[100];
 hsm_event_t blinker_queue[100];
+tsk_t       dispatcher;
+stk_t       dispatcher_stack[100];
 
 unsigned StateOffHandler(hsm_t *hsm, unsigned event)
 {
@@ -47,8 +48,9 @@ int main()
 
 	hsm_initState(&StateOff, NULL, StateOffHandler);
 	hsm_initState(&StateOn,  NULL, StateOnHandler);
-	hsm_init(&blinker, blinker_stack, sizeof(blinker_stack), blinker_queue, sizeof(blinker_queue));
-	hsm_start(&blinker, &StateOff);
+	hsm_init(&blinker, blinker_queue, sizeof(blinker_queue));
+	wrk_init(&dispatcher, NULL, dispatcher_stack, sizeof(dispatcher_stack));
+	hsm_start(&blinker, &dispatcher, &StateOff);
 	hsm_send(&blinker, hsmSwitch, NULL);
 	for (;;)
 	{

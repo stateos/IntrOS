@@ -14,6 +14,7 @@ OS_HSM_STATE(StateOff, NULL, StateOffHandler);
 OS_HSM_STATE(StateOn,  NULL, StateOnHandler);
 
 OS_HSM(blinker, 1);
+OS_TSK(dispatcher, NULL);
 
 unsigned StateOffHandler(hsm_t *hsm, unsigned event)
 {
@@ -47,7 +48,7 @@ int main()
 {
 	LED_Init();
 
-	hsm_start(blinker, StateOff);
+	hsm_start(blinker, dispatcher, StateOff);
 	hsm_send(blinker, hsmSwitch, NULL);
 	for (;;)
 	{
