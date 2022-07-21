@@ -17,7 +17,7 @@ enum
 State StateOff;
 State StateOn;
 
-unsigned StateOffHandler(hsm_t *hsm, unsigned event)
+OS_HSM_STATE(StateOff, NULL, [](hsm_t *hsm, unsigned event)->unsigned
 {
 	switch (event)
 	{
@@ -29,9 +29,9 @@ unsigned StateOffHandler(hsm_t *hsm, unsigned event)
 		return EventOK;
 	}
 	return event;
-}
+});
 
-unsigned StateOnHandler(hsm_t *hsm, unsigned event)
+OS_HSM_STATE(StateOn, NULL, [](hsm_t *hsm, unsigned event)->unsigned
 {
 	switch (event)
 	{
@@ -43,10 +43,7 @@ unsigned StateOnHandler(hsm_t *hsm, unsigned event)
 		return EventOK;
 	}
 	return event;
-}
-
-OS_HSM_STATE(StateOff, NULL, StateOffHandler);
-OS_HSM_STATE(StateOn,  NULL, StateOnHandler);
+});
 
 OS_HSM(blinker, 1);
 OS_TSK(dispatcher, NULL);

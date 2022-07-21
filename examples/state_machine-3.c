@@ -3,8 +3,13 @@
 
 enum
 {
-	hsmSwitch = hsmUser,
-	hsmTick,
+	EventOK     = hsmOK,
+	EventStop   = hsmStop,
+	EventExit   = hsmExit,
+	EventEntry  = hsmEntry,
+	EventInit   = hsmInit,
+	EventSwitch = hsmUser,
+	EventTick,
 };
 
 hsm_state_t StateOff;
@@ -18,12 +23,12 @@ unsigned StateOffHandler(hsm_t *hsm, unsigned event)
 {
 	switch (event)
 	{
-	case hsmInit:
+	case EventInit:
 		LEDs = 0;
-		return hsmOK;
-	case hsmSwitch:
+		return EventOK;
+	case EventSwitch:
 		hsm_transition(hsm, &StateOn);
-		return hsmOK;
+		return EventOK;
 	}
 	return event;
 }
@@ -32,12 +37,12 @@ unsigned StateOnHandler(hsm_t *hsm, unsigned event)
 {
 	switch (event)
 	{
-	case hsmSwitch:
+	case EventSwitch:
 		hsm_transition(hsm, &StateOff);
-		return hsmOK;
-	case hsmTick:
+		return EventOK;
+	case EventTick:
 		LED_Tick();
-		return hsmOK;
+		return EventOK;
 	}
 	return event;
 }
@@ -51,10 +56,10 @@ int main()
 	hsm_init(&blinker, blinker_queue, sizeof(blinker_queue));
 	wrk_init(&dispatcher, NULL, dispatcher_stack, sizeof(dispatcher_stack));
 	hsm_start(&blinker, &dispatcher, &StateOff);
-	hsm_send(&blinker, hsmSwitch, NULL);
+	hsm_send(&blinker, EventSwitch, NULL);
 	for (;;)
 	{
 		tsk_delay(SEC);
-		hsm_send(&blinker, hsmTick, NULL);
+		hsm_send(&blinker, EventTick, NULL);
 	}
 }

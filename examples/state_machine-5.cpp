@@ -12,12 +12,13 @@ enum
 	EventTick,
 };
 
-#define State extern hsm_state_id
+auto blinker    = intros::StateMachineT<10>();
+auto dispatcher = intros::Task(nullptr);
 
-State StateOff;
-State StateOn;
+extern intros::State StateOff;
+extern intros::State StateOn;
 
-unsigned StateOffHandler(hsm_t *hsm, unsigned event)
+intros::State StateOff([](hsm_t *hsm, unsigned event)->unsigned
 {
 	switch (event)
 	{
@@ -25,41 +26,36 @@ unsigned StateOffHandler(hsm_t *hsm, unsigned event)
 		LEDs = 0;
 		return EventOK;
 	case EventSwitch:
-		hsm_transition(hsm, StateOn);
+		hsm->transition(StateOn);
 		return EventOK;
 	}
 	return event;
-}
+});
 
-unsigned StateOnHandler(hsm_t *hsm, unsigned event)
+intros::State StateOn([](hsm_t *hsm, unsigned event)->unsigned
 {
 	switch (event)
 	{
 	case EventSwitch:
-		hsm_transition(hsm, StateOff);
+		hsm->transition(StateOff);
 		return EventOK;
 	case EventTick:
 		LED_Tick();
 		return EventOK;
 	}
 	return event;
-}
-
-OS_HSM_STATE(StateOff, NULL, StateOffHandler);
-OS_HSM_STATE(StateOn,  NULL, StateOnHandler);
-
-OS_HSM(blinker, 1);
-OS_TSK(dispatcher, NULL);
+});
 
 int main()
 {
 	LED_Init();
 
-	hsm_start(blinker, dispatcher, StateOff);
-	hsm_send(blinker, EventSwitch, NULL);
+	blinker.start(dispatcher, StateOff);
+	blinker.send(EventSwitch);
+
 	for (;;)
 	{
 		tsk_delay(SEC);
-		hsm_send(blinker, EventTick, NULL);
+		blinker.send(EventTick);
 	}
 }
