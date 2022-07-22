@@ -10,7 +10,7 @@ void action( unsigned signo )
 
 void consumer()
 {
-	cur_action(action);
+	cur_setAction(action);
 	for (;;)
 		tsk_yield();
 }
