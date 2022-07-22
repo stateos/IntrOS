@@ -8,7 +8,7 @@ auto led = Led();
 
 auto cons = Task::Start([]
 {
-	thisTask::action([](unsigned signo){ led = SIGSET(signo); });
+	thisTask::setAction([](unsigned signo){ led = SIGSET(signo); });
 	thisTask::suspend();
 });
 

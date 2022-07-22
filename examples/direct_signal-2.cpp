@@ -10,7 +10,7 @@ int main()
 
 	auto cons = Task::Start([&]
 	{
-		thisTask::action([&](unsigned signo)
+		thisTask::setAction([&](unsigned signo)
 		{
 			thisTask::flip([&]
 			{
