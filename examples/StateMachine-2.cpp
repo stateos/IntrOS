@@ -1,9 +1,11 @@
 #include <stm32f4_discovery.h>
 #include <os.h>
+#include <vector>
+#include <chrono>
 
 enum
 {
-	EventOK     = hsmOK,
+	EventALL    = hsmALL,
 	EventStop   = hsmStop,
 	EventExit   = hsmExit,
 	EventEntry  = hsmEntry,
@@ -14,48 +16,28 @@ enum
 
 auto blinker    = intros::StateMachineT<10>();
 auto dispatcher = intros::Task(nullptr);
+auto led        = device::Led();
 
-extern intros::State StateOff;
-extern intros::State StateOn;
+auto StateOff   = intros::State();
+auto StateOn    = intros::State();
 
-intros::State StateOff([](hsm_t *hsm, unsigned event)->unsigned
+std::vector<intros::Action> tab =
 {
-	switch (event)
-	{
-	case EventInit:
-		LEDs = 0;
-		return EventOK;
-	case EventSwitch:
-		hsm->transition(StateOn);
-		return EventOK;
-	}
-	return event;
-});
-
-intros::State StateOn([](hsm_t *hsm, unsigned event)->unsigned
-{
-	switch (event)
-	{
-	case EventSwitch:
-		hsm->transition(StateOff);
-		return EventOK;
-	case EventTick:
-		LED_Tick();
-		return EventOK;
-	}
-	return event;
-});
+	{ StateOff, EventInit,   [](hsm_t *, unsigned){ led = 0; } },
+	{ StateOff, EventSwitch, StateOn },
+	{ StateOn,  EventSwitch, StateOff },
+	{ StateOn,  EventTick,   [](hsm_t *, unsigned){ led.tick(); } },
+};
 
 int main()
 {
-	LED_Init();
+	for (auto& a: tab) blinker.link(a);
 
 	blinker.start(dispatcher, StateOff);
 	blinker.send(EventSwitch);
-
 	for (;;)
 	{
-		tsk_delay(SEC);
+		intros::thisTask::delay(std::chrono::seconds(1));
 		blinker.send(EventTick);
 	}
 }

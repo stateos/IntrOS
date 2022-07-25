@@ -12,11 +12,12 @@ enum
 	EventTick,
 };
 
-hsm_t blinker = HSM_INIT(1);
-tsk_t dispatcher = TSK_INIT(NULL);
-
-hsm_state_t StateOff = HSM_STATE_INIT(NULL);
-hsm_state_t StateOn  = HSM_STATE_INIT(NULL);
+hsm_state_t StateOff;
+hsm_state_t StateOn;
+hsm_t       blinker;
+unsigned    blinker_queue[100];
+tsk_t       dispatcher;
+stk_t       dispatcher_stack[100];
 
 void StateOffHandler(hsm_t *hsm, unsigned event)
 {
@@ -48,16 +49,21 @@ void StateOnHandler(hsm_t *hsm, unsigned event)
 
 hsm_action_t tab[] =
 {
-	_HSM_ACTION_INIT(&StateOff, EventInit,    NULL,     StateOffHandler),
+	_HSM_ACTION_INIT(&StateOff, EventInit,   NULL,      StateOffHandler),
 	_HSM_ACTION_INIT(&StateOff, EventSwitch, &StateOn,  NULL),
 	_HSM_ACTION_INIT(&StateOn,  EventSwitch, &StateOff, NULL),
-	_HSM_ACTION_INIT(&StateOn,  EventTick,    NULL,     StateOnHandler),
+	_HSM_ACTION_INIT(&StateOn,  EventTick,   NULL,      StateOnHandler),
 };
 #define tabsize (int)(sizeof(tab)/sizeof(tab[0]))
 
 int main()
 {
 	LED_Init();
+
+	hsm_initState(&StateOff, NULL);
+	hsm_initState(&StateOn,  NULL);
+	hsm_init(&blinker, blinker_queue, sizeof(blinker_queue));
+	wrk_init(&dispatcher, NULL, dispatcher_stack, sizeof(dispatcher_stack));
 
 	for (int i = 0; i < tabsize; i++) hsm_link(&blinker, &tab[i]);
 
