@@ -13,11 +13,10 @@ enum
 	EventTick,
 };
 
-OS_HSM(blinker, 1);
 OS_TSK(dispatcher, NULL);
-
 OS_HSM_STATE(StateOff, NULL);
 OS_HSM_STATE(StateOn,  NULL);
+OS_HSM(blinker, 1);
 
 void StateOffHandler(hsm_t *, unsigned event)
 {
