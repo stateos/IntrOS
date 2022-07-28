@@ -28,8 +28,8 @@ There's a dedicated function for immediate change the task state.
 - condition variables
 - read/write locks
 - memory pools
-- stream buffers
-- message buffers
+- raw buffers
+- message queues
 - mailbox queues
 - event queues
 - job queues
