@@ -29,7 +29,7 @@ std::vector<intros::Action> tab =
 
 int main()
 {
-	for (auto& a: tab) blinker.link(a);
+	for (auto& a: tab) a.link();
 
 	blinker.start(dispatcher, StateOff);
 	blinker.send(EventSwitch);
