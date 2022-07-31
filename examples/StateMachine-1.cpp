@@ -18,7 +18,7 @@ auto StateOff   = intros::State();
 auto StateOn    = intros::State();
 auto blinker    = intros::StateMachineT<10>();
 
-std::vector<intros::Action> tab =
+const std::vector<intros::Action> tab =
 {
 	{ StateOff, EventInit,   []( hsm_t *, unsigned ){ led = 0; } },
 	{ StateOff, EventSwitch, StateOn },
