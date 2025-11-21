@@ -18,7 +18,7 @@ void producer()
 {
 	mtx_wait(mtx);
 	tsk_delay(SEC);
-	cnd_give(cnd);
+	cnd_give(cnd, cndOne);
 	mtx_give(mtx);
 }
 

@@ -2,7 +2,7 @@
 #include <os.h>
 
 auto led = device::Led();
-auto bar = intros::Barrier(2);
+auto bar = os::Barrier(2);
 
 void consumer()
 {
@@ -12,16 +12,16 @@ void consumer()
 
 void producer()
 {
-	intros::thisTask::delay(SEC);
+	os::thisTask::delay(SEC);
 	bar.wait();
 }
 
-auto cons = intros::Task(consumer);
-auto prod = intros::Task(producer);
+auto cons = os::Task(consumer);
+auto prod = os::Task(producer);
 
 int main()
 {
 	cons.start();
 	prod.start();
-	intros::thisTask::stop();
+	os::thisTask::stop();
 }

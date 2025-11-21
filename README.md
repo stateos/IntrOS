@@ -21,10 +21,10 @@ There's a dedicated function for immediate change the task state.
 - once flags
 - events
 - signals with protection mask
-- flags (any, all)
+- flags (any, all, new)
 - barriers
-- semaphores
-- mutexes
+- semaphores (binary, limited, counting)
+- mutexes (error check)
 - condition variables
 - read/write locks
 - memory pools

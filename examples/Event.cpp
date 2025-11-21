@@ -9,7 +9,9 @@ auto evt = Event();
 
 void consumer()
 {
-	led = evt.wait();
+	unsigned x;
+	evt.wait(x);
+	led = x;
 }
 
 void producer()

@@ -2,28 +2,28 @@
 #include <os.h>
 
 auto led = device::Led();
-auto flg = intros::Flag();
+auto flg = os::Flag();
 
 void consumer()
 {
-	flg.wait(3);
+	flg.wait(3, flgAllNew);
 	led.tick();
 }
 
 void producer()
 {
-	intros::thisTask::delay(SEC/2);
+	os::thisTask::delay(SEC/2);
 	flg.give(1);
-	intros::thisTask::delay(SEC/2);
+	os::thisTask::delay(SEC/2);
 	flg.give(2);
 }
 
-auto cons = intros::Task(consumer);
-auto prod = intros::Task(producer);
+auto cons = os::Task(consumer);
+auto prod = os::Task(producer);
 
 int main()
 {
 	cons.start();
 	prod.start();
-	intros::thisTask::stop();
+	os::thisTask::stop();
 }

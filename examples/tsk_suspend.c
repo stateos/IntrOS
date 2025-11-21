@@ -11,6 +11,7 @@ OS_TSK_DEF(prod)
 	tsk_suspend(cons);
 	tsk_delay(SEC);
 	tsk_resume(cons);
+	tsk_delay(SEC);
 }
 
 int main()

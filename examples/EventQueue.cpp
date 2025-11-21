@@ -11,7 +11,9 @@ void consumer()
 {
 	for (;;)
 	{
-		led = evq.wait();
+		unsigned x;
+		evq.wait(x);
+		led = x;
 	}
 }
 

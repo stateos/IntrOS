@@ -14,7 +14,7 @@ void consumer()
 
 	for (;;)
 	{
-		p = lst.wait();
+		lst.wait(&p);
 		led = *p;
 		mem.give(p);
 	}
@@ -29,7 +29,7 @@ void producer()
 	{
 		thisTask::delay(SEC);
 
-		p = mem.wait();
+		mem.wait(&p);
 		*p=x;
 		lst.give(p);
 		x = (x << 1) | (x >> 3);

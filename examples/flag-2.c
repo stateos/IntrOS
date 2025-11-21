@@ -1,30 +1,28 @@
 #include <stm32f4_discovery.h>
 #include <os.h>
 
+OS_FLG(flg, 1);
+
 void consumer()
 {
-	static uint32_t time = 0;
-
-	tsk_sleepUntil(time += SEC);
-	tsk_stop();
-}
-
-OS_TSK(cons, consumer);
-
-void producer()
-{
-	tsk_start(cons);
-	tsk_join(cons);
-
+	flg_wait(flg, 1, flgAnyNew);
 	LED_Tick();
 }
 
+void producer()
+{
+	tsk_delay(SEC);
+	flg_give(flg, 1);
+}
+
+OS_TSK(cons, consumer);
 OS_TSK(prod, producer);
 
 int main()
 {
 	LED_Init();
 
+	tsk_start(cons);
 	tsk_start(prod);
-	tsk_join(prod);
+	tsk_stop();
 }

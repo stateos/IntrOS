@@ -9,7 +9,7 @@ OS_TSK_DEF(cons)
 
 	for (;;)
 	{
-		msg_wait(msg, &dummy, sizeof(dummy));
+		msg_wait(msg, &dummy, sizeof(dummy), NULL);
 		LED_Tick();
 	}
 }

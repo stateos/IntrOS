@@ -4,23 +4,25 @@
 using namespace device;
 using namespace intros;
 
-void consumer(Mutex &mtx, Led &led)
+auto led = Led();
+auto mtx = Mutex();
+
+void consumer()
 {
 	auto lock = LockGuard(mtx);
 	led.tick();
 }
 
-void producer(Mutex &mtx)
+void producer()
 {
 	auto lock = LockGuard(mtx);
 	thisTask::sleepFor(SEC);
 }
 
+auto prod = Task::Start(producer);
+auto cons = Task::Start(consumer);
+
 int main()
 {
-	Led led;
-	Mutex mtx;
-	Task prod = Task::Start([&mtx]      { producer(mtx); });
-	Task cons = Task::Start([&mtx, &led]{ consumer(mtx, led); });
 	thisTask::sleep();
 }

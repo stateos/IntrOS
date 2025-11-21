@@ -7,19 +7,19 @@ void consumer()
 {
 	unsigned x;
 
-	sig_wait(sig, sigAll, &x);
-	LEDs = SIGSET(x);
+	sig_wait(sig, sigAny, &x);
+	LEDs = x & 0x0FUL;
 }
 
 void producer()
 {
-	unsigned x = 0;
+	unsigned x = 1;
 
 	for (;;)
 	{
 		tsk_delay(SEC);
 		sig_give(sig, x);
-		x = (x + 1) % 4;
+		x = (x << 1) | (x >> 3);
 	}
 }
 
