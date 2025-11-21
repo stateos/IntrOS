@@ -77,4 +77,4 @@
 // indicates the use of atomic functions
 // available values: 0, 1
 // default value: 0
-#define OS_ATOMICS            0
+#define OS_ATOMICS            1
