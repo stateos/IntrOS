@@ -17,6 +17,5 @@ int main()
 			led.tick();
 			thisTask::stop();
 		});
-		tsk.join();
 	});
 }

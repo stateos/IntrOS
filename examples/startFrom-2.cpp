@@ -20,6 +20,5 @@ int main()
 				thisTask::stop();
 			});
 		});
-		tsk.join();
 	});
 }

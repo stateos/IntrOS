@@ -10,6 +10,5 @@ int main()
 	auto sem = Semaphore::Binary();
 	auto cons = Task::Make ([&]{ sem.wait(); led.tick(); });
 	auto prod = Task::Start([&]{ thisTask::sleepFor(SEC); sem.give(); });
-	cons.start();
-	cons.join();
+	thisTask::suspend();
 }

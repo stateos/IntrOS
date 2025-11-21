@@ -24,6 +24,5 @@ int main()
 {
 	auto prod = Task::Start(producer);
 	auto cons = Task::Start(consumer);
-	cons.join();
-	prod.join();
+	thisTask::suspend();
 }
