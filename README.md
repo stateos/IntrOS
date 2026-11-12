@@ -14,6 +14,7 @@ There's a dedicated function for immediate change the task state.
 ### Documentation
 
 The API is documented in the header files, the documentation generated with doxygen is available on [GitHub Pages](https://stateos.github.io/IntrOS/).
+How to port the system to another processor, compiler or device is described in [Porting IntrOS](https://stateos.github.io/IntrOS/porting.html).
 
 ### Features
 
