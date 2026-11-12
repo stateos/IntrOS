@@ -16,6 +16,26 @@ There's a dedicated function for immediate change the task state.
 The API is documented in the header files, the documentation generated with doxygen is available on [GitHub Pages](https://stateos.github.io/IntrOS/).
 How to port the system to another processor, compiler or device is described in [Porting IntrOS](https://stateos.github.io/IntrOS/porting.html).
 
+### Getting started
+
+Clone the repository with the submodule `common` (kernel, ports, startup code, CMSIS, build scripts):
+
+```
+git clone --recursive https://github.com/stateos/IntrOS.git
+```
+
+- `include/osconfig.h`: configuration of the kernel
+- `src/main.cpp`: the application (`src/main.c` in C)
+- `examples`: complete programs that show the use of every object, in C and C++
+
+The project is built for the STM32F4-Discovery board:
+
+- make: `make -f makefile.gnucc` (or `makefile.clang`, `makefile.armcc`, `makefile.iarcc`, `makefile.csmcc`)
+- CMake: `cmake -S . -B build -G Ninja` and `cmake --build build`
+
+Another board is selected in the makefile (`include $(COMMON)/intros/make/<board>/makefile.<compiler>`) or in `CMakeLists.txt` (`CMAKE_TOOLCHAIN_FILE`);
+the supported boards are in `common/intros/make` and `common/intros/cmake`.
+
 ### Features
 
 - kernel can operate in cooperative (non-preemptive) mode only
@@ -48,8 +68,11 @@ How to port the system to another processor, compiler or device is described in 
 
 ### Targets
 
-ARM CM0(+), CM3, CM4(F), CM7, x86_64
+- ARM Cortex-M0(+), M3, M4(F), M7: compilers armcc, clang, csmcc, gnucc, iarcc
+- STM8: compilers csmc, iarc, sdcc
+- AVR8: compiler gcc
+- x86_64 (PC: Linux, Windows): compiler gcc, for testing purposes
 
 ### License
 
-This project is licensed under the terms of [MIT License (MIT)](https://opensource.org/licenses/MIT).
+This project is licensed under the terms of the [MIT License (MIT)](https://opensource.org/licenses/MIT).
