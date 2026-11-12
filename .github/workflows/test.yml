@@ -8,44 +8,44 @@ on:
   schedule:
     - cron: '0 0 1 * *'
 
+permissions:
+  contents: read
+
+env:
+  ARM_GCC_VERSION: 14.3.rel1
+
 jobs:
-  build:
-    name: build test
+  test:
+    name: ${{matrix.name}}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - name: build test
+          cmake: true
+          run: |
+            cmake -S. -Bbuild -GNinja
+            cmake --build build -v
+        - name: example test
+          run: bash ./.example-test.sh
     steps:
     - name: checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v7
     - name: checkout submodules
       run: git submodule update --init --remote --recursive
     - name: install dependencies
+      if: matrix.cmake
       run: |
         sudo apt-get -y -qq update
         sudo apt-get -y -qq install cmake ninja-build
     - name: install arm-none-eabi-gcc
       run: |
-        wget -q https://developer.arm.com/-/media/Files/downloads/gnu/14.3.rel1/binrel/arm-gnu-toolchain-14.3.rel1-x86_64-arm-none-eabi.tar.xz
-        tar -xf arm-gnu-toolchain-14.3.rel1-x86_64-arm-none-eabi.tar.xz
-        echo "${{github.workspace}}/arm-gnu-toolchain-14.3.rel1-x86_64-arm-none-eabi/bin" >> $GITHUB_PATH
+        ARM_GCC=arm-gnu-toolchain-$ARM_GCC_VERSION-x86_64-arm-none-eabi
+        wget -q https://developer.arm.com/-/media/Files/downloads/gnu/$ARM_GCC_VERSION/binrel/$ARM_GCC.tar.xz
+        tar -xf $ARM_GCC.tar.xz
+        echo "${{github.workspace}}/$ARM_GCC/bin" >> $GITHUB_PATH
     - name: check arm-none-eabi-gcc version
       run: arm-none-eabi-gcc -v
     - name: make test
-      run: |
-        cmake -S. -Bbuild -GNinja
-        cmake --build build -v
-  example:
-    name: example test
-    runs-on: ubuntu-latest
-    steps:
-    - name: checkout repository
-      uses: actions/checkout@v3
-    - name: checkout submodules
-      run: git submodule update --init --remote --recursive
-    - name: install arm-none-eabi-gcc
-      run: |
-        wget -q https://developer.arm.com/-/media/Files/downloads/gnu/14.3.rel1/binrel/arm-gnu-toolchain-14.3.rel1-x86_64-arm-none-eabi.tar.xz
-        tar -xf arm-gnu-toolchain-14.3.rel1-x86_64-arm-none-eabi.tar.xz
-        echo "${{github.workspace}}/arm-gnu-toolchain-14.3.rel1-x86_64-arm-none-eabi/bin" >> $GITHUB_PATH
-    - name: check arm-none-eabi-gcc version
-      run: arm-none-eabi-gcc -v
-    - name: make test
-      run: bash ./.example-test.sh
+      run: ${{matrix.run}}
