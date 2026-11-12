@@ -2,13 +2,18 @@
   [![](https://img.shields.io/github/release/stateos/IntrOS.svg?style=flat-square&logo)](https://github.com/stateos/IntrOS/releases)
   [![](https://img.shields.io/github/license/stateos/IntrOS.svg?style=flat-square&logo)](https://opensource.org/licenses/MIT)
   [![](https://github.com/stateos/IntrOS/actions/workflows/test.yml/badge.svg)](https://github.com/stateos/IntrOS/actions/workflows/test.yml)
+  [![](https://github.com/stateos/IntrOS/actions/workflows/docs.yml/badge.svg)](https://stateos.github.io/IntrOS/)
 
 Free, simple and tiny cooperative operating system (OS) designed for deeply embedded applications.
-Target: ARM Cortex-M, STM8, AVR8, x86 / x86_64.
+Target: ARM Cortex-M, STM8, AVR8, x86_64.
 It was inspired by the concept of a state machine.
 Procedure executed by the task (task state) doesn't have to be noreturn-type.
 It will be executed into an infinite loop.
 There's a dedicated function for immediate change the task state.
+
+### Documentation
+
+The API is documented in the header files, the documentation generated with doxygen is available on [GitHub Pages](https://stateos.github.io/IntrOS/).
 
 ### Features
 
@@ -36,13 +41,13 @@ There's a dedicated function for immediate change the task state.
 - timers (one-shot, periodic)
 - hierarchical state machine
 - c++ wrapper
-- all documentation is contained within the source files
+- [API documentation](https://stateos.github.io/IntrOS/) generated with doxygen from the header files
 - examples and templates are in separate repositories on [GitHub](https://github.com/stateos)
 - archival releases on [sourceforge](https://sourceforge.net/projects/intros.stateos.p)
 
 ### Targets
 
-ARM CM0(+), CM3, CM4(F), CM7, x86 / x86_64
+ARM CM0(+), CM3, CM4(F), CM7, x86_64
 
 ### License
 
