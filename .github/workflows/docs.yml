@@ -1,0 +1,50 @@
+name: docs
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: build documentation
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout repository
+      uses: actions/checkout@v7
+      with:
+        submodules: true
+    - name: install doxygen
+      run: |
+        wget -q https://github.com/doxygen/doxygen/releases/download/Release_1_18_0/doxygen-1.18.0.linux.bin.tar.gz
+        tar -xf doxygen-1.18.0.linux.bin.tar.gz
+        echo "${{github.workspace}}/doxygen-1.18.0/bin" >> $GITHUB_PATH
+    - name: check doxygen version
+      run: doxygen --version
+    - name: make documentation
+      working-directory: common/intros
+      run: ( cat Doxyfile; echo "WARN_AS_ERROR = FAIL_ON_WARNINGS" ) | doxygen -
+    - name: upload documentation
+      uses: actions/upload-pages-artifact@v5
+      with:
+        path: common/intros/doc/html
+  deploy:
+    name: deploy documentation
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{steps.deployment.outputs.page_url}}
+    steps:
+    - name: deploy to github pages
+      id: deployment
+      uses: actions/deploy-pages@v5
